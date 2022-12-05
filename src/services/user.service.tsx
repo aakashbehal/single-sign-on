@@ -1,0 +1,88 @@
+
+import { history } from "../helpers";
+import { handleResponse, axiosCustom } from "../helpers/util"
+
+const login = async (username: string, password: string) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/login`, {
+            loginKey: username.trim(),
+            loginSecret: password.trim()
+        })
+        const data = handleResponse(response)
+        if (data.response.isResetRequired) {
+            localStorage.setItem('tempUser', JSON.stringify(data.response))
+        } else {
+            const dataToSet = { ...data.response, ...{ version: '1' } }
+            localStorage.setItem('user', JSON.stringify(dataToSet))
+        }
+        return data.response
+    } catch (error: any) {
+        if (error.message) {
+            throw error.message
+        }
+        throw error
+    }
+}
+
+async function logout() {
+    const user = getUser()
+    try {
+        await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/logout`, {
+            principleId: user.principleId,
+            loginKey: user.loginKey
+        })
+        localStorage.removeItem('user');
+        history.push('/login')
+    } catch (error: any) {
+        throw error
+    }
+    // remove user from local storage to log user out
+}
+
+function logoutAuthExpired() {
+    localStorage.removeItem('user');
+    history.push('/login')
+}
+
+const isLoggedIn = () => {
+    const user = localStorage.getItem('user')
+    if (user) {
+        return true
+    } else {
+        return false
+    }
+}
+
+const isPasswordResetRequired = () => {
+    const user: any = localStorage.getItem('tempUser')
+    const userParsed = JSON.parse(user)
+    if (userParsed && userParsed.isResetRequired) {
+        return true
+    } else {
+        return false
+    }
+}
+
+const getTempUser = () => {
+    return JSON.parse(localStorage.getItem('tempUser')!)
+}
+
+const getUser = () => {
+    const user = JSON.parse(localStorage.getItem('user')!)
+    if (user && user.version !== "1") {
+        localStorage.clear()
+        history.push('/login')
+        return null
+    }
+    return user
+}
+
+export const userService = {
+    login,
+    logout,
+    isLoggedIn,
+    getUser,
+    getTempUser,
+    logoutAuthExpired,
+    isPasswordResetRequired
+}

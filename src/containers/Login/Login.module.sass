@@ -1,0 +1,75 @@
+@import "../../colors"
+
+.reCaptchaId
+    display: flex
+    justify-content: center
+    margin-bottom: 20px
+
+.login
+    height: 100vh
+    display: flex
+    justify-content: center
+    align-items: center
+    // background: linear-gradient(45deg, $bittersweet, $dull_lavender);
+    // background: url('../../assets/img/login_back.jpg')
+    background-size: cover
+    background-repeat: no-repeat
+    .login_container
+        width: 450px
+        padding: 2rem
+        background: white
+        box-shadow: 0px 0px 14px -5px black
+        border: 2px solid $bittersweet
+        border-radius: 5px
+        h2
+            margin-bottom: 2rem
+            text-align: center
+        .inner_login_container
+            border: 2px solid $bittersweet
+            padding: 20px 30px
+            border-radius: 5px
+            h5
+                margin-bottom: 0px
+                color: $bittersweet
+            .login_form
+                label
+                    display: block
+                    margin-bottom: 0.5rem
+                input
+                    display: block
+                    // background-color: $background
+                    width: 100%
+                    // margin-top: 1rem
+                    line-height: 2.5rem
+                    border-radius: 2px
+                    // border: 1px solid black
+                    padding: 0 10px
+                    &:first-child
+                        margin-top: 0
+                select
+                    // border: 1px solid black
+                    // margin-top: 1rem
+                button
+                    padding: 5px 20px
+                    width: 100%
+                    border: none
+                    cursor: pointer
+                    background-color: $bittersweet !important
+                    transition: background-color 0.2s
+                    color: white
+                    &:hover
+                        background-color: $darkenBittersweet !important
+.error
+    border: 2px solid red !important
+.forgot_password
+    cursor: pointer
+    &:hover
+        color: $bittersweet
+.password_set
+    width: 800px !important
+    .inner_password_set
+        border: 0 !important
+.no_margin
+    margin-bottom: 0 !important
+.form_error
+    color: red

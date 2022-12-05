@@ -1,0 +1,409 @@
+@import "./colors"
+@import "/node_modules/react-grid-layout/css/styles.css"
+@import "/node_modules/react-resizable/css/styles.css"
+
+*
+	margin: 0
+	padding: 0
+	box-sizing: border-box
+	&:focus
+		box-shadow: none !important
+
+//================================================ 
+//============= FONTS =========================== 
+@font-face
+	font-family: 'VisbyCF-Thin'
+	src: url('./assets/fonts/VisbyCF-Thin.otf') format('opentype')
+@font-face
+	font-family: 'VisbyCF-Regular'
+	src: url('./assets/fonts/VisbyCF-Regular.otf') format('opentype')
+@font-face
+	font-family: 'VisbyCF-Medium'
+	src: url('./assets/fonts/VisbyCF-Medium.otf') format('opentype')
+@font-face
+	font-family: 'VisbyCF-Bold'
+	src: url('./assets/fonts/VisbyCF-Bold.otf') format('opentype')
+@font-face
+	font-family: 'VisbyCF-ExtraBold'
+	src: url('./assets/fonts/VisbyCF-ExtraBold.otf') format('opentype')
+//==============================================
+// ============ COMMON =========================
+html, body
+	font-family: 'VisbyCF-Regular', Arial, Helvetica, sans-serif
+	letter-spacing: 0.6px
+	background-color: rgb(247, 247, 247)
+
+.no_padding
+	padding: 0
+.dropdown-menu
+	padding: 0
+	.dropdown-item
+		padding: .5rem 1.5rem
+	.dropdown-item:not(:last-child)
+		border-bottom: 1px solid #dadada
+
+.spinner
+	animation: spin infinite 1s linear
+
+@keyframes spin
+	0%
+		transform: rotate(0deg)
+	100%
+		transform: rotate(360deg)
+
+.dropdown-item
+	&:active
+		background-color: #f8f9fa
+		color: black
+.react-date-picker__calendar
+	z-index: 9999 !important
+
+.react-date-picker, .react-datetime-picker, .react-timerange-picker, .react-time-picker
+	display: block
+	width: 100%
+	padding: .375rem .75rem
+	font-size: 1rem
+	line-height: 1.5
+	color: #495057
+	background-color: #fff
+	background-clip: padding-box
+	border: 1px solid #ced4da
+	border-radius: .25rem
+	transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out
+	.react-date-picker__wrapper, .react-datetime-picker__wrapper, .react-timerange-picker__wrapper, .react-time-picker__wrapper
+		border: 0
+
+ul.pagination
+	.page-link
+		color: black
+
+.page-item.active
+	.page-link
+		background-color: black !important
+		color: white
+		border-color: black
+
+.dropdown-item.active
+	background-color: $bittersweet
+
+.tableHeight
+	max-height: 100vh
+
+a.nav-link.active
+	background-color: $bittersweet
+.table-responsive
+	max-height: 77vh
+	border: 1px solid rgba(0, 0, 0, 0.13)
+
+.form_container
+	background-color: #e9ecef
+	padding: 15px 10px
+.clickable_td
+	color: $bittersweet
+	font-weight: bold
+	position: relative
+.clickable_td_emp
+	cursor: pointer
+	&:hover
+		text-decoration: underline
+
+// th, td
+// 	min-width: 100px
+
+// table ---------------start-----------------
+.table_header_container
+	display: flex
+	font-size: 14px
+	position: relative
+	min-width: 220px
+	justify-content: space-around
+	.sorting
+		position: absolute
+		right: 0
+		svg
+			cursor: pointer
+			fill: #484848
+		svg.active
+			fill: white
+
+table
+	thead
+		th
+			background-color: black
+			position: sticky
+			top: -1px
+			z-index: 99
+	tr.no_records
+		line-height: 35px
+		background-color: #e9ecef
+		text-align: center
+		th
+			background: none
+	tbody
+		background: white
+
+.table-sm td, .table-sm th
+	padding: .3rem .7rem
+
+.td_string
+	text-align: left
+.td_number
+	text-align: right
+// table -------------ends-------------------
+
+.react-datetime-picker__calendar,
+.react-datetime-picker__clock
+	z-index: 999 !important
+.table_container
+	position: relative
+.table_loading
+	background-color: rgba(233,236,239,.9)
+	position: absolute
+	padding-top: 0.5rem
+	width: 100%
+	top: 0
+	min-height: 200px
+	height: 100%
+	display: flex
+	z-index: 99
+	align-items: center
+	border-radius: 5px
+	justify-content: center
+	// color: white
+
+.switch_box
+	display: flex
+	align-items: center
+
+input[type="checkbox"].switch
+	-webkit-appearance: none
+	-moz-appearance: none
+	appearance: none
+	width: 3.5em
+	height: 1.5em
+	background: #ddd
+	border-radius: 3em
+	position: relative
+	cursor: pointer
+	outline: none
+	-webkit-transition: all .2s ease-in-out
+	transition: all .2s ease-in-out
+
+input[type="checkbox"].switch:checked
+	background: $bittersweet
+
+input[type="checkbox"][disabled]
+	cursor: not-allowed
+
+input[type="checkbox"].switch:after
+	position: absolute
+	content: ""
+	width: 1.5em
+	height: 1.5em
+	border-radius: 50%
+	background: #fff
+	-webkit-box-shadow: 0 0 .25em rgba(0,0,0,.3)
+	box-shadow: 0 0 .25em rgba(0,0,0,.3)
+	-webkit-transform: scale(.7)
+	transform: scale(.7)
+	left: 0
+	-webkit-transition: all .2s ease-in-out
+	transition: all .2s ease-in-out
+
+input[type="checkbox"].switch:checked:after
+	left: calc(100% - 1.5em)
+
+.react-toast-notifications__container
+	z-index: 9999 !important
+	.react-toast-notifications__toast--error
+		background-color: white
+		.react-toast-notifications__toast__icon-wrapper
+			background-color: red
+			color: white
+			.react-toast-notifications__toast__countdown
+				color: white
+		.react-toast-notifications__toast__content
+			color: red
+			font-weight: bold
+
+::-webkit-scrollbar
+	width: 10px
+	height: 10px
+
+::-webkit-scrollbar-track
+	border-radius: 12px
+	padding: 2px
+	background-color: rgba(0,0,0,0.1)
+
+::-webkit-scrollbar-thumb
+	border-radius: 10px
+	border: 2px solid #dedede
+	background-color: transparentize($bittersweet, 0.4)
+	&:hover
+		border: transparentize($bittersweet, 0.4)
+
+.no_min_height
+	min-height: auto !important
+.form-label
+	padding-right: 0
+
+.preferenceModal
+	.modal-dialog
+		max-width: 98vw !important
+.preferenceModalSmall
+	.modal-dialog
+		max-width: 900px
+
+.global_loader
+	position: absolute
+	color: #ff7765
+	left: 0
+	top: 0
+.fixed_header
+	position: fixed
+	width: 100%
+	z-index: 1001
+	background: #f7f7f7
+.gridItemToggle
+	.dropdown-toggle::after
+		content: none
+	.btn-primary:not(:disabled):not(.disabled).active,
+	.btn-primary:not(:disabled):not(.disabled):active,
+	.btn-primary.dropdown-toggle
+		background: none
+		color: white
+		height: 23px
+canvas
+	@media ( min-width: 1980px )
+		height: 100% !important
+
+//============================================================================
+
+$grid: 8px
+$pink: #fd3afd
+$pinkDark: #690169
+$greyLight: #515b7d
+$black: #1d212e
+$borderWidth: 4px
+$borderRadius: 8px
+
+.columns
+	display: flex
+	justify-content: space-around
+
+.column
+	border-radius: $borderRadius
+	background-color: #ffffff
+	border: 1px solid #595858
+	padding: 1rem
+
+.column-title
+	font-size: 20px
+	color: black
+	text-align: center
+	margin: 0 0 1rem 0
+
+.task-list
+	padding-left: $grid
+	padding-right: $grid
+
+.item
+	background: black
+	border: $borderWidth solid $bittersweet
+	box-sizing: border-box
+	border-radius: $borderRadius
+	color: white
+	font-size: 12px
+	user-select: none
+	display: flex
+	justify-content: center
+	align-items: center
+
+.is-dragging
+	background: $bittersweet
+	border-color: black
+	color: black
+#tooltip-error
+	z-index: 999999 !important
+
+// =========================================================================
+.label_custom
+	position: absolute
+	top: -8px
+	left: 40px
+	background: #e9ecef
+	line-height: 1rem
+	padding: 0 0.5rem
+	font-weight: 600
+	color: #747678
+	font-size: 14px
+	&.no_left
+		left: 5px
+	&.white
+		background: white
+	&.light_grey
+		background: #f7f7f7
+.input_custom, .select_custom
+	background: none
+	height: 3rem !important
+
+.textArea_custom
+	background: none
+	&.white
+		background: white !important
+.select_custom
+	&.white
+		background-color: white !important
+	&.light_grey
+		background: #f7f7f7 !important
+.form_container .form-control, .form_container .form-control:focus
+	color: #000000
+	font-size: 16px
+	font-weight: 100
+	background-color: #e9ecef
+	border-color: #b4bac0
+	outline: 0
+.react-date-picker,
+.react-daterange-picker__wrapper
+	border-color: #b4bac0
+.react-daterange-picker__wrapper
+	color: #000000
+	font-size: 16px
+	font-weight: 100
+	// background-color: #e9ecef
+	border-color: #b4bac0 !important
+	// padding-left: .3rem
+	outline: 0
+	border-radius: 0.3rem
+	width: 100%
+select option
+	background: white
+
+//============================================================
+.nav-tabs
+	.nav-link
+		color: black
+		&.active
+			color: $bittersweet
+			font-weight: 600
+.progress-bar
+	background-color: #ff7765
+.table_top_section
+	align-items: baseline
+	justify-content: right
+	padding-right: 1rem
+.share_With_parent
+	display: flex
+	justify-content: center
+	padding: .1rem
+	.shared_with
+		padding: 0rem 0.65rem
+		color: white
+		font-weight: 600
+		border-radius: 50%
+		&:nth-child(even)
+			background: lighten(red, 25)
+		&:nth-child(odd)
+			background: lighten(black,10)
+.quicksight-embedding-iframe
+	height: 90vh !important

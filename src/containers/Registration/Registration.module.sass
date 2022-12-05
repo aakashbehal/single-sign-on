@@ -1,0 +1,179 @@
+@import "../../colors"
+
+.login
+    height: 100vh
+    display: flex
+    justify-content: center
+    align-items: center
+    background: #ebebeb
+    // background: linear-gradient(45deg, $bittersweet, $dull_lavender)
+    .login_container
+        width: 55vw
+        // padding: 2rem
+        background: white
+        // box-shadow: 0px 0px 14px -5px black
+        // border: 2px solid $bittersweet
+        border-radius: 10px
+        h2
+            margin-bottom: 2rem
+            text-align: center
+        .inner_login_container
+            min-height: 415px
+            // border: 2px solid $bittersweet
+            padding: 40px 30px
+            border-radius: 5px
+            text-align: center
+            h5
+                margin-bottom: 0px
+                color: $bittersweet
+            .login_form
+                // margin-top: 5rem
+                // min-height: 220px
+                label
+                    display: block
+                    margin-bottom: 0.5rem
+                input:not([type="checkbox"])
+                    display: block
+                    // background-color: $background
+                    width: 100%
+                    margin-bottom: 1rem
+                    line-height: 2.5rem
+                    border-radius: 2px
+                    // background: none
+                    border: 1px solid #ced4da
+                    padding: 0 1rem 0 2rem
+                    border-radius: 5px
+                button
+                    padding: 10px 20px
+                    width: 150px
+                    border: none
+                    border-top-left-radius: 20px
+                    border-bottom-left-radius: 20px
+                    border-top-right-radius: 20px
+                    border-bottom-right-radius: 20px
+                    cursor: pointer
+                    background-color: $bittersweet !important
+                    transition: background-color 0.2s
+                    color: white
+                    &:hover
+                        background-color: $darkenBittersweet !important
+.error
+    border: 2px solid red !important
+
+.loginLogout
+    display: flex
+    justify-content: center
+
+.input_group
+    position: relative
+    .input_icon
+        position: absolute
+        left: .5rem
+        top: .8rem
+    .indicator
+        position: absolute
+        right: .5rem
+        top: .8rem
+
+.loginScreenLeft,
+.loginScreenRight
+    border-top-right-radius: 5px
+    border-bottom-right-radius: 5px
+    text-align: center
+    padding: 40px 20px
+    background-repeat: no-repeat
+    background-size: cover
+    background: linear-gradient(360deg, rgba(255, 119, 101, .9), rgba(255, 119, 101, 1)), url('../../assets/img/eq_background.jpg')
+    h2
+        color: white
+    p
+        color: white
+        margin-top: 20px
+        // padding: 20px 40px
+    button
+        padding: 10px 15px
+        width: 150px
+        border: none
+        border-top-left-radius: 20px
+        border-bottom-left-radius: 20px
+        border-top-right-radius: 20px
+        border-bottom-right-radius: 20px
+        cursor: pointer
+        margin-top: 200px
+        background: transparent
+        border-style: inset
+        border: 1px solid white !important
+        transition: background-color 0.2s
+        color: white
+        &:hover
+            color: #FF7765
+            background-color: white !important
+.loginScreenLeft
+    border-top-left-radius: 5px
+    border-bottom-left-radius: 5px
+    border-top-right-radius: 0px
+    border-bottom-right-radius: 0px
+
+.socialMediaContainer
+    display: flex
+    justify-content: center
+    .socialMediaContainerInner
+        width: 110px
+        display: flex
+        justify-content: space-between
+.socialButton
+    border: 1px solid lighten(#FF7765, 10%)
+    border-radius: 50%
+    width: 3rem
+    height: 3rem
+    display: flex
+    font-size: 20px
+    justify-content: center
+    align-items: center
+    cursor: pointer
+    transition: all ease-in 0.2s
+    margin-bottom: 20px
+    &:hover
+        background: #FF7765
+        svg
+            color: white
+.forgotPassword
+    cursor: pointer
+    border-bottom: 1px dotted #FF7765
+    &:hover
+        font-weight: bold
+        border-bottom-color: red
+.checking
+    transition: all ease 0.5s
+
+.fakeLoading
+    position: absolute
+    z-index: 9
+    width: 100%
+    background: rgba(0, 0, 0, 0.7)
+    left: 0
+    border-radius: 10px
+    height: 100%
+    color: white
+    display: flex
+    justify-content: center
+    align-items: center
+
+.progress_bar_container
+    background: #f9f9f9 !important
+    margin-top: 5rem
+    border-radius: 5px
+    .input
+        background-color: white
+.progress_bar
+    span
+        background-color: #f47260 !important
+        color: white !important
+.next_button
+    color: white !important
+    background-color: #f47260 !important
+    border-color: #f47260 !important
+.reCaptchaId
+    display: flex
+    justify-content: center
+    margin-bottom: 20px

@@ -1,0 +1,45 @@
+
+@import "../../../colors"
+
+.nav
+    background-color: #000
+    ul
+        display: inline-flex
+        list-style: none
+        margin-bottom: 0
+.link
+    display: flex
+    cursor: pointer
+    border-right: 1px solid rgba(255, 255, 255, 0.1)
+    a
+        text-decoration: none
+        color: white
+        height: 100%
+        display: flex
+        align-items: center
+        padding: 0.5rem 1rem .25rem
+        transition: background-color 0.2s
+        border-bottom: .25rem solid transparent
+        &:hover
+            border-bottom-color: $bittersweet
+
+.dropdown_link
+    background-color: transparent
+    border-right: 1px solid rgba(255, 255, 255, 0.1)
+    &>a
+        &:hover
+            text-decoration: none
+.dropdown_nav
+    &>a
+        padding: 0.5rem 1rem .25rem
+        text-decoration: none
+        display: flex
+        align-items: center
+        color: white
+        border-bottom: .25rem solid transparent
+        &:hover
+            border-bottom-color: $bittersweet
+    &>a.active
+        background-color: red
+.link_active
+    background-color: $bittersweet
