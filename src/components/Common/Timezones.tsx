@@ -25,7 +25,6 @@ const Timezones = forwardRef(({ selectedValue = '', isDisabled = false, type = '
 
     useEffect(() => {
         if (Timezones && Timezones.length === 0 && !Timezones) {
-            dispatch(MiscActionCreator.getCountryTimeZone())
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [Timezones])

@@ -1,0 +1,40 @@
+{
+  "files": {
+    "main.css": "./static/css/main.7b02d826.chunk.css",
+    "main.js": "./static/js/main.39999a6a.chunk.js",
+    "main.js.map": "./static/js/main.39999a6a.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.a5794a43.js",
+    "runtime-main.js.map": "./static/js/runtime-main.a5794a43.js.map",
+    "static/css/2.14e63bca.chunk.css": "./static/css/2.14e63bca.chunk.css",
+    "static/js/2.fc42f969.chunk.js": "./static/js/2.fc42f969.chunk.js",
+    "static/js/2.fc42f969.chunk.js.map": "./static/js/2.fc42f969.chunk.js.map",
+    "static/css/3.9c6b934b.chunk.css": "./static/css/3.9c6b934b.chunk.css",
+    "static/js/3.13098d7b.chunk.js": "./static/js/3.13098d7b.chunk.js",
+    "static/js/3.13098d7b.chunk.js.map": "./static/js/3.13098d7b.chunk.js.map",
+    "static/css/4.096273ea.chunk.css": "./static/css/4.096273ea.chunk.css",
+    "static/js/4.eb63da8d.chunk.js": "./static/js/4.eb63da8d.chunk.js",
+    "static/js/4.eb63da8d.chunk.js.map": "./static/js/4.eb63da8d.chunk.js.map",
+    "static/css/5.e5110c23.chunk.css": "./static/css/5.e5110c23.chunk.css",
+    "static/js/5.3de05d06.chunk.js": "./static/js/5.3de05d06.chunk.js",
+    "static/js/5.3de05d06.chunk.js.map": "./static/js/5.3de05d06.chunk.js.map",
+    "static/js/6.cb26c77a.chunk.js": "./static/js/6.cb26c77a.chunk.js",
+    "static/js/6.cb26c77a.chunk.js.map": "./static/js/6.cb26c77a.chunk.js.map",
+    "index.html": "./index.html",
+    "static/css/2.14e63bca.chunk.css.map": "./static/css/2.14e63bca.chunk.css.map",
+    "static/css/3.9c6b934b.chunk.css.map": "./static/css/3.9c6b934b.chunk.css.map",
+    "static/css/4.096273ea.chunk.css.map": "./static/css/4.096273ea.chunk.css.map",
+    "static/css/5.e5110c23.chunk.css.map": "./static/css/5.e5110c23.chunk.css.map",
+    "static/css/main.7b02d826.chunk.css.map": "./static/css/main.7b02d826.chunk.css.map",
+    "static/js/2.fc42f969.chunk.js.LICENSE.txt": "./static/js/2.fc42f969.chunk.js.LICENSE.txt",
+    "static/js/3.13098d7b.chunk.js.LICENSE.txt": "./static/js/3.13098d7b.chunk.js.LICENSE.txt",
+    "static/media/App.sass": "./static/media/VisbyCF-Thin.8328abdc.otf",
+    "static/media/Registration.module.sass": "./static/media/eq_background.8257312e.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a5794a43.js",
+    "static/css/2.14e63bca.chunk.css",
+    "static/js/2.fc42f969.chunk.js",
+    "static/css/main.7b02d826.chunk.css",
+    "static/js/main.39999a6a.chunk.js"
+  ]
+}

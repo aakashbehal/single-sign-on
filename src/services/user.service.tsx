@@ -4,18 +4,25 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/login`, {
+        const response = await axiosCustom.post(`/authenticate`, {
             loginKey: username.trim(),
             loginSecret: password.trim()
         })
         const data = handleResponse(response)
-        if (data.response.isResetRequired) {
-            localStorage.setItem('tempUser', JSON.stringify(data.response))
-        } else {
-            const dataToSet = { ...data.response, ...{ version: '1' } }
-            localStorage.setItem('user', JSON.stringify(dataToSet))
+        if (data.response) {
+            let jwtToken = data.response.token;
+            if (jwtToken) {
+                delete data.response.token
+            }
+            if (data.response.isResetRequired) {
+                localStorage.setItem('tempUser', JSON.stringify(data.response))
+            } else {
+                sessionStorage.setItem('jwtToken', jwtToken)
+                const dataToSet = { ...data.response, ...{ version: '1' } }
+                localStorage.setItem('user', JSON.stringify(dataToSet))
+            }
+            return data.response
         }
-        return data.response
     } catch (error: any) {
         if (error.message) {
             throw error.message
@@ -27,10 +34,10 @@ const login = async (username: string, password: string) => {
 async function logout() {
     const user = getUser()
     try {
-        await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/logout`, {
-            principleId: user.principleId,
-            loginKey: user.loginKey
-        })
+        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/logout`, {
+        //     principleId: user.principleId,
+        //     loginKey: user.loginKey
+        // })
         localStorage.removeItem('user');
         history.push('/login')
     } catch (error: any) {
@@ -69,7 +76,7 @@ const getTempUser = () => {
 
 const getUser = () => {
     const user = JSON.parse(localStorage.getItem('user')!)
-    if (user && user.version !== "1") {
+    if (!user) {
         localStorage.clear()
         history.push('/login')
         return null
@@ -77,12 +84,24 @@ const getUser = () => {
     return user
 }
 
+const getUserType = () => {
+    const user = JSON.parse(localStorage.getItem('user')!)
+    return user.role
+}
+
+const getAccessToken = () => {
+    const token = sessionStorage.getItem('jwtToken')
+    return token
+}
+
 export const userService = {
     login,
     logout,
     isLoggedIn,
     getUser,
+    getAccessToken,
     getTempUser,
     logoutAuthExpired,
-    isPasswordResetRequired
+    isPasswordResetRequired,
+    getUserType
 }

@@ -12,10 +12,9 @@ import { LoginActionCreator } from "../../store/actions/auth.actions"
 import { encryptPassword } from "../../helpers/util"
 import { userService } from "../../services";
 import useDocumentTitle from "../../components/Common/DocumentTitle";
-import { FaLastfmSquare } from "react-icons/fa";
 
 const Login: FC = () => {
-    useDocumentTitle('Equabli - EQ Collect', true)
+    useDocumentTitle('Equabli - Document Manager', true);
     const { addToast, removeAllToasts } = useToasts();
     const dispatch = useDispatch();
     const usernameRef: any = useRef(null);
@@ -24,6 +23,8 @@ const Login: FC = () => {
         username: false,
         password: false
     })
+    const [formIsInvalid, setFormIsInvalid] = useState<any>(false)
+    const [disabledSubmit, setDisabledSubmit] = useState(true)
 
     const { user, error, loading } = useSelector((state: any) => ({
         user: state.auth.user,
@@ -45,7 +46,7 @@ const Login: FC = () => {
                 dispatch(LoginActionCreator.resetUser())
                 history.push('/change_password')
             } else {
-                history.push('/dashboard')
+                history.push('/documents/my_documents')
             }
         }
     }, [user])
@@ -54,6 +55,9 @@ const Login: FC = () => {
         localStorage.clear()
         if (usernameRef !== null) {
             usernameRef.current.focus()
+            if (window.location.hash.indexOf('isAutomate') !== -1) {
+                setDisabledSubmit(false)
+            }
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
@@ -86,7 +90,7 @@ const Login: FC = () => {
         }
     }
 
-    const [formIsInvalid, setFormIsInvalid] = useState<any>(false)
+
     const validateLoginForm = (username: boolean, password: boolean) => {
         let formIsValid = true;
         const error: { username: boolean, password: boolean } = {
@@ -119,7 +123,7 @@ const Login: FC = () => {
         return <CgSpinnerAlt className="spinner" />
     }
 
-    const [disabledSubmit, setDisabledSubmit] = useState(true)
+
     const onChange = () => {
         setDisabledSubmit(false)
     }

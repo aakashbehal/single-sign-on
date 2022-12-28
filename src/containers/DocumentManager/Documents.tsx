@@ -147,236 +147,242 @@ const Documents = () => {
      */
     const handlePagination = (pageSize: number, pageNumber: number) => { }
 
+    const documentSummary = () => {
+        return <Col sm={12} className="form_container">
+            <Row>
+                <Col sm={11}><h4 style={{ marginLeft: '1rem' }}>Document Summary</h4></Col>
+                <Col sm={1} style={{ textAlign: 'right', paddingRight: '2rem', cursor: 'pointer' }} onClick={() => setCollapse((collapse) => !collapse)}>
+                    {!collapse && <BsArrowsAngleContract size={20} />}
+                    {collapse && <BsArrowsAngleExpand size={20} />}
+                </Col>
+            </Row>
+            <Col sm={12} className={collapse ? Styles.collapse_summary : ''}>
+                <Row>
+                    <Col sm={5}>
+                        <Col sm={12} className={Styles.inner_document_summary}
+                            style={{
+                                borderWidth: collapse ? '0' : '1px',
+                                background: collapse ? '#e9ecef' : 'white'
+                            }}>
+                            <h5>Document Coverage</h5>
+                            <br />
+                            <Form
+                            // ref={formSearchAccount} onSubmit={(e) => onSubmitHandler(e)}
+                            >
+                                <Row>
+                                    <Col lg={6} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (tenures && tenures.length > 0) &&
+                                                        tenures.map((tenure: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={tenure.statusCode}>{tenure.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Tenure</Form.Label>
+                                        </Form.Group>
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (portfolios && portfolios.length > 0) &&
+                                                        portfolios.map((portfolio: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={portfolio.statusCode}>{portfolio.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Portfolio</Form.Label>
+                                        </Form.Group>
+                                    </Col >
+                                    <Col lg={6} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (products && products.length > 0) &&
+                                                        products.map((product: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={product.statusCode}>{product.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Products</Form.Label>
+                                        </Form.Group>
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (users && users.length > 0) &&
+                                                        users.map((user: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={user.statusCode}>{user.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Users</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                </Row >
+                                <hr />
+                                <Col sm={12} className={`no_padding ${Styles.progress_container_outer}`}>
+                                    {
+                                        documentCoverage && documentCoverage.length > 0
+                                        && documentCoverage.map((dC, index) => {
+                                            return (
+                                                <div className={Styles.progress_container}>
+                                                    <p className={Styles.ProgressTitle}><b>{dC.title}</b></p>
+                                                    <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}%`} />
+                                                    <p className={Styles.ProgressDesc}><span className={Styles.clickable}>{dC.accountsDone}</span> out of <b>{dC.accountsTotal}</b> accounts has {dC.type}</p>
+                                                    <hr />
+                                                </div>
+                                            )
+                                        })
+
+                                    }
+                                </Col>
+                            </Form >
+                        </Col >
+                    </Col >
+                    <Col sm={5}  >
+                        <Col sm={12} className={Styles.inner_document_summary}
+                            style={{
+                                borderWidth: collapse ? '0' : '1px',
+                                background: collapse ? '#e9ecef' : 'white'
+                            }}>
+                            <h5>Document Requirement</h5>
+                            <br />
+                            <Form
+                            // ref={formSearchAccount} onSubmit={(e) => onSubmitHandler(e)}
+                            >
+                                <Row>
+                                    <Col lg={6} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (tenures && tenures.length > 0) &&
+                                                        tenures.map((tenure: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={tenure.statusCode}>{tenure.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Tenure</Form.Label>
+                                        </Form.Group>
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (portfolios && portfolios.length > 0) &&
+                                                        portfolios.map((portfolio: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={portfolio.statusCode}>{portfolio.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Portfolio</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col lg={6} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (products && products.length > 0) &&
+                                                        products.map((product: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={product.statusCode}>{product.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Products</Form.Label>
+                                        </Form.Group>
+                                        <Form.Group as={Col} className="mb-4 ">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control
+                                                    as="select"
+                                                    name="service_offered"
+                                                    className="select_custom white">
+                                                    {
+                                                        (users && users.length > 0) &&
+                                                        users.map((user: any, index: number) => {
+                                                            return <option key={`cr_${index}`} value={user.statusCode}>{user.status}</option>
+                                                        })
+                                                    }
+                                                </Form.Control>
+                                            </Col>
+                                            <Form.Label className="label_custom white">Users</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                </Row>
+                                <hr />
+                                <Row>
+                                    <Col sm={6} className={`${Styles.chart_container} ${Styles.right_border}`}>
+                                        <h5>Sent Requests</h5>
+                                        <Doughnut data={dataSent} options={options} />
+                                    </Col>
+                                    <Col sm={6} className={Styles.chart_container}>
+                                        <h5>Received Requests</h5>
+                                        <Doughnut data={dataRequested} options={options} />
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                    </Col>
+                    <Col sm={2} >
+                        <Col className={Styles.inner_document_summary}
+                            style={{
+                                borderWidth: collapse ? '0' : '1px',
+                                background: collapse ? '#e9ecef' : 'white'
+                            }}>
+                            <h5>Usage</h5>
+                            <br />
+                            <Col sm={12} className="no_padding">
+                                <div className={Styles.progress_container}>
+                                    <ProgressBar className={Styles.progressbar} now={60} label={`60%`} />
+                                    <br />
+                                    <p><b>11.58 GB used out of 15 GB</b></p>
+                                    <p><b>Total 15K documents</b></p>
+                                    <Button variant="dark">Upgrade Your Plan</Button>
+                                </div>
+                            </Col>
+                        </Col>
+                    </Col>
+                </Row >
+            </Col >
+        </Col >
+    }
+
     return (
         <>
-            <Col sm={12} className="form_container">
-                <Row>
-                    <Col sm={11}><h4 style={{ marginLeft: '1rem' }}>Document Summary</h4></Col>
-                    <Col sm={1} style={{ textAlign: 'right', paddingRight: '2rem', cursor: 'pointer' }} onClick={() => setCollapse((collapse) => !collapse)}>
-                        {!collapse && <BsArrowsAngleContract size={20} />}
-                        {collapse && <BsArrowsAngleExpand size={20} />}
-                    </Col>
-                </Row>
-                <Col sm={12} className={collapse ? Styles.collapse_summary : ''}>
-                    <Row>
-                        <Col sm={5}>
-                            <Col sm={12} className={Styles.inner_document_summary}
-                                style={{
-                                    borderWidth: collapse ? '0' : '1px',
-                                    background: collapse ? '#e9ecef' : 'white'
-                                }}>
-                                <h5>Document Coverage</h5>
-                                <br />
-                                <Form
-                                // ref={formSearchAccount} onSubmit={(e) => onSubmitHandler(e)}
-                                >
-                                    <Row>
-                                        <Col lg={6} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (tenures && tenures.length > 0) &&
-                                                            tenures.map((tenure: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={tenure.statusCode}>{tenure.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Tenure</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (portfolios && portfolios.length > 0) &&
-                                                            portfolios.map((portfolio: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={portfolio.statusCode}>{portfolio.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Portfolio</Form.Label>
-                                            </Form.Group>
-                                        </Col >
-                                        <Col lg={6} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (products && products.length > 0) &&
-                                                            products.map((product: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={product.statusCode}>{product.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Products</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (users && users.length > 0) &&
-                                                            users.map((user: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={user.statusCode}>{user.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Users</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row >
-                                    <hr />
-                                    <Col sm={12} className={`no_padding ${Styles.progress_container_outer}`}>
-                                        {
-                                            documentCoverage && documentCoverage.length > 0
-                                            && documentCoverage.map((dC, index) => {
-                                                return (
-                                                    <div className={Styles.progress_container}>
-                                                        <p className={Styles.ProgressTitle}><b>{dC.title}</b></p>
-                                                        <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}%`} />
-                                                        <p className={Styles.ProgressDesc}><span className={Styles.clickable}>{dC.accountsDone}</span> out of <b>{dC.accountsTotal}</b> accounts has {dC.type}</p>
-                                                        <hr />
-                                                    </div>
-                                                )
-                                            })
-
-                                        }
-                                    </Col>
-                                </Form >
-                            </Col >
-                        </Col >
-                        <Col sm={5}  >
-                            <Col sm={12} className={Styles.inner_document_summary}
-                                style={{
-                                    borderWidth: collapse ? '0' : '1px',
-                                    background: collapse ? '#e9ecef' : 'white'
-                                }}>
-                                <h5>Document Requirement</h5>
-                                <br />
-                                <Form
-                                // ref={formSearchAccount} onSubmit={(e) => onSubmitHandler(e)}
-                                >
-                                    <Row>
-                                        <Col lg={6} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (tenures && tenures.length > 0) &&
-                                                            tenures.map((tenure: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={tenure.statusCode}>{tenure.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Tenure</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (portfolios && portfolios.length > 0) &&
-                                                            portfolios.map((portfolio: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={portfolio.statusCode}>{portfolio.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Portfolio</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                        <Col lg={6} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (products && products.length > 0) &&
-                                                            products.map((product: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={product.statusCode}>{product.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Products</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4 ">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control
-                                                        as="select"
-                                                        name="service_offered"
-                                                        className="select_custom white">
-                                                        {
-                                                            (users && users.length > 0) &&
-                                                            users.map((user: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={user.statusCode}>{user.status}</option>
-                                                            })
-                                                        }
-                                                    </Form.Control>
-                                                </Col>
-                                                <Form.Label className="label_custom white">Users</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                    </Row>
-                                    <hr />
-                                    <Row>
-                                        <Col sm={6} className={`${Styles.chart_container} ${Styles.right_border}`}>
-                                            <h5>Sent Requests</h5>
-                                            <Doughnut data={dataSent} options={options} />
-                                        </Col>
-                                        <Col sm={6} className={Styles.chart_container}>
-                                            <h5>Received Requests</h5>
-                                            <Doughnut data={dataRequested} options={options} />
-                                        </Col>
-                                    </Row>
-                                </Form>
-                            </Col>
-                        </Col>
-                        <Col sm={2} >
-                            <Col className={Styles.inner_document_summary}
-                                style={{
-                                    borderWidth: collapse ? '0' : '1px',
-                                    background: collapse ? '#e9ecef' : 'white'
-                                }}>
-                                <h5>Usage</h5>
-                                <br />
-                                <Col sm={12} className="no_padding">
-                                    <div className={Styles.progress_container}>
-                                        <ProgressBar className={Styles.progressbar} now={60} label={`60%`} />
-                                        <br />
-                                        <p><b>11.58 GB used out of 15 GB</b></p>
-                                        <p><b>Total 15K documents</b></p>
-                                        <Button variant="dark">Upgrade Your Plan</Button>
-                                    </div>
-                                </Col>
-                            </Col>
-                        </Col>
-                    </Row >
-                </Col >
-            </Col >
+            {/* {
+                documentSummary()
+            } */}
             <br />
             <Col className="no_padding">
                 <Tabs

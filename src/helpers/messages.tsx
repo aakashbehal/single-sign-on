@@ -1,4 +1,5 @@
 const MESSAGES = {
+    FILE_NAME_CONFIGURATION_SAVED_SUCCESS: "Great! File Name Configuration saved successfully",
     DOWNLOAD_REPORT_REQUEST: "Great! Download request submitted",
     ASSISTANCE: "Please wait and try your request again. If the issue persists, please contact the Equabli administrator at support@equabli.com",
     ALERT_ERROR_FETCHING: "Error in fetching requested details",

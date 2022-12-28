@@ -86,7 +86,6 @@ export const encryptPassword: any = (password: any) => {
 
 export const handleResponse = (response: any) => {
     if (!response.data.validation) {
-        store.dispatch(MiscActionCreator.logIssue(response))
         if (response.data.message === 'Token Expired!') {
             userService.logoutAuthExpired()
         }
@@ -167,6 +166,7 @@ export const httpInterceptor = () => {
         (request: any) => {
             try {
                 let user = userService.getUser();
+                let token = userService.getAccessToken()
                 if (request.url.includes('changePasswordByUserDetails')) {
                     user = userService.getTempUser()
                 }
@@ -199,7 +199,7 @@ export const httpInterceptor = () => {
                             request.data.clientId = user.clientId
                         }
                     }
-                    request.headers['Authorization'] = `Bearer ${user.token}`;
+                    request.headers['Authorization'] = `Bearer ${token}`;
                 }
                 request.headers['rqsOrigin'] = 'web';
                 return request

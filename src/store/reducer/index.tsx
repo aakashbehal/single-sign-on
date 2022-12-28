@@ -3,6 +3,7 @@ import { combineReducers } from "redux";
 import authReducer from "./auth.reducer";
 import miscReducer from "./common/misc.reducer";
 import typesReducer from "./common/types.reducer";
+import fileNameConfigReducer from "./fileNameConfig.reducer";
 import registrationReducer from "./registration.reducer";
 
 const appReducer = combineReducers({
@@ -10,6 +11,7 @@ const appReducer = combineReducers({
     misc: miscReducer,
     types: typesReducer,
     registration: registrationReducer,
+    fileNameConfig: fileNameConfigReducer
 })
 
 const rootReducer = (state, action) => {

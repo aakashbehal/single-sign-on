@@ -183,17 +183,17 @@ const ReceivedDocumentRequests = () => {
                 </Col>
             </Row>
             <br />
-            <Row>
+            {/* <Row>
                 <Col md={9} sm={9} className={Styles.search_input}>
                 </Col>
                 <Col md={3} sm={3} style={{ display: 'flex' }}>
                     <Button variant="dark" style={{ flex: 1, marginRight: '1rem' }}>Export</Button>
                     <Button variant="dark" style={{ flex: 3 }}>Show/Hide Columns</Button>
                 </Col>
-            </Row>
+            </Row> */}
         </Col>
         <br />
-        <Col>
+        {/* <Col>
             <TableComponent
                 data={[]}
                 isLoading={false}
@@ -211,7 +211,7 @@ const ReceivedDocumentRequests = () => {
                 onPaginationChange={(
                     pageSize: number, pageNumber: number
                 ) => handlePagination(pageSize, pageNumber)}></TableComponent >
-        </Col>
+        </Col> */}
     </>)
 }
 

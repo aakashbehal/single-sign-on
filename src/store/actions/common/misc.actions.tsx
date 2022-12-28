@@ -8,10 +8,6 @@ import {
     States,
     CommunicationChannel,
     AccountConfig,
-    TimeZones,
-    PlacementReconciliationStatus,
-    LogIssue,
-    ReportingIssue
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -172,58 +168,4 @@ export const MiscActionCreator = {
                 }
             )
     },
-    getPlacementStatus: (type: any) => (dispatch: any) => {
-        const request = () => ({ type: PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_REQUEST })
-        const success = (agencies: any) => ({ type: PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_SUCCESS, payload: agencies })
-        const failure = (error: any) => ({ type: PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_FAILURE, payload: error })
-
-        dispatch(request())
-
-        commonServices.getFilterTypes(type)
-            .then(
-                types => {
-                    dispatch(success(types))
-                },
-                error => {
-                    dispatch(failure(error))
-                }
-            )
-    },
-    getCountryTimeZone: () => (dispatch: any) => {
-        const request = () => ({ type: TimeZones.TIME_ZONE_REQUEST })
-        const success = (agencies: any) => ({ type: TimeZones.TIME_ZONE_SUCCESS, payload: agencies })
-        const failure = (error: any) => ({ type: TimeZones.TIME_ZONE_FAILURE, payload: error })
-
-        dispatch(request())
-
-        commonServices.getCountryTimeZone()
-            .then(
-                types => {
-                    dispatch(success(types))
-                },
-                error => {
-                    dispatch(failure(error))
-                }
-            )
-    },
-    logIssue: (data: any) => (dispatch: any) => {
-        dispatch(({ type: LogIssue.LOG_ISSUE, payload: data }))
-    },
-    reportIssue: (issueData: any) => (dispatch: any) => {
-        const request = () => ({ type: ReportingIssue.REPORTING_ISSUE_REQUESTED })
-        const success = (agencies: any) => ({ type: ReportingIssue.REPORTING_ISSUE_SUCCESS, payload: agencies })
-        const failure = (error: any) => ({ type: ReportingIssue.REPORTING_ISSUE_FAILURE, payload: error })
-
-        dispatch(request())
-
-        commonServices.reportIssue(issueData)
-            .then(
-                types => {
-                    dispatch(success(types))
-                },
-                error => {
-                    dispatch(failure(error))
-                }
-            ).finally(() => dispatch({ type: ReportingIssue.REPORTING_ISSUE_RESET }))
-    }
 }

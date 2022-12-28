@@ -8,10 +8,6 @@ import {
     CommunicationChannel,
     AccountConfig,
     Status,
-    TimeZones,
-    PlacementReconciliationStatus,
-    LogIssue,
-    ReportingIssue
 } from "../../types.d";
 
 const initialState = {
@@ -61,22 +57,6 @@ const initialState = {
         loading: false,
         error: false
     },
-    Timezones: {
-        data: [],
-        loading: false,
-        error: false
-    },
-    placementReconciliationStatus: {
-        data: [],
-        loading: false,
-        error: false
-    },
-    issueData: {},
-    reportingIssue: {
-        loading: false,
-        error: null,
-        success: null
-    }
 }
 
 const miscReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -318,93 +298,6 @@ const miscReducer = (state = initialState, action: { type: any; payload: any; })
                 accountConfig: {
                     config: [],
                     error: false
-                }
-            }
-        case TimeZones.TIME_ZONE_REQUEST:
-            return {
-                ...state,
-                Timezones: {
-                    loading: true
-                }
-            }
-        case TimeZones.TIME_ZONE_SUCCESS:
-            return {
-                ...state,
-                Timezones: {
-                    loading: false,
-                    data: action.payload
-                }
-            }
-        case TimeZones.TIME_ZONE_FAILURE:
-            return {
-                ...state,
-                Timezones: {
-                    loading: false,
-                    error: true
-                }
-            }
-        case PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_REQUEST:
-            return {
-                ...state,
-                placementReconciliationStatus: {
-                    loading: true
-                }
-            }
-        case PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_SUCCESS:
-            return {
-                ...state,
-                placementReconciliationStatus: {
-                    loading: false,
-                    data: action.payload
-                }
-            }
-        case PlacementReconciliationStatus.PLACEMENT_RECONCILIATION_STATUS_FAILURE:
-            return {
-                ...state,
-                placementReconciliationStatus: {
-                    loading: false,
-                    error: true
-                }
-            }
-        case LogIssue.LOG_ISSUE:
-            return {
-                ...state,
-                issueData: action.payload
-            }
-        case ReportingIssue.REPORTING_ISSUE_REQUESTED:
-            return {
-                ...state,
-                reportingIssue: {
-                    ...state.reportingIssue,
-                    loading: true
-                }
-            }
-        case ReportingIssue.REPORTING_ISSUE_SUCCESS:
-            return {
-                ...state,
-                reportingIssue: {
-                    ...state.reportingIssue,
-                    loading: false,
-                    success: action.payload
-                }
-            }
-        case ReportingIssue.REPORTING_ISSUE_FAILURE:
-            return {
-                ...state,
-                reportingIssue: {
-                    ...state.reportingIssue,
-                    loading: false,
-                    error: action.payload
-                }
-            }
-        case ReportingIssue.REPORTING_ISSUE_RESET:
-            return {
-                ...state,
-                ReportingIssue: {
-                    ...state.reportingIssue,
-                    loading: false,
-                    error: false,
-                    success: false
                 }
             }
         default:

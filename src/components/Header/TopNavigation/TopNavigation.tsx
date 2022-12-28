@@ -8,6 +8,7 @@ import Styles from "./TopNavigation.module.sass"
 import Logo from '../../../assets/img/logo.png'
 import { userService } from "../../../services/user.service";
 import Notification from "../../modal/Notifications"
+import { LoginActionCreator } from "../../../store/actions/auth.actions";
 
 
 const TopNavigation = () => {
@@ -17,38 +18,18 @@ const TopNavigation = () => {
     const [currentUser, setCurrentUser] = useState<any>()
     const [totalNotifications, setTotalNotifications] = useState<any>([])
     const [showConfirmLogout, setShowConfirmLogout] = useState<Boolean>(false)
-    let { myRequests } = useSelector((state: any) => ({
-        myRequests: state.actionItems.myRequests
-    }))
-
-    const getNotifications = () => {
-        // dispatch(NotificationActionCreator.setNotification([]))
-    }
 
     useEffect(() => {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
-
-    useEffect(() => {
-        getNotifications();
-        const d = myRequests.filter((dd) => {
-            if (dd.requestStatus === 'Requested') {
-                return dd
-            } else {
-                return false
-            }
-        })
-        setTotalNotifications(d)
         const user: any = userService.getUser();
         setCurrentUser(user)
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [myRequests])
+    }, [])
 
     const logoutUser = () => {
         setShowConfirmLogout(true)
     }
 
     const approveHandler = () => {
+        dispatch(LoginActionCreator.logout())
     }
 
     const setNotification = () => {
@@ -67,7 +48,7 @@ const TopNavigation = () => {
 
     const goToAccSearch = () => {
         history.push({
-            pathname: "/search/account_search",
+            pathname: "/documents/my_documents",
         })
     }
 
@@ -77,12 +58,12 @@ const TopNavigation = () => {
                 <img src={Logo} alt="Equabli" onClick={goToAccSearch} height="100%" width="150px" style={{ cursor: 'pointer' }} />
             </div>
             <div className={Styles.headerActions}>
-                <div className={Styles.notification} onClick={toggleNotificationsHandler}>
+                {/* <div className={Styles.notification} onClick={toggleNotificationsHandler}>
                     <span className={`${Styles.notification_count} ${totalNotifications.length > 0 ? Styles.has_notification : Styles.no_notification}`}>
                         <p>{totalNotifications.length}</p>
                     </span>
                     {setNotification()}
-                </div>
+                </div> */}
                 <div className={Styles.user_container}>
                     <Dropdown>
                         <Dropdown.Toggle id="dropdown-basic">
@@ -90,7 +71,8 @@ const TopNavigation = () => {
                             {currentUser && (currentUser.firstName).replace(/\b(\w)/g, (char: string) => char.toUpperCase())}
                         </Dropdown.Toggle>
                         <Dropdown.Menu>
-                            <Dropdown.Item as={Link} to="/user_account">User Details</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/profile/user_account">User Details</Dropdown.Item>
+                            <Dropdown.Item as={Link} to="/profile/document_general_configuration">Document General Configuration</Dropdown.Item>
                         </Dropdown.Menu>
                     </Dropdown>
                 </div>
@@ -103,7 +85,7 @@ const TopNavigation = () => {
                 onHide={() => setShowConfirmLogout(false)}
                 approveHandler={() => approveHandler()} />
 
-            <Notification show={showNotification} onHide={() => toggleNotificationsHandler()} data={totalNotifications} />
+            {/* <Notification show={showNotification} onHide={() => toggleNotificationsHandler()} data={totalNotifications} /> */}
         </header>
     )
 }

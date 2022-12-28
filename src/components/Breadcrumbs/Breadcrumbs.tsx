@@ -6,13 +6,12 @@ import Styles from "./Breadcrumbs.module.sass"
 import { history } from '../../helpers';
 
 const Breadcrumbs = () => <Route path="*" render={props => {
-    const hash = window.location.hash
+    const hash = window.location.hash;
     let parts = hash.split('/').filter(part => part.indexOf('#') === -1) // Removes first # part
 
     if (new RegExp(/^report/).test(parts[0])) {
         parts = parts[0].split('?dName=')
     }
-
     return <Breadcrumb className={Styles.bread_crumbs}>{
         parts.map((part, index) => {
             part = part.split("?")[0]
@@ -47,6 +46,8 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                 case 'admin':
                     part = `admin/alerts`
                     break
+                case 'profile':
+                    part = `profile/user_account`
             }
 
             const gotoPage = (part) => {

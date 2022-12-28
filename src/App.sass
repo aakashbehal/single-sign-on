@@ -329,8 +329,8 @@ $borderRadius: 8px
 // =========================================================================
 .label_custom
 	position: absolute
-	top: -8px
-	left: 40px
+	top: -20px
+	left: 25px
 	background: #e9ecef
 	line-height: 1rem
 	padding: 0 0.5rem
@@ -407,3 +407,56 @@ select option
 			background: lighten(black,10)
 .quicksight-embedding-iframe
 	height: 90vh !important
+.select_custom:disabled
+	background: #dddddd
+
+	#form-file-upload
+	  height: 16rem
+	  width: 28rem
+	  max-width: 100%
+	  text-align: center
+	  position: relative
+
+#input-file-upload
+  display: none
+
+// File upload  ========================
+// =====================================
+#form-file-upload
+	height: 16rem
+	max-width: 100%
+	text-align: center
+	position: relative
+#input-file-upload
+	display: none
+#label-file-upload
+	height: 100%
+	display: flex
+	align-items: center
+	justify-content: center
+	border-width: 2px
+	border-radius: 1rem
+	border-style: dashed
+	border-color: #cbd5e1
+	background-color: #ffffff
+	&.drag-active
+		background-color: darken(#f8fafc,0% )
+		// background-color: red
+.upload-button
+	cursor: pointer
+	padding: 0.25rem
+	font-size: 1rem
+	border: none
+	font-family: 'Oswald', sans-serif
+	background-color: transparent
+	&:hover
+		text-decoration-line: underline
+#drag-file-element
+	position: absolute
+	width: 100%
+	height: 100%
+	border-radius: 1rem
+	top: 0px
+	right: 0px
+	bottom: 0px
+	left: 0px

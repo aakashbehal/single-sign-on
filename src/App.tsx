@@ -27,6 +27,7 @@ import { MyCustomToast } from "./helpers/customToaster";
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
 const UserAccount = lazy(() => import("./containers/User/UserAccount"));
+const DocumentGeneralConfiguration = lazy(() => import("./containers/User/DocumentGeneralConfiguration"));
 /**
  * Applications starting point
  * @returns 
@@ -54,10 +55,12 @@ const App = () => {
               <PublicRoute path="/onboarding" component={Registration} />
 
               {/* User settings ---------------*/}
-              <PrivateRoute exact path="/user_account" component={sessions(UserAccount)} />
+              <PrivateRoute exact path="/profile/user_account" component={sessions(UserAccount)} />
+              <PrivateRoute exact path="/profile/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
+
 
               {/* Document Manager */}
-              <PrivateRoute exact path="/my_documents" component={Documents} />
+              <PrivateRoute exact path="/documents/my_documents" component={Documents} />
 
             </Switch>
           </ErrorBoundary>

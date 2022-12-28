@@ -16,8 +16,6 @@ export const MyCustomToast = ({ children, ...props }: any) => (
                     <Button variant='dark' style={{ marginRight: '1rem' }} onClick={() => {
                         const state: any = store.getState()
                         console.log(state)
-                        store.dispatch(MiscActionCreator.reportIssue(state?.misc?.issueData))
-                        // commonServices.reportIssue(state?.misc?.issueData)
                     }}>Report Issue</Button>
                     <OverlayTrigger
                         placement="right"

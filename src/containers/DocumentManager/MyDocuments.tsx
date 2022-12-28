@@ -5,6 +5,7 @@ import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap"
 import { CgOptions, CgSearch } from "react-icons/cg";
 import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
+import DocumentUpload from "../../components/modal/DocumentUpload";
 
 const tenuresInit = [
     {
@@ -50,7 +51,7 @@ const MyDocuments = () => {
     const [sortType, setSortType] = useState('asc');
     const [pageCount, setPageCount] = useState(10)
     const [currentPage, setCurrentPage] = useState(1);
-
+    const [uploadDocModal, setUploadDocModal] = useState(false)
     /**
      * function is used in pagination
      * @param pageSize 
@@ -199,22 +200,22 @@ const MyDocuments = () => {
                                     </Form.Group>
 
                                 </Row>
-                                <Col className={Styles.button_center}>
+                                {/* <Col className={Styles.button_center}>
                                     <Button variant="dark" type="submit">Search</Button>{" "}
                                     <Button variant="dark">Reset</Button>
-                                </Col>
+                                </Col> */}
                             </Col>
                         </Form>
                     </div>
                     }
                 </Col>
                 <Col md={2} sm={2}>
-                    <Button variant="dark" style={{ width: "100%" }}>Upload Document</Button>
+                    <Button variant="dark" style={{ width: "100%" }} onClick={() => setUploadDocModal(true)}>Upload Document</Button>
                 </Col>
             </Row>
             <br />
         </Col>
-        <Col>
+        {/* <Col>
             <TableComponent
                 data={documents}
                 isLoading={false}
@@ -240,7 +241,11 @@ const MyDocuments = () => {
                 onPaginationChange={(
                     pageSize: number, pageNumber: number
                 ) => handlePagination(pageSize, pageNumber)}></TableComponent >
-        </Col>
+        </Col> */}
+        {
+            uploadDocModal
+            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} />
+        }
     </>)
 }
 
