@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
-    Table, Col, Form, Row, OverlayTrigger, Tooltip, Button
+    Table, Col, Form, Row, OverlayTrigger, Tooltip, Button, Dropdown
 } from 'react-bootstrap';
 import { CgSpinnerAlt } from 'react-icons/cg';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
@@ -9,11 +9,11 @@ import { GiSandsOfTime } from 'react-icons/gi';
 import { BiPencil } from "react-icons/bi";
 import { CgTrash } from "react-icons/cg"
 import { VscRunAll } from "react-icons/vsc"
-import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder } from "react-icons/ai"
+import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye } from "react-icons/ai"
 import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
-import { AiFillQuestionCircle } from "react-icons/ai"
+import { FiShare2 } from "react-icons/fi"
 
 import { checkType } from '../../helpers/util';
 import PaginationComponent from './pagination';
@@ -42,6 +42,8 @@ const TableComponent = ({
     searchCriteria
 }: any) => {
     const history = useHistory();
+    const [isCheckAll, setIsCheckAll] = useState(false);
+    const [isCheck, setIsCheck] = useState<any>([]);
     const [headers, setHeaders] = useState<string[]>([]);
     const [pageSize, setPageSize] = useState(10);
     const pageSizes = [10, 50, 100];
@@ -88,7 +90,7 @@ const TableComponent = ({
             }
             {
                 !isLoading
-                && (parentComponent === 'myDocuments')
+                && (parentComponent === 'myDocuments' || parentComponent === 'sentDocumentRequest')
                 && <>
                     <Button variant="dark" style={{ marginRight: '1rem' }}>Export</Button>
                     <Button variant="dark" style={{ marginRight: '1rem' }}>Show/Hide Columns</Button>
@@ -279,7 +281,7 @@ const TableComponent = ({
         if (!complianceIds) return ''
         let split = complianceIds.split(',')
         split = split.map((complianceId, index) => {
-            return <span id='index' onClick={() => goToCompliance(complianceId, data)} className="clickable_td_emp">{complianceId}{index < split.length - 1 ? ', ' : ''} </span>
+            return <span id='index' key={`compliance_${index}`} onClick={() => goToCompliance(complianceId, data)} className="clickable_td_emp">{complianceId}{index < split.length - 1 ? ', ' : ''} </span>
         })
         return split
     }
@@ -289,8 +291,8 @@ const TableComponent = ({
     /**======================================= */
     const keyContactsHandler = (contacts) => {
         return (
-            contacts && contacts.map((contact) => {
-                return <p style={{ textAlign: 'left', paddingLeft: '1rem' }}>
+            contacts && contacts.map((contact, index) => {
+                return <p style={{ textAlign: 'left', paddingLeft: '1rem' }} key={`contact_${index}`}>
                     <span>{contact.name}</span> <br />
                     <span>{contact.phone}</span>
                 </p>
@@ -306,8 +308,8 @@ const TableComponent = ({
                 "flexWrap": "wrap"
             }}>
                 {
-                    services && services.map((service) => {
-                        return <p style={{ background: '#ff7765', color: 'white', borderRadius: '.3rem', padding: '.1rem .5rem', marginRight: '1rem' }}>{service}</p>
+                    services && services.map((service, index) => {
+                        return <p key={`service_${index}`} style={{ background: '#ff7765', color: 'white', borderRadius: '.3rem', padding: '.1rem .5rem', marginRight: '1rem' }}>{service}</p>
                     })
                 }
             </div>
@@ -340,12 +342,40 @@ const TableComponent = ({
     }
     const collectionsHandler = (data) => {
         return (
-            data && data.map((d) => {
-                return <p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }}>
+            data && data.map((d, index) => {
+                return <p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }} key={`collection_${index}`}>
                     <span><b>{d.type}</b>: {`$${d.amount}`}</span>
                 </p>
             })
         )
+    }
+
+    const handleAllSelect = () => {
+        setIsCheckAll(!isCheckAll);
+        setIsCheck(data.map(li => li.folderName));
+        if (isCheckAll) {
+            setIsCheck([]);
+        }
+    }
+
+    const handleClick = e => {
+        const { id, checked } = e.target;
+        setIsCheck([...isCheck, id]);
+        if (!checked) {
+            setIsCheck(isCheck.filter(item => item !== id));
+        }
+    };
+
+    const dueDateHandler = (data) => {
+        if (parentComponent === 'sentDocumentRequest') {
+            if (!data.fulfillment && new Date(data.dueDate) >= new Date()) {
+                return '#fbbdc3'
+            } else if (!data.fulfillment && new Date(data.dueDate) < new Date()) {
+                return '#b2e7d0'
+            } else {
+                return 'white'
+            }
+        }
     }
 
     /**
@@ -353,37 +383,57 @@ const TableComponent = ({
      * =============================================
      */
     const handleSharedWith = (sharedWith) => {
-        return (
-            <div className='share_With_parent'>
-                {
-                    sharedWith && sharedWith.map((sW, index) => {
-                        return <OverlayTrigger
-                            placement="bottom"
-                            delay={{ show: 250, hide: 400 }}
-                            overlay={(
-                                <Tooltip id="tooltip-error">
-                                    {sW.name} - {sW.email}
-                                </Tooltip>
-                            )}
-                        >
-                            <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW.name.charAt(0)}</span>
-                        </OverlayTrigger>
-                    })
-                }
-            </div>
-        )
+        if (!sharedWith) {
+            return "-"
+        } else {
+            return (
+                <div className='share_With_parent'>
+                    {
+                        sharedWith && sharedWith.map((sW, index) => {
+                            return <OverlayTrigger
+                                key={`sw_${index}`}
+                                placement="bottom"
+                                delay={{ show: 250, hide: 400 }}
+                                overlay={(
+                                    <Tooltip id="tooltip-error">
+                                        {sW.name} - {sW.email}
+                                    </Tooltip>
+                                )}
+                            >
+                                <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW.name.charAt(0)}</span>
+                            </OverlayTrigger>
+                        })
+                    }
+                </div>
+            )
+        }
     }
-
 
     const tableHandler = () => (
         <>
             <thead>
                 <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                    {isPagination && <th className="span1">#</th>}
+                    {/* {isPagination && <th className="span1">#</th>} */}
                     {(parentComponent === 'myRequests'
                         || parentComponent === 'pendingForApproval'
                         || parentComponent === 'pendingMyApproval'
                     ) && <th>#</th>}
+                    {
+                        (parentComponent === 'myDocuments' || parentComponent === 'documents')
+                        && <th className="span1">
+                            <div
+                                className="table_header_container"
+                                style={
+                                    {
+                                        'minWidth': '20px',
+                                        'height': '30px',
+                                        'alignItems': 'center'
+                                    }
+                                }>
+                                <Form.Control type='Checkbox' onChange={() => handleAllSelect()} style={{ cursor: 'pointer' }}></Form.Control>
+                            </div>
+                        </th>
+                    }
                     {
                         // eslint-disable-next-line array-callback-return
                         headers && headers.map((header, index) => {
@@ -439,6 +489,9 @@ const TableComponent = ({
                         ((typeof tableAction.openSolModal !== 'undefined') && headers.indexOf('dtClientStatute') !== -1)
                         && <th className="span1" style={{ minWidth: '130px', 'textAlign': 'center' }}>Action</th>
                     }
+                    {
+                        (parentComponent === 'myDocuments' || parentComponent === 'documents') && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
+                    }
                 </tr>
             </thead>
             <tbody>
@@ -446,14 +499,35 @@ const TableComponent = ({
                     data && data.map((d: any, index: number) => (
                         <tr
                             key={`data_${index}`} style={{
-                                lineHeight: '30px', textAlign: 'center', position: 'relative', zIndex: 9
+                                lineHeight: '30px',
+                                textAlign: 'center',
+                                position: 'relative',
+                                zIndex: 9,
+                                backgroundColor: dueDateHandler(d)
                             }}
+
                         >
-                            {isPagination && <td>{index + (currentPage !== 1 ? ((currentPage - 1) * 10) : 0) + 1}</td>}
+                            {/* {isPagination && <td>{index + (currentPage !== 1 ? ((currentPage - 1) * 10) : 0) + 1}</td>} */}
                             {(parentComponent === 'myRequests'
                                 || parentComponent === 'pendingForApproval'
                                 || parentComponent === 'pendingMyApproval'
                             ) && <th>{index + 1}</th>}
+                            {
+                                (parentComponent === 'myDocuments' || parentComponent === 'documents')
+                                && <th className="span1">
+                                    <div
+                                        className="table_header_container"
+                                        style={
+                                            {
+                                                'minWidth': '20px',
+                                                'height': '30px',
+                                                'alignItems': 'center'
+                                            }
+                                        }>
+                                        <Form.Control type='Checkbox' id={d.folderName} checked={isCheck.includes(d.folderName)} style={{ cursor: 'pointer' }} onChange={handleClick} ></Form.Control>
+                                    </div>
+                                </th>
+                            }
                             {
                                 // eslint-disable-next-line array-callback-return
                                 headers.map((header: any, index2) => {
@@ -485,9 +559,27 @@ const TableComponent = ({
                                                     {
                                                         priorityIndicator(header, d)
                                                     }
-                                                    <span onClick={() => handleNavigate(d, header)} className="clickable_td_emp">
-                                                        {d[header]}
-                                                    </span>
+                                                    {
+                                                        header === "folderName" && parentComponent === 'myDocuments' &&
+                                                        <div style={{
+                                                            display: 'flex',
+                                                            justifyContent: 'center',
+                                                            alignItems: 'center'
+                                                        }}><AiFillFolder size={20} /><span
+                                                            style={{ paddingLeft: '.7rem' }}
+                                                            onClick={() => handleNavigate(d, header)}
+                                                            className="clickable_td_emp">
+                                                                {d[header]}
+                                                            </span>
+                                                        </div>
+                                                    }
+                                                    {
+                                                        header !== "folderName" && parentComponent !== 'myDocuments' &&
+                                                        <span onClick={() => handleNavigate(d, header)} className="clickable_td_emp">
+                                                            {d[header]}
+                                                        </span>
+                                                    }
+
                                                 </td>
                                             );
                                         }
@@ -556,14 +648,6 @@ const TableComponent = ({
                                                 }
                                             </td>
                                         }
-                                        if (header === "name" && parentComponent === 'myDocuments') {
-                                            return <td><div style={{
-                                                display: 'flex',
-                                                justifyContent: 'center',
-                                                alignItems: 'center'
-                                            }}><AiFillFolder size={20} /><span style={{ paddingLeft: '.7rem' }}>{d[header]}</span></div></td>
-                                        }
-
                                         if (header === 'executionStatusVal') {
                                             return (<td>
                                                 <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -748,6 +832,63 @@ const TableComponent = ({
                                         </td>
                                     </>
                                 )
+                            }
+                            {
+                                (parentComponent === 'myDocuments' || parentComponent === 'documents')
+                                && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    View
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <AiOutlineEye onClick={() => addEditArray.view(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                    </span> &nbsp;
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Download
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <AiOutlineCloudDownload onClick={() => addEditArray.download(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                    </span> &nbsp;
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Share
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <FiShare2 size={20} onClick={() => addEditArray.share(d)} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                    </span> &nbsp;
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Delete
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <AiOutlineDelete onClick={() => addEditArray.delete(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                    </span>
+                                </th>
                             }
                         </tr>
                     ))

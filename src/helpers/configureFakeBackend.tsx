@@ -28,113 +28,580 @@ export const configureFakeBackend = () => {
         }]
     });
 
-    // Conjunction API
-    mock.onGet("/conjunctionType").reply(() => {
-        return [200, {
-            "statusResponse": "SUCCESS",
-            "message": "OK",
-            validation: true,
-            "response": [
-                {
-                    "isActive": null,
-                    "isDelete": null,
-                    "createdAt": null,
-                    "updatedAt": null,
-                    "deletedAt": null,
-                    "id": "988d5605-f21c-4b89-801e-8169f91c8f0c",
-                    "type": "Underscore [_]",
-                    "shortCode": "_"
-                },
-                {
-                    "isActive": null,
-                    "isDelete": null,
-                    "createdAt": null,
-                    "updatedAt": null,
-                    "deletedAt": null,
-                    "id": "115e16e2-faeb-40c2-87d5-d5c17749f92f",
-                    "type": "Hyphen [-]",
-                    "shortCode": "-"
-                }
-            ]
-        }]
-    })
-
     // Field options API
-    mock.onGet("/concatVal").reply((opts) => {
+    mock.onGet("/fileNamesConfig").reply((opts) => {
         const params = opts.params
-        if (params === 'Client') {
+        if (params.fileNameConfig === 'SEPARATOR') {
             return [200, {
-                "statusResponse": "SUCCESS",
-                "message": "OK",
-                validation: true,
-                response: [
-                    {
-                        "id": "eae9cce3-5415-42f7-98d8-4b0946ebc440",
-                        "fieldName": "Client Account Number",
-                        "shortCode": "CAN"
-                    },
-                    {
-                        "id": "09c12d1e-9ce8-4156-a631-feffaa917828",
-                        "fieldName": "Document Type Id",
-                        "shortCode": "DTI"
-                    },
-                    {
-                        "id": "e68e24e6-1924-499f-8e7a-12064c217cc1",
-                        "fieldName": "Orignal Account Number",
-                        "shortCode": "OAN"
-                    },
-                    {
-                        "id": "d42e6d3e-3b0e-4ea5-b83f-c3eddbf2fd85",
-                        "fieldName": "Document Generation Date",
-                        "shortCode": "DGD"
-                    },
-                    {
-                        "id": "9b0a9866-382b-4712-a5ec-044e7411a55e",
-                        "fieldName": "Document Name",
-                        "shortCode": "DN"
-                    }
-                ]
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": {
+                    "docMgrConfigs": [
+                        {
+                            "id": 15,
+                            "shortCode": "SEPARATOR",
+                            "description": "file seperator",
+                            "defaultValue": "Underscore[_]",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 68,
+                                    "shortCode": "-",
+                                    "description": "Hyphne[-]",
+                                    "fieldValue": "Hyphne[-]"
+                                },
+                                {
+                                    "id": 69,
+                                    "shortCode": "_",
+                                    "description": "Underscore[_]",
+                                    "fieldValue": "Underscore[_]"
+                                }
+                            ]
+                        }
+                    ],
+                    "userTypeId": 2
+                },
+                "validation": true
             }]
-        } else {
+        } else if (params.fileNameConfig === 'RETENTION_POLICY') {
             return [200, {
-                validation: true,
-                response: [
-                    {
-                        "uuid": "44792b5a-5d1c-4df8-b22a-b774a4e8765d",
-                        "docConcatVal": "Client ID or Client Short Code",
-                        "shortCode": "CID"
-                    },
-                    {
-                        "uuid": "2351bbf1-cae9-4887-82a9-bef46b2cd904",
-                        "docConcatVal": "Client Account Number",
-                        "shortCode": "CAN"
-                    },
-                    {
-                        "uuid": "2786dc6e-4e3c-4c5f-997b-54afc8c6c190",
-                        "docConcatVal": "Document Type Id",
-                        "shortCode": "DTI"
-                    },
-                    {
-                        "uuid": "cf656af1-1b6f-4f1d-b15e-37339a60b399",
-                        "docConcatVal": "Orignal Account Number",
-                        "shortCode": "OAN"
-                    },
-                    {
-                        "uuid": "1f98b713-23af-49fd-82d6-2dcdb85afaf4",
-                        "docConcatVal": "Document Generation Date",
-                        "shortCode": "DGD"
-                    },
-                    {
-                        "uuid": "44792b5a-5d1c-4df8-b22a-b774a4e8765d",
-                        "docConcatVal": "Document Name",
-                        "shortCode": "DN"
-                    }
-                ]
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": {
+                    "docMgrConfigs": [
+                        {
+                            "id": 7,
+                            "shortCode": "RP",
+                            "description": "retention policy in day",
+                            "defaultValue": "60",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 28,
+                                    "shortCode": "60",
+                                    "description": "retention policy in 60 days",
+                                    "fieldValue": "60"
+                                },
+                                {
+                                    "id": 29,
+                                    "shortCode": "90",
+                                    "description": "retention policy in 90 days",
+                                    "fieldValue": "90"
+                                }
+                            ]
+                        }
+                    ],
+                    "userTypeId": 1
+                },
+                "validation": true
+            }]
+        } else if (params.fileNameConfig === 'DOCUMENT_POLICY') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": {
+                    "docMgrConfigs": [
+                        {
+                            "id": 8,
+                            "shortCode": "DP",
+                            "description": "Specify document policy like allow create new document or replace",
+                            "defaultValue": "Keep Both File",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 30,
+                                    "shortCode": "KBF",
+                                    "description": "Keep Both File",
+                                    "fieldValue": "Keep Both File"
+                                },
+                                {
+                                    "id": 31,
+                                    "shortCode": "RE",
+                                    "description": "Replace  Existing",
+                                    "fieldValue": "Replace Existing"
+                                }
+                            ]
+                        }
+                    ],
+                    "userTypeId": 1
+                },
+                "validation": true
+            }]
+        } else if (!params.fileNameConfig && params.userType === 'Client') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": {
+                    "docMgrConfigs": [
+                        {
+                            "id": 1,
+                            "shortCode": "field1",
+                            "description": "",
+                            "defaultValue": "Client Account Number",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 1,
+                                    "shortCode": "CAN",
+                                    "description": "client account number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 2,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 3,
+                                    "shortCode": "OAN",
+                                    "description": "Original account number",
+                                    "fieldValue": "Orignal Account Number"
+                                },
+                                {
+                                    "id": 4,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 5,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 2,
+                            "shortCode": "field2",
+                            "description": "",
+                            "defaultValue": "Document Type ID",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 6,
+                                    "shortCode": "CAN",
+                                    "description": "client account number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 7,
+                                    "shortCode": "DT",
+                                    "description": "Document Type",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 8,
+                                    "shortCode": "OAN",
+                                    "description": "Original account number",
+                                    "fieldValue": "Orignal Account Number"
+                                },
+                                {
+                                    "id": 9,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 10,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 3,
+                            "shortCode": "field3",
+                            "description": "",
+                            "defaultValue": "Original Account Number",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 11,
+                                    "shortCode": "CAN",
+                                    "description": "client account number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 12,
+                                    "shortCode": "DT",
+                                    "description": "Document Type",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 13,
+                                    "shortCode": "OAN",
+                                    "description": "Original account number",
+                                    "fieldValue": "Orignal Account Number"
+                                },
+                                {
+                                    "id": 14,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 15,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 4,
+                            "shortCode": "field4",
+                            "description": "",
+                            "defaultValue": "Document Generation Date",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 16,
+                                    "shortCode": "CAN",
+                                    "description": "client account number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 17,
+                                    "shortCode": "DT",
+                                    "description": "Document Type",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 18,
+                                    "shortCode": "OAN",
+                                    "description": "Original account number",
+                                    "fieldValue": "Orignal Account Number"
+                                },
+                                {
+                                    "id": 19,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 20,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 5,
+                            "shortCode": "field5",
+                            "description": "",
+                            "defaultValue": "Document Name",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 24,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 25,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                },
+                                {
+                                    "id": 21,
+                                    "shortCode": "CAN",
+                                    "description": "client account number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 22,
+                                    "shortCode": "DT",
+                                    "description": "Document Type",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 23,
+                                    "shortCode": "OAN",
+                                    "description": "Original account number",
+                                    "fieldValue": "Orignal Account Number"
+                                }
+                            ]
+                        }
+                    ],
+                    "userTypeId": 1
+                },
+                "validation": true
+            }]
+        } else if (!params.fileNameConfig && params.userType === 'Partner') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": {
+                    "docMgrConfigs": [
+                        {
+                            "id": 9,
+                            "shortCode": "field1",
+                            "description": "",
+                            "defaultValue": "Client ID or Client Short Code",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 32,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 33,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 34,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 35,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 36,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 37,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 10,
+                            "shortCode": "field2",
+                            "description": "",
+                            "defaultValue": "Document Type ID",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 38,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 39,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 40,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 41,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 42,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 43,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 11,
+                            "shortCode": "field3",
+                            "description": "",
+                            "defaultValue": "Client Account Number",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 44,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 45,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 46,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 47,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 48,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 49,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 12,
+                            "shortCode": "field4",
+                            "description": "",
+                            "defaultValue": "Original Account Number",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 50,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 51,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 52,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 53,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 54,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 55,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 13,
+                            "shortCode": "field5",
+                            "description": "",
+                            "defaultValue": "Document Generation Date",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 56,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 57,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 58,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 59,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 60,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 61,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        },
+                        {
+                            "id": 14,
+                            "shortCode": "field6",
+                            "description": "",
+                            "defaultValue": "Document Name",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 62,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 63,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 64,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 65,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 66,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 67,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
+                        }
+                    ],
+                    "userTypeId": 2
+                },
+                "validation": true
             }]
         }
-
     })
-
 
     /**
      * Get user File config
@@ -142,44 +609,415 @@ export const configureFakeBackend = () => {
     mock.onGet("/configuration").reply((opts) => {
         const params = opts.params
         return [200, {
-            validation: true,
-            message: null,
-            response: {
-                "uuid": "af071772-7407-4669-9276-0ff460b81932",
-                "userId": "3d868c75-6ee8-4d58-b59c-3e43c6187757",
-                "documentKeepPolicy": "CREATE_NEW",
-                "fileConjunction": "_",
-                "retentionPolicyInDay": 90,
-                "fileConfiguration": [
-                    {
-                        "id": "2351bbf1-cae9-4887-82a9-bef46b2cd904",
-                        "sequence": 1,
+            "message": "Global config with  fetched successfully",
+            "status": "SUCCESS",
+            "response": [
+                {
+                    "id": 33,
+                    "docMgrConfig": {
+                        "id": 1,
+                        "shortCode": "field1",
+                        "description": "",
+                        "defaultValue": "Client Account Number"
+                    },
+                    "docMgrConfigVal": {
+                        "id": 1,
                         "shortCode": "CAN",
-                        "fieldName": "Client Account Number"
+                        "description": "client account number",
+                        "fieldValue": "Client Account Number"
                     },
-                    {
-                        "id": "cf656af1-1b6f-4f1d-b15e-37339a60b399",
-                        "sequence": 2,
+                    "userTypeId": 1,
+                    "docMgrConfigSelectedCode": "field1",
+                    "docMgrConfigValSelectedCode": "CAN"
+                },
+                {
+                    "id": 34,
+                    "docMgrConfig": {
+                        "id": 2,
+                        "shortCode": "field2",
+                        "description": "",
+                        "defaultValue": "Document Type ID"
+                    },
+                    "docMgrConfigVal": {
+                        "id": 8,
                         "shortCode": "OAN",
-                        "fieldName": "Orignal Account Number"
+                        "description": "Original account number",
+                        "fieldValue": "Orignal Account Number"
                     },
-                    {
-                        "id": "44792b5a-5d1c-4df8-b22a-b774a4e8765d",
-                        "sequence": 3,
-                        "shortCode": "DON",
-                        "fieldName": "Document Name"
-                    },
+                    "userTypeId": 1,
+                    "docMgrConfigSelectedCode": "field2",
+                    "docMgrConfigValSelectedCode": "OAN"
+                }
+            ],
+            "validation": true
+        }]
+    });
 
-                    {
-                        "id": "1f98b713-23af-49fd-82d6-2dcdb85afaf4",
-                        "sequence": 4,
-                        "shortCode": "DGD",
-                        "fieldName": "Document Generation Date"
-                    }
-                ]
-            }
+    /**
+     * Save Retention Policy
+     */
+    mock.onPost("/retantionPolicy").reply((opts) => {
+        return [200, {
+            "message": "Global config with 14 id is created successfully",
+            "status": "SUCCESS",
+            "response": "14",
+            "validation": true
         }]
     })
 
+    /**
+    * Save Duplicate 
+    */
+    mock.onPost("/documentConfiguration").reply((opts) => {
+        return [200, {
+            "message": "Global config with 14 id is created successfully",
+            "status": "SUCCESS",
+            "response": "14",
+            "validation": true
+        }]
+    })
 
+    /**
+     * Get Folder Structure
+     */
+    mock.onGet("/document/folders").reply((opts) => {
+        return [200, {
+            "status": "SUCCESS",
+            "response": {
+                "metadata": {
+                    "pageSize": 10,
+                    "pageNumber": 0,
+                    "recordCount": 2,
+                    "pageCount": 0,
+                    "startRecord": 1
+                },
+                "datas": [
+                    {
+                        "folderName": "123456",
+                        "fileSize": 29572,
+                        "modifiedDate": "01/12/2023",
+                        "shareDate": null,
+                        "receiveDate": null,
+                        "shareBy": null,
+                        "sharedWith": null
+                    },
+                    {
+                        "folderName": "7890",
+                        "fileSize": 29572,
+                        "modifiedDate": "01/12/2023",
+                        "shareDate": null,
+                        "receiveDate": null,
+                        "shareBy": null,
+                        "sharedWith": null
+                    }
+                ]
+            },
+            "validation": true,
+            "limit": 0,
+            "total": 0,
+            "lastPage": false
+        }]
+    })
+
+    /**
+     * Get Documents
+     */
+    mock.onGet("/document/documents").reply((opts) => {
+        return [200, {
+            "status": "SUCCESS",
+            "response": {
+                "metadata": {
+                    "pageSize": 10,
+                    "pageNumber": 0,
+                    "recordCount": 2,
+                    "pageCount": 1
+                },
+                "datas": [
+                    {
+                        "id": 7,
+                        "documentName": "Application",
+                        "documentType": "Application",
+                        "originalAccountNo": "7890",
+                        "equabliAccountNo": null,
+                        "clientAccountNo": "123456",
+                        "generateDate": null,
+                        "uploadDate": null,
+                        "shareDate": null,
+                        "fileSize": 14786,
+                        "sharedBy": null,
+                        "sharedWith": null,
+                        "fileName": "123456-Application-7890.png",
+                        "objectKey": "https://eqb-dev-ui-dm.s3.amazonaws.com/default/CT/123456-456789-7890.png",
+                        "orgTypeCode": "CT",
+                        "filePath": "https://eqb-dev-ui-dm.s3.amazonaws.com/default/CT/123456-456789-7890.png"
+                    },
+                    {
+                        "id": 8,
+                        "documentName": "Application",
+                        "documentType": "Application",
+                        "originalAccountNo": "7890",
+                        "equabliAccountNo": null,
+                        "clientAccountNo": "123456",
+                        "generateDate": null,
+                        "uploadDate": null,
+                        "shareDate": null,
+                        "fileSize": 14786,
+                        "sharedBy": null,
+                        "sharedWith": null,
+                        "fileName": "123456-Application-7890.pdf",
+                        "objectKey": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf",
+                        "orgTypeCode": "CT",
+                        "filePath": "https://eqb-dev-ui-dm.s3.amazonaws.com/default/CT/123456-456789-7890.png"
+                    }
+                ]
+            },
+            "validation": true,
+            "limit": 0,
+            "total": 0,
+            "lastPage": false
+        }]
+    })
+
+    /**
+     * Document Type List
+     */
+    mock.onGet("/document/documentType").reply((opts) => {
+        return [200, {
+            "message": "Document type fetch successfully",
+            "status": "SUCCESS",
+            "response": [
+                {
+                    "documentName": "Application",
+                    "shortCode": "AP",
+                    "description": "Application"
+                },
+                {
+                    "documentName": "Bill of Sale",
+                    "shortCode": "BS",
+                    "description": "Bill of Sale"
+                },
+                {
+                    "documentName": "Business Record Affidavit",
+                    "shortCode": "BRS",
+                    "description": "Business Record Affidavit"
+                },
+                {
+                    "documentName": "Military Affidavit",
+                    "shortCode": "MA",
+                    "description": "Military Affidavit"
+                },
+                {
+                    "documentName": "Transaction History",
+                    "shortCode": "TH",
+                    "description": "Transaction History"
+                }
+            ],
+            "validation": true
+        }]
+    })
+
+    /**
+     * Document Cost list
+     */
+    mock.onGet("/document/costs").reply((opts) => {
+        return [200, {
+            "status": "SUCCESS",
+            "validation": true,
+            "response": [
+                {
+                    "documentType": "Application",
+                    "clientName": null,
+                    "cost": 110
+                },
+                {
+                    "documentType": "Bill of Sale",
+                    "clientName": null,
+                    "cost": 110
+                }
+            ]
+        }]
+    })
+
+    /**
+     * Product Type list
+     */
+    mock.onGet("/document/productType").reply((opts) => {
+        return [200, {
+            "message": "Product config with  is created successfully",
+            "status": "SUCCESS",
+            "response": [
+                {
+                    "name": "Credit Card",
+                    "productCode": "CC",
+                    "description": "Credit Card"
+                },
+                {
+                    "name": "Consumer Loan",
+                    "productCode": "CL",
+                    "description": "Consumer Loan"
+                },
+                {
+                    "name": "Student Loan",
+                    "productCode": "SL",
+                    "description": "Student Loan"
+                },
+                {
+                    "name": "Utility Debt",
+                    "productCode": "UD",
+                    "description": "Utility Debt"
+                },
+                {
+                    "name": "Telecom",
+                    "productCode": "TC",
+                    "description": "Telecom"
+                },
+                {
+                    "name": "Medical",
+                    "productCode": "ML",
+                    "description": "Medical"
+                },
+                {
+                    "name": "Healthcare",
+                    "productCode": "HC",
+                    "description": "Healthcare"
+                },
+                {
+                    "name": "Municipal Debt",
+                    "productCode": "MD",
+                    "description": "Municipal Debt"
+                },
+                {
+                    "name": "Auto Loan",
+                    "productCode": "AL",
+                    "description": "Auto Loan"
+                },
+                {
+                    "name": "Debit Card",
+                    "productCode": "DC",
+                    "description": "Debit Card"
+                }
+            ],
+            "validation": true
+        }]
+    })
+
+    /**
+     * Product Type list
+     */
+    mock.onGet("/document/requiredDocuments").reply((opts) => {
+        return [200, {
+            "message": "Document type fetch successfully",
+            "status": "SUCCESS",
+            "response": [
+                {
+                    "productCode": "CC",
+                    "productName": 'Credit Card',
+                    "documentList": [
+                        {
+                            "documentName": "Application",
+                            "shortCode": "AP",
+                            "description": "Application"
+                        },
+                        {
+                            "documentName": "Bill of Sale",
+                            "shortCode": "BS",
+                            "description": "Bill of Sale"
+                        },
+                        {
+                            "documentName": "Business Record Affidavit",
+                            "shortCode": "BRS",
+                            "description": "Business Record Affidavit"
+                        },
+                        {
+                            "documentName": "Military Affidavit",
+                            "shortCode": "MA",
+                            "description": "Military Affidavit"
+                        },
+                        {
+                            "documentName": "Transaction History",
+                            "shortCode": "TH",
+                            "description": "Transaction History"
+                        }
+                    ]
+                },
+                {
+                    "productCode": "AL",
+                    "productName": 'Auto Loan',
+                    "documentList": [
+                        {
+                            "documentName": "Application",
+                            "shortCode": "AP",
+                            "description": "Application"
+                        },
+                        {
+                            "documentName": "Bill of Sale",
+                            "shortCode": "BS",
+                            "description": "Bill of Sale"
+                        }
+                    ]
+                },
+            ],
+            "validation": true
+        }]
+    })
+
+    /**
+    * Product Type list
+    */
+    mock.onGet("/requestReceive/sentDocuments").reply((opts) => {
+        return [200, {
+            "status": "SUCCESS",
+            "response": {
+                "metadata": {
+                    "pageSize": 10,
+                    "pageNumber": 0,
+                    "recordCount": 3,
+                    "pageCount": 0,
+                    "startRecord": 1
+                },
+                "datas": [
+                    {
+                        "requestedDocuments": "Business Record Affidavit",
+                        "originalAccountNo": "7890",
+                        "equabliAccountNo": null,
+                        "clientAccountNo": "123456",
+                        "requestedDate": "01/12/2023",
+                        "dueDate": "03/01/2023",
+                        "fulfillment": null,
+                        "fileName": null,
+                        "filePath": null,
+                        "requestedFrom": "Zo Financial"
+                    },
+                    {
+                        "requestedDocuments": "Application",
+                        "originalAccountNo": "7890",
+                        "equabliAccountNo": null,
+                        "clientAccountNo": "123456",
+                        "requestedDate": "01/12/2023",
+                        "dueDate": "01/18/2023",
+                        "fulfillment": null,
+                        "fileName": null,
+                        "filePath": null,
+                        "requestedFrom": "Zo Financial"
+                    },
+                    {
+                        "requestedDocuments": "Transaction History",
+                        "originalAccountNo": "7890",
+                        "equabliAccountNo": null,
+                        "clientAccountNo": "123456",
+                        "requestedDate": "01/12/2023",
+                        "dueDate": "01/18/2023",
+                        "fulfillment": "01/18/2023",
+                        "fileName": "123456-Application-7890.pdf",
+                        "filePath": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf",
+                        "requestedFrom": "Zo Financial"
+                    },
+                ]
+            },
+            "validation": true,
+            "limit": 0,
+            "total": 0,
+            "lastPage": false
+        }]
+    })
 }

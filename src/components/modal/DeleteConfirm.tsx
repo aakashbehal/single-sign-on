@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
-import { Modal, Button } from "react-bootstrap"
+import { Modal, Button, Container } from "react-bootstrap"
 
-const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionText = 'Delete' }) => {
+const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionText = 'Delete', details, type }) => {
     const deleteRef: any = useRef<any>(null);
 
     useEffect(() => {
@@ -25,11 +25,33 @@ const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionT
                     Confirm {text}
                 </Modal.Title>
             </Modal.Header>
+            {
+                details && type === 'costConfiguration' &&
+                < Modal.Body className="show-grid">
+                    <Container>
+                        <p>
+                            Are you sure you want to delete Cost
+                            Configuration for <b>{details.documentType}</b>
+                        </p>
+                    </Container>
+                </Modal.Body>
+            }
+            {
+                details && type === 'requiredDocuments' &&
+                < Modal.Body className="show-grid">
+                    <Container>
+                        <p>
+                            Are you sure you want to delete Required Document
+                            Configuration for <b>{details.productName}</b>
+                        </p>
+                    </Container>
+                </Modal.Body>
+            }
             <Modal.Footer>
                 <Button variant="danger" ref={deleteRef} onClick={confirmDelete}>{actionText}</Button>
                 <Button variant="dark" onClick={onHide}>Cancel</Button>
             </Modal.Footer>
-        </Modal>
+        </Modal >
     )
 }
 

@@ -245,7 +245,7 @@ const Documents = () => {
                                         documentCoverage && documentCoverage.length > 0
                                         && documentCoverage.map((dC, index) => {
                                             return (
-                                                <div className={Styles.progress_container}>
+                                                <div key={`dC_${index}`} className={Styles.progress_container}>
                                                     <p className={Styles.ProgressTitle}><b>{dC.title}</b></p>
                                                     <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}%`} />
                                                     <p className={Styles.ProgressDesc}><span className={Styles.clickable}>{dC.accountsDone}</span> out of <b>{dC.accountsTotal}</b> accounts has {dC.type}</p>
@@ -400,10 +400,12 @@ const Documents = () => {
                     <Tab eventKey="receivedDocuments" title="Received Document Request">
                         <ReceivedDocumentRequests />
                     </Tab>
-                    <Tab eventKey="templates" title="Templates">
+                    {/* Templates */}
+                    <Tab eventKey="templates" title="">
 
                     </Tab>
-                    <Tab eventKey="downloadHistory" title="Download History">
+                    {/* Download History */}
+                    <Tab eventKey="downloadHistory" title="">
 
                     </Tab>
                 </Tabs >

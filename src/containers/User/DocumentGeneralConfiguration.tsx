@@ -33,7 +33,7 @@ const DocumentGeneralConfiguration = () => {
     const dispatch = useDispatch();
     const configRef = useRef<any>();
     const [modeSelected, setModeSelected] = useState('CREATE_NEW');
-    const [filteredOptions, setFilteredOptions] = useState([]);
+    const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [userType, setUserType] = useState(null)
     const [fieldsSelected, setFieldSelected] = useState<any>({});
     const [mode, setMode] = useState([
@@ -46,6 +46,10 @@ const DocumentGeneralConfiguration = () => {
             keyvalue: 'Replace existing'
         }
     ])
+
+    useEffect(() => {
+        console.log(filteredOptions)
+    }, [filteredOptions])
 
     const {
         loadingConjunction,
@@ -78,18 +82,17 @@ const DocumentGeneralConfiguration = () => {
             setFieldSelected(PARTNER_DEFAULT)
         }
         dispatch(FileNameConfigActionCreator.getUserConfig({ userUuid: user.userUuid, userType: user.role }))
-        dispatch(FileNameConfigActionCreator.getConjunction())
-        dispatch(FileNameConfigActionCreator.getFieldOptions({ userType: user.role }))
+        dispatch(FileNameConfigActionCreator.getConjunction(user.role))
+        dispatch(FileNameConfigActionCreator.getFieldOptions(user.role))
+        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
+        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
+        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
     }, [])
-
-    useEffect(() => {
-        console.log(fieldsSelected)
-    }, [fieldsSelected])
 
     useEffect(() => {
         if (
             dataFileNamingConfig
-            && dataFileNamingConfig.fileConfiguration
+            && dataFileNamingConfig.length > 0
         ) {
             handleDefaultAndSavedSelection()
         }
@@ -97,13 +100,15 @@ const DocumentGeneralConfiguration = () => {
 
     const handleDefaultAndSavedSelection = async () => {
         // setFilteredOptions(dataFieldOptionsFiltered)
-        const { fieldFinal, selectionFinal } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, dataFileNamingConfig, userType, fieldsSelected)
+        const { fieldFinal, selectionFinal }: { fieldFinal: any, selectionFinal: any } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, dataFileNamingConfig, userType, fieldsSelected)
         setFilteredOptions(fieldFinal)
         setFieldSelected(selectionFinal)
     }
 
-    const handleMove = (field, direction) => {
+    const handleMove = async (field, direction) => {
+        console.log(field)
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
+        console.log(fieldsSelectedTemp)
         let temp = null
         if (direction === 'down') {
             temp = fieldsSelectedTemp[field]
@@ -119,7 +124,7 @@ const DocumentGeneralConfiguration = () => {
 
     const handleSelection = (field, selected) => {
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
-        const dataFieldOptionsFiltered = dataFieldOptions.map((fO) => {
+        const dataFieldOptionsFiltered = filteredOptions.map((fO) => {
             if (selected === fO.shortCode) {
                 fO.available = false
             }
@@ -184,9 +189,9 @@ const DocumentGeneralConfiguration = () => {
                                         className="select_custom">
                                         {/* <option></option> */}
                                         {
-                                            (dataConjunction && dataConjunction.length > 0) &&
-                                            dataConjunction.map((cR: any, index: number) => {
-                                                return <option key={`cr_${index}`} value={cR.shortCode}>{cR.type}</option>
+                                            (dataConjunction && dataConjunction.docMgrConfigVals && dataConjunction.docMgrConfigVals.length > 0) &&
+                                            dataConjunction.docMgrConfigVals.map((cR: any, index: number) => {
+                                                return <option key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
                                             })
                                         }
                                     </Form.Control>
@@ -207,12 +212,12 @@ const DocumentGeneralConfiguration = () => {
                                         value={fieldsSelected[1] || ''}>
                                         {/* <option></option> */}
                                         {
-                                            (dataFieldOptions && dataFieldOptions.length > 0) &&
-                                            dataFieldOptions.map((cR: any, index: number) => {
+                                            (filteredOptions && filteredOptions.length > 0) &&
+                                            filteredOptions.map((cR: any, index: number) => {
                                                 return <option
                                                     key={`cr_${index}`}
                                                     value={cR.shortCode}>
-                                                    {cR.docConcatVal}
+                                                    {cR.fieldValue}
                                                 </option>
                                             })
                                         }
@@ -237,12 +242,12 @@ const DocumentGeneralConfiguration = () => {
                                         className="select_custom">
                                         {/* <option></option> */}
                                         {
-                                            (dataFieldOptions && dataFieldOptions.length > 0) &&
-                                            dataFieldOptions.map((cR: any, index: number) => {
+                                            (filteredOptions && filteredOptions.length > 0) &&
+                                            filteredOptions.map((cR: any, index: number) => {
                                                 return <option
                                                     key={`cr_${index}`}
                                                     value={cR.shortCode}>
-                                                    {cR.docConcatVal}
+                                                    {cR.fieldValue}
                                                 </option>
                                             })
                                         }
@@ -275,12 +280,12 @@ const DocumentGeneralConfiguration = () => {
                                             userType === 'Client'
                                             && <option></option>}
                                         {
-                                            (dataFieldOptions && dataFieldOptions.length > 0) &&
-                                            dataFieldOptions.map((cR: any, index: number) => {
+                                            (filteredOptions && filteredOptions.length > 0) &&
+                                            filteredOptions.map((cR: any, index: number) => {
                                                 if (userType !== 'Client') {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.docConcatVal}</option>
+                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
                                                 } else if (userType === 'Client' && !cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.docConcatVal}</option>
+                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
                                                 } else {
                                                     return false
                                                 }
@@ -318,7 +323,7 @@ const DocumentGeneralConfiguration = () => {
                                             (filteredOptions && filteredOptions.length > 0) &&
                                             filteredOptions.map((cR: any, index: number) => {
                                                 if (!cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.docConcatVal}</option>
+                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
                                                 } else {
                                                     return false
                                                 }
@@ -355,7 +360,7 @@ const DocumentGeneralConfiguration = () => {
                                             (filteredOptions && filteredOptions.length > 0) &&
                                             filteredOptions.map((cR: any, index: number) => {
                                                 if (!cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.docConcatVal}</option>
+                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
                                                 } else {
                                                     return false
                                                 }
@@ -477,7 +482,7 @@ const DocumentGeneralConfiguration = () => {
                                                             key={`default-${index}`}
                                                             inline
                                                             type="radio"
-                                                            onClick={(e: any) => {
+                                                            onChange={(e: any) => {
                                                                 setModeSelected(e.target.value)
                                                             }}
                                                             checked={dataFileNamingConfig.documentKeepPolicy === m.keycode}

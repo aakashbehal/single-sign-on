@@ -154,7 +154,25 @@ const fetchAllTypes = () => {
         })
 }
 
+const getDocumentTypes = async (userType) => {
+    try {
+        const response = await axiosCustom.get(`/document/documentType`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
 
+const getProductTypes = async (userType) => {
+    try {
+        const response = await axiosCustom.get(`/document/productType`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
 
 export const commonServices = {
     getFilterTypes,
@@ -167,5 +185,7 @@ export const commonServices = {
     getRegulatory,
     getStatus,
     getAccountConfig,
-    fetchAllTypes
+    fetchAllTypes,
+    getDocumentTypes,
+    getProductTypes
 }

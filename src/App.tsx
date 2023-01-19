@@ -23,11 +23,13 @@ import Registration from "./containers/Registration/Registration";
 import { sessions } from "./helpers/sessions"
 import { MyCustomToast } from "./helpers/customToaster";
 
-
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
 const UserAccount = lazy(() => import("./containers/User/UserAccount"));
 const DocumentGeneralConfiguration = lazy(() => import("./containers/User/DocumentGeneralConfiguration"));
+const DocumentsList = lazy(() => import("./containers/DocumentManager/DocumentsList"));
+const DocumentCostConfiguration = lazy(() => import("./containers/User/DocumentCostConfiguration"));
+const RequiredDocuments = lazy(() => import("./containers/User/RequiredDocuments"));
 /**
  * Applications starting point
  * @returns 
@@ -57,10 +59,13 @@ const App = () => {
               {/* User settings ---------------*/}
               <PrivateRoute exact path="/profile/user_account" component={sessions(UserAccount)} />
               <PrivateRoute exact path="/profile/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
+              <PrivateRoute exact path="/profile/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
+              <PrivateRoute exact path="/profile/required_documents" component={sessions(RequiredDocuments)} />
 
 
               {/* Document Manager */}
               <PrivateRoute exact path="/documents/my_documents" component={Documents} />
+              <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
 
             </Switch>
           </ErrorBoundary>

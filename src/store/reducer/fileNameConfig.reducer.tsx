@@ -4,7 +4,7 @@ const initialState = {
     conjunction: {
         loading: false,
         error: false,
-        data: []
+        data: {}
     },
     fieldOptions: {
         loading: false,

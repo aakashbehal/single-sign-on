@@ -2,14 +2,14 @@ import { Conjunction, FieldOptions, UserFileNamingConfig } from "../types.d";
 import { fileNameConfigService } from "../../services"
 
 export const FileNameConfigActionCreator = {
-    getConjunction: () => (dispatch: any) => {
+    getConjunction: (userType) => (dispatch: any) => {
         const request = () => ({ type: Conjunction.CONJUNCTION_REQUEST })
         const success = (user: any) => ({ type: Conjunction.CONJUNCTION_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: Conjunction.CONJUNCTION_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getConjunction()
+        fileNameConfigService.getConjunction(userType)
             .then(
                 user => {
                     dispatch(success(user))
@@ -19,14 +19,14 @@ export const FileNameConfigActionCreator = {
                 }
             ).finally(() => dispatch({ type: Conjunction.CONJUNCTION_RESET }))
     },
-    getFieldOptions: (requestParams) => (dispatch: any) => {
+    getFieldOptions: (userType) => (dispatch: any) => {
         const request = () => ({ type: FieldOptions.FIELD_OPTIONS_REQUEST })
         const success = (user: any) => ({ type: FieldOptions.FIELD_OPTIONS_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: FieldOptions.FIELD_OPTIONS_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getFieldOptions(requestParams)
+        fileNameConfigService.getFieldOptions(userType)
             .then(
                 user => {
                     dispatch(success(user))
@@ -36,14 +36,14 @@ export const FileNameConfigActionCreator = {
                 }
             ).finally(() => dispatch({ type: FieldOptions.FIELD_OPTIONS_RESET }))
     },
-    getUserConfig: (requestParams) => (dispatch: any) => {
+    getUserConfig: (userType) => (dispatch: any) => {
         const request = () => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_REQUEST })
         const success = (userNameConfig: any) => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getUserConfig(requestParams)
+        fileNameConfigService.getUserConfig(userType)
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))

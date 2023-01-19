@@ -1,7 +1,9 @@
 import {
     DocTypes,
     CommunicationType,
-    BankruptcyType
+    BankruptcyType,
+    DocumentsType,
+    ProductTypes
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -63,4 +65,38 @@ export const TypesActionCreator = {
                 }
             )
     },
+    getDocumentTypes: (userType) => (dispatch: any) => {
+        const request = () => ({ type: DocumentsType.DOCUMENTS_TYPE_REQUEST })
+        const success = (compliance: any) => ({ type: DocumentsType.DOCUMENTS_TYPE_SUCCESS, payload: compliance })
+        const failure = (error: any) => ({ type: DocumentsType.DOCUMENTS_TYPE_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getDocumentTypes(userType)
+            .then(
+                compliance => {
+                    dispatch(success(compliance))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    getProductTypes: (userType) => (dispatch: any) => {
+        const request = () => ({ type: ProductTypes.PRODUCT_TYPE_REQUEST })
+        const success = (products: any) => ({ type: ProductTypes.PRODUCT_TYPE_SUCCESS, payload: products })
+        const failure = (error: any) => ({ type: ProductTypes.PRODUCT_TYPE_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getProductTypes(userType)
+            .then(
+                products => {
+                    dispatch(success(products))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    }
 }

@@ -10,7 +10,7 @@ import { axiosCustom, dateFormatterForRequestFileUpload } from '../../helpers/ut
 import { userService } from '../../services';
 
 
-const DocumentUpload = ({ show, onHide, accountId, Styles }: any) => {
+const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent }: any) => {
     const { addToast } = useToasts();
     const editRef = useRef<any>()
     const dispatch = useDispatch();
@@ -164,7 +164,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles }: any) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter" >
-                    Upload New Document
+                    {parentComponent === 'myDocument' ? "Upload New Document" : parentComponent === 'sentDocumentRequest' ? 'Upload file for bulk document request' : ''}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
@@ -189,12 +189,24 @@ const DocumentUpload = ({ show, onHide, accountId, Styles }: any) => {
                     </Col>
                 </Container>
             </Modal.Body>
-            <Modal.Footer style={{ padding: '1rem 4rem 2rem' }}>
+            <Modal.Footer style={{ padding: '1rem 4rem 2rem' }} className="sent_bulk_request">
                 {
                     formSubmitted &&
                     <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
                 }
-                <Button variant="dark" type="submit" disabled={formSubmitted} onClick={onSubmitHandler} style={{ width: '100%' }}>Upload</Button>
+                <Col sm={12} className='no_padding'>
+                    <Button variant="dark" type="submit" disabled={formSubmitted} onClick={onSubmitHandler} style={{ width: '100%' }}>Upload</Button>
+                </Col>
+                {
+                    parentComponent === 'sentDocumentRequest'
+                    && <Col sm={12} className='no_padding'>
+                        <br />
+                        <p>Please download the sample file to get idea about the fields you need to pass to raise bulk document request</p>
+                        <Col sm={12} className='no_padding'>
+                            <Button variant="dark" type="submit" disabled={formSubmitted} onClick={onSubmitHandler} style={{ width: '100%' }}>Download Sample File</Button>
+                        </Col>
+                    </Col>
+                }
             </Modal.Footer>
         </Modal >
     )

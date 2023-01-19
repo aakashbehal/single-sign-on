@@ -1,25 +1,26 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getConjunction = async () => {
+const getConjunction = async (userType) => {
     try {
-        const response = await axiosCustom.get(`/conjunctionType`, {})
+        const response = await axiosCustom.get(`/fileNamesConfig`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
         const data = handleResponse(response)
-        return data.response
+        return data.response.docMgrConfigs[0]
     } catch (error: any) {
         throw error
     }
 }
 
-const getFieldOptions = async (requestParams) => {
+const getFieldOptions = async (userType) => {
     try {
-        const response = await axiosCustom.get(`/concatVal`, { params: requestParams })
+        const response = await axiosCustom.get(`/fileNamesConfig`, { params: { userType, fileNameConfig: '' } })
         const data = handleResponse(response)
-        return data.response
+        return data.response.docMgrConfigs
     } catch (error: any) {
         throw error
     }
 }
+
 
 const getUserConfig = async (requestParams) => {
     try {
@@ -32,6 +33,10 @@ const getUserConfig = async (requestParams) => {
 }
 
 const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, userType, fieldsSelected) => {
+    let allFields = [];
+    if (dataFieldOptions && dataFieldOptions.length > 0) {
+        allFields = dataFieldOptions[0].docMgrConfigVals
+    }
     let selectedFields: any = []
     let notAvailableFields: any = []
     let defaultFields: any = []
@@ -41,7 +46,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
         defaultFields = [1, 2, 3]
     }
     let defaultFieldsShortCode: any = []
-    if (serverOptions && serverOptions.fileConfiguration && serverOptions.fileConfiguration.length === 0) {
+    if (serverOptions && serverOptions.length === 0) {
         /**
          * Default available and selection
          */
@@ -54,21 +59,20 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
             notAvailableFields = ['CID', 'DTI', 'CAN']
             defaultFieldsShortCode = ['CAN', "DTI"]
         }
-    } else if (serverOptions && serverOptions.fileConfiguration && serverOptions.fileConfiguration.length > 0) {
+    } else if (serverOptions && serverOptions.length > 0) {
         /**
          * Saved selections
          */
-        serverOptions.fileConfiguration.forEach((field) => {
-            fieldsSelected[field.sequence] = field.shortCode
-            selectedFields.push(field.shortCode)
-            notAvailableFields.push(field.shortCode)
-            if (defaultFields.indexOf(field.sequence) !== -1) {
-                defaultFieldsShortCode.push(field.shortCode)
+        serverOptions.forEach((field, index) => {
+            fieldsSelected[index + 1] = field.docMgrConfigValSelectedCode
+            selectedFields.push(field.docMgrConfigValSelectedCode)
+            notAvailableFields.push(field.docMgrConfigValSelectedCode)
+            if (defaultFields.indexOf(index + 1) !== -1) {
+                defaultFieldsShortCode.push(field.docMgrConfigValSelectedCode)
             }
         })
     }
-    console.log(selectedFields, notAvailableFields, defaultFieldsShortCode)
-    const dataFieldOptionsFiltered = dataFieldOptions.map((fO: any) => {
+    const dataFieldOptionsFiltered = allFields.map((fO: any) => {
         if (defaultFieldsShortCode.indexOf(fO.shortCode) !== -1) {
             fO.default = true
         } else {

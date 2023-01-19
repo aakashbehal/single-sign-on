@@ -48,6 +48,9 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                     break
                 case 'profile':
                     part = `profile/user_account`
+                    break
+                case 'documents':
+                    part = `documents/my_documents`
             }
 
             const gotoPage = (part) => {
