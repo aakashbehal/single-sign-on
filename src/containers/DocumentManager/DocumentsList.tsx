@@ -40,13 +40,17 @@ const DocumentsList = ({ location }) => {
 
     useEffect(() => {
         search(pageCount, currentPage)
+        return () => {
+            dispatch(MyDocumentsActionCreator.resetDocumentList())
+        }
     }, [])
 
     const search = (pageSize = pageCount, pageNumber = 0) => {
         dispatch(MyDocumentsActionCreator.getMyDocumentList({
             pageSize,
             pageNumber,
-            AccountId
+            accountNumber: AccountId,
+            orgType: 'CT'
         }))
     }
 
@@ -58,6 +62,10 @@ const DocumentsList = ({ location }) => {
     const handlePagination = (pageSize: number, pageNumber: number) => {
         setPageCount(pageSize)
         search(pageSize, pageNumber)
+    }
+
+    const downloadHandler = (document) => {
+        console.log(document)
     }
 
     return (<>
@@ -218,7 +226,7 @@ const DocumentsList = ({ location }) => {
         <Col>
             <TableComponent
                 data={documents}
-                isLoading={false}
+                isLoading={loading}
                 map={{
                     fileName: "Name",
                     documentType: "Document Type",
@@ -248,7 +256,7 @@ const DocumentsList = ({ location }) => {
                 searchCriteria={{}}
                 addEditArray={
                     {
-                        download: (data) => console.log(`download Action`, data),
+                        download: (data) => downloadHandler(data),
                         share: (data) => console.log(`share action`, data),
                         view: (data) => {
                             setShowDocument(true)
@@ -263,7 +271,7 @@ const DocumentsList = ({ location }) => {
         </Col>
         {
             uploadDocModal
-            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} />
+            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} />
         }
         {
             showDocument &&

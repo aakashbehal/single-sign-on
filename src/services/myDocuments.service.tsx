@@ -7,7 +7,14 @@ const getMyDocumentFolders = async ({
     orgType
 }) => {
     try {
-        const response = await axiosCustom.get(`/document/folders`, { params: { pageSize, pageNumber, orgType } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+            {
+                params: {
+                    pageSize,
+                    pageNumber: 0,
+                    orgType
+                }
+            })
         const data = handleResponse(response)
         let folders = data.response.datas
         const responseModified: any = {}
@@ -29,7 +36,9 @@ const getMyDocumentList = async ({
     orgType
 }) => {
     try {
-        const response = await axiosCustom.get(`/document/documents`, { params: { accountNumber, orgType, pageSize, pageNumber } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document`,
+            { params: { accountNumber, orgType, pageSize, pageNumber: 0 } }
+        )
         const data = handleResponse(response)
         let documents = data.response.datas
         const responseModified: any = {}

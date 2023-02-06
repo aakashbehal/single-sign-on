@@ -9,106 +9,136 @@ import { fileNameConfigService, userService } from "../../services";
 import UseDocumentTitle from "../../helpers/useDocumentTitle"
 import { useToasts } from "react-toast-notifications"
 import { createMessage } from "../../helpers/messages"
-
-const PARTNER_DEFAULT = {
-    1: 'CID',
-    2: 'DTI',
-    3: 'CAN',
-    4: null,
-    5: null,
-    6: null
-}
-
-const CLIENT_DEFAULT = {
-    1: 'CAN',
-    2: 'DTI',
-    3: null,
-    4: null,
-    5: null,
-}
+import { CgSpinnerAlt } from "react-icons/cg"
 
 const DocumentGeneralConfiguration = () => {
+    const clientDefault = ["CAN", "DT", "PC"]
+    const partnerDefault = ["CAN", "DT", "CAN", "PC"]
     const { addToast } = useToasts();
     UseDocumentTitle('Document General Configuration')
     const dispatch = useDispatch();
     const configRef = useRef<any>();
-    const [modeSelected, setModeSelected] = useState('CREATE_NEW');
+    const retentionRef = useRef<any>();
+    const configNameSaveRef = useRef<any>();
+    const retentionSaveRef = useRef<any>();
+    const otherSaveRef = useRef<any>();
+    const [modeSelected, setModeSelected] = useState('KBF');
     const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [userType, setUserType] = useState(null)
     const [fieldsSelected, setFieldSelected] = useState<any>({});
     const [mode, setMode] = useState([
         {
-            keycode: 'CREATE_NEW',
-            keyvalue: 'Keep both files'
+            keycode: 'KBF',
+            keyvalue: 'Keep Both Files'
         },
         {
-            keycode: 'REPLACE',
-            keyvalue: 'Replace existing'
+            keycode: 'RE',
+            keyvalue: 'Replace Existing'
         }
     ])
-
-    useEffect(() => {
-        console.log(filteredOptions)
-    }, [filteredOptions])
+    const [retention, setRetention] = useState<any>(60)
 
     const {
-        loadingConjunction,
-        errorConjunction,
         dataConjunction,
-        loadingFieldOptions,
-        errorFieldOptions,
+        isLoading,
         dataFieldOptions,
         dataFileNamingConfig,
-        loadingFileNamingConfig,
-        errorFileNamingConfig
+        dataUserRetentionPolicy,
+        isLoadingRetention,
+        dataUserConjunction,
+        dataRetentionPolicy,
+        dataDocumentPolicy,
+        dataUserDocumentPolicy,
+        isLoadingDocumentPolicy,
+        saveLoading,
+        saveSuccess,
+        saveError
     } = useSelector((state: any) => ({
-        loadingConjunction: state.fileNameConfig.conjunction.loading,
-        errorConjunction: state.fileNameConfig.conjunction.error,
         dataConjunction: state.fileNameConfig.conjunction.data,
-        loadingFieldOptions: state.fileNameConfig.fieldOptions.loading,
-        errorFieldOptions: state.fileNameConfig.fieldOptions.error,
+        isLoading: state.fileNameConfig.conjunction.loading,
         dataFieldOptions: state.fileNameConfig.fieldOptions.data,
         dataFileNamingConfig: state.fileNameConfig.fileNamingConfig.data,
-        loadingFileNamingConfig: state.fileNameConfig.fileNamingConfig.loading,
-        errorFileNamingConfig: state.fileNameConfig.fileNamingConfig.error
+        dataUserRetentionPolicy: state.fileNameConfig.userRetentionPolicy.data,
+        isLoadingRetention: state.fileNameConfig.userRetentionPolicy.loading,
+        dataUserConjunction: state.fileNameConfig.userConjunction.data,
+        dataUserDocumentPolicy: state.fileNameConfig.userDocumentPolicy.data,
+        isLoadingDocumentPolicy: state.fileNameConfig.userDocumentPolicy.loading,
+        dataRetentionPolicy: state.fileNameConfig.retentionPolicy.data,
+        dataDocumentPolicy: state.fileNameConfig.documentPolicy.data,
+        saveLoading: state.fileNameConfig.saveConfig.loading,
+        saveSuccess: state.fileNameConfig.saveConfig.success,
+        saveError: state.fileNameConfig.saveConfig.error
     }))
 
     useEffect(() => {
-        const user = userService.getUser();
-        setUserType(user.role)
-        if (user.role === 'Client') {
-            setFieldSelected(CLIENT_DEFAULT)
-        } else {
-            setFieldSelected(PARTNER_DEFAULT)
+        if (dataUserRetentionPolicy) {
+            setRetention(dataUserRetentionPolicy ? dataUserRetentionPolicy.configValSelectedCode : dataRetentionPolicy.defaultValue)
         }
-        dispatch(FileNameConfigActionCreator.getUserConfig({ userUuid: user.userUuid, userType: user.role }))
-        dispatch(FileNameConfigActionCreator.getConjunction(user.role))
-        dispatch(FileNameConfigActionCreator.getFieldOptions(user.role))
-        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
-        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
-        // dispatch(FileNameConfigActionCreator.getFieldOptions(userType: user.role ))
+        if (dataUserDocumentPolicy) {
+            setModeSelected((dataUserDocumentPolicy ? dataUserDocumentPolicy.configValSelectedCode : "KBF"))
+        }
+    }, [dataUserRetentionPolicy, dataUserDocumentPolicy])
+
+    useEffect(() => {
+        const user = userService.getUser();
+        setUserType(user.recordSource);
+        let selectedTemp = {}
+        if (user.recordSource === 'Client' || user.recordSource === 'Equabli') {
+            selectedTemp = {
+                1: 'CAN',
+                2: 'DT',
+                3: 'PC',
+                4: null,
+                5: null,
+                6: null,
+            }
+        } else {
+            selectedTemp = {
+                1: 'CID',
+                2: 'DT',
+                3: 'CAN',
+                4: 'PC',
+                5: null,
+                6: null,
+                7: null
+            }
+        }
+        setFieldSelected(selectedTemp)
+        dispatch(FileNameConfigActionCreator.getUserConfig({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getFieldOptions({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getConjunction({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getDocumentPolicy({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getRetentionPolicy({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getUserRetentionPolicy({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getUserSeparator({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getUserDocumentPolicy({ orgType: 'CT' }))
     }, [])
 
     useEffect(() => {
         if (
-            dataFileNamingConfig
-            && dataFileNamingConfig.length > 0
+            dataFieldOptions.length > 0
         ) {
             handleDefaultAndSavedSelection()
         }
     }, [dataFieldOptions, dataFileNamingConfig])
 
+    useEffect(() => {
+        if (saveSuccess) {
+            addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
+        }
+        if (saveError) {
+            addToast(createMessage('error', `User Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });
+        }
+    }, [saveSuccess, saveError])
+
     const handleDefaultAndSavedSelection = async () => {
-        // setFilteredOptions(dataFieldOptionsFiltered)
         const { fieldFinal, selectionFinal }: { fieldFinal: any, selectionFinal: any } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, dataFileNamingConfig, userType, fieldsSelected)
         setFilteredOptions(fieldFinal)
         setFieldSelected(selectionFinal)
     }
 
     const handleMove = async (field, direction) => {
-        console.log(field)
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
-        console.log(fieldsSelectedTemp)
         let temp = null
         if (direction === 'down') {
             temp = fieldsSelectedTemp[field]
@@ -124,391 +154,357 @@ const DocumentGeneralConfiguration = () => {
 
     const handleSelection = (field, selected) => {
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
-        const dataFieldOptionsFiltered = filteredOptions.map((fO) => {
+        fieldsSelectedTemp[field] = selected
+        const tempMap = Object.values(fieldsSelectedTemp)
+        let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
             if (selected === fO.shortCode) {
                 fO.available = false
             }
             if (!selected && (fieldsSelectedTemp[field] === fO.shortCode)) {
                 fO.available = true
             }
+            if (tempMap.indexOf(fO.shortCode) === -1) {
+                fO.selected = false
+                fO.available = true
+            }
             return fO
         })
-        fieldsSelectedTemp[field] = selected
         setFilteredOptions(dataFieldOptionsFiltered)
         setFieldSelected(fieldsSelectedTemp)
     }
 
-    const handleSave = (e) => {
-        e.preventDefault()
-        const {
-            conjunction,
-            field_1,
-            field_2,
-            field_3,
-            field_4,
-            field_5,
-            field_6,
-        } = configRef.current
-        console.log(
-            conjunction.value,
-            field_1.value,
-            field_2.value,
-            field_3.value,
-            field_4.value,
-            field_5.value,
-            field_6.value,)
-        addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: false });
+    const handleSave = (e, type) => {
+        e.preventDefault();
+        const configRequest: any = []
+        if (type === 'config') {
+            const {
+                conjunction,
+                field_1,
+                field_2,
+                field_3,
+                field_4,
+                field_5,
+                field_6,
+            } = configRef.current
+            configRequest.push({
+                "configShortCode": "SEPARATOR",
+                "configValShortCode": conjunction.value,
+                "orgTypeCode": "CT"
+            })
+            if (field_1.value) {
+                configRequest.push({
+                    "configShortCode": "field1",
+                    "configValShortCode": field_1.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_2.value) {
+                configRequest.push({
+                    "configShortCode": "field2",
+                    "configValShortCode": field_2.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_3.value) {
+                configRequest.push({
+                    "configShortCode": "field3",
+                    "configValShortCode": field_3.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_4.value) {
+                configRequest.push({
+                    "configShortCode": "field4",
+                    "configValShortCode": field_4.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_5.value) {
+                configRequest.push({
+                    "configShortCode": "field5",
+                    "configValShortCode": field_5.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_6.value) {
+                configRequest.push({
+                    "configShortCode": "field6",
+                    "configValShortCode": field_6.value,
+                    "orgTypeCode": "CT"
+                })
+            }
+        } else if (type === 'retention') {
+            const {
+                retention_policy
+            } = retentionRef.current
+            console.log(retention_policy.value)
+            configRequest.push({
+                "configShortCode": "RP",
+                "configValShortCode": retention_policy.value,
+                "orgTypeCode": "CT"
+            })
+        } else if (type === 'mode') {
+            configRequest.push({
+                "configShortCode": "DP",
+                "configValShortCode": modeSelected,
+                "orgTypeCode": "CT"
+            })
+        }
+        dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
     }
 
-    const resetHandler = () => {
-        if (userType === 'Client') {
-            setFieldSelected(CLIENT_DEFAULT)
-        } else {
-            setFieldSelected(PARTNER_DEFAULT)
+    const resetHandler = async (e, type) => {
+        if (type === 'config') {
+            let selectedTemp = {}
+            if (userType === 'Client' || userType === 'Equabli') {
+                selectedTemp = {
+                    1: 'CAN',
+                    2: 'DT',
+                    3: 'PC',
+                    4: null,
+                    5: null,
+                    6: null,
+                }
+            } else {
+                selectedTemp = {
+                    1: 'CID',
+                    2: 'DT',
+                    3: 'CAN',
+                    4: 'PC',
+                    5: null,
+                    6: null,
+                    7: null
+                }
+            }
+            configRef.current.conjunction.value = '_'
+            setTimeout(async () => {
+                configNameSaveRef.current.click()
+                setFieldSelected(selectedTemp)
+                const tempMap = Object.values(selectedTemp)
+                let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
+                    if (tempMap.indexOf(fO.shortCode) === -1) {
+                        fO.selected = false
+                        fO.available = true
+                    }
+                    return fO
+                })
+                setFilteredOptions(dataFieldOptionsFiltered)
+            }, 100)
+        } else if (type === 'retention') {
+            setRetention(60)
+            setTimeout(() => {
+                retentionSaveRef.current.click()
+            }, 0)
+        } else if (type === 'mode') {
+            setModeSelected('KBF')
+            setTimeout(() => {
+                otherSaveRef.current.click()
+            }, 0)
         }
-        configRef.current.conjunction.value = '_'
+    }
+
+    const disableHandler = (fieldName) => {
+        let flag = false
+        if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
+            flag = true
+        } else if (partnerDefault.indexOf(fieldName) !== -1) {
+            flag = true
+        }
+        return flag
     }
 
     return <>
-        <Row style={{ margin: 0 }} className="form_container">
-            <Col sm={3}></Col>
-            <Col sm={6}>
-                <Row>
-                    <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>File Name Configuration</h5></Col>
-                </Row>
-                <br />
-                <br />
-                <Form ref={configRef} onSubmit={(e) => handleSave(e)}>
+        {
+            isLoading && <CgSpinnerAlt className="spinner" size={50} />
+        }
+        {
+            !isLoading &&
+            <Row style={{ margin: 0 }} className="form_container">
+                <Col sm={3}></Col>
+                <Col sm={6}>
                     <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5">
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="conjunction"
-                                        className="select_custom">
-                                        {/* <option></option> */}
-                                        {
-                                            (dataConjunction && dataConjunction.docMgrConfigVals && dataConjunction.docMgrConfigVals.length > 0) &&
-                                            dataConjunction.docMgrConfigVals.map((cR: any, index: number) => {
-                                                return <option key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Conjunction / Concatenation Parameter</Form.Label>
-                            </Form.Group>
-                        </Col>
+                        <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>File Name Configuration</h5></Col>
                     </Row>
-                    <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5">
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="field_1"
-                                        className="select_custom"
-                                        disabled
-                                        value={fieldsSelected[1] || ''}>
-                                        {/* <option></option> */}
-                                        {
-                                            (filteredOptions && filteredOptions.length > 0) &&
-                                            filteredOptions.map((cR: any, index: number) => {
-                                                return <option
-                                                    key={`cr_${index}`}
-                                                    value={cR.shortCode}>
-                                                    {cR.fieldValue}
-                                                </option>
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Field 1</Form.Label>
-                                <div className={Styles.movement_group}>
-                                    <HiArrowNarrowDown onClick={() => handleMove(1, 'down')} />
-                                </div>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5">
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="field_2"
-                                        value={fieldsSelected[2] || ''}
-                                        disabled
-                                        className="select_custom">
-                                        {/* <option></option> */}
-                                        {
-                                            (filteredOptions && filteredOptions.length > 0) &&
-                                            filteredOptions.map((cR: any, index: number) => {
-                                                return <option
-                                                    key={`cr_${index}`}
-                                                    value={cR.shortCode}>
-                                                    {cR.fieldValue}
-                                                </option>
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Field 2</Form.Label>
-                                <div className={Styles.movement_group}>
-                                    <HiArrowNarrowUp onClick={() => handleMove(2, 'up')} />
-                                    {
-                                        (userType !== 'Client'
-                                            || fieldsSelected[3])
-                                        && <HiArrowNarrowDown onClick={() => handleMove(2, 'down')} />
-                                    }
-                                </div>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5">
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="field_3"
-                                        value={fieldsSelected[3] || ''}
-                                        disabled={userType !== 'Client'}
-                                        onChange={(e) => handleSelection(3, e.target.value)}
-                                        className="select_custom">
-                                        {
-                                            userType === 'Client'
-                                            && <option></option>}
-                                        {
-                                            (filteredOptions && filteredOptions.length > 0) &&
-                                            filteredOptions.map((cR: any, index: number) => {
-                                                if (userType !== 'Client') {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
-                                                } else if (userType === 'Client' && !cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
-                                                } else {
-                                                    return false
-                                                }
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Field 3</Form.Label>
-                                <div className={Styles.movement_group}>
-                                    {
-                                        (userType !== 'Client'
-                                            || fieldsSelected[3])
-                                        && <HiArrowNarrowUp onClick={() => handleMove(3, 'up')} />
-                                    }
-                                    {
-                                        fieldsSelected[4] &&
-                                        <HiArrowNarrowDown onClick={() => handleMove(3, 'down')} />
-                                    }
-                                </div>
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5">
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="field_4"
-                                        onChange={(e) => handleSelection(4, e.target.value)}
-                                        value={fieldsSelected[4] || ''}
-                                        className="select_custom">
-                                        <option></option>
-                                        {
-                                            (filteredOptions && filteredOptions.length > 0) &&
-                                            filteredOptions.map((cR: any, index: number) => {
-                                                if (!cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
-                                                } else {
-                                                    return false
-                                                }
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Field 4</Form.Label>
-                                {
-                                    fieldsSelected[4] &&
-                                    <div className={Styles.movement_group}>
-                                        <HiArrowNarrowUp onClick={() => handleMove(4, 'up')} />
-                                        {
-                                            fieldsSelected[5] &&
-                                            <HiArrowNarrowDown onClick={() => handleMove(4, 'down')} />
-                                        }
-                                    </div>
-                                }
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col lg={12} md={6} className="no_padding">
-                            <Form.Group as={Col} className="mb-5" >
-                                <Col md={12} sm={12}>
-                                    <Form.Control
-                                        as="select"
-                                        name="field_5"
-                                        onChange={(e) => handleSelection(5, e.target.value)}
-                                        value={fieldsSelected[5] || ''}
-                                        className="select_custom">
-                                        <option></option>
-                                        {
-                                            (filteredOptions && filteredOptions.length > 0) &&
-                                            filteredOptions.map((cR: any, index: number) => {
-                                                if (!cR.default) {
-                                                    return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
-                                                } else {
-                                                    return false
-                                                }
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                                <Form.Label className="label_custom">Field 5</Form.Label>
-                                {
-                                    fieldsSelected[5] &&
-                                    <div className={Styles.movement_group}>
-                                        <HiArrowNarrowUp onClick={() => handleMove(5, 'up')} />
-                                        {
-                                            fieldsSelected[6] &&
-                                            <HiArrowNarrowDown onClick={() => handleMove(5, 'down')} />
-                                        }
-                                    </div>
-                                }
-                            </Form.Group>
-                        </Col>
-                    </Row>
-                    <Row>
+                    <br />
+                    <br />
+                    <Form ref={configRef} onSubmit={(e) => handleSave(e, 'config')}>
                         {
-                            userType !== 'Client'
-                            &&
-                            <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control
-                                            as="select"
-                                            name="field_6"
-                                            onChange={(e) => handleSelection(6, e.target.value)}
-                                            value={fieldsSelected[6] || ''}
-                                            className="select_custom">
-                                            <option></option>
-                                            {
-                                                (filteredOptions && filteredOptions.length > 0) &&
-                                                filteredOptions.map((cR: any, index: number) => {
-                                                    if (!cR.default) {
-                                                        return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.docConcatVal}</option>
-                                                    } else {
-                                                        return false
+                            JSON.stringify(dataUserConjunction) !== "{}"
+                            && <Row>
+                                <Col lg={12} md={6} className="no_padding">
+                                    <Form.Group as={Col} className="mb-5">
+                                        <Col md={12} sm={12}>
+                                            <Form.Control
+                                                as="select"
+                                                name="conjunction"
+                                                defaultValue={dataUserConjunction ? dataUserConjunction.configValSelectedCode : dataConjunction.defaultValue}
+                                                className="select_custom">
+                                                {
+                                                    (dataConjunction && dataConjunction.configVals && dataConjunction.configVals.length > 0) &&
+                                                    dataConjunction.configVals.map((cR: any, index: number) => {
+                                                        return <option key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
+                                                    })
+                                                }
+                                            </Form.Control>
+                                        </Col>
+                                        <Form.Label className="label_custom">Conjunction / Concatenation Parameter</Form.Label>
+                                    </Form.Group>
+                                </Col>
+                            </Row>
+                        }
+                        {
+                            fieldsSelected
+                            && Object.keys(fieldsSelected).map((keyName, keyIndex) => {
+                                return (
+                                    <Row key={`options_${keyIndex}`}>
+                                        <Col lg={12} md={6} className="no_padding">
+                                            <Form.Group as={Col} className="mb-5">
+                                                <Col md={12} sm={12}>
+                                                    <Form.Control
+                                                        as="select"
+                                                        name={`field_${keyIndex + 1}`}
+                                                        className="select_custom"
+                                                        disabled={
+                                                            disableHandler(fieldsSelected[keyName])
+                                                        }
+                                                        onChange={(e) => handleSelection(keyIndex + 1, e.target.value)}
+                                                        value={fieldsSelected[keyName] || ''}>
+                                                        {
+                                                            !fieldsSelected[Number(keyName) + 1]
+                                                            && <option></option>
+                                                        }
+                                                        {
+                                                            (filteredOptions && filteredOptions.length > 0) &&
+                                                            filteredOptions.map((cR: any, index: number) => {
+                                                                return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
+                                                            })
+                                                        }
+                                                    </Form.Control>
+                                                </Col>
+                                                <Form.Label className="label_custom">Field {keyIndex + 1} </Form.Label>
+                                                <div className={Styles.movement_group}>
+                                                    {
+                                                        keyIndex !== 0
+                                                        && fieldsSelected[keyName]
+                                                        && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
                                                     }
-                                                })
-                                            }
-                                        </Form.Control>
-                                    </Col>
-                                    <Form.Label className="label_custom">Field 6</Form.Label>
-                                    {
-                                        fieldsSelected[6] &&
-                                        <div className={Styles.movement_group}>
-                                            <HiArrowNarrowUp onClick={() => handleMove(6, 'up')} />
-                                        </div>
-                                    }
-                                </Form.Group>
-                            </Col>
+                                                    {
+                                                        keyIndex !== (Object.keys(fieldsSelected).length - 1)
+                                                        && fieldsSelected[keyName]
+                                                        && fieldsSelected[Number(keyName) + 1]
+                                                        && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
+                                                    }
+                                                </div>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>)
+                            })
                         }
                         <Col sm={12} style={{ marginLeft: '1rem' }}>
-                            <Button variant="dark" style={{ width: "140px" }} type="submit">Save</Button>{" "}
-                            <Button variant="dark" style={{ width: "140px" }} onClick={() => resetHandler()}>Reset to Default</Button>
+                            <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
+                            <Button variant="dark" style={{ width: "140px" }} onClick={(e) => resetHandler(e, 'config')}>Reset to Default</Button>
                         </Col>
-                    </Row>
-                </Form>
-            </Col>
-            <Col sm={3}></Col>
-        </Row>
+                    </Form>
+                </Col >
+                <Col sm={3}></Col>
+            </Row >
+        }
         <br />
         {
-            userType === 'Client'
+            (userType === 'Client' || userType === 'Equabli')
             && <>
-                <Row style={{ margin: 0 }} className="form_container">
-                    <Col sm={3}></Col>
-                    <Col sm={6}>
-                        <Row>
-                            <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Document Retention Policy</h5></Col>
-                        </Row>
-                        <br />
-                        <br />
-                        <Form onSubmit={(e) => handleSave(e)}>
+                {
+                    !isLoadingRetention
+                    &&
+                    <Row style={{ margin: 0 }} className="form_container">
+                        <Col sm={3}></Col>
+                        <Col sm={6}>
                             <Row>
-                                <Col lg={12} md={6}>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Row>
-                                            <Col md={11} sm={11}>
-                                                <Form.Control className="select_custom" type="text" name="charge_off_balance_from" value={dataFileNamingConfig.retentionPolicyInDay} />
-                                            </Col>
-                                            <Col md={1} style={{ display: 'flex', alignItems: 'center' }}><p style={{ margin: 0 }}>Days</p></Col>
-                                        </Row>
-                                        <Form.Label className="label_custom" style={{ left: '10px' }}>Retain document after closure of account till</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col sm={12} style={{ marginLeft: '1rem' }}>
-                                    <Button variant="dark" style={{ width: "140px" }} type="submit">Save</Button>{" "}
-                                    <Button variant="dark" style={{ width: "140px" }} onClick={resetHandler}>Reset to Default</Button>
-                                </Col>
+                                <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Document Retention Policy</h5></Col>
                             </Row>
-                        </Form>
-                    </Col>
-                    <Col sm={3}></Col>
-                </Row>
+                            <br />
+                            <br />
+                            <Form ref={retentionRef} onSubmit={(e) => handleSave(e, 'retention')}>
+                                <Row>
+                                    <Col lg={12} md={6}>
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Row>
+                                                <Col md={11} sm={11}>
+                                                    <Form.Control
+                                                        className="select_custom"
+                                                        type="number"
+                                                        name="retention_policy"
+                                                        onChange={(e) => setRetention(e.target.value)}
+                                                        value={retention} />
+                                                </Col>
+                                                <Col md={1} style={{ display: 'flex', alignItems: 'center' }}><p style={{ margin: 0 }}>Days</p></Col>
+                                            </Row>
+                                            <Form.Label className="label_custom" style={{ left: '10px' }}>Retain document after closure of account till</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col sm={12} style={{ marginLeft: '1rem' }}>
+                                        <Button variant="dark" style={{ width: "140px" }} ref={retentionSaveRef} type="submit">Save</Button>{" "}
+                                        <Button variant="dark" style={{ width: "140px" }} onClick={(e) => resetHandler(e, 'retention')}>Reset to Default</Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                        <Col sm={3}></Col>
+                    </Row>
+                }
                 <br />
-                <Row style={{ margin: 0 }} className="form_container">
-                    <Col sm={3}></Col>
-                    <Col sm={6}>
-                        <Row>
-                            <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Other Configuration</h5></Col>
-                        </Row>
-                        <br />
-                        <br />
-                        <Form onSubmit={(e) => handleSave(e)}>
+                {
+                    !isLoadingDocumentPolicy
+                    && <Row style={{ margin: 0 }} className="form_container">
+                        <Col sm={3}></Col>
+                        <Col sm={6}>
                             <Row>
-                                <Col lg={12} md={6}>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Row>
-                                            <Col md={12} sm={12}>
-                                                {
-                                                    mode && mode.map((m, index) => (
-                                                        <Form.Check
-                                                            key={`default-${index}`}
-                                                            inline
-                                                            type="radio"
-                                                            onChange={(e: any) => {
-                                                                setModeSelected(e.target.value)
-                                                            }}
-                                                            checked={dataFileNamingConfig.documentKeepPolicy === m.keycode}
-                                                            value={m.keycode}
-                                                            name='mode'
-                                                            label={m.keyvalue}
-                                                        />
-                                                    ))
-                                                }
-                                            </Col>
-                                        </Row>
-                                        <Form.Label className="label_custom" style={{ left: '10px' }}>Incase of Document Duplication</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col sm={12} style={{ marginLeft: '1rem' }}>
-                                    <Button variant="dark" style={{ width: "140px" }} type="submit">Save</Button>{" "}
-                                    <Button variant="dark" style={{ width: "140px" }} onClick={resetHandler}>Reset to Default</Button>
-                                </Col>
+                                <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Other Configuration</h5></Col>
                             </Row>
-                        </Form>
-                    </Col>
-                    <Col sm={3}></Col>
-                </Row>
+                            <br />
+                            <br />
+                            <Form onSubmit={(e) => handleSave(e, 'mode')}>
+                                <Row>
+                                    <Col lg={12} md={6}>
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Row>
+                                                <Col md={12} sm={12}>
+                                                    {
+                                                        mode && mode.map((m, index) => (
+                                                            <Form.Check
+                                                                key={`default-${index}`}
+                                                                inline
+                                                                type="radio"
+                                                                onChange={(e: any) => {
+                                                                    setModeSelected(e.target.value)
+                                                                }}
+                                                                checked={m.keycode == modeSelected}
+                                                                value={m.keycode}
+                                                                name='mode'
+                                                                label={m.keyvalue}
+                                                            />
+                                                        ))
+                                                    }
+                                                </Col>
+                                            </Row>
+                                            <Form.Label className="label_custom" style={{ left: '10px' }}>Incase of Document Duplication</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col sm={12} style={{ marginLeft: '1rem' }}>
+                                        <Button variant="dark" style={{ width: "140px" }} ref={otherSaveRef} type="submit">Save</Button>{" "}
+                                        <Button variant="dark" style={{ width: "140px" }} onClick={(e) => resetHandler(e, 'mode')}>Reset to Default</Button>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </Col>
+                        <Col sm={3}></Col>
+                    </Row>
+                }
+
             </>
         }
     </>
 }
 
 export default DocumentGeneralConfiguration
+

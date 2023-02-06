@@ -1,4 +1,4 @@
-import { RequiredDocuments } from "../types.d";
+import { RequiredDocuments, SaveRequiredDocuments, DeleteRequiredDocuments } from "../types.d";
 import { requiredDocumentService } from "../../services"
 
 export const RequiredDocumentActionCreator = {
@@ -19,4 +19,38 @@ export const RequiredDocumentActionCreator = {
                 }
             )
     },
+    saveRequiredDocuments: (requestData) => (dispatch: any) => {
+        const request = () => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_REQUEST })
+        const success = (costs: any) => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_SUCCESS, payload: costs })
+        const failure = (error: any) => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_FAILURE, payload: error })
+
+        dispatch(request())
+
+        requiredDocumentService.saveRequiredDocuments(requestData)
+            .then(
+                costs => {
+                    dispatch(success(costs))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => dispatch({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_RESET }))
+    },
+    deleteRequiredDocuments: (id) => (dispatch: any) => {
+        const request = () => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_REQUEST })
+        const success = (costs: any) => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_SUCCESS, payload: costs })
+        const failure = (error: any) => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_FAILURE, payload: error })
+
+        dispatch(request())
+
+        requiredDocumentService.deleteRequiredDocuments(id)
+            .then(
+                costs => {
+                    dispatch(success(costs))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => dispatch({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_RESET }))
+    }
 }

@@ -2,7 +2,28 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const getRequiredDocuments = async (requestData) => {
     try {
-        const response = await axiosCustom.get(`/document/requiredDocuments`, { params: requestData })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/all`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const saveRequiredDocuments = async (requestData) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require`, requestData)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const deleteRequiredDocuments = async (id) => {
+    console.log(id)
+    try {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -11,5 +32,7 @@ const getRequiredDocuments = async (requestData) => {
 }
 
 export const requiredDocumentService = {
-    getRequiredDocuments
+    getRequiredDocuments,
+    saveRequiredDocuments,
+    deleteRequiredDocuments
 }

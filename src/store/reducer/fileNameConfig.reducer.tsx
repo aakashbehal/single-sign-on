@@ -1,4 +1,14 @@
-import { Conjunction, FieldOptions, UserFileNamingConfig } from "../types.d"
+import {
+    Conjunction,
+    FieldOptions,
+    UserFileNamingConfig,
+    UserRetentionPolicy,
+    UserSeparator,
+    UserDocumentPolicy,
+    SaveUserConfiguration,
+    RetentionPolicy,
+    DocumentPolicy
+} from "../types.d"
 
 const initialState = {
     conjunction: {
@@ -15,6 +25,36 @@ const initialState = {
         loading: false,
         error: false,
         data: {}
+    },
+    userConjunction: {
+        loading: false,
+        error: false,
+        data: {}
+    },
+    retentionPolicy: {
+        loading: false,
+        error: false,
+        data: {}
+    },
+    documentPolicy: {
+        loading: false,
+        error: false,
+        data: {}
+    },
+    userRetentionPolicy: {
+        loading: false,
+        error: false,
+        data: {}
+    },
+    userDocumentPolicy: {
+        loading: false,
+        error: false,
+        data: {}
+    },
+    saveConfig: {
+        loading: false,
+        error: false,
+        success: false
     }
 }
 
@@ -35,7 +75,7 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                 conjunction: {
                     ...state.conjunction,
                     loading: false,
-                    data: action.payload
+                    data: action.payload[0]
                 }
             }
         case Conjunction.CONJUNCTION_FAILURE:
@@ -99,6 +139,177 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                     ...state.fileNamingConfig,
                     loading: false,
                     error: true
+                }
+            }
+        case UserSeparator.USER_SEPARATOR_REQUEST:
+            return {
+                ...state,
+                userConjunction: {
+                    ...state.userConjunction,
+                    loading: true,
+                    error: false
+                }
+            }
+        case UserSeparator.USER_SEPARATOR_SUCCESS:
+            return {
+                ...state,
+                userConjunction: {
+                    ...state.userConjunction,
+                    loading: false,
+                    data: action.payload[0]
+                }
+            }
+        case UserSeparator.USER_SEPARATOR_FAILURE:
+            return {
+                ...state,
+                userConjunction: {
+                    ...state.userConjunction,
+                    loading: false,
+                    error: true
+                }
+            }
+        case UserRetentionPolicy.USER_RETENTION_POLICY_REQUEST:
+            return {
+                ...state,
+                userRetentionPolicy: {
+                    ...state.userRetentionPolicy,
+                    loading: true,
+                    error: false
+                }
+            }
+        case UserRetentionPolicy.USER_RETENTION_POLICY_SUCCESS:
+            return {
+                ...state,
+                userRetentionPolicy: {
+                    ...state.userRetentionPolicy,
+                    loading: false,
+                    data: action.payload[0]
+                }
+            }
+        case UserRetentionPolicy.USER_RETENTION_POLICY_FAILURE:
+            return {
+                ...state,
+                userRetentionPolicy: {
+                    ...state.userRetentionPolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case UserDocumentPolicy.USER_DOCUMENT_POLICY_REQUEST:
+            return {
+                ...state,
+                userDocumentPolicy: {
+                    ...state.userDocumentPolicy,
+                    loading: true,
+                    error: false
+                }
+            }
+        case UserDocumentPolicy.USER_DOCUMENT_POLICY_SUCCESS:
+            return {
+                ...state,
+                userDocumentPolicy: {
+                    ...state.userDocumentPolicy,
+                    loading: false,
+                    data: action.payload[0]
+                }
+            }
+        case UserDocumentPolicy.USER_DOCUMENT_POLICY_FAILURE:
+            return {
+                ...state,
+                userDocumentPolicy: {
+                    ...state.userDocumentPolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case RetentionPolicy.RETENTION_POLICY_REQUEST:
+            return {
+                ...state,
+                retentionPolicy: {
+                    ...state.retentionPolicy,
+                    loading: true,
+                    error: false
+                }
+            }
+        case RetentionPolicy.RETENTION_POLICY_SUCCESS:
+            return {
+                ...state,
+                retentionPolicy: {
+                    ...state.retentionPolicy,
+                    loading: false,
+                    data: action.payload[0]
+                }
+            }
+        case RetentionPolicy.RETENTION_POLICY_FAILURE:
+            return {
+                ...state,
+                retentionPolicy: {
+                    ...state.retentionPolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case DocumentPolicy.DOCUMENT_POLICY_REQUEST:
+            return {
+                ...state,
+                documentPolicy: {
+                    ...state.documentPolicy,
+                    loading: true,
+                    error: false
+                }
+            }
+        case DocumentPolicy.DOCUMENT_POLICY_SUCCESS:
+            return {
+                ...state,
+                documentPolicy: {
+                    ...state.documentPolicy,
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case DocumentPolicy.DOCUMENT_POLICY_FAILURE:
+            return {
+                ...state,
+                documentPolicy: {
+                    ...state.documentPolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveUserConfiguration.SAVE_USER_CONFIG_REQUEST:
+            return {
+                ...state,
+                saveConfig: {
+                    ...state.saveConfig,
+                    loading: true
+                }
+            }
+        case SaveUserConfiguration.SAVE_USER_CONFIG_SUCCESS:
+            return {
+                ...state,
+                saveConfig: {
+                    ...state.saveConfig,
+                    loading: false,
+                    success: true
+                }
+            }
+        case SaveUserConfiguration.SAVE_USER_CONFIG_FAILURE:
+            return {
+                ...state,
+                saveConfig: {
+                    ...state.saveConfig,
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveUserConfiguration.SAVE_USER_CONFIG_RESET:
+            return {
+                ...state,
+                saveConfig: {
+                    ...state.saveConfig,
+                    loading: false,
+                    error: false,
+                    success: false
                 }
             }
         default:

@@ -8,7 +8,7 @@ const COLOR_PALETTE = {
     GREY: 'rgba(0,0,0,.8)',
     BITTER_SWEET: 'rgba(255, 119, 101, 0.8)',
     BLUE: 'rgba(10, 87, 250, 0.8)',
-    PINK: 'rgba(255, 209, 255, 1)',
+    PCNK: 'rgba(255, 209, 255, 1)',
     GREEN: 'rgba(0, 235, 168, 0.8)',
     YELLOW: 'rgba(255, 181, 0, 0.8)',
     PURPLE: 'rgba(168, 112, 252, 0.8)',
@@ -18,7 +18,7 @@ const SECONDARY_COLOR = {
     GREY: 'rgba(0,0,0, 0.5)',
     BITTER_SWEET: 'rgba(255, 144, 129, 0.9)',
     BLUE_TINT: 'rgba(148, 222, 252, 0.9)',
-    PINK_TINT: 'rgba(255, 237, 255, 1)',
+    PCNK_TINT: 'rgba(255, 237, 255, 1)',
     GREEN_TINT: 'rgba(153, 247, 219, 0.9)',
     YELLOW_TINT: 'rgba(255, 224, 153, 0.9)',
     PURPLE_TINT: 'rgba(219, 199, 255, 0.9)'
@@ -69,7 +69,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
                 backgroundColor: secondary_colors[index],
             }
         })
-    } else if (chartType === 'SIMPLE_PIE' || chartType === 'Doughnut') {
+    } else if (chartType === 'SIMPLE_PCE' || chartType === 'Doughnut') {
         dataSet = dataSet.map((w, index) => {
             return {
                 label: w.label,

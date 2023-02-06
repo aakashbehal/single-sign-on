@@ -87,6 +87,7 @@ const getRecordStatus = async (type: any) => {
         throw error
     }
 }
+
 const getStatus = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_INVENTORY_SERVICE}/getAllAccountStatuses`)
@@ -106,6 +107,7 @@ const getRecordSource = async (type: any) => {
         throw error
     }
 }
+
 const getAccountConfig = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_INVENTORY_SERVICE}/getAccountConf`)
@@ -156,9 +158,9 @@ const fetchAllTypes = () => {
 
 const getDocumentTypes = async (userType) => {
     try {
-        const response = await axiosCustom.get(`/document/documentType`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/type`)
         const data = handleResponse(response)
-        return data.response
+        return data.response.datas
     } catch (error: any) {
         throw error
     }
@@ -166,7 +168,7 @@ const getDocumentTypes = async (userType) => {
 
 const getProductTypes = async (userType) => {
     try {
-        const response = await axiosCustom.get(`/document/productType`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/product/type`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

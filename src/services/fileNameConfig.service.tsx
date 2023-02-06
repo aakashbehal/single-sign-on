@@ -1,30 +1,22 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getConjunction = async (userType) => {
+const getConfig = async (requestParams) => {
     try {
-        const response = await axiosCustom.get(`/fileNamesConfig`, { params: { userType, fileNameConfig: 'SEPARATOR' } })
-        const data = handleResponse(response)
-        return data.response.docMgrConfigs[0]
-    } catch (error: any) {
-        throw error
-    }
-}
-
-const getFieldOptions = async (userType) => {
-    try {
-        const response = await axiosCustom.get(`/fileNamesConfig`, { params: { userType, fileNameConfig: '' } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
+            { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response.docMgrConfigs
     } catch (error: any) {
+        console.log(error)
         throw error
     }
 }
 
-
 const getUserConfig = async (requestParams) => {
     try {
-        const response = await axiosCustom.get(`/configuration`, { params: requestParams })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+            { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -35,49 +27,32 @@ const getUserConfig = async (requestParams) => {
 const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, userType, fieldsSelected) => {
     let allFields = [];
     if (dataFieldOptions && dataFieldOptions.length > 0) {
-        allFields = dataFieldOptions[0].docMgrConfigVals
+        allFields = dataFieldOptions[0].configVals
     }
     let selectedFields: any = []
     let notAvailableFields: any = []
-    let defaultFields: any = []
-    if (userType === 'Client') {
-        defaultFields = [1, 2]
-    } else {
-        defaultFields = [1, 2, 3]
-    }
-    let defaultFieldsShortCode: any = []
     if (serverOptions && serverOptions.length === 0) {
         /**
          * Default available and selection
          */
-        if (userType !== 'Client') {
-            selectedFields = ['CID', "DTI", "CAN"]
-            notAvailableFields = ['CID', "DTI", "CAN"]
-            defaultFieldsShortCode = ['CID', "DTI", "CAN"]
+        if (userType !== 'Client' || userType === "Equabli") {
+            selectedFields = ['CID', "DT", "CAN", "PC"]
+            notAvailableFields = ['CID', "DT", "CAN"]
         } else {
-            selectedFields = ['CAN', "DTI"]
-            notAvailableFields = ['CID', 'DTI', 'CAN']
-            defaultFieldsShortCode = ['CAN', "DTI"]
+            selectedFields = ['CAN', "DT", "PC"]
+            notAvailableFields = ['CID', 'DT', 'CAN']
         }
     } else if (serverOptions && serverOptions.length > 0) {
         /**
          * Saved selections
          */
         serverOptions.forEach((field, index) => {
-            fieldsSelected[index + 1] = field.docMgrConfigValSelectedCode
-            selectedFields.push(field.docMgrConfigValSelectedCode)
-            notAvailableFields.push(field.docMgrConfigValSelectedCode)
-            if (defaultFields.indexOf(index + 1) !== -1) {
-                defaultFieldsShortCode.push(field.docMgrConfigValSelectedCode)
-            }
+            fieldsSelected[index + 1] = field.configValSelectedCode
+            selectedFields.push(field.configValSelectedCode)
+            notAvailableFields.push(field.configValSelectedCode)
         })
     }
     const dataFieldOptionsFiltered = allFields.map((fO: any) => {
-        if (defaultFieldsShortCode.indexOf(fO.shortCode) !== -1) {
-            fO.default = true
-        } else {
-            fO.default = false
-        }
         if (selectedFields.indexOf(fO.shortCode) !== -1) {
             fO.selected = true
         } else {
@@ -90,12 +65,37 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
         }
         return fO
     })
-    return { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
+    if (!fieldsSelected[4]) {
+        fieldsSelected[4] = null
+    }
+    if (!fieldsSelected[5]) {
+        fieldsSelected[5] = null
+    }
+    if (!fieldsSelected[6]) {
+        fieldsSelected[6] = null
+    }
+    if (userType === 'Partner' && !fieldsSelected[7]) {
+        fieldsSelected[7] = null
+    }
+    let Obj = { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
+    console.log(Obj)
+    return Obj
+}
+
+const saveUserConfiguration = async (requestBody) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+            requestBody)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
 }
 
 export const fileNameConfigService = {
-    getConjunction,
-    getFieldOptions,
+    getConfig,
     getUserConfig,
-    handleDefaultAndSavedSelection
+    handleDefaultAndSavedSelection,
+    saveUserConfiguration
 }

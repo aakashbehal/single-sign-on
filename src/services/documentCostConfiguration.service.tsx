@@ -3,7 +3,37 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const getDocumentCost = async (userType) => {
     try {
-        const response = await axiosCustom.get(`/document/costs`, { params: { userType } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost/all`)
+        const data = handleResponse(response)
+        return data.response.datas
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const saveDocumentCost = async (payload) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost`, payload)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const editDocumentCost = async (payload) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost`, payload)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const deleteDocumentCost = async (docTypeCode) => {
+    try {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost/${docTypeCode}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -13,5 +43,8 @@ const getDocumentCost = async (userType) => {
 
 
 export const documentCostConfigurationService = {
-    getDocumentCost
+    getDocumentCost,
+    saveDocumentCost,
+    editDocumentCost,
+    deleteDocumentCost
 }

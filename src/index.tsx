@@ -6,7 +6,7 @@ import { configureFakeBackend } from './helpers';
 import { httpInterceptor } from './helpers/util';
 
 httpInterceptor()
-configureFakeBackend()
+// configureFakeBackend()
 
 ReactDOM.render(
   // <React.StrictMode>

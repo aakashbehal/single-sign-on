@@ -47,6 +47,18 @@ const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionT
                     </Container>
                 </Modal.Body>
             }
+            {
+                details && type === 'sentDocumentRequest'
+                && <Modal.Body className="show-grid">
+                    <Container>
+                        <p>
+                            Are you sure you want to delete Document
+                            Request for <b>{details.documentType}</b> requested from <b>{details.requestedFrom}</b>
+                        </p>
+                    </Container>
+                </Modal.Body>
+
+            }
             <Modal.Footer>
                 <Button variant="danger" ref={deleteRef} onClick={confirmDelete}>{actionText}</Button>
                 <Button variant="dark" onClick={onHide}>Cancel</Button>

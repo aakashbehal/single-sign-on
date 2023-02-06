@@ -50,7 +50,8 @@ const MyDocuments = () => {
     const search = (pageSize = pageCount, pageNumber = 0) => {
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders({
             pageSize,
-            pageNumber
+            pageNumber,
+            orgType: 'CT'
         }))
     }
 
@@ -62,6 +63,10 @@ const MyDocuments = () => {
     const handlePagination = (pageSize: number, pageNumber: number) => {
         setPageCount(pageSize)
         search(pageSize, pageNumber)
+    }
+
+    const downloadDocument = (document) => {
+        console.log(document)
     }
 
     return (<>
@@ -222,7 +227,7 @@ const MyDocuments = () => {
         <Col>
             <TableComponent
                 data={folders}
-                isLoading={false}
+                isLoading={loading}
                 map={{
                     "folderName": "Name",
                     "fileSize": "Size",
@@ -244,7 +249,7 @@ const MyDocuments = () => {
                 searchCriteria={{}}
                 addEditArray={
                     {
-                        download: (data) => console.log(`download Action`),
+                        download: (data) => downloadDocument(data),
                         share: (data) => console.log(`share action`),
                         view: (data) => console.log(`View Action`),
                         delete: (data) => console.log(`Delete Action`)
@@ -256,7 +261,7 @@ const MyDocuments = () => {
         </Col>
         {
             uploadDocModal
-            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="myDocument" />
+            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="myDocument" search={search} />
         }
     </>)
 }

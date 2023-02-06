@@ -6,23 +6,42 @@ import { FiEdit2 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead"
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { useToasts } from "react-toast-notifications";
 
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
-import { DocumentCostConfigActionCreator } from "../../store/actions/documentCostConfiguration.actions";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
-
 import Styles from "./User.module.sass";
 import { RequiredDocumentActionCreator } from "../../store/actions/requiredDocuments.actions";
+import { createMessage } from "../../helpers/messages"
 
 const RequiredDocuments = () => {
     const dispatch = useDispatch()
+    const { addToast } = useToasts();
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [addEditRequired, setAddEditRequired] = useState(false)
     const [editRequired, setEditRequired] = useState(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null)
-
-    const { requiredDocuments, loading, error, productTypes, loadingProductTypes, errorProductTypes, documentTypes, loadingDocumentTypes, errorDocumentTypes } = useSelector((state: any) => ({
+    const [selectedProduct, setSelectedProduct] = useState<any>([])
+    const [requiredDocumentsUpdated, setRequiredDocumentsUpdated] = useState<any>([])
+    const { requiredDocuments,
+        loading,
+        error,
+        productTypes,
+        loadingProductTypes,
+        errorProductTypes,
+        documentTypes,
+        loadingDocumentTypes,
+        errorDocumentTypes,
+        adding,
+        addSuccessful,
+        addError,
+        editing,
+        editSuccessful,
+        editError,
+        deleteSuccessful,
+        deleteError
+    } = useSelector((state: any) => ({
         requiredDocuments: state.requiredDocuments.data,
         loading: state.requiredDocuments.loading,
         error: state.requiredDocuments.error,
@@ -31,26 +50,90 @@ const RequiredDocuments = () => {
         errorProductTypes: state.types.productType.error,
         documentTypes: state.types.documentType.data,
         loadingDocumentTypes: state.types.documentType.loading,
-        errorDocumentTypes: state.types.documentType.error
+        errorDocumentTypes: state.types.documentType.error,
+        adding: state.requiredDocuments.adding,
+        addSuccessful: state.requiredDocuments.addSuccessful,
+        addError: state.requiredDocuments.addError,
+        editing: state.requiredDocuments.editing,
+        editSuccessful: state.requiredDocuments.editSuccessful,
+        editError: state.requiredDocuments.editError,
+        deleteSuccessful: state.requiredDocuments.deleteSuccessful,
+        deleteError: state.requiredDocuments.deleteError
     }))
 
     useEffect(() => {
-        dispatch(RequiredDocumentActionCreator.getRequiredDocuments('CL'))
+        getRequiredDocuments()
         dispatch(TypesActionCreator.getProductTypes('CL'))
         dispatch(TypesActionCreator.getDocumentTypes('CL'))
     }, [])
+
+    useEffect(() => {
+        if (requiredDocuments && requiredDocuments.length > 0) {
+            let tempRequiredDocuments = Object.assign([], requiredDocuments)
+            tempRequiredDocuments = tempRequiredDocuments.map((tRD) => {
+                tRD.documents = tRD.documents.map((d) => {
+                    d.shortCode = d.documentCode
+                    d.documentType = d.documentName
+                    d.description = d.documentName
+                    delete d.documentCode
+                    delete d.documentName
+                    return d
+                })
+                return tRD
+            })
+            // setRequiredDocumentsUpdated()
+            let tempC = requiredDocuments.map((c) => {
+                return c.productCode
+            })
+            setSelectedProduct(tempC)
+        }
+    }, [requiredDocuments])
+
+    useEffect(() => {
+        if (addSuccessful) {
+            addToast(createMessage('success', `added`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
+            setAddEditRequired(false);
+            getRequiredDocuments()
+        }
+        if (addError) { addToast(createMessage('error', `adding`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
+        if (editSuccessful) {
+            addToast(createMessage('success', `edit`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
+            setAddEditRequired(false)
+            getRequiredDocuments()
+        }
+        if (editError) { addToast(createMessage('error', `editing`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
+        if (deleteSuccessful) {
+            addToast(createMessage('success', `delete`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
+            setShowDeleteConfirm(false)
+            getRequiredDocuments()
+        }
+        if (deleteError) { addToast(createMessage('error', `deleting`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
+    }, [addSuccessful,
+        addError,
+        editSuccessful,
+        editError,
+        deleteSuccessful,
+        deleteError])
 
     const handleEdit = (required) => {
         setEditRequired(required)
         setAddEditRequired(true)
     }
 
-    const deleteAlert = () => { }
+    const getRequiredDocuments = () => {
+        dispatch(RequiredDocumentActionCreator.getRequiredDocuments('CL'))
+    }
+
+    const deleteAlert = () => {
+        console.log(details)
+        dispatch(RequiredDocumentActionCreator.deleteRequiredDocuments(details.productCode))
+    }
 
     const handleDetails = (required) => {
         setDetails(required)
         setShowDeleteConfirm(true)
     }
+
 
     return (<>
         <Col sm={12}>
@@ -122,8 +205,8 @@ const RequiredDocuments = () => {
                             return (<tr key={`rD_${index}`}>
                                 <td>{cT.productName}</td>
                                 <td>
-                                    {cT.documentList && cT.documentList.map((dL, index) => {
-                                        return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentName}</span>
+                                    {cT.documents && cT.documents.map((dL, index) => {
+                                        return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentType}</span>
                                     })}
                                 </td>
                                 <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
@@ -162,7 +245,16 @@ const RequiredDocuments = () => {
         </Col>
         {
             addEditRequired
-            && <AddEditCost show={addEditRequired} onHide={() => setAddEditRequired(false)} editRequired={editRequired} Styles={Styles} documentTypes={documentTypes} productTypes={productTypes} />
+            && <AddEditRequiredDocuments
+                show={addEditRequired}
+                onHide={() => setAddEditRequired(false)}
+                editRequired={editRequired}
+                Styles={Styles}
+                documentTypes={documentTypes}
+                dispatch={dispatch}
+                productTypes={productTypes}
+                selectedProduct={selectedProduct}
+            />
         }
         {
             showDeleteConfirm
@@ -177,7 +269,23 @@ const RequiredDocuments = () => {
     </>)
 }
 
-const AddEditCost = ({ show, onHide, Styles, documentTypes, editRequired, productTypes }) => {
+const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editRequired, productTypes, dispatch, selectedProduct }) => {
+    const formRef = useRef<any>()
+    const [documentTypesSelected, setDocumentTypesSelected] = useState<any>([])
+
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        const {
+            productType
+        } = formRef.current
+        dispatch(RequiredDocumentActionCreator.saveRequiredDocuments({
+            "productCode": productType.value,
+            "docTypeCode": documentTypesSelected.map((dT) => {
+                return dT.shortCode
+            })
+        }))
+    }
+
     return (
         <Modal
             show={show}
@@ -187,66 +295,71 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editRequired, produc
             size="lg"
             animation={true}
         >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter" >
-                    {editRequired ? 'Edit Required Document Configuration' : "Add New Required Document Configuration"}
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Body className="show-grid">
-                <Container>
-                    <br />
-                    <Col md={12} sm={12} >
-                        <Form.Group as={Col} className="mb-4">
-                            <Col md={12} sm={12} >
-                                <Form.Control
-                                    as="select"
-                                    name="service_offered"
-                                    disabled={editRequired}
-                                    defaultValue={editRequired ? editRequired.productName : ''}
-                                    className="select_custom white">
-                                    <option></option>
-                                    {
-                                        (productTypes && productTypes.length > 0) &&
-                                        productTypes.map((dT: any, index: number) => {
-                                            return <option key={`cr_${index}`} value={dT.statusCode}>{dT.name}</option>
-                                        })
-                                    }
-                                </Form.Control>
-                            </Col>
-                            <Form.Label className="label_custom white">Product</Form.Label>
-                        </Form.Group>
-                    </Col>
-                    <br />
-                    <Col sm={12}>
-                        <Form.Group as={Col} className="mb-4">
-                            <Col md={12} sm={12}>
-                                {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
-                                <PublicMethodsExample documentTypes={documentTypes} editRequired={editRequired} />
-                            </Col>
-                            <Form.Label className="label_custom white">Required Documents</Form.Label>
-                        </Form.Group>
-                    </Col>
-                </Container>
-            </Modal.Body>
-            <Modal.Footer style={{ padding: '1rem 4rem 2rem' }}>
-                <Button variant="dark" type="submit" style={{ width: '100%' }}>Save</Button>
-                <Button variant="dark" type="submit" style={{ width: '100%' }} onClick={onHide}>Cancel</Button>
-            </Modal.Footer>
+            <Form ref={formRef} onSubmit={(e) => handleSubmit(e)}>
+                <Modal.Header closeButton>
+                    <Modal.Title id="contained-modal-title-vcenter" >
+                        {editRequired ? 'Edit Required Document Configuration' : "Add New Required Document Configuration"}
+                    </Modal.Title>
+                </Modal.Header>
+                <Modal.Body className="show-grid">
+                    <Container>
+                        <br />
+                        <Col md={12} sm={12} >
+                            <Form.Group as={Col} className="mb-4">
+                                <Col md={12} sm={12} >
+                                    <Form.Control
+                                        as="select"
+                                        name="productType"
+                                        disabled={editRequired}
+                                        defaultValue={editRequired ? editRequired.productCode : ''}
+                                        className="select_custom white">
+                                        <option></option>
+                                        {
+                                            (productTypes && productTypes.length > 0) &&
+                                            productTypes.map((dT: any, index: number) => {
+                                                return <option key={`cr_${index}`} disabled={selectedProduct.indexOf(dT.productCode) !== -1} value={dT.productCode}>{dT.name}</option>
+                                            })
+                                        }
+                                    </Form.Control>
+                                </Col>
+                                <Form.Label className="label_custom white">Product</Form.Label>
+                            </Form.Group>
+                        </Col>
+                        <br />
+                        <Col sm={12}>
+                            <Form.Group as={Col} className="mb-4">
+                                <Col md={12} sm={12}>
+                                    {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
+                                    <PublicMethodsExample documentTypes={documentTypes} editRequired={editRequired} setDocumentTypesSelected={setDocumentTypesSelected} />
+                                </Col>
+                                <Form.Label className="label_custom white">Required Documents</Form.Label>
+                            </Form.Group>
+                        </Col>
+                    </Container>
+                </Modal.Body>
+                <Modal.Footer style={{ padding: '1rem 4rem 2rem' }}>
+                    <Button variant="dark" type="submit" style={{ width: '100%' }}>Add</Button>
+                </Modal.Footer>
+            </Form>
         </Modal >
     )
 }
 
-const PublicMethodsExample = ({ documentTypes, editRequired }) => {
+const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSelected }) => {
     const ref = useRef<any>();
     return (
         <>
             <Typeahead
-                defaultSelected={editRequired ? editRequired.documentList : []}
+                defaultSelected={editRequired ? editRequired.documents : []}
                 id="public-methods-example"
-                labelKey="documentName"
+                labelKey="documentType"
                 multiple
                 options={documentTypes}
-                placeholder="Choose a state..."
+                onChange={(selected) => {
+                    setDocumentTypesSelected(selected)
+                }}
+                ignoreDiacritics={false}
+                placeholder="Choose Document Types..."
                 ref={ref}
             />
         </>

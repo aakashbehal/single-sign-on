@@ -9,7 +9,7 @@ import { GiSandsOfTime } from 'react-icons/gi';
 import { BiPencil } from "react-icons/bi";
 import { CgTrash } from "react-icons/cg"
 import { VscRunAll } from "react-icons/vsc"
-import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye } from "react-icons/ai"
+import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye, AiFillFileExclamation } from "react-icons/ai"
 import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
@@ -409,434 +409,454 @@ const TableComponent = ({
         }
     }
 
-    const tableHandler = () => (
-        <>
-            <thead>
-                <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                    {/* {isPagination && <th className="span1">#</th>} */}
-                    {(parentComponent === 'myRequests'
-                        || parentComponent === 'pendingForApproval'
-                        || parentComponent === 'pendingMyApproval'
-                    ) && <th>#</th>}
-                    {
-                        (parentComponent === 'myDocuments' || parentComponent === 'documents')
-                        && <th className="span1">
-                            <div
-                                className="table_header_container"
-                                style={
-                                    {
-                                        'minWidth': '20px',
-                                        'height': '30px',
-                                        'alignItems': 'center'
-                                    }
-                                }>
-                                <Form.Control type='Checkbox' onChange={() => handleAllSelect()} style={{ cursor: 'pointer' }}></Form.Control>
-                            </div>
-                        </th>
-                    }
-                    {
-                        // eslint-disable-next-line array-callback-return
-                        headers && headers.map((header, index) => {
-                            if (header !== 'clientId'
-                                && header !== 'recordStatusVal'
-                                && header !== 'batchSchedulerGroupId'
-                                && header !== 'logDescription'
-                                && header !== 'queueId'
-                                && header !== 'slaStatus'
-                                && header !== 'alertDefinition'
-                                && header !== 'RFILink'
-                                && header !== 'auditLink'
-                            ) {
-                                return (
-                                    <th
-                                        className="span1"
-                                        key={`header_${index}`}
-                                    >
-                                        <div
-                                            className="table_header_container"
-                                            style={
-                                                {
-                                                    'minWidth': ["servicesOffered", "capacity", "commissionRate", "accountTypeServiced", "compliance", "collections"].indexOf(header) !== -1
-                                                        ? '300px'
-                                                        : ["preview", "upload", "download", "autoRenew"].indexOf(header) !== -1 ? '110px' : '220px'
-                                                }
-                                            }>
-                                            <div>
-                                                {map[header] ? map[header] : header}
-                                            </div>
-                                            {
-                                                sorting
-                                                && (
-                                                    <div className="sorting">
-                                                        <TiArrowSortedUp size={12} className={`header_asc ${header}_asc`} onClick={() => sortBy(header, 'asc')} />
-                                                        <TiArrowSortedDown size={12} className={`header_desc ${header}_desc`} onClick={() => sortBy(header, 'desc')} />
-                                                    </div>
-                                                )
-                                            }
-                                        </div>
-                                    </th>
-                                );
-                            }
-
-                        })
-                    }
-                    {
-                        ((typeof addEditArray.edit !== 'undefined')
-                            || (typeof addEditArray.view !== 'undefined' && headers.indexOf('alertDefinition') !== -1))
-                        && <th className="span1" style={{ minWidth: '130px' }}>Action Items</th>
-                    }
-                    {
-                        ((typeof tableAction.openSolModal !== 'undefined') && headers.indexOf('dtClientStatute') !== -1)
-                        && <th className="span1" style={{ minWidth: '130px', 'textAlign': 'center' }}>Action</th>
-                    }
-                    {
-                        (parentComponent === 'myDocuments' || parentComponent === 'documents') && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
-                    }
-                </tr>
-            </thead>
-            <tbody>
+    const tableHeaderHandler = () => {
+        return <thead>
+            <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                {/* {isPagination && <th className="span1">#</th>} */}
+                {(parentComponent === 'myRequests'
+                    || parentComponent === 'pendingForApproval'
+                    || parentComponent === 'pendingMyApproval'
+                ) && <th>#</th>}
                 {
-                    data && data.map((d: any, index: number) => (
-                        <tr
-                            key={`data_${index}`} style={{
-                                lineHeight: '30px',
-                                textAlign: 'center',
-                                position: 'relative',
-                                zIndex: 9,
-                                backgroundColor: dueDateHandler(d)
-                            }}
-
-                        >
-                            {/* {isPagination && <td>{index + (currentPage !== 1 ? ((currentPage - 1) * 10) : 0) + 1}</td>} */}
-                            {(parentComponent === 'myRequests'
-                                || parentComponent === 'pendingForApproval'
-                                || parentComponent === 'pendingMyApproval'
-                            ) && <th>{index + 1}</th>}
-                            {
-                                (parentComponent === 'myDocuments' || parentComponent === 'documents')
-                                && <th className="span1">
+                    (parentComponent === 'myDocuments' || parentComponent === 'documents')
+                    && <th className="span1">
+                        <div
+                            className="table_header_container"
+                            style={
+                                {
+                                    'minWidth': '20px',
+                                    'height': '30px',
+                                    'alignItems': 'center'
+                                }
+                            }>
+                            <Form.Control type='Checkbox' onChange={() => handleAllSelect()} style={{ cursor: 'pointer' }}></Form.Control>
+                        </div>
+                    </th>
+                }
+                {
+                    // eslint-disable-next-line array-callback-return
+                    headers && headers.map((header, index) => {
+                        if (header !== 'clientId'
+                            && header !== 'recordStatusVal'
+                            && header !== 'batchSchedulerGroupId'
+                            && header !== 'logDescription'
+                            && header !== 'queueId'
+                            && header !== 'slaStatus'
+                            && header !== 'alertDefinition'
+                            && header !== 'RFILink'
+                            && header !== 'auditLink'
+                        ) {
+                            return (
+                                <th
+                                    className="span1"
+                                    key={`header_${index}`}
+                                >
                                     <div
                                         className="table_header_container"
                                         style={
                                             {
-                                                'minWidth': '20px',
-                                                'height': '30px',
-                                                'alignItems': 'center'
+                                                'minWidth': ["servicesOffered", "capacity", "commissionRate", "accountTypeServiced", "compliance", "collections"].indexOf(header) !== -1
+                                                    ? '300px'
+                                                    : ["preview", "upload", "download", "autoRenew"].indexOf(header) !== -1 ? '110px' : '220px'
                                             }
                                         }>
-                                        <Form.Control type='Checkbox' id={d.folderName} checked={isCheck.includes(d.folderName)} style={{ cursor: 'pointer' }} onChange={handleClick} ></Form.Control>
-                                    </div>
-                                </th>
-                            }
-                            {
-                                // eslint-disable-next-line array-callback-return
-                                headers.map((header: any, index2) => {
-                                    if (header !== 'clientId'
-                                        && header !== 'recordStatusVal'
-                                        && header !== 'batchSchedulerGroupId'
-                                        && header !== 'logDescription'
-                                        && header !== 'slaStatus'
-                                        && header !== 'queueId'
-                                        && header !== 'alertDefinition'
-                                        && header !== 'RFILink'
-                                        && header !== 'auditLink'
-                                    ) {
-                                        if (actionArray.includes(header)) {
-                                            return (
-                                                <td
-                                                    style={
-                                                        {
-                                                            background: header === 'complianceId' ? d.slaStatus : '',
-                                                            color: header === 'complianceId' && d.slaStatus ? 'white' : ''
-                                                        }
-                                                    }
-                                                    key={`data_2${index2}`}
-                                                    className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}
-                                                >
-                                                    {
-                                                        servicingRequestIndicator(header, d)
-                                                    }
-                                                    {
-                                                        priorityIndicator(header, d)
-                                                    }
-                                                    {
-                                                        header === "folderName" && parentComponent === 'myDocuments' &&
-                                                        <div style={{
-                                                            display: 'flex',
-                                                            justifyContent: 'center',
-                                                            alignItems: 'center'
-                                                        }}><AiFillFolder size={20} /><span
-                                                            style={{ paddingLeft: '.7rem' }}
-                                                            onClick={() => handleNavigate(d, header)}
-                                                            className="clickable_td_emp">
-                                                                {d[header]}
-                                                            </span>
-                                                        </div>
-                                                    }
-                                                    {
-                                                        header !== "folderName" && parentComponent !== 'myDocuments' &&
-                                                        <span onClick={() => handleNavigate(d, header)} className="clickable_td_emp">
-                                                            {d[header]}
-                                                        </span>
-                                                    }
-
-                                                </td>
-                                            );
-                                        }
-                                        if (header === 'isValidationRequired') {
-                                            return <td>{d[header] ? 'Yes' : 'No'}</td>;
-                                        }
-                                        if (header === 'isExcluded') {
-                                            return <td>{d[header] ? 'Y' : 'N'}</td>;
-                                        }
-                                        if (header === 'isAdditionalTimeRequired') {
-                                            return <td>{d[header] ? 'Yes' : 'No'}</td>;
-                                        }
-                                        if (header === 'keyContacts') {
-                                            return <td>{keyContactsHandler(d[header])}</td>
-                                        }
-                                        if (header === 'servicesOffered'
-                                            || header === "accountTypeServiced"
-                                        ) {
-                                            return <td>{serviceOfferedHandler(d[header])}</td>
-                                        }
-                                        if (parentComponent === 'partnerSearch' && (header === 'accountType'
-                                            || header === 'productType')) {
-                                            return <td>{serviceOfferedHandler(d[header])}</td>
-                                        }
-                                        if (header === "capacity") {
-                                            return <td>{capacityHandler(d[header])}</td>
-                                        }
-                                        if (header === "commissionRate") {
-                                            return <td>{commissionRateHandler(d[header])}</td>
-                                        }
-                                        if (header === "compliance") {
-                                            return <td>{complianceHandler(d[header])}</td>
-                                        }
-                                        if (parentComponent !== 'partnerSearch' && header === "collections") {
-                                            return <td>{collectionsHandler(d[header])}</td>
-                                        }
-                                        if (header === "sharedWith") {
-                                            return <td>{handleSharedWith(d[header])}</td>
-                                        }
-                                        if (header === "preview") {
-                                            return <td><BsFileEarmarkText size={24} /></td>
-                                        }
-                                        if (header === 'upload') {
-                                            return <td><AiOutlineCloudUpload size={24} /></td>
-                                        }
-                                        if (header === 'download') {
-                                            return <td><AiOutlineCloudDownload size={24} /></td>
-                                        }
-                                        if (!d[header]) {
-                                            return <td><b>-</b></td>
-                                        }
-                                        if (header === "partnerStatus") {
-                                            return <td style={{ textAlign: 'left' }}>
-                                                <span style={{
-                                                    backgroundColor: d['partnerStatus'] === 'Equabli Recommended' ? '#ff7765' : d['partnerStatus'] === 'Equabli Approved' ? "rgb(0, 235, 165)" : '#00b5fc',
-                                                    color: 'white',
-                                                    padding: '.3rem 1rem',
-                                                    borderRadius: '.3rem'
-                                                }}>{d[header]}</span><br />
-                                                {
-                                                    (d['partnerStatus'] === 'Equabli Recommended' || d['partnerStatus'] === 'Equabli Approved')
-                                                    && <>
-                                                        <b><a href={d['RFILink']}>Review RFI</a></b><br />
-                                                        <b><a href={d['auditLink']}>Review Audit</a></b>
-                                                    </>
-                                                }
-                                            </td>
-                                        }
-                                        if (header === 'executionStatusVal') {
-                                            return (<td>
-                                                <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                                                    {d[header]}
-                                                    <OverlayTrigger
-                                                        placement="right"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                {d['logDescription']}
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <AiFillQuestionCircle size={20} style={{ marginLeft: '1rem' }} />
-                                                    </OverlayTrigger>
-                                                </span>
-                                            </td>)
-                                        }
-                                        if (header === 'complianceIds') {
-                                            return (
-                                                <td className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}>
-                                                    {complianceSplitter(d[header], d)}
-                                                </td>
+                                        <div>
+                                            {map[header] ? map[header] : header}
+                                        </div>
+                                        {
+                                            sorting
+                                            && (
+                                                <div className="sorting">
+                                                    <TiArrowSortedUp size={12} className={`header_asc ${header}_asc`} onClick={() => sortBy(header, 'asc')} />
+                                                    <TiArrowSortedDown size={12} className={`header_desc ${header}_desc`} onClick={() => sortBy(header, 'desc')} />
+                                                </div>
                                             )
                                         }
-                                        if (colorArray.includes(header)) {
-                                            return (
-                                                <td
-                                                    style={{ backgroundColor: `${d[header]}` }}
-                                                    key={`data_2${index2}`}
-                                                >{''}
-                                                </td>
-                                            );
+                                    </div>
+                                </th>
+                            );
+                        }
+
+                    })
+                }
+                {
+                    ((typeof addEditArray.edit !== 'undefined')
+                        || (typeof addEditArray.view !== 'undefined' && headers.indexOf('alertDefinition') !== -1))
+                    && <th className="span1" style={{ minWidth: '130px' }}>Action Items</th>
+                }
+                {
+                    ((typeof tableAction.openSolModal !== 'undefined') && headers.indexOf('dtClientStatute') !== -1)
+                    && <th className="span1" style={{ minWidth: '130px', 'textAlign': 'center' }}>Action</th>
+                }
+                {
+                    (
+                        parentComponent === 'myDocuments'
+                        || parentComponent === 'documents'
+                        || parentComponent === 'sentDocumentRequest'
+                    )
+                    && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
+                }
+            </tr>
+        </thead>
+    }
+
+    const tableBodyHandler = () => {
+        return <tbody>
+            {
+                data && data.map((d: any, index: number) => (
+                    <tr
+                        key={`data_${index}`} style={{
+                            lineHeight: '30px',
+                            textAlign: 'center',
+                            position: 'relative',
+                            zIndex: 9,
+                            backgroundColor: dueDateHandler(d)
+                        }}
+
+                    >
+                        {/* {isPagination && <td>{index + (currentPage !== 1 ? ((currentPage - 1) * 10) : 0) + 1}</td>} */}
+                        {(parentComponent === 'myRequests'
+                            || parentComponent === 'pendingForApproval'
+                            || parentComponent === 'pendingMyApproval'
+                        ) && <th>{index + 1}</th>}
+                        {
+                            (parentComponent === 'myDocuments' || parentComponent === 'documents')
+                            && <th className="span1">
+                                <div
+                                    className="table_header_container"
+                                    style={
+                                        {
+                                            'minWidth': '20px',
+                                            'height': '30px',
+                                            'alignItems': 'center'
                                         }
+                                    }>
+                                    <Form.Control type='Checkbox' id={d.folderName} checked={isCheck.includes(d.folderName)} style={{ cursor: 'pointer' }} onChange={handleClick} ></Form.Control>
+                                </div>
+                            </th>
+                        }
+                        {
+                            // eslint-disable-next-line array-callback-return
+                            headers.map((header: any, index2) => {
+                                if (header !== 'clientId'
+                                    && header !== 'recordStatusVal'
+                                    && header !== 'batchSchedulerGroupId'
+                                    && header !== 'logDescription'
+                                    && header !== 'slaStatus'
+                                    && header !== 'queueId'
+                                    && header !== 'alertDefinition'
+                                    && header !== 'RFILink'
+                                    && header !== 'auditLink'
+                                ) {
+                                    if (actionArray.includes(header)) {
                                         return (
                                             <td
-                                                className={`${checkType(d[header], header) ? 'td_number' : 'td_string'}`}
+                                                style={
+                                                    {
+                                                        background: header === 'complianceId' ? d.slaStatus : '',
+                                                        color: header === 'complianceId' && d.slaStatus ? 'white' : ''
+                                                    }
+                                                }
                                                 key={`data_2${index2}`}
+                                                className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}
                                             >
-                                                {currencyColumns.indexOf(header) !== -1 ? '$' : ''}
-                                                {' '}
-                                                {d[header]}
+                                                {
+                                                    servicingRequestIndicator(header, d)
+                                                }
+                                                {
+                                                    priorityIndicator(header, d)
+                                                }
+                                                {
+                                                    header === "folderName" && parentComponent === 'myDocuments' &&
+                                                    <div
+                                                        style={{
+                                                            display: 'flex',
+                                                            alignItems: 'center'
+                                                        }}
+                                                    >
+                                                        <AiFillFolder size={20} />
+                                                        <span
+                                                            style={{ paddingLeft: '.7rem' }}
+                                                            onClick={() => handleNavigate(d, header)}
+                                                            className="clickable_td_emp"
+                                                        >
+                                                            {d[header]}
+                                                        </span>
+                                                    </div>
+                                                }
+                                                {
+                                                    header !== "folderName" && parentComponent !== 'myDocuments' &&
+                                                    <span onClick={() => handleNavigate(d, header)} className="clickable_td_emp">
+                                                        {d[header]}
+                                                    </span>
+                                                }
+
                                             </td>
                                         );
                                     }
+                                    if (header === 'isValidationRequired') {
+                                        return <td key={`data_2${index2}`}>{d[header] ? 'Yes' : 'No'}</td>;
+                                    }
+                                    if (header === 'isExcluded') {
+                                        return <td key={`data_2${index2}`}>{d[header] ? 'Y' : 'N'}</td>;
+                                    }
+                                    if (header === 'isAdditionalTimeRequired') {
+                                        return <td key={`data_2${index2}`}>{d[header] ? 'Yes' : 'No'}</td>;
+                                    }
+                                    if (header === 'keyContacts') {
+                                        return <td key={`data_2${index2}`}>{keyContactsHandler(d[header])}</td>
+                                    }
+                                    if (header === 'servicesOffered'
+                                        || header === "accountTypeServiced"
+                                    ) {
+                                        return <td key={`data_2${index2}`}>{serviceOfferedHandler(d[header])}</td>
+                                    }
+                                    if (parentComponent === 'partnerSearch' && (header === 'accountType'
+                                        || header === 'productType')) {
+                                        return <td key={`data_2${index2}`}>{serviceOfferedHandler(d[header])}</td>
+                                    }
+                                    if (header === "capacity") {
+                                        return <td key={`data_2${index2}`}>{capacityHandler(d[header])}</td>
+                                    }
+                                    if (header === "commissionRate") {
+                                        return <td key={`data_2${index2}`}>{commissionRateHandler(d[header])}</td>
+                                    }
+                                    if (header === "compliance") {
+                                        return <td key={`data_2${index2}`}>{complianceHandler(d[header])}</td>
+                                    }
+                                    if (parentComponent !== 'partnerSearch' && header === "collections") {
+                                        return <td key={`data_2${index2}`}>{collectionsHandler(d[header])}</td>
+                                    }
+                                    if (header === "sharedWith") {
+                                        return <td key={`data_2${index2}`}>{handleSharedWith(d[header])}</td>
+                                    }
+                                    if (header === "preview") {
+                                        return <td key={`data_2${index2}`}><BsFileEarmarkText size={24} /></td>
+                                    }
+                                    if (header === 'upload') {
+                                        return <td key={`data_2${index2}`}><AiOutlineCloudUpload size={24} /></td>
+                                    }
+                                    if (header === 'download') {
+                                        return <td key={`data_2${index2}`}><AiOutlineCloudDownload size={24} /></td>
+                                    }
+                                    if (parentComponent === 'sentDocumentRequest' && header === 'fileName') {
+                                        return <td key={`data_2${index2}`} className='center_align_td'><AiFillFileExclamation size={24} /> Pending</td>
+                                    }
+                                    if (!d[header]) {
+                                        return <td key={`data_2${index2}`}><b>-</b></td>
+                                    }
+                                    if (header === "partnerStatus") {
+                                        return <td key={`data_2${index2}`} style={{ textAlign: 'left' }}>
+                                            <span style={{
+                                                backgroundColor: d['partnerStatus'] === 'Equabli Recommended' ? '#ff7765' : d['partnerStatus'] === 'Equabli Approved' ? "rgb(0, 235, 165)" : '#00b5fc',
+                                                color: 'white',
+                                                padding: '.3rem 1rem',
+                                                borderRadius: '.3rem'
+                                            }}>{d[header]}</span><br />
+                                            {
+                                                (d['partnerStatus'] === 'Equabli Recommended' || d['partnerStatus'] === 'Equabli Approved')
+                                                && <>
+                                                    <b><a href={d['RFILink']}>Review RFI</a></b><br />
+                                                    <b><a href={d['auditLink']}>Review Audit</a></b>
+                                                </>
+                                            }
+                                        </td>
+                                    }
+                                    if (header === 'executionStatusVal') {
+                                        return (<td >
+                                            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                                {d[header]}
+                                                <OverlayTrigger
+                                                    placement="right"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            {d['logDescription']}
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <AiFillQuestionCircle size={20} style={{ marginLeft: '1rem' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        </td>)
+                                    }
+                                    if (header === 'complianceIds') {
+                                        return (
+                                            <td className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}>
+                                                {complianceSplitter(d[header], d)}
+                                            </td>
+                                        )
+                                    }
+                                    if (colorArray.includes(header)) {
+                                        return (
+                                            <td
+                                                style={{ backgroundColor: `${d[header]}` }}
+                                                key={`data_2${index2}`}
+                                            >{''}
+                                            </td>
+                                        );
+                                    }
+                                    return (
+                                        <td
+                                            className={`${checkType(d[header], header) ? 'td_number' : 'td_string'}`}
+                                            key={`data_2${index2}`}
+                                        >
+                                            {currencyColumns.indexOf(header) !== -1 ? '$' : ''}
+                                            {' '}
+                                            {d[header]}
+                                        </td>
+                                    );
+                                }
 
-                                })
-                            }
-                            {
-                                ((typeof tableAction.openSolModal !== 'undefined') && headers.indexOf('dtClientStatute') !== -1)
-                                && <td className="span1" >
-                                    <Button variant="dark" onClick={() => tableAction.openSolModal(d)}>Set SOL</Button>
-                                </td>
-                            }
-                            {
-                                typeof addEditArray.edit !== 'undefined'
-                                && (
-                                    <>
-                                        <td className="span1" >
-                                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                {
-                                                    d.recordStatusVal !== "Deleted"
-                                                    && <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Edit
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <BiPencil onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
-                                                    d.recordStatusVal === "Deleted"
-                                                    && <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                View
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <BsEye onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
-                                                    d.recordStatusVal !== "Deleted"
-                                                    &&
-                                                    <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Delete
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <CgTrash onClick={() => addEditArray.delete(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
-                                                    d.recordStatusVal === "Disabled"
-                                                    &&
-                                                    <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Click to unlock
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <BsLockFill onClick={() => addEditArray.update(index)} size={18} style={{ margin: '0 .5rem', color: 'red', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
+                            })
+                        }
+                        {
+                            ((typeof tableAction.openSolModal !== 'undefined') && headers.indexOf('dtClientStatute') !== -1)
+                            && <td key={`data_${index}`} className="span1" >
+                                <Button variant="dark" onClick={() => tableAction.openSolModal(d)}>Set SOL</Button>
+                            </td>
+                        }
+                        {
+                            typeof addEditArray.edit !== 'undefined'
+                            && (
+                                <>
+                                    <td key={`data_${index}`} className="span1" >
+                                        <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {
+                                                d.recordStatusVal !== "Deleted"
+                                                && <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Edit
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <BiPencil onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                d.recordStatusVal === "Deleted"
+                                                && <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            View
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <BsEye onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                d.recordStatusVal !== "Deleted"
+                                                &&
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Delete
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <CgTrash onClick={() => addEditArray.delete(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                d.recordStatusVal === "Disabled"
+                                                &&
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Click to unlock
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <BsLockFill onClick={() => addEditArray.update(index)} size={18} style={{ margin: '0 .5rem', color: 'red', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                d.recordStatusVal === "Enabled"
+                                                &&
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Click to lock
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <BsUnlockFill onClick={() => addEditArray.update(index)} size={18} style={{ margin: '0 .5rem', color: 'rgb(76, 175, 80)', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                (
                                                     d.recordStatusVal === "Enabled"
-                                                    &&
-                                                    <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Click to lock
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <BsUnlockFill onClick={() => addEditArray.update(index)} size={18} style={{ margin: '0 .5rem', color: 'rgb(76, 175, 80)', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
-                                                    (
-                                                        d.recordStatusVal === "Enabled"
-                                                        || d.recordStatusVal === "Disabled"
-                                                    )
-                                                    && (typeof addEditArray.execute !== 'undefined')
-                                                    &&
-                                                    <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Execute
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <VscRunAll onClick={() => addEditArray.execute(index)} size={18} style={{ margin: '0 .5rem', color: 'rgb(76, 175, 80)', cursor: 'pointer' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                                {
-                                                    d.recordStatusVal === "Deleted"
-                                                    &&
-                                                    <OverlayTrigger
-                                                        placement="bottom"
-                                                        delay={{ show: 250, hide: 400 }}
-                                                        overlay={
-                                                            <Tooltip id={`tooltip-error`}>
-                                                                Deleted
-                                                            </Tooltip>
-                                                        }
-                                                    >
-                                                        <FcCancel size={20} style={{ color: d.ragStatus, margin: '0 .5rem' }} />
-                                                    </OverlayTrigger>
-                                                }
-                                            </span>
-                                        </td>
-                                    </>
-                                )
-                            }
-                            {
-                                typeof addEditArray.view !== 'undefined'
-                                && d['alertDefinition'] !== undefined
-                                && (
-                                    <>
-                                        <td className="span1" >
-                                            <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                                {<p onClick={() => addEditArray.view(d['alertDefinition'])} style={{ margin: '0 .5rem', cursor: 'pointer', color: '#FF7765' }} >View Email</p>}
-                                            </span>
-                                        </td>
-                                    </>
-                                )
-                            }
-                            {
-                                (parentComponent === 'myDocuments' || parentComponent === 'documents')
-                                && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                    <span>
+                                                    || d.recordStatusVal === "Disabled"
+                                                )
+                                                && (typeof addEditArray.execute !== 'undefined')
+                                                &&
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Execute
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <VscRunAll onClick={() => addEditArray.execute(index)} size={18} style={{ margin: '0 .5rem', color: 'rgb(76, 175, 80)', cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            }
+                                            {
+                                                d.recordStatusVal === "Deleted"
+                                                &&
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Deleted
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <FcCancel size={20} style={{ color: d.ragStatus, margin: '0 .5rem' }} />
+                                                </OverlayTrigger>
+                                            }
+                                        </span>
+                                    </td>
+                                </>
+                            )
+                        }
+                        {
+                            typeof addEditArray.view !== 'undefined'
+                            && d['alertDefinition'] !== undefined
+                            && (
+                                <>
+                                    <td key={`data_${index}`} className="span1" >
+                                        <span style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                                            {<p onClick={() => addEditArray.view(d['alertDefinition'])} style={{ margin: '0 .5rem', cursor: 'pointer', color: '#FF7765' }} >View Email</p>}
+                                        </span>
+                                    </td>
+                                </>
+                            )
+                        }
+                        {
+                            (
+                                parentComponent === 'myDocuments'
+                                || parentComponent === 'documents'
+                                || parentComponent === 'sentDocumentRequest'
+                            )
+                            && <td key={`data_${index}`} className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                {
+                                    typeof addEditArray.view !== 'undefined'
+                                    && <span>
                                         <OverlayTrigger
                                             placement="bottom"
                                             delay={{ show: 250, hide: 400 }}
@@ -848,8 +868,11 @@ const TableComponent = ({
                                         >
                                             <AiOutlineEye onClick={() => addEditArray.view(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
-                                    </span> &nbsp;
-                                    <span>
+                                    </span>
+                                } &nbsp;
+                                {
+                                    typeof addEditArray.download !== 'undefined'
+                                    && <span>
                                         <OverlayTrigger
                                             placement="bottom"
                                             delay={{ show: 250, hide: 400 }}
@@ -861,8 +884,11 @@ const TableComponent = ({
                                         >
                                             <AiOutlineCloudDownload onClick={() => addEditArray.download(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
-                                    </span> &nbsp;
-                                    <span>
+                                    </span>
+                                } &nbsp;
+                                {
+                                    typeof addEditArray.share !== 'undefined'
+                                    && <span>
                                         <OverlayTrigger
                                             placement="bottom"
                                             delay={{ show: 250, hide: 400 }}
@@ -874,7 +900,11 @@ const TableComponent = ({
                                         >
                                             <FiShare2 size={20} onClick={() => addEditArray.share(d)} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
-                                    </span> &nbsp;
+                                    </span>
+                                } &nbsp;
+                                {
+                                    typeof addEditArray.delete !== 'undefined'
+                                    &&
                                     <span>
                                         <OverlayTrigger
                                             placement="bottom"
@@ -888,12 +918,23 @@ const TableComponent = ({
                                             <AiOutlineDelete onClick={() => addEditArray.delete(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
                                     </span>
-                                </th>
-                            }
-                        </tr>
-                    ))
-                }
-            </tbody>
+                                }
+                            </td>
+                        }
+                    </tr>
+                ))
+            }
+        </tbody>
+    }
+
+    const tableHandler = () => (
+        <>
+            {
+                tableHeaderHandler()
+            }
+            {
+                tableBodyHandler()
+            }
         </>
     );
 

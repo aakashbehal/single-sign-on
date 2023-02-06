@@ -65,6 +65,10 @@ const App = () => {
 
               {/* Document Manager */}
               <PrivateRoute exact path="/documents/my_documents" component={Documents} />
+              <PrivateRoute exact path="/documents/sent_document_requests" component={Documents} />
+              <PrivateRoute exact path="/documents/received_document_requests" component={Documents} />
+              <PrivateRoute exact path="/documents/templates" component={Documents} />
+              <PrivateRoute exact path="/documents/download_history" component={Documents} />
               <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
 
             </Switch>

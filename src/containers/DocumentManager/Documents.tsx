@@ -11,6 +11,8 @@ import TableComponent from "../../components/Table/Table";
 import MyDocuments from "./MyDocuments";
 import ReceivedDocumentRequests from "./ReceivedDocumentRequests";
 import SentDocumentRequests from "./SentDocumentRequests";
+import DownloadHistory from "./DownloadHistory";
+import { useHistory } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -128,7 +130,8 @@ export const dataSent = {
 };
 
 
-const Documents = () => {
+const Documents = ({ location }) => {
+    const history = useHistory();
     const [tenures, setTenures] = useState(tenuresInit)
     const [products, setProducts] = useState(productsInit)
     const [portfolios, setPortfolios] = useState(portfolioInit)
@@ -139,6 +142,12 @@ const Documents = () => {
     const [pageCount, setPageCount] = useState(10)
     const [currentPage, setCurrentPage] = useState(1);
     const [collapse, setCollapse] = useState(false);
+    const [selectedTab, setSelectedTab] = useState('')
+
+    useEffect(() => {
+        const tab = location.pathname.split('/')
+        setSelectedTab(tab[tab.length - 1])
+    }, [location])
 
     /**
      * function is used in pagination
@@ -377,37 +386,39 @@ const Documents = () => {
             </Col >
         </Col >
     }
-
+    const handleSelect = (e) => {
+        history.push({
+            pathname: `/documents/${e}`
+        });
+    }
     return (
         <>
-            {/* {
-                documentSummary()
-            } */}
+            {
+                // documentSummary()
+            }
             <br />
             <Col className="no_padding">
                 <Tabs
-                    defaultActiveKey="Documents"
+                    activeKey={selectedTab}
                     id="fill-tab-example"
                     fill
                     className="mb-3"
+                    onSelect={handleSelect}
                 >
-                    <Tab eventKey="Documents" title="My Documents">
+                    <Tab eventKey="my_documents" title="My Documents">
                         <MyDocuments />
                     </Tab>
-                    <Tab eventKey="sendDocuments" title="Sent Document Requests">
+                    <Tab eventKey="sent_document_requests" title="Sent Document Requests">
                         <SentDocumentRequests />
                     </Tab>
-                    <Tab eventKey="receivedDocuments" title="Received Document Request">
+                    {/* <Tab eventKey="received_document_requests" title="Received Document Request">
                         <ReceivedDocumentRequests />
+                    </Tab>*/}
+                    <Tab eventKey="download_history" title="Download History">
+                        <DownloadHistory />
                     </Tab>
-                    {/* Templates */}
-                    <Tab eventKey="templates" title="">
-
-                    </Tab>
-                    {/* Download History */}
-                    <Tab eventKey="downloadHistory" title="">
-
-                    </Tab>
+                    {/*<Tab eventKey="templates" title="">
+                    </Tab> */}
                 </Tabs >
             </Col >
         </>

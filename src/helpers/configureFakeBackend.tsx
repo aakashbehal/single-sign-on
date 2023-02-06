@@ -4,8 +4,9 @@ const MockAdapter = require("axios-mock-adapter");
 export const configureFakeBackend = () => {
 
     const mock = new MockAdapter(axiosCustom);
-
     // authentication api
+    mock.restore();
+
     mock.onPost("/authenticate").reply((opts) => {
         const body = opts.data && JSON.parse(opts.data)
         const { loginKey, loginSecret } = body;
@@ -28,7 +29,7 @@ export const configureFakeBackend = () => {
         }]
     });
 
-    // Field options API
+    // Field options APC
     mock.onGet("/fileNamesConfig").reply((opts) => {
         const params = opts.params
         if (params.fileNameConfig === 'SEPARATOR') {
@@ -165,6 +166,12 @@ export const configureFakeBackend = () => {
                                     "shortCode": "DN",
                                     "description": "Document Name",
                                     "fieldValue": "Document Name"
+                                },
+                                {
+                                    "id": 6,
+                                    "shortCode": "PCD",
+                                    "description": "Product Code",
+                                    "fieldValue": "Product Code"
                                 }
                             ]
                         },
@@ -319,6 +326,50 @@ export const configureFakeBackend = () => {
                                     "fieldValue": "Orignal Account Number"
                                 }
                             ]
+                        },
+                        {
+                            "id": 15,
+                            "shortCode": "field6",
+                            "description": "",
+                            "defaultValue": "Product Code",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 62,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 63,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 64,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 65,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 66,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 67,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
                         }
                     ],
                     "userTypeId": 1
@@ -372,6 +423,12 @@ export const configureFakeBackend = () => {
                                     "shortCode": "DN",
                                     "description": "Document Name",
                                     "fieldValue": "Document Name"
+                                },
+                                {
+                                    "id": 38,
+                                    "shortCode": "PCD",
+                                    "description": "Product Code",
+                                    "fieldValue": "Product Code"
                                 }
                             ]
                         },
@@ -594,6 +651,50 @@ export const configureFakeBackend = () => {
                                     "fieldValue": "Document Name"
                                 }
                             ]
+                        },
+                        {
+                            "id": 15,
+                            "shortCode": "field7",
+                            "description": "",
+                            "defaultValue": "Product Code",
+                            "docMgrConfigVals": [
+                                {
+                                    "id": 62,
+                                    "shortCode": "CIDSC",
+                                    "description": "Client ID or Client Short Code",
+                                    "fieldValue": "Client ID or Client Short Code"
+                                },
+                                {
+                                    "id": 63,
+                                    "shortCode": "DT",
+                                    "description": "Document Type Id",
+                                    "fieldValue": "Document Type Id"
+                                },
+                                {
+                                    "id": 64,
+                                    "shortCode": "CAN",
+                                    "description": "Client Account Number",
+                                    "fieldValue": "Client Account Number"
+                                },
+                                {
+                                    "id": 65,
+                                    "shortCode": "OAN",
+                                    "description": "Original Account Number",
+                                    "fieldValue": "Original Account Number"
+                                },
+                                {
+                                    "id": 66,
+                                    "shortCode": "DGD",
+                                    "description": "Document Generation Date",
+                                    "fieldValue": "Document Generation Date"
+                                },
+                                {
+                                    "id": 67,
+                                    "shortCode": "DN",
+                                    "description": "Document Name",
+                                    "fieldValue": "Document Name"
+                                }
+                            ]
                         }
                     ],
                     "userTypeId": 2
@@ -606,51 +707,167 @@ export const configureFakeBackend = () => {
     /**
      * Get user File config
      */
-    mock.onGet("/configuration").reply((opts) => {
+    mock.onGet("/user/file/configuration").reply((opts) => {
         const params = opts.params
-        return [200, {
-            "message": "Global config with  fetched successfully",
-            "status": "SUCCESS",
-            "response": [
-                {
-                    "id": 33,
-                    "docMgrConfig": {
-                        "id": 1,
-                        "shortCode": "field1",
-                        "description": "",
-                        "defaultValue": "Client Account Number"
+        if (params.fileNameConfig === 'FIELD') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": [
+                    {
+                        "id": 33,
+                        "docMgrConfig": {
+                            "id": 1,
+                            "shortCode": "field1",
+                            "description": "",
+                            "defaultValue": "Client Account Number"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 1,
+                            "shortCode": "CAN",
+                            "description": "client account number",
+                            "fieldValue": "Client Account Number"
+                        },
+                        "userTypeId": 1,
+                        "docMgrConfigSelectedCode": "field1",
+                        "docMgrConfigValSelectedCode": "CAN"
                     },
-                    "docMgrConfigVal": {
-                        "id": 1,
-                        "shortCode": "CAN",
-                        "description": "client account number",
-                        "fieldValue": "Client Account Number"
+                    {
+                        "id": 34,
+                        "docMgrConfig": {
+                            "id": 2,
+                            "shortCode": "field2",
+                            "description": "",
+                            "defaultValue": "Document Type ID"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 8,
+                            "shortCode": "OAN",
+                            "description": "Original account number",
+                            "fieldValue": "Orignal Account Number"
+                        },
+                        "userTypeId": 1,
+                        "docMgrConfigSelectedCode": "field2",
+                        "docMgrConfigValSelectedCode": "OAN"
                     },
-                    "userTypeId": 1,
-                    "docMgrConfigSelectedCode": "field1",
-                    "docMgrConfigValSelectedCode": "CAN"
-                },
-                {
-                    "id": 34,
-                    "docMgrConfig": {
-                        "id": 2,
-                        "shortCode": "field2",
-                        "description": "",
-                        "defaultValue": "Document Type ID"
+                    {
+                        "id": 34,
+                        "docMgrConfig": {
+                            "id": 2,
+                            "shortCode": "field2",
+                            "description": "",
+                            "defaultValue": "Document Type ID"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 8,
+                            "shortCode": "OAN",
+                            "description": "Original account number",
+                            "fieldValue": "Orignal Account Number"
+                        },
+                        "userTypeId": 1,
+                        "docMgrConfigSelectedCode": "field3",
+                        "docMgrConfigValSelectedCode": "PCD"
                     },
-                    "docMgrConfigVal": {
-                        "id": 8,
-                        "shortCode": "OAN",
-                        "description": "Original account number",
-                        "fieldValue": "Orignal Account Number"
-                    },
-                    "userTypeId": 1,
-                    "docMgrConfigSelectedCode": "field2",
-                    "docMgrConfigValSelectedCode": "OAN"
-                }
-            ],
-            "validation": true
-        }]
+                    {
+                        "id": 34,
+                        "docMgrConfig": {
+                            "id": 2,
+                            "shortCode": "field2",
+                            "description": "",
+                            "defaultValue": "Document Type ID"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 8,
+                            "shortCode": "OAN",
+                            "description": "Original account number",
+                            "fieldValue": "Orignal Account Number"
+                        },
+                        "userTypeId": 1,
+                        "docMgrConfigSelectedCode": "field4",
+                        "docMgrConfigValSelectedCode": "DT"
+                    }
+                ],
+                "validation": true
+            }]
+        } else if (params.fileNameConfig === 'RETENTION_POLICY') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": [
+                    {
+                        "id": 4,
+                        "docMgrConfig": {
+                            "id": 8,
+                            "shortCode": "RP",
+                            "description": "retention policy in day",
+                            "defaultValue": "60"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 40,
+                            "shortCode": "60",
+                            "description": "retention policy in 60 days",
+                            "fieldValue": "60"
+                        },
+                        "orgTypeCode": "CT",
+                        "docMgrConfigSelectedCode": "RP",
+                        "docMgrConfigValSelectedCode": "60"
+                    }
+                ],
+                "validation": true
+            }]
+        } else if (params.fileNameConfig === 'SEPARATOR') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": [
+                    {
+                        "id": 6,
+                        "docMgrConfig": {
+                            "id": 7,
+                            "shortCode": "SEPARATOR",
+                            "description": "file seperator",
+                            "defaultValue": "Underscore[_]"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 38,
+                            "shortCode": "-",
+                            "description": "Hyphne[-]",
+                            "fieldValue": "Hyphne[-]"
+                        },
+                        "orgTypeCode": "CT",
+                        "docMgrConfigSelectedCode": "SEPARATOR",
+                        "docMgrConfigValSelectedCode": "-"
+                    }
+                ],
+                "validation": true
+            }]
+        } else if (params.fileNameConfig === 'DOCUMENT_POLICY') {
+            return [200, {
+                "message": "Global config with  fetched successfully",
+                "status": "SUCCESS",
+                "response": [
+                    {
+                        "id": 5,
+                        "docMgrConfig": {
+                            "id": 9,
+                            "shortCode": "DP",
+                            "description": "Specify document policy like allow create new document or replace",
+                            "defaultValue": "Keep Both File"
+                        },
+                        "docMgrConfigVal": {
+                            "id": 43,
+                            "shortCode": "RE",
+                            "description": "Replace  Existing",
+                            "fieldValue": "Replace Existing"
+                        },
+                        "orgTypeCode": "CT",
+                        "docMgrConfigSelectedCode": "DP",
+                        "docMgrConfigValSelectedCode": "RE"
+                    }
+                ],
+                "validation": true
+            }]
+        }
     });
 
     /**
@@ -767,7 +984,7 @@ export const configureFakeBackend = () => {
                         "fileName": "123456-Application-7890.pdf",
                         "objectKey": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf",
                         "orgTypeCode": "CT",
-                        "filePath": "https://eqb-dev-ui-dm.s3.amazonaws.com/default/CT/123456-456789-7890.png"
+                        "filePath": "https://media.geeksforgeeks.org/wp-content/cdn-uploads/20210101201653/PDF.pdf"
                     }
                 ]
             },
@@ -825,14 +1042,16 @@ export const configureFakeBackend = () => {
             "validation": true,
             "response": [
                 {
-                    "documentType": "Application",
+                    "documentType": "Business Record Affidavit",
+                    "docTypeCode": "BRA",
                     "clientName": null,
-                    "cost": 110
+                    "cost": 112
                 },
                 {
-                    "documentType": "Bill of Sale",
+                    "documentType": "Transaction History",
+                    "docTypeCode": "TH",
                     "clientName": null,
-                    "cost": 110
+                    "cost": 10
                 }
             ]
         }]

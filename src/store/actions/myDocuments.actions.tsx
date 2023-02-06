@@ -34,6 +34,9 @@ export const MyDocumentsActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: MyDocumentsList.MY_DOCUMENTS_LIST_RESET }))
+            )
+    },
+    resetDocumentList: () => (dispatch: any) => {
+        dispatch(() => dispatch({ type: MyDocumentsList.MY_DOCUMENTS_LIST_RESET }))
     }
 }

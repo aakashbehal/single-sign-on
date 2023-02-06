@@ -22,7 +22,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
             animation={true}
         >
             <Modal.Header closeButton>
-                <p>{documentData.fileName}</p>
+                <p>{documentData.fileName} {documentType}</p>
             </Modal.Header>
             < Modal.Body className="show-grid">
                 <Container className={Styles.center_document}>

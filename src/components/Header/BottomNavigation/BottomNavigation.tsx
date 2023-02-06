@@ -15,6 +15,7 @@ const rolesMapping = {
         'my_documents',
         "sent_document_requests",
         "received_document_requests",
+        "download_history",
         "templates"
     ],
     "Client": [
@@ -22,6 +23,7 @@ const rolesMapping = {
         'my_documents',
         "sent_document_requests",
         "received_document_requests",
+        "download_history",
         "templates"
     ],
     "Partner": [
@@ -29,6 +31,7 @@ const rolesMapping = {
         'my_documents',
         "sent_document_requests",
         "received_document_requests",
+        "download_history",
         "templates"
     ]
 }
@@ -44,7 +47,7 @@ const BottomNavigation = () => {
         if (user === null) {
             history.push('/login')
         } else {
-            setRole(user.role)
+            setRole(user.recordSource)
             const locationArr: any = window.location.hash.split('/')
             setActiveRoute(locationArr[locationArr.length - 1])
         }
@@ -71,6 +74,7 @@ const BottomNavigation = () => {
                                 activeRoute === 'my_documents'
                                 || activeRoute === "sent_document_requests"
                                 || activeRoute === "received_document_requests"
+                                || activeRoute === "download_history"
                                 || activeRoute === "templates"
                             }
                             id="collasible-nav-dropdown"
@@ -99,6 +103,14 @@ const BottomNavigation = () => {
                                     as={Link}
                                     active={"received_document_requests" === activeRoute}
                                     to="/documents/received_document_requests">Received Document Requests</NavDropdown.Item>
+                            }
+                            {
+                                role && rolesMapping[role].includes('download_history')
+                                && <NavDropdown.Item
+                                    eventKey={"download_history"}
+                                    as={Link}
+                                    active={"download_history" === activeRoute}
+                                    to="/documents/download_history">Download History</NavDropdown.Item>
                             }
                             {
                                 role && rolesMapping[role].includes('templates')

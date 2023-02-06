@@ -4,7 +4,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await axiosCustom.post(`/authenticate`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/login`, {
             loginKey: username.trim(),
             loginSecret: password.trim()
         })
@@ -34,10 +34,11 @@ const login = async (username: string, password: string) => {
 async function logout() {
     const user = getUser()
     try {
-        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/logout`, {
-        //     principleId: user.principleId,
-        //     loginKey: user.loginKey
-        // })
+        console.log(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`)
+        await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
+            principleId: user.principleId,
+            loginKey: user.loginKey
+        })
         localStorage.removeItem('user');
         history.push('/login')
     } catch (error: any) {
@@ -86,7 +87,7 @@ const getUser = () => {
 
 const getUserType = () => {
     const user = JSON.parse(localStorage.getItem('user')!)
-    return user.role
+    return user.recordSource
 }
 
 const getAccessToken = () => {

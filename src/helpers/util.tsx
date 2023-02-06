@@ -1,10 +1,7 @@
 import { userService } from "../services";
 import axios from "axios";
-import { globalLoaderAction } from "../store/actions/globalLoader.actions";
 import React, { useEffect, useMemo, useState } from "react";
-import { CgSpinnerAlt } from "react-icons/cg";
-import store from "../store";
-import { MiscActionCreator } from "../store/actions/common/misc.actions";
+import { saveAs } from 'file-saver';
 export const axiosCustom = axios.create(); // export this and use it in all your components
 
 /**
@@ -138,28 +135,8 @@ export const useAxiosLoader = () => {
 export const httpInterceptor = () => {
     const noAuthRequired = [
         "login",
-        // "allClients",
-        "getAllStates",
-        "getallstates",
-        // "getAllPartners",
-        "getAllAccountStatuses",
-        "getAllRecordStatus",
-        "getRecordStatusById",
-        "getRecordStatusByShortName",
         "authenticate",
-        "logout",
-        "activateme",
-        "record_source",
-        "secret_question",
-        "resetPasswordByUserDetails",
-        "getSecurityQuesByUserDetails",
-        "validateSecurityQuesByUserDetails",
-        "resetPasswordByUserDetails",
-        "setPasswordAndSecurityQues",
-        "changePasswordByUserDetails",
-        "registration",
-        "getClientOrPartnerIdByCode",
-        "insertIntoAppErrorLog"
+        "logout"
     ]
 
     axiosCustom.interceptors.request.use(
@@ -175,33 +152,34 @@ export const httpInterceptor = () => {
                 if (
                     noAuthRequired.indexOf(urlString[0]) === -1
                 ) {
-                    if (user.orgType === 'PT') {
-                        if (request.method === 'get') {
-                            if ((request.url).indexOf("?") !== -1) {
-                                request.url += `&partnerId=${user.partnerId}`
-                            } else {
-                                request.url += `?partnerId=${user.partnerId}`
-                            }
-                        }
-                        if (request.method === 'post' || request.method === 'put') {
-                            request.data.partnerId = user.partnerId
-                        }
-                    }
-                    if (user.orgType === 'CL') {
-                        if (request.method === 'get') {
-                            if ((request.url).indexOf("?") !== -1) {
-                                request.url += `&clientId=${user.clientId}`
-                            } else {
-                                request.url += `?clientId=${user.clientId}`
-                            }
-                        }
-                        if (request.method === 'post' || request.method === 'put') {
-                            request.data.clientId = user.clientId
-                        }
-                    }
+                    // if (user.orgType === 'PT') {
+                    //     if (request.method === 'get') {
+                    //         if ((request.url).indexOf("?") !== -1) {
+                    //             request.url += `&partnerId=${user.partnerId}`
+                    //         } else {
+                    //             request.url += `?partnerId=${user.partnerId}`
+                    //         }
+                    //     }
+                    //     if (request.method === 'post' || request.method === 'put') {
+                    //         request.data.partnerId = user.partnerId
+                    //     }
+                    // }
+                    // if (user.orgType === 'CL') {
+                    //     if (request.method === 'get') {
+                    //         if ((request.url).indexOf("?") !== -1) {
+                    //             request.url += `&clientId=${user.clientId}`
+                    //         } else {
+                    //             request.url += `?clientId=${user.clientId}`
+                    //         }
+                    //     }
+                    //     if (request.method === 'post' || request.method === 'put') {
+                    //         request.data.clientId = user.clientId
+                    //     }
+                    // }
                     request.headers['Authorization'] = `Bearer ${token}`;
                 }
                 request.headers['rqsOrigin'] = 'web';
+                // request.headers['Content-Type'] = 'application/json';
                 return request
             } catch (err) {
                 return Promise.reject(err)
@@ -429,3 +407,4 @@ export const decimalToFixed = (x: any) => {
     }
     return valueToReturn
 }
+

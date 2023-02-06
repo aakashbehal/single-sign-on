@@ -142,7 +142,7 @@ const Login: FC = () => {
     return (
         <div className={Styles.login}>
             <div className={Styles.login_container}>
-                <h2>Document Manager</h2>
+                <h2>EQ Docs</h2>
                 <div className={Styles.inner_login_container}>
                     <h5>User Authentication</h5>
                     <br />

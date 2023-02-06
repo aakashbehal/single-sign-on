@@ -47,6 +47,17 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     error: true
                 }
             }
+        case MyDocumentsFolder.MY_DOCUMENTS_FOLDER_RESET:
+            return {
+                ...state,
+                folders: {
+                    ...state.folders,
+                    loading: false,
+                    error: false,
+                    totalCount: 0,
+                    data: []
+                }
+            }
         case MyDocumentsList.MY_DOCUMENTS_LIST_REQUEST:
             return {
                 ...state,
@@ -73,6 +84,17 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     ...state.documents,
                     loading: false,
                     error: true,
+                    totalCount: 0,
+                    data: []
+                }
+            }
+        case MyDocumentsList.MY_DOCUMENTS_LIST_RESET:
+            return {
+                ...state,
+                documents: {
+                    ...state.documents,
+                    loading: false,
+                    error: false,
                     totalCount: 0,
                     data: []
                 }
