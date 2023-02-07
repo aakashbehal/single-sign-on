@@ -16,6 +16,7 @@
     "@wojtekmaj/react-daterange-picker": "^4.0.0",
     "@wojtekmaj/react-timerange-picker": "^3.4.2",
     "amazon-quicksight-embedding-sdk": "^1.18.0",
+    "aws-sdk": "^2.1310.0",
     "aws-sign": "^1.0.1",
     "aws-sign-web": "^1.5.0",
     "axios": "^0.21.1",
@@ -53,12 +54,13 @@
   },
   "scripts": {
     "start": "react-scripts start --max_old_space_size=8128 start",
-    "build": "react-scripts build",
+    "build": " react-scripts build",
     "build:dev": "env-cmd -f .env npm run-script build",
     "build:qa": "env-cmd -f .env.qa npm run-script build",
     "build:uat": "env-cmd -f .env.uat npm run-script build",
     "build:stage": "env-cmd -f .env.stage npm run-script build",
     "build:prod": "env-cmd -f .env.prod npm run-script build",
+    "deploy": "aws s3 sync build/ s3://eqb-dev-ui-dm/build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -81,6 +83,13 @@
     ]
   },
   "devDependencies": {
+    "@aws-crypto/sha256-browser": "^3.0.0",
+    "@aws-sdk/hash-node": "^3.266.0",
+    "@aws-sdk/middleware-endpoint": "^3.266.0",
+    "@aws-sdk/protocol-http": "^3.266.0",
+    "@aws-sdk/s3-request-presigner": "^3.173.0",
+    "@aws-sdk/url-parser": "^3.266.0",
+    "@aws-sdk/util-format-url": "^3.266.0",
     "@types/bcryptjs": "^2.4.2",
     "axios-mock-adapter": "^1.21.2",
     "env-cmd": "^10.1.0",

@@ -68,7 +68,7 @@ const sentDocumentRequestReducer = (state = initialState, action: { type: any; p
                 sendRequestSuccess: false,
                 sendRequestError: true
             }
-        case GetSentDocumentRequest.SENT_DOCUMENT_REQUEST_RESET:
+        case SentDocumentRequest.SENT_DOCUMENT_REQUEST_RESET:
             return {
                 ...state,
                 sendRequest: false,

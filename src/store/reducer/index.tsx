@@ -4,8 +4,10 @@ import authReducer from "./auth.reducer";
 import miscReducer from "./common/misc.reducer";
 import typesReducer from "./common/types.reducer";
 import documentCostConfigurationReducer from "./documentCostConfiguration.reducer";
+import downloadHistoryRequestReducer from "./downloadHistory.reducer";
 import fileNameConfigReducer from "./fileNameConfig.reducer";
 import myDocumentsReducer from "./myDocuments.reducer";
+import receiveDocumentRequestReducer from "./receiveDocumentRequest.reducer";
 import registrationReducer from "./registration.reducer";
 import requiredDocumentsReducer from "./requiredDocuments.reducer";
 import sentDocumentRequestReducer from "./sentDocumentRequest.reducer";
@@ -19,7 +21,9 @@ const appReducer = combineReducers({
     myDocuments: myDocumentsReducer,
     cost: documentCostConfigurationReducer,
     requiredDocuments: requiredDocumentsReducer,
-    sentDocumentRequest: sentDocumentRequestReducer
+    sentDocumentRequest: sentDocumentRequestReducer,
+    receiveDocumentRequest: receiveDocumentRequestReducer,
+    downloadHistory: downloadHistoryRequestReducer
 })
 
 const rootReducer = (state, action) => {

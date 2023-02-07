@@ -10,6 +10,10 @@ import TableComponent from "../../components/Table/Table";
 import { SentDocumentRequestActionCreator } from "../../store/actions/sentDocumentRequest.actions";
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
+import { createMessage } from "../../helpers/messages";
+import { useToasts } from "react-toast-notifications";
+import { ReceiveDocumentRequestActionCreator } from "../../store/actions/receivedDocumentRequest.actions";
+import DeleteConfirm from "../../components/modal/DeleteConfirm";
 
 const tenuresInit = [
     {
@@ -20,6 +24,7 @@ const tenuresInit = [
 
 const ReceivedDocumentRequests = () => {
     const dispatch = useDispatch()
+    const { addToast } = useToasts();
     const [tenures, setTenures] = useState(tenuresInit)
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('originalAccountNumber')
@@ -27,35 +32,99 @@ const ReceivedDocumentRequests = () => {
     const [pageCount, setPageCount] = useState(10)
     const [currentPage, setCurrentPage] = useState(1);
     const [showBulkRequest, setShowBulkRequest] = useState(false)
-    const [showRequestNewDocument, setShowRequestNewDocument] = useState(false)
+    const [showRequestNewDocument, setShowRequestNewDocument] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [uploadDocModal, setUploadDocModal] = useState(false)
+    const [details, setDetails] = useState<any>(null);
 
-    const { sentDocumentRequests, totalCount, loading, error, documentTypes, loadingDocumentTypes, errorDocumentTypes } = useSelector((state: any) => ({
-        sentDocumentRequests: state.sentDocumentRequest.data,
-        totalCount: state.sentDocumentRequest.totalCount,
-        loading: state.sentDocumentRequest.loading,
-        error: state.sentDocumentRequest.error,
+    const {
+        receiveDocumentRequests,
+        totalCount,
+        loading,
+        error,
+        documentTypes,
+        loadingDocumentTypes,
+        errorDocumentTypes,
+        downloadRequest,
+        downloadRequestSuccess,
+        downloadRequestError,
+        deleteRequest,
+        deleteRequestSuccess,
+        deleteRequestError
+    } = useSelector((state: any) => ({
+        receiveDocumentRequests: state.receiveDocumentRequest.data,
+        totalCount: state.receiveDocumentRequest.totalCount,
+        loading: state.receiveDocumentRequest.loading,
+        error: state.receiveDocumentRequest.error,
         documentTypes: state.types.documentType.data,
         loadingDocumentTypes: state.types.documentType.loading,
-        errorDocumentTypes: state.types.documentType.error
+        errorDocumentTypes: state.types.documentType.error,
+        downloadRequest: state.receiveDocumentRequest.downloadRequest,
+        downloadRequestSuccess: state.receiveDocumentRequest.downloadRequestSuccess,
+        downloadRequestError: state.receiveDocumentRequest.downloadRequestError,
+        deleteRequest: state.receiveDocumentRequest.deleteRequest,
+        deleteRequestSuccess: state.receiveDocumentRequest.deleteRequestSuccess,
+        deleteRequestError: state.receiveDocumentRequest.deleteRequestError
     }))
 
     useEffect(() => {
-        dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest('CL'))
+        search(pageCount, currentPage)
         dispatch(TypesActionCreator.getDocumentTypes('CL'))
     }, [])
+
+    useEffect(() => {
+        // if (sendRequestSuccess) {
+        //     addToast(createMessage('success', `Sent`, 'Document Request'), { appearance: 'success', autoDismiss: true });
+        //     setShowRequestNewDocument(false);
+        //     search(pageCount, currentPage)
+        // }
+        // if (sendRequestError) { addToast(createMessage('error', `sending`, 'document request'), { appearance: 'error', autoDismiss: false }); }
+        if (deleteRequestSuccess) {
+            addToast(createMessage('success', `deleted`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
+            setShowDeleteConfirm(false)
+            search(pageCount, currentPage)
+        }
+        if (deleteRequestError) { addToast(createMessage('error', `deleting`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
+    }, [
+        // sendRequestSuccess,
+        // sendRequestError,
+        deleteRequestSuccess,
+        deleteRequestError])
+
+    const search = (pageSize = pageCount, pageNumber = 1) => {
+        dispatch(ReceiveDocumentRequestActionCreator.getReceiveDocumentRequest({
+            pageSize,
+            pageNumber
+        }))
+    }
 
     /**
      * function is used in pagination
      * @param pageSize 
      * @param pageNumber 
      */
-    const handlePagination = (pageSize: number, pageNumber: number) => { }
+    const handlePagination = (pageSize: number, pageNumber: number) => {
+        setPageCount(pageSize)
+        search(pageSize, pageNumber)
+    }
 
+    const deleteAlert = () => {
+        dispatch(SentDocumentRequestActionCreator.deleteDocumentRequest(details.id))
+    }
+
+    const handleDetails = (document) => {
+        setDetails(document)
+        setShowDeleteConfirm(true)
+    }
+
+    const downloadDocument = (document) => {
+        console.log(document)
+    }
 
     return (<>
         <Col sm={12}>
             <Row>
-                <Col md={8} sm={8} className={Styles.search_input}>
+                <Col md={10} sm={10} className={Styles.search_input}>
                     <CgSearch size={20} className={Styles.search} />
                     <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
@@ -203,28 +272,25 @@ const ReceivedDocumentRequests = () => {
                     }
                 </Col>
                 <Col md={2} sm={2}>
-                    <Button variant="dark" style={{ width: "100%" }} onClick={() => setShowBulkRequest(true)}>Import Bulk Request</Button>
-                </Col>
-                <Col md={2} sm={2}>
-                    <Button variant="dark" style={{ width: "100%" }} onClick={() => setShowRequestNewDocument(true)}>Request New Document</Button>
+                    <Button variant="dark" style={{ width: "100%" }} onClick={() => setUploadDocModal(true)}>Fulfill Bulk Request</Button>
                 </Col>
             </Row>
             <br />
         </Col>
         <Col>
             <TableComponent
-                data={sentDocumentRequests}
-                isLoading={false}
+                data={receiveDocumentRequests}
+                isLoading={loading}
                 map={{
-                    "requestedDocuments": "Requested Document",
-                    "originalAccountNo": "Original Account Number",
-                    "equabliAccountNo": "Equabli Account Number",
-                    "clientAccountNo": "Client Account Number",
-                    "requestedDate": "Requested Date",
+                    "documentType": "Requested Document",
+                    "originalAccountNumber": "Original Account Number",
+                    "equabliAccountNumber": "Equabli Account Number",
+                    "clientAccountNumber": "Client Account Number",
+                    "requestDate": "Requested Date",
                     "dueDate": "Due Date",
                     "fulfillment": "Fulfillment Date",
-                    "fileName": "File Name",
-                    "requestedFrom": "Requested From"
+                    "fileName": "Document Name",
+                    "requestedBy": "Requested By"
                 }}
                 totalCount={totalCount}
                 actionArray={[]}
@@ -234,119 +300,42 @@ const ReceivedDocumentRequests = () => {
                 sortType={(type) => setSortType(type)}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
-                parentComponent={'sentDocumentRequest'}
+                parentComponent={'receiveDocumentRequest'}
                 searchCriteria={{}}
+                addEditArray={
+                    {
+                        download: (data) => downloadDocument(data),
+                        upload: (data) => setUploadDocModal(true),
+                        delete: (data) => handleDetails(data)
+                    }
+                }
                 onPaginationChange={(
                     pageSize: number, pageNumber: number
                 ) => handlePagination(pageSize, pageNumber)}></TableComponent >
         </Col>
-
         {
-            showRequestNewDocument
-            && <RequestNewDocument show={showRequestNewDocument} onHide={() => setShowRequestNewDocument(false)} documentTypes={documentTypes} />
+            uploadDocModal
+            && <DocumentUpload
+                show={uploadDocModal}
+                onHide={() => setUploadDocModal(false)}
+                accountId={123}
+                Styles={Styles}
+                parentComponent="receiveDocumentRequest"
+                search={search}
+                details={details}
+            />
         }
         {
-            showBulkRequest
-            && <DocumentUpload show={showBulkRequest} onHide={() => setShowBulkRequest(false)} accountId={123} Styles={Styles} parentComponent="sentDocumentRequest" />
+            showDeleteConfirm
+            && <DeleteConfirm
+                show={showDeleteConfirm}
+                onHide={() => setShowDeleteConfirm(false)}
+                confirmDelete={() => deleteAlert()}
+                details={details}
+                type='receiveDocumentRequest'
+            />
         }
     </>)
-}
-
-const RequestNewDocument = ({ show, onHide, documentTypes }) => {
-    const ref = useRef<any>();
-
-    return (
-        <Modal
-            show={show}
-            onHide={onHide}
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            size="xl"
-            animation={true}
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    Request New Document
-                </Modal.Title>
-            </Modal.Header>
-            < Modal.Body className="show-grid">
-                <Container className={Styles.center_document}>
-                    <Form >
-                        <br />
-                        <Row>
-                            <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
-                                    <Col md={12} sm={12}>
-                                        <Typeahead
-                                            defaultSelected={[]}
-                                            id="public-methods-example"
-                                            labelKey="documentName"
-                                            multiple
-                                            options={['abc']}
-                                            ref={ref}
-                                        />
-                                    </Col>
-                                    <Form.Label className="label_custom white">Send Request To</Form.Label>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control type="text"></Form.Control>
-                                    </Col>
-                                    <Form.Label className="label_custom white">Portfolio Id</Form.Label>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control type="text"></Form.Control>
-                                    </Col>
-                                    <Form.Label className="label_custom white">Original Account Number</Form.Label>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control type="text"></Form.Control>
-                                    </Col>
-                                    <Form.Label className="label_custom white">Client Account Number</Form.Label>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Row>
-                            <Col lg={12} md={6} >
-                                <Form.Group as={Col} className="mb-5">
-                                    <Form.Control
-                                        as="select"
-                                        name="service_offered"
-                                        className="select_custom white">
-                                        <option></option>
-                                        {
-                                            (documentTypes && documentTypes.length > 0) &&
-                                            documentTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} value={dT.statusCode}>{dT.documentName}</option>
-                                            })
-                                        }
-                                    </Form.Control>
-                                    <Form.Label className="label_custom white">Document Type</Form.Label>
-                                </Form.Group>
-                            </Col>
-                        </Row>
-                        <Col className={Styles.button_center}>
-                            <Button variant="dark" type="submit" style={{ width: '100%' }}>Request</Button>{" "}
-                        </Col>
-                    </Form>
-                </Container>
-            </Modal.Body>
-        </Modal >
-    )
 }
 
 export default ReceivedDocumentRequests

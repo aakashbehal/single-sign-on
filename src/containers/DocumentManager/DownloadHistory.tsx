@@ -8,9 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 import { useHistory } from "react-router-dom";
 import TableComponent from "../../components/Table/Table";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { useToasts } from "react-toast-notifications";
+import { createMessage } from "../../helpers/messages";
 
 const DownloadHistory = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const { addToast } = useToasts();
     const history = useHistory();
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('originalAccountNumber')
@@ -19,16 +23,43 @@ const DownloadHistory = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [uploadDocModal, setUploadDocModal] = useState(false)
 
-    const { folders, totalCount, error, loading } = useSelector((state: any) => ({
-        folders: state.myDocuments.folders.data,
-        totalCount: state.myDocuments.folders.totalCount,
-        error: state.myDocuments.folders.error,
-        loading: state.myDocuments.folders.loading
+    const {
+        data,
+        totalCount,
+        error,
+        loading,
+        saveDownload,
+        saveDownloadSuccess,
+        saveDownloadError,
+        deleteDownloadHistory,
+        deleteDownloadHistorySuccess,
+        deleteDownloadHistoryError
+    } = useSelector((state: any) => ({
+        data: state.downloadHistory.data,
+        totalCount: state.downloadHistory.totalCount,
+        error: state.downloadHistory.error,
+        loading: state.downloadHistory.loading,
+        saveDownload: state.downloadHistory.saveDownload,
+        saveDownloadSuccess: state.downloadHistory.saveDownloadSuccess,
+        saveDownloadError: state.downloadHistory.saveDownloadError,
+        deleteDownloadHistory: state.downloadHistory.deleteDownloadHistory,
+        deleteDownloadHistorySuccess: state.downloadHistory.deleteDownloadHistorySuccess,
+        deleteDownloadHistoryError: state.downloadHistory.deleteDownloadHistoryError
     }))
 
     useEffect(() => {
         search(pageCount, currentPage)
     }, [])
+
+    useEffect(() => {
+        if (deleteDownloadHistorySuccess) {
+            addToast(createMessage('success', `Sent`, 'Document Request'), { appearance: 'success', autoDismiss: true });
+            search(pageCount, currentPage)
+        }
+        if (deleteDownloadHistoryError) {
+
+        }
+    }, [deleteDownloadHistorySuccess, deleteDownloadHistoryError])
 
     const showDocumentListPage = (data, column) => {
         history.push({
@@ -38,10 +69,10 @@ const DownloadHistory = () => {
     }
 
     const search = (pageSize = pageCount, pageNumber = 0) => {
-        // dispatch(MyDocumentsActionCreator.getMyDocumentFolders({
-        //     pageSize,
-        //     pageNumber
-        // }))
+        dispatch(DownloadHistoryActionCreator.getDownloadHistory({
+            pageSize,
+            pageNumber
+        }))
     }
 
     /**
@@ -57,16 +88,13 @@ const DownloadHistory = () => {
     return (<>
         <Col>
             <TableComponent
-                data={folders}
-                isLoading={false}
+                data={data}
+                isLoading={loading}
                 map={{
-                    "folderName": "Name",
-                    "fileSize": "Size",
-                    "modifiedDate": "Modified Date",
-                    "shareDate": "Shared Date",
-                    "receiveDate": "Received Date",
-                    "shareBy": "Shared By",
-                    "sharedWith": "Shared With"
+                    documentName: "Document Name",
+                    documentsize: "Size",
+                    downloadDate: "Download Date",
+                    downloadStatus: "Status"
                 }}
                 totalCount={totalCount}
                 actionArray={['folderName']}
@@ -80,10 +108,11 @@ const DownloadHistory = () => {
                 searchCriteria={{}}
                 addEditArray={
                     {
-                        download: (data) => console.log(`download Action`),
-                        share: (data) => console.log(`share action`),
-                        view: (data) => console.log(`View Action`),
-                        delete: (data) => console.log(`Delete Action`)
+                        pause: (data) => console.log(`pause Action`),
+                        restartDownload: (data) => console.log(`Restart Download action`),
+                        delete: (data) => {
+                            dispatch(DownloadHistoryActionCreator.deleteDownloadHistory(data.id))
+                        }
                     }
                 }
                 onPaginationChange={(

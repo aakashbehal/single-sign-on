@@ -9,7 +9,7 @@ import { GiSandsOfTime } from 'react-icons/gi';
 import { BiPencil } from "react-icons/bi";
 import { CgTrash } from "react-icons/cg"
 import { VscRunAll } from "react-icons/vsc"
-import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye, AiFillFileExclamation } from "react-icons/ai"
+import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye, AiFillFileExclamation, AiOutlineUpload } from "react-icons/ai"
 import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
@@ -46,6 +46,7 @@ const TableComponent = ({
     const [isCheck, setIsCheck] = useState<any>([]);
     const [headers, setHeaders] = useState<string[]>([]);
     const [pageSize, setPageSize] = useState(10);
+    const [show, setShow] = useState(false)
     const pageSizes = [10, 50, 100];
     useEffect(() => {
         if (isPagination) {
@@ -90,7 +91,11 @@ const TableComponent = ({
             }
             {
                 !isLoading
-                && (parentComponent === 'myDocuments' || parentComponent === 'sentDocumentRequest')
+                && (
+                    parentComponent === 'myDocuments'
+                    || parentComponent === 'sentDocumentRequest'
+                    || parentComponent === 'receiveDocumentRequest'
+                )
                 && <>
                     <Button variant="dark" style={{ marginRight: '1rem' }}>Export</Button>
                     <Button variant="dark" style={{ marginRight: '1rem' }}>Show/Hide Columns</Button>
@@ -367,7 +372,7 @@ const TableComponent = ({
     };
 
     const dueDateHandler = (data) => {
-        if (parentComponent === 'sentDocumentRequest') {
+        if (parentComponent === 'sentDocumentRequest' || parentComponent === 'receiveDocumentRequest') {
             if (!data.fulfillment && new Date(data.dueDate) >= new Date()) {
                 return '#fbbdc3'
             } else if (!data.fulfillment && new Date(data.dueDate) < new Date()) {
@@ -406,6 +411,30 @@ const TableComponent = ({
                     }
                 </div>
             )
+        }
+    }
+
+    const handleDocumentName = (data) => {
+        if (data['fileName']) {
+            return <td>
+                <div style={{
+                    display: 'inline-flex'
+                }}>
+                    <BsFileEarmarkText size={24} />
+                    <span>
+                        {data['fileName']}
+                    </span>
+                </div>
+            </td>
+        } else {
+            return <td
+                className='center_align_td'
+            >
+                <AiFillFileExclamation
+                    size={24}
+                />
+                {parentComponent === 'sentDocumentRequest' ? 'Pending' : 'Not Provided Yet'}
+            </td>
         }
     }
 
@@ -493,6 +522,8 @@ const TableComponent = ({
                         parentComponent === 'myDocuments'
                         || parentComponent === 'documents'
                         || parentComponent === 'sentDocumentRequest'
+                        || parentComponent === 'receiveDocumentRequest'
+                        || parentComponent === 'downloadHistory'
                     )
                     && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
                 }
@@ -639,8 +670,8 @@ const TableComponent = ({
                                     if (header === 'download') {
                                         return <td key={`data_2${index2}`}><AiOutlineCloudDownload size={24} /></td>
                                     }
-                                    if (parentComponent === 'sentDocumentRequest' && header === 'fileName') {
-                                        return <td key={`data_2${index2}`} className='center_align_td'><AiFillFileExclamation size={24} /> Pending</td>
+                                    if (header === 'fileName') {
+                                        return handleDocumentName(d)
                                     }
                                     if (!d[header]) {
                                         return <td key={`data_2${index2}`}><b>-</b></td>
@@ -852,8 +883,27 @@ const TableComponent = ({
                                 parentComponent === 'myDocuments'
                                 || parentComponent === 'documents'
                                 || parentComponent === 'sentDocumentRequest'
+                                || parentComponent === 'receiveDocumentRequest'
+                                || parentComponent === 'downloadHistory'
                             )
-                            && <td key={`data_${index}`} className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                            && <td key={`data_${index}`} className='span1' style={{ minWidth: '140px', textAlign: 'center' }}>
+                                {
+                                    typeof addEditArray.upload !== 'undefined'
+                                    && !d["fileName"]
+                                    && <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Upload
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <AiOutlineCloudUpload onClick={() => addEditArray.upload(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                    </span>
+                                } &nbsp;
                                 {
                                     typeof addEditArray.view !== 'undefined'
                                     && <span>
@@ -872,6 +922,12 @@ const TableComponent = ({
                                 } &nbsp;
                                 {
                                     typeof addEditArray.download !== 'undefined'
+                                    && (
+                                        (parentComponent === 'receiveDocumentRequest' && d["fileName"])
+                                        || parentComponent === 'myDocuments'
+                                        || parentComponent === 'documents'
+                                        || parentComponent === 'sentDocumentRequest'
+                                    )
                                     && <span>
                                         <OverlayTrigger
                                             placement="bottom"
@@ -882,7 +938,12 @@ const TableComponent = ({
                                                 </Tooltip>
                                             }
                                         >
-                                            <AiOutlineCloudDownload onClick={() => addEditArray.download(d)} size={20} style={{ cursor: 'pointer' }} />
+                                            <AiOutlineCloudDownload
+                                                style={{
+                                                    color: parentComponent === 'sentDocumentRequest' && !d["fileName"] ? "#bebebe" : "black",
+                                                    cursor: 'pointer'
+                                                }}
+                                                onClick={() => addEditArray.download(d)} size={20} />
                                         </OverlayTrigger>
                                     </span>
                                 } &nbsp;
@@ -952,7 +1013,7 @@ const TableComponent = ({
         </div >
     );
 
-    const [show, setShow] = useState(false)
+
 
     return (
         <div className="table_container">

@@ -40,7 +40,7 @@ const FileUploadHook = (files) => {
             if (!zipFile) {
                 zip.generateAsync({ type: "blob" })
                     .then((content) => {
-                        return new File([content], 'zip.zip', { type: 'application/x-zip-compressed' })
+                        return new File([content], 'new.zip', { type: 'application/x-zip-compressed' })
                     })
                     .then((file) => {
                         setState({
@@ -64,7 +64,7 @@ const FileUploadHook = (files) => {
     ];
 }
 
-const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, search }: any) => {
+const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, search, details = null }: any) => {
     const { addToast } = useToasts();
     const editRef = useRef<any>()
     const dispatch = useDispatch();
@@ -77,7 +77,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     const [fileTypeSelected, setFileTypeSelected] = useState('')
     const [formSubmitted, setFormSubmitted] = useState<any>(false)
     const [formError, setFormError] = useState<any>({
-        fileLengthSingle: false
+        fileLengthSingle: false,
+        fileSize: false
     })
 
     useEffect(() => {
@@ -145,8 +146,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         "excelUrl": urls.response.fileUrl[1],
                         "zipUrl": urls.response.fileUrl[0],
                         "bulkType": "upload"
-                    },
-                    config
+                    }
                 )
                 const data = handleResponse(responseFilePath)
                 addToast(createMessage('success', `uploaded`, 'File'), { appearance: 'success', autoDismiss: true })
@@ -214,7 +214,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
     // triggers when file is selected with click
     const handleChange = function (e) {
-        console.log(`handle changes`)
         e.preventDefault();
         if (e.target.files && e.target.files[0]) {
             handleFiles(e.target.files);
@@ -301,7 +300,14 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         </div>
                         <Col md={12} sm={12}>
                             <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
-                                <input ref={inputRef} type="file" id="input-file-upload" accept="image/png, image/jpeg, application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" multiple={true} onChange={handleChange} />
+                                <input
+                                    ref={inputRef}
+                                    type="file"
+                                    id="input-file-upload"
+                                    accept="image/png, image/jpeg, application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                                    multiple={true}
+                                    onChange={handleChange}
+                                />
                                 <label id="label-file-upload" className={dragActive ? "drag-active" : ""}>
                                     <div>
                                         <CgSoftwareUpload size={60} color={'#5070e1'} onClick={onButtonClick} cursor='pointer' />

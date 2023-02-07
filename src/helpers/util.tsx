@@ -2,6 +2,12 @@ import { userService } from "../services";
 import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { saveAs } from 'file-saver';
+import { HttpRequest } from "@aws-sdk/protocol-http";
+import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
+import { parseUrl } from "@aws-sdk/url-parser";
+import { Sha256 } from "@aws-crypto/sha256-browser";
+import { formatUrl } from "@aws-sdk/util-format-url";
+
 export const axiosCustom = axios.create(); // export this and use it in all your components
 
 /**
@@ -408,3 +414,33 @@ export const decimalToFixed = (x: any) => {
     return valueToReturn
 }
 
+export const formatBytes = (bytes, decimals = 2) => {
+    if (!+bytes) return '0 Bytes'
+
+    const k = 1024
+    const dm = decimals < 0 ? 0 : decimals
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+    return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`
+}
+
+
+export const getSignedURL = async (fileKey) => {
+    const region = "us-east-1"
+    const credentials: any = {
+        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.REACT_APP_AWS_ACCESS_KEY_SECRET
+    }
+    const s3ObjectUrl = parseUrl(`https://eq-dev-dm.s3.${region}.amazonaws.com/${fileKey}`);
+    const presigner = new S3RequestPresigner({
+        credentials,
+        region,
+        sha256: Sha256 // In browsers
+    });
+    // Create a GET request from S3 url.
+    const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+    return formatUrl(url);
+
+}

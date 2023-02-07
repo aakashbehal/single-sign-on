@@ -346,10 +346,6 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
             clientAccountNumber,
             docTypeCode
         } = sendRequestRef.current
-        console.log(usersSelected)
-        console.log(originalAccountNumber.value)
-        console.log(clientAccountNumber.value)
-        console.log(docTypeCode.value)
         dispatch(SentDocumentRequestActionCreator.sentDocumentRequest({
             "sendRequests": usersSelected,
             "originalAccountNumber": originalAccountNumber.value,
@@ -390,7 +386,13 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
                                             allowNew={true}
                                             newSelectionPrefix='Not a Platform User: '
                                             onChange={(selected) => {
-                                                setUserSelected(selected)
+                                                let selectedUpdated = selected.map((s) => {
+                                                    if (typeof s === 'object') {
+                                                        return s.email
+                                                    }
+                                                    return s
+                                                })
+                                                setUserSelected(selectedUpdated)
                                             }}
                                             options={users}
                                         />

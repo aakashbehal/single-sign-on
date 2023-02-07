@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DatePicker from 'react-date-picker';
+
 
 import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
 import { CgOptions, CgSearch } from "react-icons/cg";
@@ -9,6 +10,8 @@ import DocumentUpload from "../../components/modal/DocumentUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { getSignedURL } from "../../helpers/util";
 
 const tenuresInit = [
     {
@@ -20,6 +23,7 @@ const tenuresInit = [
 const DocumentsList = ({ location }) => {
     const dispatch = useDispatch();
     const params = new URLSearchParams(location.search);
+    const aRef = useRef<any>()
     const AccountId = params.get('account_id');
     const [tenures, setTenures] = useState(tenuresInit)
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
@@ -29,7 +33,8 @@ const DocumentsList = ({ location }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [uploadDocModal, setUploadDocModal] = useState(false)
     const [showDocument, setShowDocument] = useState(false)
-    const [documentToShow, setDocumentToShow] = useState(null)
+    const [documentToShow, setDocumentToShow] = useState(null);
+    const [listFiles, setListFiles] = useState([]);
 
     const { documents, totalCount, error, loading } = useSelector((state: any) => ({
         documents: state.myDocuments.documents.data,
@@ -43,7 +48,7 @@ const DocumentsList = ({ location }) => {
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
-    }, [])
+    }, []);
 
     const search = (pageSize = pageCount, pageNumber = 0) => {
         dispatch(MyDocumentsActionCreator.getMyDocumentList({
@@ -64,11 +69,31 @@ const DocumentsList = ({ location }) => {
         search(pageSize, pageNumber)
     }
 
-    const downloadHandler = (document) => {
-        console.log(document)
+    const downloadHandler = async (document) => {
+        //download file
+        console.log(document.fileName)
+        const splitFileName = document.fileName.split('.')
+        let filePath = await getSignedURL(document.objectKey)
+        // let formatType = { type: 'application/pdf' }
+        // if (splitFileName[1] === 'png') {
+        //     formatType = { type: 'application/png' }
+        // }
+        // var file = new Blob([filePath], formatType);
+        // var fileURL = window.URL.createObjectURL(file);
+        aRef.current.href = filePath;
+        aRef.current.download = document.fileName;
+        aRef.current.click();
+        //save download id
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
     }
 
+    const getHtml = (template) => {
+        return template.join('\n');
+    }
+
+
     return (<>
+        <a href="" ref={aRef} target="_blank"></a>
         <Col sm={12}>
             <Row>
                 <Col md={10} sm={10} className={Styles.search_input}>

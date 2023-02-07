@@ -387,6 +387,7 @@ const Documents = ({ location }) => {
         </Col >
     }
     const handleSelect = (e) => {
+        console.log(e)
         history.push({
             pathname: `/documents/${e}`
         });
@@ -406,16 +407,16 @@ const Documents = ({ location }) => {
                     onSelect={handleSelect}
                 >
                     <Tab eventKey="my_documents" title="My Documents">
-                        <MyDocuments />
+                        {selectedTab === "my_documents" && <MyDocuments />}
                     </Tab>
                     <Tab eventKey="sent_document_requests" title="Sent Document Requests">
-                        <SentDocumentRequests />
+                        {selectedTab === "sent_document_requests" && <SentDocumentRequests />}
                     </Tab>
-                    {/* <Tab eventKey="received_document_requests" title="Received Document Request">
-                        <ReceivedDocumentRequests />
-                    </Tab>*/}
+                    <Tab eventKey="received_document_requests" title="Received Document Request">
+                        {selectedTab === "received_document_requests" && <ReceivedDocumentRequests />}
+                    </Tab>
                     <Tab eventKey="download_history" title="Download History">
-                        <DownloadHistory />
+                        {selectedTab === "download_history" && <DownloadHistory />}
                     </Tab>
                     {/*<Tab eventKey="templates" title="">
                     </Tab> */}

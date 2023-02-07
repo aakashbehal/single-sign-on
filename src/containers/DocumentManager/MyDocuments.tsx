@@ -47,7 +47,7 @@ const MyDocuments = () => {
         });
     }
 
-    const search = (pageSize = pageCount, pageNumber = 0) => {
+    const search = (pageSize = pageCount, pageNumber = 1) => {
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders({
             pageSize,
             pageNumber,
@@ -261,7 +261,13 @@ const MyDocuments = () => {
         </Col>
         {
             uploadDocModal
-            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="myDocument" search={search} />
+            && <DocumentUpload
+                show={uploadDocModal}
+                onHide={() => setUploadDocModal(false)}
+                accountId={123}
+                Styles={Styles}
+                parentComponent="myDocument"
+                search={search} />
         }
     </>)
 }
