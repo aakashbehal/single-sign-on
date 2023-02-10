@@ -1,5 +1,5 @@
 
-import { handleResponse, axiosCustom, formatBytes, dateTimeFormat } from "../helpers/util"
+import { handleResponse, axiosCustom, formatBytes, dateFormatterForRequest } from "../helpers/util"
 
 const getDownloadHistory = async ({
     pageSize,
@@ -17,7 +17,7 @@ const getDownloadHistory = async ({
         const responseModified: any = {}
         responseModified.sentRequests = downloadHistory.map((dH) => {
             dH.documentsize = formatBytes(dH.documentsize)
-            dH.downloadDate = `${dH.downloadDate[1] > 9 ? dH.downloadDate[1] : `0${dH.downloadDate[1]}`}/${dH.downloadDate[2] > 9 ? dH.downloadDate[2] : `0${dH.downloadDate[2]}`}/${dH.downloadDate[0]}`
+            dH.downloadDate = dateFormatterForRequest(dH.downloadAt)
             return dH
         })
         responseModified.totalCount = data.response.metadata.recordCount

@@ -288,9 +288,9 @@ const ReceivedDocumentRequests = () => {
                     "clientAccountNumber": "Client Account Number",
                     "requestDate": "Requested Date",
                     "dueDate": "Due Date",
-                    "fulfillment": "Fulfillment Date",
+                    "fulfillmentDate": "Fulfillment Date",
                     "fileName": "Document Name",
-                    "requestedBy": "Requested By"
+                    "requestedFrom": "Requested By"
                 }}
                 totalCount={totalCount}
                 actionArray={[]}

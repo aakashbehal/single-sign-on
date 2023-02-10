@@ -71,26 +71,12 @@ const DocumentsList = ({ location }) => {
 
     const downloadHandler = async (document) => {
         //download file
-        console.log(document.fileName)
-        const splitFileName = document.fileName.split('.')
         let filePath = await getSignedURL(document.objectKey)
-        // let formatType = { type: 'application/pdf' }
-        // if (splitFileName[1] === 'png') {
-        //     formatType = { type: 'application/png' }
-        // }
-        // var file = new Blob([filePath], formatType);
-        // var fileURL = window.URL.createObjectURL(file);
         aRef.current.href = filePath;
         aRef.current.download = document.fileName;
         aRef.current.click();
-        //save download id
         dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
     }
-
-    const getHtml = (template) => {
-        return template.join('\n');
-    }
-
 
     return (<>
         <a href="" ref={aRef} target="_blank"></a>
@@ -253,7 +239,7 @@ const DocumentsList = ({ location }) => {
                 data={documents}
                 isLoading={loading}
                 map={{
-                    fileName: "Name",
+                    documentName: "Name",
                     documentType: "Document Type",
                     originalAccountNo: "Original Account Number",
                     equabliAccountNo: "Equabli Account Number",
@@ -267,7 +253,7 @@ const DocumentsList = ({ location }) => {
                     sharedWith: "Shared With",
                 }}
                 totalCount={totalCount}
-                actionArray={['fileName']}
+                actionArray={['documentName']}
                 handleNavigate={(data) => {
                     setShowDocument(true)
                     setDocumentToShow(data)

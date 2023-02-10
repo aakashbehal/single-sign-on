@@ -7,6 +7,7 @@ import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
 import { parseUrl } from "@aws-sdk/url-parser";
 import { Sha256 } from "@aws-crypto/sha256-browser";
 import { formatUrl } from "@aws-sdk/util-format-url";
+import { history } from "./history";
 
 export const axiosCustom = axios.create(); // export this and use it in all your components
 
@@ -155,6 +156,10 @@ export const httpInterceptor = () => {
                 }
                 const url = request.url.split('/')
                 const urlString = url[url.length - 1].split('?')
+                if (token === null && urlString[0] === 'logout') {
+                    localStorage.removeItem('user');
+                    history.push('/login')
+                }
                 if (
                     noAuthRequired.indexOf(urlString[0]) === -1
                 ) {
@@ -442,5 +447,4 @@ export const getSignedURL = async (fileKey) => {
     // Create a GET request from S3 url.
     const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
     return formatUrl(url);
-
 }

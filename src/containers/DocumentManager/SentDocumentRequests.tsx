@@ -14,6 +14,10 @@ import DocumentUpload from "../../components/modal/DocumentUpload";
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
+import { UserActionCreator } from "../../store/actions/user.actions";
+import { getSignedURL } from "../../helpers/util";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { SummaryActionCreator } from "../../store/actions/summary.actions";
 
 const tenuresInit = [
     {
@@ -23,7 +27,8 @@ const tenuresInit = [
 ]
 
 const SentDocumentRequests = () => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const aRef = useRef<any>()
     const { addToast } = useToasts();
     const [tenures, setTenures] = useState(tenuresInit)
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
@@ -76,12 +81,16 @@ const SentDocumentRequests = () => {
             addToast(createMessage('success', `Sent`, 'Document Request'), { appearance: 'success', autoDismiss: true });
             setShowRequestNewDocument(false);
             search(pageCount, currentPage)
+            setTimeout(() => {
+                dispatch(SummaryActionCreator.reRender())
+            }, 1000)
         }
         if (sendRequestError) { addToast(createMessage('error', `sending`, 'document request'), { appearance: 'error', autoDismiss: false }); }
         if (deleteRequestSuccess) {
             addToast(createMessage('success', `deleted`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
             setShowDeleteConfirm(false)
             search(pageCount, currentPage)
+            dispatch(SummaryActionCreator.reRender())
         }
         if (deleteRequestError) { addToast(createMessage('error', `deleting`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
     }, [sendRequestSuccess,
@@ -115,7 +124,17 @@ const SentDocumentRequests = () => {
         setShowDeleteConfirm(true)
     }
 
+    const downloadHandler = async (document) => {
+        //download file
+        let filePath = await getSignedURL(document.filePath)
+        aRef.current.href = filePath;
+        aRef.current.download = document.documentName;
+        aRef.current.click();
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+    }
+
     return (<>
+        <a href="" ref={aRef} target="_blank"></a>
         <Col sm={12}>
             <Row>
                 <Col md={8} sm={8} className={Styles.search_input}>
@@ -285,7 +304,7 @@ const SentDocumentRequests = () => {
                     "clientAccountNumber": "Client Account Number",
                     "requestDate": "Requested Date",
                     "dueDate": "Due Date",
-                    "fulfillment": "Fulfillment Date",
+                    "fulfillmentDate": "Fulfillment Date",
                     "fileName": "File Name",
                     "requestedFrom": "Requested From",
                 }}
@@ -301,7 +320,7 @@ const SentDocumentRequests = () => {
                 searchCriteria={{}}
                 addEditArray={
                     {
-                        download: (data) => console.log("download", data),
+                        download: (data) => downloadHandler(data),
                         delete: (data) => handleDetails(data)
                     }
                 }
@@ -334,10 +353,24 @@ const SentDocumentRequests = () => {
 const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
     const ref = useRef<any>();
     const sendRequestRef = useRef<any>()
-    const [loading, setLoading] = useState(false);
-    const [users, setUsers] = useState(['aakashbehal@gmail.com', 'abc@gmail.com']);
+    // const [loading, setLoading] = useState(false);
+    // const [users, setUsers] = useState(['aakashbehal@gmail.com', 'abc@gmail.com']);
     const [defaultSelect, setDefaultSelect] = useState<any>([])
     const [usersSelected, setUserSelected] = useState<any>([])
+
+    const {
+        users,
+        loading,
+        error
+    } = useSelector((state: any) => ({
+        users: state.users.data,
+        loading: state.users.loading,
+        error: state.users.error
+    }))
+
+    useEffect(() => {
+        dispatch(UserActionCreator.getConnectedUsers())
+    }, [])
 
     const handleRequest = (e) => {
         e.preventDefault()
@@ -346,6 +379,12 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
             clientAccountNumber,
             docTypeCode
         } = sendRequestRef.current
+        usersSelected.push({
+            "firstName": "Sachin",
+            "principleId": 21,
+            "orgTypeCode": "CL",
+            "orgCode": "MRLT"
+        })
         dispatch(SentDocumentRequestActionCreator.sentDocumentRequest({
             "sendRequests": usersSelected,
             "originalAccountNumber": originalAccountNumber.value,
@@ -379,18 +418,21 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
                                         <Typeahead
                                             isLoading={loading}
                                             id="public-methods-example"
-                                            labelKey="email"
+                                            labelKey="firstName"
                                             multiple
                                             defaultSelected={defaultSelect}
                                             ref={ref}
                                             allowNew={true}
                                             newSelectionPrefix='Not a Platform User: '
                                             onChange={(selected) => {
-                                                let selectedUpdated = selected.map((s) => {
-                                                    if (typeof s === 'object') {
-                                                        return s.email
+                                                let selectedUpdated = selected.map((s: any) => {
+                                                    let temp = {
+                                                        "firstName": s.firstName,
+                                                        "principleId": s.principleId,
+                                                        "orgTypeCode": s.orgType,
+                                                        "orgCode": s.orgCode
                                                     }
-                                                    return s
+                                                    return temp
                                                 })
                                                 setUserSelected(selectedUpdated)
                                             }}

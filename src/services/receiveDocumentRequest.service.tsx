@@ -6,7 +6,7 @@ const getReceiveDocumentRequest = async ({
     pageNumber
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
             pageSize,
             pageNumber: pageNumber - 1
         })

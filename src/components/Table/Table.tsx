@@ -373,11 +373,11 @@ const TableComponent = ({
 
     const dueDateHandler = (data) => {
         if (parentComponent === 'sentDocumentRequest' || parentComponent === 'receiveDocumentRequest') {
-            if (!data.fulfillment && new Date(data.dueDate) >= new Date()) {
-                return '#fbbdc3'
-            } else if (!data.fulfillment && new Date(data.dueDate) < new Date()) {
+            if (data.requestStatus === 'Open' && new Date(data.dueDate) >= new Date()) {
                 return '#b2e7d0'
-            } else {
+            } else if (data.requestStatus === 'Open' && new Date(data.dueDate) > new Date()) {
+                return '#fbbdc3'
+            } else if (data.requestStatus === 'Fulfilled') {
                 return 'white'
             }
         }
@@ -415,14 +415,14 @@ const TableComponent = ({
     }
 
     const handleDocumentName = (data) => {
-        if (data['fileName']) {
+        if (data['documentName']) {
             return <td>
                 <div style={{
                     display: 'inline-flex'
                 }}>
                     <BsFileEarmarkText size={24} />
                     <span>
-                        {data['fileName']}
+                        {data['documentName']}
                     </span>
                 </div>
             </td>
@@ -889,7 +889,7 @@ const TableComponent = ({
                             && <td key={`data_${index}`} className='span1' style={{ minWidth: '140px', textAlign: 'center' }}>
                                 {
                                     typeof addEditArray.upload !== 'undefined'
-                                    && !d["fileName"]
+                                    && !d["documentName"]
                                     && <span>
                                         <OverlayTrigger
                                             placement="bottom"
@@ -902,8 +902,9 @@ const TableComponent = ({
                                         >
                                             <AiOutlineCloudUpload onClick={() => addEditArray.upload(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
+                                        &nbsp;
                                     </span>
-                                } &nbsp;
+                                }
                                 {
                                     typeof addEditArray.view !== 'undefined'
                                     && <span>
@@ -918,12 +919,13 @@ const TableComponent = ({
                                         >
                                             <AiOutlineEye onClick={() => addEditArray.view(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
+                                        &nbsp;
                                     </span>
-                                } &nbsp;
+                                }
                                 {
                                     typeof addEditArray.download !== 'undefined'
                                     && (
-                                        (parentComponent === 'receiveDocumentRequest' && d["fileName"])
+                                        (parentComponent === 'receiveDocumentRequest' && d["documentName"])
                                         || parentComponent === 'myDocuments'
                                         || parentComponent === 'documents'
                                         || parentComponent === 'sentDocumentRequest'
@@ -940,13 +942,14 @@ const TableComponent = ({
                                         >
                                             <AiOutlineCloudDownload
                                                 style={{
-                                                    color: parentComponent === 'sentDocumentRequest' && !d["fileName"] ? "#bebebe" : "black",
+                                                    color: parentComponent === 'sentDocumentRequest' && !d["documentName"] ? "#bebebe" : "black",
                                                     cursor: 'pointer'
                                                 }}
                                                 onClick={() => addEditArray.download(d)} size={20} />
                                         </OverlayTrigger>
+                                        &nbsp;
                                     </span>
-                                } &nbsp;
+                                }
                                 {
                                     typeof addEditArray.share !== 'undefined'
                                     && <span>
@@ -961,8 +964,9 @@ const TableComponent = ({
                                         >
                                             <FiShare2 size={20} onClick={() => addEditArray.share(d)} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
+                                        &nbsp;
                                     </span>
-                                } &nbsp;
+                                }
                                 {
                                     typeof addEditArray.delete !== 'undefined'
                                     &&

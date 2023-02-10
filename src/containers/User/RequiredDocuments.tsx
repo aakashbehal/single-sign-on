@@ -125,7 +125,7 @@ const RequiredDocuments = () => {
     }
 
     const deleteAlert = () => {
-        console.log(details)
+
         dispatch(RequiredDocumentActionCreator.deleteRequiredDocuments(details.productCode))
     }
 

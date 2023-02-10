@@ -51,7 +51,6 @@ const deleteDocumentRequest = async (id) => {
     }
 }
 
-
 export const sentDocumentRequestService = {
     getSentDocumentRequest,
     sentDocumentRequest,

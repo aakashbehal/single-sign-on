@@ -4,23 +4,27 @@ import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 const getMyDocumentFolders = async ({
     pageSize,
     pageNumber,
-    orgType
+    folderName,
+    modifiedDateFrom,
+    modifiedDateTo
 }) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
-                params: {
-                    pageSize,
-                    pageNumber: pageNumber - 1,
-                    orgType
-                }
-            })
+                pageSize,
+                pageNumber: pageNumber - 1,
+                folderName,
+                modifiedDateFrom,
+                modifiedDateTo
+            }
+        )
         const data = handleResponse(response)
         let folders = data.response.datas
         const responseModified: any = {}
         responseModified.folders = folders.map((folder) => {
             folder.selected = false
             folder.fileSize = formatBytes(folder.fileSize)
+            folder.folderName = `Account-${folder.folderName}`
             return folder
         })
         responseModified.totalCount = data.response.metadata.recordCount
@@ -39,7 +43,7 @@ const getMyDocumentList = async ({
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
-                accountNumber,
+                accountNumber: accountNumber.replace("Account-", ""),
                 orgTypeCode: orgType,
                 pageSize,
                 pageNumber: pageNumber - 1
@@ -49,12 +53,8 @@ const getMyDocumentList = async ({
         let documents = data.response.datas
         const responseModified: any = {}
         responseModified.documents = documents.map((document) => {
-            let splitFileName = document.filePath.split('/')
             document.selected = false
             document.fileSize = formatBytes(document.fileSize)
-            if (splitFileName) {
-                document.fileName = splitFileName[splitFileName.length - 1]
-            }
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount

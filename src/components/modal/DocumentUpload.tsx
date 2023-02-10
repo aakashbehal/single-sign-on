@@ -13,6 +13,7 @@ import { saveAs } from 'file-saver';
 import { createMessage } from '../../helpers/messages';
 import { axiosCustom, dateFormatterForRequestFileUpload, handleResponse } from '../../helpers/util';
 import { userService } from '../../services';
+import { SummaryActionCreator } from '../../store/actions/summary.actions';
 
 const FileUploadHook = (files) => {
     const [state, setState] = useState<any>(null)
@@ -161,6 +162,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 setFormSubmitted(false)
                 onHide()
             }
+            dispatch(SummaryActionCreator.getReceiveSummary())
+            dispatch(SummaryActionCreator.getSentSummary())
             search()
         } catch (error: any) {
             setFormSubmitted(false)

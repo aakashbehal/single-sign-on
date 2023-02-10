@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
 import Styles from "./DocumentManager.module.sass";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
@@ -13,6 +13,8 @@ import ReceivedDocumentRequests from "./ReceivedDocumentRequests";
 import SentDocumentRequests from "./SentDocumentRequests";
 import DownloadHistory from "./DownloadHistory";
 import { useHistory } from "react-router-dom";
+import { SummaryActionCreator } from "../../store/actions/summary.actions";
+import { useDispatch, useSelector } from "react-redux";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -87,12 +89,12 @@ const options = {
     },
 }
 
-export const dataRequested = {
+export const DATA_REQUESTED = {
     labels: ['Fulfilled', 'Open', 'Overdue'],
     datasets: [
         {
             label: 'Total',
-            data: [45, 35, 20],
+            data: [],
             backgroundColor: [
                 '#53d591',
                 'rgba(255, 206, 86, 1)',
@@ -108,12 +110,12 @@ export const dataRequested = {
     ],
 };
 
-export const dataSent = {
+export const DATA_SENT = {
     labels: ['Fulfilled', 'Open', 'Overdue'],
     datasets: [
         {
             label: 'Total',
-            data: [60, 30, 10],
+            data: [],
             backgroundColor: [
                 '#53d591',
                 'rgba(255, 206, 86, 1)',
@@ -132,6 +134,7 @@ export const dataSent = {
 
 const Documents = ({ location }) => {
     const history = useHistory();
+    const dispatch = useDispatch()
     const [tenures, setTenures] = useState(tenuresInit)
     const [products, setProducts] = useState(productsInit)
     const [portfolios, setPortfolios] = useState(portfolioInit)
@@ -142,19 +145,164 @@ const Documents = ({ location }) => {
     const [pageCount, setPageCount] = useState(10)
     const [currentPage, setCurrentPage] = useState(1);
     const [collapse, setCollapse] = useState(false);
-    const [selectedTab, setSelectedTab] = useState('')
+    const [selectedTab, setSelectedTab] = useState('');
+    const [dataRequested, setDataRequested] = useState<any>({
+        labels: ['Fulfilled', 'Open', 'Overdue'],
+        datasets: [
+            {
+                label: 'Total',
+                data: [],
+                backgroundColor: [
+                    '#53d591',
+                    'rgba(255, 206, 86, 1)',
+                    '#fc3f3f'
+                ],
+                borderColor: [
+                    '#53d591',
+                    'rgba(255, 206, 86, 1)',
+                    '#fc3f3f',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    })
+    const [dataSent, setDataSent] = useState<any>({
+        labels: ['Fulfilled', 'Open', 'Overdue'],
+        datasets: [
+            {
+                label: 'Total',
+                data: [],
+                backgroundColor: [
+                    '#53d591',
+                    'rgba(255, 206, 86, 1)',
+                    '#fc3f3f'
+                ],
+                borderColor: [
+                    '#53d591',
+                    'rgba(255, 206, 86, 1)',
+                    '#fc3f3f',
+                ],
+                borderWidth: 1,
+            },
+        ],
+    })
+
+    const {
+        requestedSummary,
+        sentSummary,
+        errorSent,
+        loadingSent,
+        loadingRequest,
+        errorRequest,
+        reRender
+    } = useSelector((state: any) => ({
+        requestedSummary: state.summary.requestedSummary,
+        sentSummary: state.summary.sentSummary,
+        errorSent: state.summary.errorSent,
+        loadingSent: state.summary.loadingSent,
+        loadingRequest: state.summary.loadingRequest,
+        errorRequest: state.summary.errorRequest,
+        reRender: state.summary.reRender
+    }))
+
+    useEffect(() => {
+        if (JSON.stringify(requestedSummary) !== "{}") {
+            delete requestedSummary.total
+            let labels = ['Fulfilled', 'Open', 'Overdue']
+            let values = Object.values(requestedSummary)
+            const dataRequestedTemp: any = Object.assign({}, DATA_REQUESTED)
+            dataRequestedTemp.labels = labels
+            dataRequestedTemp.datasets[0].data = values
+            setDataRequested(dataRequestedTemp)
+        }
+        if (JSON.stringify(sentSummary) !== "{}") {
+            delete sentSummary.total
+            let labels = ['Fulfilled', 'Open', 'Overdue']
+            let values = Object.values(sentSummary)
+            const dataSentTemp: any = Object.assign({}, DATA_SENT)
+            dataSentTemp.labels = labels
+            dataSentTemp.datasets[0].data = values
+            setDataSent(dataSentTemp)
+        }
+    }, [requestedSummary, sentSummary])
+
+    useEffect(() => {
+        dispatch(SummaryActionCreator.getSentSummary())
+        dispatch(SummaryActionCreator.getReceiveSummary())
+    }, [])
+
+    useEffect(() => {
+        console.log(reRender)
+        if (reRender) {
+            setDataSent({
+                labels: ['Fulfilled', 'Open', 'Overdue'],
+                datasets: [
+                    {
+                        label: 'Total',
+                        data: [],
+                        backgroundColor: [
+                            '#53d591',
+                            'rgba(255, 206, 86, 1)',
+                            '#fc3f3f'
+                        ],
+                        borderColor: [
+                            '#53d591',
+                            'rgba(255, 206, 86, 1)',
+                            '#fc3f3f',
+                        ],
+                        borderWidth: 1,
+                    },
+                ],
+            })
+            setDataRequested({
+                labels: ['Fulfilled', 'Open', 'Overdue'],
+                datasets: [
+                    {
+                        label: 'Total',
+                        data: [],
+                        backgroundColor: [
+                            '#53d591',
+                            'rgba(255, 206, 86, 1)',
+                            '#fc3f3f'
+                        ],
+                        borderColor: [
+                            '#53d591',
+                            'rgba(255, 206, 86, 1)',
+                            '#fc3f3f',
+                        ],
+                        borderWidth: 1,
+                    },
+                ],
+            })
+            dispatch(SummaryActionCreator.getSentSummary())
+            dispatch(SummaryActionCreator.getReceiveSummary())
+        }
+    }, [reRender])
 
     useEffect(() => {
         const tab = location.pathname.split('/')
         setSelectedTab(tab[tab.length - 1])
     }, [location])
 
+    const memoRequested = useMemo(() => {
+        console.log(`should re render request`, JSON.stringify(dataRequested))
+        // if (dataRequested && dataRequested.datasets && dataRequested.datasets[0].data.length > 0) {
+        return <Doughnut data={dataRequested} options={options} />
+        // }
+    }, [dataRequested])
+
+    const memoSent = useMemo(() => {
+        console.log(`should re render sent`, JSON.stringify(dataSent))
+        // if (dataSent && dataSent.datasets && dataSent.datasets[0].data.length > 0) {
+        return <Doughnut data={dataSent} options={options} />
+        // }
+    }, [dataSent])
+
     /**
      * function is used in pagination
      * @param pageSize 
      * @param pageNumber 
      */
-    const handlePagination = (pageSize: number, pageNumber: number) => { }
 
     const documentSummary = () => {
         return <Col sm={12} className="form_container">
@@ -353,11 +501,19 @@ const Documents = ({ location }) => {
                                 <Row>
                                     <Col sm={6} className={`${Styles.chart_container} ${Styles.right_border}`}>
                                         <h5>Sent Requests</h5>
-                                        <Doughnut data={dataSent} options={options} />
+                                        {
+                                            !loadingSent &&
+                                            memoSent
+                                        }
                                     </Col>
                                     <Col sm={6} className={Styles.chart_container}>
                                         <h5>Received Requests</h5>
-                                        <Doughnut data={dataRequested} options={options} />
+                                        {
+                                            !loadingRequest &&
+                                            memoRequested
+                                        }
+                                        {/* JSON.stringify(requestedSummary) !== "{}"
+                                            &&  */}
                                     </Col>
                                 </Row>
                             </Form>
@@ -387,7 +543,6 @@ const Documents = ({ location }) => {
         </Col >
     }
     const handleSelect = (e) => {
-        console.log(e)
         history.push({
             pathname: `/documents/${e}`
         });
@@ -395,7 +550,7 @@ const Documents = ({ location }) => {
     return (
         <>
             {
-                // documentSummary()
+                documentSummary()
             }
             <br />
             <Col className="no_padding">

@@ -53,7 +53,7 @@
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "start": "react-scripts start --max_old_space_size=8128 start",
+    "start": "set PORT=3006 && react-scripts start --max_old_space_size=8128 start ",
     "build": " react-scripts build",
     "build:dev": "env-cmd -f .env npm run-script build",
     "build:qa": "env-cmd -f .env.qa npm run-script build",

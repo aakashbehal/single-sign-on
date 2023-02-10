@@ -95,6 +95,16 @@ const getAccessToken = () => {
     return token
 }
 
+const getConnectedUsers = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_AUTH_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/connected`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
 export const userService = {
     login,
     logout,
@@ -104,5 +114,6 @@ export const userService = {
     getTempUser,
     logoutAuthExpired,
     isPasswordResetRequired,
-    getUserType
+    getUserType,
+    getConnectedUsers
 }

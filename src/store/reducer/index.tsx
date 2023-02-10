@@ -11,6 +11,8 @@ import receiveDocumentRequestReducer from "./receiveDocumentRequest.reducer";
 import registrationReducer from "./registration.reducer";
 import requiredDocumentsReducer from "./requiredDocuments.reducer";
 import sentDocumentRequestReducer from "./sentDocumentRequest.reducer";
+import summaryReducer from "./summary.reducer";
+import userReducer from "./user.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -23,7 +25,9 @@ const appReducer = combineReducers({
     requiredDocuments: requiredDocumentsReducer,
     sentDocumentRequest: sentDocumentRequestReducer,
     receiveDocumentRequest: receiveDocumentRequestReducer,
-    downloadHistory: downloadHistoryRequestReducer
+    downloadHistory: downloadHistoryRequestReducer,
+    users: userReducer,
+    summary: summaryReducer
 })
 
 const rootReducer = (state, action) => {

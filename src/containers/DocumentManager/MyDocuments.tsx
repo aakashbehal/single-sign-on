@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DatePicker from 'react-date-picker';
 
 import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
@@ -20,8 +20,10 @@ const tenuresInit = [
 const MyDocuments = () => {
     const dispatch = useDispatch()
     const history = useHistory();
+    const advanceSearchRef = useRef<any>();
     const [tenures, setTenures] = useState(tenuresInit)
-    const [documents, setDocuments] = useState([])
+    const [generationDateFrom, setGenerationDateFrom] = useState<any>(null)
+    const [generationDateTo, setGenerationDateTo] = useState<any>(null)
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('originalAccountNumber')
     const [sortType, setSortType] = useState('asc');
@@ -47,11 +49,13 @@ const MyDocuments = () => {
         });
     }
 
-    const search = (pageSize = pageCount, pageNumber = 1) => {
+    const search = (pageSize = pageCount, pageNumber = 1, folderName = null, modifiedDateFrom = null, modifiedDateTo = null) => {
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders({
             pageSize,
             pageNumber,
-            orgType: 'CT'
+            folderName,
+            modifiedDateFrom,
+            modifiedDateTo
         }))
     }
 
@@ -69,6 +73,17 @@ const MyDocuments = () => {
         console.log(document)
     }
 
+    const advanceSearchHandler = (e) => {
+        e.preventDefault()
+        const {
+            document_name
+        } = advanceSearchRef.current
+        console.log(document_name.value)
+        console.log(generationDateFrom, generationDateTo)
+        search(pageCount, 1, document_name.value, generationDateFrom, generationDateTo)
+        setShowAdvanceSearch(false)
+    }
+
     return (<>
         <Col sm={12}>
             <Row>
@@ -77,10 +92,10 @@ const MyDocuments = () => {
                     <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
                     {showAdvanceSearch && <div className={Styles.advance_search}>
-                        <Form className="" style={{ marginTop: '2rem' }}>
+                        <Form ref={advanceSearchRef} onSubmit={(e) => advanceSearchHandler(e)}>
                             <Row>
                                 <Col lg={12} md={12}>
-                                    <Form.Group as={Col} className="mb-4">
+                                    {/* <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12} >
                                             <Form.Control
                                                 as="select"
@@ -96,24 +111,26 @@ const MyDocuments = () => {
                                             </Form.Control>
                                         </Col>
                                         <Form.Label className="label_custom white">Document Type</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
+                                    </Form.Group> */}
+                                    <Form.Group as={Col} className="mb-4 mt-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control className="select_custom white" type="text" name="document_name" />
                                         </Col>
-                                        <Form.Label className="label_custom white">Document Name</Form.Label>
+                                        <Form.Label className="label_custom white">Folder Name</Form.Label>
                                     </Form.Group>
                                 </Col>
                             </Row>
                             <Col sm={12}>
                                 <Row>
-                                    <Form.Group as={Col} className="mb-4">
+                                    <Form.Group as={Col} className="mb-4 mt-2">
                                         <Col md={12} sm={12}>
                                             <DatePicker
                                                 format={'MM/dd/yyyy'}
                                                 className="select_custom white"
                                                 monthPlaceholder={'mm'}
+                                                onChange={setGenerationDateFrom}
                                                 dayPlaceholder={'dd'}
+                                                value={generationDateFrom}
                                                 yearPlaceholder={'yyyy'} />
                                         </Col>
                                         <Form.Label className="label_custom white">Generation Date From</Form.Label>
@@ -124,14 +141,16 @@ const MyDocuments = () => {
                                                 format={'MM/dd/yyyy'}
                                                 className="select_custom white"
                                                 monthPlaceholder={'mm'}
+                                                onChange={setGenerationDateTo}
                                                 dayPlaceholder={'dd'}
+                                                value={generationDateTo}
                                                 yearPlaceholder={'yyyy'} />
                                         </Col>
                                         <Form.Label className="label_custom white">Generation Date To</Form.Label>
                                     </Form.Group>
                                 </Row>
                             </Col>
-                            <Col sm={12}>
+                            {/* <Col sm={12}>
                                 <Row>
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
@@ -182,9 +201,9 @@ const MyDocuments = () => {
                                         <Form.Label className="label_custom white">Share Date To</Form.Label>
                                     </Form.Group>
                                 </Row>
-                            </Col>
+                            </Col> */}
                             <Col sm={12}>
-                                <Row>
+                                {/* <Row>
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <DatePicker
@@ -207,8 +226,7 @@ const MyDocuments = () => {
                                         </Col>
                                         <Form.Label className="label_custom white">Received Date To</Form.Label>
                                     </Form.Group>
-
-                                </Row>
+                                </Row> */}
                                 <Col className={Styles.button_center}>
                                     <Button variant="dark" type="submit">Search</Button>{" "}
                                     <Button variant="dark">Reset</Button>
