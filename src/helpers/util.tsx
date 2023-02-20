@@ -29,6 +29,23 @@ export const dateFormatterForRequest = (date: any) => {
 };
 
 /**
+ * Method is used to format date [DOCUMENT MANAGER]
+ * @param date 
+ * @returns Date: YYYY-MM-DD
+ */
+export const dateFormatterForRequestDocManager = (date: any) => {
+    if (!date) {
+        return date;
+    }
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = d.getMonth() + 1;
+    const day = d.getDate();
+    // return `${year}-${month > 9 ? month : `0${month}`}-${day > 9 ? day : `0${day}`}`;
+    return `${month > 9 ? month : `0${month}`}/${day > 9 ? day : `0${day}`}/${year}`;
+};
+
+/**
  * Method used for file upload
  * @param date 
  * @returns YYYYMMDD
@@ -447,4 +464,45 @@ export const getSignedURL = async (fileKey) => {
     // Create a GET request from S3 url.
     const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
     return formatUrl(url);
+}
+
+export const createZipForFolderDownload = (filePaths, folderName) => {
+    return new Promise((resolve, reject) => {
+        const zip = require('jszip')();
+        var promises = filePaths.map(async (fP, index) => {
+            let signedPath = await getSignedURL(fP)
+            let filePathSplit = fP.split('/')
+            const type = (filePathSplit[filePathSplit.length - 1]).split(".")
+            await axios({
+                url: signedPath,
+                method: 'GET',
+                responseType: 'blob', // Important
+            }).then((response) => {
+                const file = new File([response.data], `${filePathSplit[filePathSplit.length - 1]}`, { type: type[type.length - 1] === 'png' ? 'application/png' : 'application/pdf' });
+                return zip.file(`${filePathSplit[filePathSplit.length - 1]}`, file);
+            });
+        })
+        Promise.all(promises).then(function (results) {
+            zip.generateAsync({ type: "blob" })
+                .then((content) => {
+                    return new File([content], `${folderName}.zip`, { type: 'application/x-zip-compressed' })
+                })
+                .then((file) => {
+                    saveAs(file, `${folderName}.zip`);
+                }).finally(() => {
+                    resolve(true)
+                })
+        })
+    })
+}
+
+export const checkIfAdvanceSearchIsActive = (formObj) => {
+    let formIsValid = true;
+    for (let key in formObj) {
+        if (formObj[key] !== null) {
+            formIsValid = false
+            break
+        }
+    }
+    return formIsValid
 }

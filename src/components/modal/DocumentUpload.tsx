@@ -6,64 +6,16 @@ import { BsFileEarmarkPdf, BsFillFileEarmarkImageFill } from 'react-icons/bs';
 import { CgSpinnerAlt, CgSoftwareUpload } from 'react-icons/cg';
 import { MdOutlineDelete } from 'react-icons/md';
 import { SiMicrosoftexcel } from 'react-icons/si';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import { saveAs } from 'file-saver';
 
 import { createMessage } from '../../helpers/messages';
-import { axiosCustom, dateFormatterForRequestFileUpload, handleResponse } from '../../helpers/util';
+import { axiosCustom, handleResponse } from '../../helpers/util';
 import { userService } from '../../services';
 import { SummaryActionCreator } from '../../store/actions/summary.actions';
+import FileUploadHook from '../CustomHooks/FileUploadHook';
 
-const FileUploadHook = (files) => {
-    const [state, setState] = useState<any>(null)
-    const zipTargetFiles: any = async (files) => {
-        let zipFile: any = null
-        if (files.length === 1) {
-            setState({
-                zipFile,
-                file: files[0]
-            })
-        } else {
-            const zip = require('jszip')();
-            let matrixFile: any = null
-            for (let i = 0; i < files.length; i++) {
-                if (files[i].name === 'matrix.xlsx') {
-                    matrixFile = files[i]
-                }
-                if (files[i].type === 'application/zip' || files[i].type === "application/x-zip-compressed") {
-                    zipFile = files[i]
-                }
-                if (!zipFile && files[i].name !== 'matrix.xlsx') {
-                    zip.file(files[i].name, files[i]);
-                }
-            }
-            if (!zipFile) {
-                zip.generateAsync({ type: "blob" })
-                    .then((content) => {
-                        return new File([content], 'new.zip', { type: 'application/x-zip-compressed' })
-                    })
-                    .then((file) => {
-                        setState({
-                            matrixFile,
-                            file: file
-                        });
-                    })
-            } else {
-                setState({
-                    matrixFile,
-                    file: zipFile
-                });
-            }
-        }
-    }
-    return [
-        state,
-        {
-            zipTargetFiles
-        }
-    ];
-}
 
 const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, search, details = null }: any) => {
     const { addToast } = useToasts();
@@ -81,7 +33,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         fileLengthSingle: false,
         fileSize: false
     })
-
+    const [noMatrixFile, SetNoMatrixFile] = useState(false)
     useEffect(() => {
         const user = userService.getUser()
         setUserLoggedIn(user)
@@ -121,17 +73,22 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             file: files.length
         })) {
             setFormSubmitted(true)
-            const zippedFile = zipTargetFiles(files)
-            console.log(zippedFile)
+            zipTargetFiles(files)
         }
     }
 
     const uploadFile = async () => {
+        SetNoMatrixFile(false)
         const config = {
             headers: { 'Content-Type': 'multipart/form-data' }
         }
         let API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload`
         const { file, matrixFile } = fileToUpload
+        if (parentComponent === 'myDocument' && files.length > 1 && !matrixFile) {
+            setFormSubmitted(false)
+            SetNoMatrixFile(true)
+            return
+        }
         let formData: any = new FormData()
         try {
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
@@ -239,15 +196,15 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         if (parentComponent === 'myDocument') {
             sampleFile = "./sample_file_upload.xlsx"
         } else {
-            sampleFile = "./sample_file_fulfill.xlsx"
+            sampleFile = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download`
         }
-        console.log(sampleFile)
-        axios.get(sampleFile, { responseType: 'arraybuffer' })
+        axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
             .then((response) => {
                 var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                saveAs(blob, 'fixi.xlsx');
+                saveAs(blob, 'SendRequestDocumentSample.xlsx');
             });
     }
+
     return (
         <Modal
             show={show}
@@ -269,6 +226,11 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                             (parentComponent === 'sentDocumentRequest'
                                 ? 'Upload file for bulk document request'
                                 : '')
+                    }
+                    {
+
+                        parentComponent === 'receiveDocumentRequest'
+                        && "Upload File to FulFill the request"
                     }
                 </Modal.Title>
             </Modal.Header>
@@ -321,6 +283,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                                 {dragActive && <div id="drag-file-element" onDragEnter={handleDrag} onDragLeave={handleDrag} onDragOver={handleDrag} onDrop={handleDrop}></div>}
                             </form>
                             <span className={Styles.form_error}><small>{formError["fileLengthSingle"] ? 'File is required' : ''}</small></span>
+                            <span className={Styles.form_error}><small>{noMatrixFile ? 'Matrix File is required' : ''}</small></span>
                         </Col>
                     </Col>
                 </Container>
@@ -338,7 +301,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     && files.length > 1
                     && <Col sm={12} className='no_padding'>
                         <br />
-                        <p>Please download the Matrix file and update the columns to help system establish connection between the files being uploaded and system.</p>
+                        <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
                         <Col sm={12} className='no_padding'>
                             <Button variant="dark" type="submit" onClick={downloadSampleFile} style={{ width: '100%' }}>Download Sample File</Button>
                         </Col>

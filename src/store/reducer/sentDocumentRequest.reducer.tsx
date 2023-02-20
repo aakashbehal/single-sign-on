@@ -2,6 +2,7 @@ import { GetSentDocumentRequest, SentDocumentRequest, DeleteDocumentRequest } fr
 
 const initialState = {
     data: [],
+    columns: [],
     totalCount: 0,
     error: false,
     loading: false,
@@ -29,6 +30,7 @@ const sentDocumentRequestReducer = (state = initialState, action: { type: any; p
                 ...state,
                 loading: false,
                 data: action.payload.sentRequests,
+                columns: action.payload.columns,
                 totalCount: action.payload.totalCount
             }
         case GetSentDocumentRequest.GET_SENT_DOCUMENT_REQUEST_FAILURE:
@@ -45,6 +47,7 @@ const sentDocumentRequestReducer = (state = initialState, action: { type: any; p
                 loading: false,
                 error: false,
                 data: [],
+                columns: [],
                 totalCount: 0
             }
         case SentDocumentRequest.SENT_DOCUMENT_REQUEST_REQUEST:

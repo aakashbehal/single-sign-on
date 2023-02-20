@@ -13,7 +13,8 @@ const ViewDocument = ({ onHide, show, documentData }) => {
     const [loadingImage, setLoadingImage] = useState(false)
 
     useEffect(() => {
-        const splitDocumentName = documentData.fileName.split('.')
+        console.log(documentData)
+        const splitDocumentName = documentData.fileName ? documentData.fileName.split('.') : documentData.documentName.split('.')
         setDocumentType(splitDocumentName[splitDocumentName.length - 1])
     }, [documentData])
 
@@ -25,7 +26,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
         if (documentType === 'pdf' || documentType === 'png') {
             setLoadingImage(true)
         }
-        let fileUrl = await getSignedURL(documentData.objectKey)
+        let fileUrl = await getSignedURL(documentData.objectKey || documentData.filePath)
         setImageUrl(fileUrl)
     }
 
@@ -43,7 +44,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
             animation={true}
         >
             <Modal.Header closeButton>
-                <p>{documentData.fileName}</p>
+                <p>{documentData.fileName || documentData.documentName}</p>
             </Modal.Header>
             < Modal.Body className="show-grid">
                 <Container className={Styles.center_document} style={{ minHeight: '3rem' }}>

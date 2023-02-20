@@ -32,13 +32,13 @@ const login = async (username: string, password: string) => {
 }
 
 async function logout() {
-    const user = getUser()
+    // const user = getUser()
     try {
-        console.log(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`)
-        await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
-            principleId: user.principleId,
-            loginKey: user.loginKey
-        })
+        // console.log(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`)
+        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
+        //     principleId: user.principleId,
+        //     loginKey: user.loginKey
+        // })
         localStorage.removeItem('user');
         history.push('/login')
     } catch (error: any) {

@@ -8,6 +8,8 @@ import {
     CommunicationChannel,
     AccountConfig,
     Status,
+    SaveColumn,
+    AllTableColumns
 } from "../../types.d";
 
 const initialState = {
@@ -27,7 +29,6 @@ const initialState = {
         loading: false,
         error: false
     },
-
     app: {
         data: null,
         loading: false,
@@ -57,6 +58,16 @@ const initialState = {
         loading: false,
         error: false
     },
+    column: {
+        loading: false,
+        error: false,
+        success: false
+    },
+    allTableColumns: {
+        data: [],
+        loading: false,
+        error: false
+    }
 }
 
 const miscReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -297,6 +308,72 @@ const miscReducer = (state = initialState, action: { type: any; payload: any; })
                 ...state,
                 accountConfig: {
                     config: [],
+                    error: false
+                }
+            }
+        case SaveColumn.SAVE_COLUMN_REQUEST:
+            return {
+                ...state,
+                column: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case SaveColumn.SAVE_COLUMN_SUCCESS:
+            return {
+                ...state,
+                column: {
+                    loading: false,
+                    success: true
+                }
+            }
+        case SaveColumn.SAVE_COLUMN_FAILURE:
+            return {
+                ...state,
+                column: {
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveColumn.SAVE_COLUMN_RESET:
+            return {
+                ...state,
+                column: {
+                    loading: false,
+                    success: false,
+                    error: false
+                }
+            }
+        case AllTableColumns.ALL_TABLE_COLUMN_REQUEST:
+            return {
+                ...state,
+                allTableColumns: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case AllTableColumns.ALL_TABLE_COLUMN_SUCCESS:
+            return {
+                ...state,
+                allTableColumns: {
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case AllTableColumns.ALL_TABLE_COLUMN_FAILURE:
+            return {
+                ...state,
+                allTableColumns: {
+                    loading: false,
+                    error: true
+                }
+            }
+        case AllTableColumns.ALL_TABLE_COLUMN_RESET:
+            return {
+                ...state,
+                allTableColumns: {
+                    loading: false,
+                    data: [],
                     error: false
                 }
             }

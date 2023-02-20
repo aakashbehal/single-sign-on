@@ -6,6 +6,7 @@ import {
 
 const initialState = {
     data: [],
+    columns: [],
     totalCount: 0,
     error: false,
     loading: false,
@@ -15,7 +16,6 @@ const initialState = {
     deleteRequest: false,
     deleteRequestSuccess: false,
     deleteRequestError: false
-
 }
 
 const receiveDocumentRequestReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -33,7 +33,8 @@ const receiveDocumentRequestReducer = (state = initialState, action: { type: any
                 ...state,
                 loading: false,
                 data: action.payload.sentRequests,
-                totalCount: action.payload.totalCount
+                totalCount: action.payload.totalCount,
+                columns: action.payload.columns
             }
         case GetReceiveDocumentRequest.GET_RECEIVE_DOCUMENT_REQUEST_FAILURE:
             return {
@@ -49,6 +50,7 @@ const receiveDocumentRequestReducer = (state = initialState, action: { type: any
                 loading: false,
                 error: false,
                 data: [],
+                columns: [],
                 totalCount: 0
             }
         case DownloadDocumentRequest.DOWNLOAD_DOCUMENT_REQUEST_REQUEST:

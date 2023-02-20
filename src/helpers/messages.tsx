@@ -11,7 +11,9 @@ const MESSAGES = {
     CHARGE_VALUE_GREATER_ERROR: "'Charge-off Balance From' cannot be greater than 'Charge-off Balance To'. Please update search criteria and try again.",
     CHARGE_DATE_GREATER_ERROR: "'Charge-off Date From' cannot be greater than 'Charge-off Date To'. Please update search criteria and try again.",
     CONTACT_REQUEST: "Contact request generated successfully, someone from Itsupport@equabli.com and/or support@equabli.com will get back to you soon.",
-    ADDITION_TIME_NOTE: "User to note that only one extension request for resolving a compliance item will be approved. Please read and close this message and then proceed to review the new SLA due date for the compliance item."
+    ADDITION_TIME_NOTE: "User to note that only one extension request for resolving a compliance item will be approved. Please read and close this message and then proceed to review the new SLA due date for the compliance item.",
+    DOWNLOAD_STARTED: "Download Started",
+    DOWNLOAD_SUCCESSFUL: "Download Finished"
 }
 
 /**

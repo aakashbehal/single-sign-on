@@ -65,14 +65,14 @@ export const TypesActionCreator = {
                 }
             )
     },
-    getDocumentTypes: (userType) => (dispatch: any) => {
+    getDocumentTypes: () => (dispatch: any) => {
         const request = () => ({ type: DocumentsType.DOCUMENTS_TYPE_REQUEST })
         const success = (compliance: any) => ({ type: DocumentsType.DOCUMENTS_TYPE_SUCCESS, payload: compliance })
         const failure = (error: any) => ({ type: DocumentsType.DOCUMENTS_TYPE_FAILURE, payload: error })
 
         dispatch(request())
 
-        commonServices.getDocumentTypes(userType)
+        commonServices.getDocumentTypes()
             .then(
                 compliance => {
                     dispatch(success(compliance))
@@ -82,14 +82,14 @@ export const TypesActionCreator = {
                 }
             )
     },
-    getProductTypes: (userType) => (dispatch: any) => {
+    getProductTypes: () => (dispatch: any) => {
         const request = () => ({ type: ProductTypes.PRODUCT_TYPE_REQUEST })
         const success = (products: any) => ({ type: ProductTypes.PRODUCT_TYPE_SUCCESS, payload: products })
         const failure = (error: any) => ({ type: ProductTypes.PRODUCT_TYPE_FAILURE, payload: error })
 
         dispatch(request())
 
-        commonServices.getProductTypes(userType)
+        commonServices.getProductTypes()
             .then(
                 products => {
                     dispatch(success(products))

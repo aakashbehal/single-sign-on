@@ -6,33 +6,29 @@ import { CgOptions, CgSearch } from "react-icons/cg";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "react-toast-notifications";
+import { debounce } from "lodash"
 
 import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
 import { SentDocumentRequestActionCreator } from "../../store/actions/sentDocumentRequest.actions";
 import DocumentUpload from "../../components/modal/DocumentUpload";
-import { TypesActionCreator } from "../../store/actions/common/types.actions";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import { UserActionCreator } from "../../store/actions/user.actions";
-import { getSignedURL } from "../../helpers/util";
+import { checkIfAdvanceSearchIsActive, getSignedURL } from "../../helpers/util";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
-
-const tenuresInit = [
-    {
-        statusCode: 'current_month',
-        status: 'Current Month'
-    }
-]
+import ViewDocument from "../../components/modal/ViewDocument";
+import DocumentTypes from "../../components/Common/DocumentType";
+import AdvanceSearch from "../../components/Common/AdvanceSearch";
 
 const SentDocumentRequests = () => {
     const dispatch = useDispatch();
     const aRef = useRef<any>()
     const { addToast } = useToasts();
-    const [tenures, setTenures] = useState(tenuresInit)
+
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
-    const [sortElement, setSortElement] = useState('originalAccountNumber')
+    const [sortElement, setSortElement] = useState('id')
     const [sortType, setSortType] = useState('asc');
     const [pageCount, setPageCount] = useState(10)
     const [currentPage, setCurrentPage] = useState(1);
@@ -40,41 +36,55 @@ const SentDocumentRequests = () => {
     const [showRequestNewDocument, setShowRequestNewDocument] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
+    const [showDocument, setShowDocument] = useState(false)
+    const [documentToShow, setDocumentToShow] = useState(null);
+    const [advanceSearchObj, setAdvanceSearchObj] = useState({});
+    const [columnsSaved, setColumnsSaved] = useState<any>([])
 
     const {
         sentDocumentRequests,
         totalCount,
+        columns,
         loading,
         error,
-        documentTypes,
-        loadingDocumentTypes,
-        errorDocumentTypes,
         sendRequest,
         sendRequestSuccess,
         sendRequestError,
         deleteRequest,
         deleteRequestSuccess,
-        deleteRequestError
+        deleteRequestError,
+        defaultColumns
     } = useSelector((state: any) => ({
         sentDocumentRequests: state.sentDocumentRequest.data,
         totalCount: state.sentDocumentRequest.totalCount,
+        columns: state.sentDocumentRequest.columns,
         loading: state.sentDocumentRequest.loading,
         error: state.sentDocumentRequest.error,
-        documentTypes: state.types.documentType.data,
-        loadingDocumentTypes: state.types.documentType.loading,
-        errorDocumentTypes: state.types.documentType.error,
         sendRequest: state.sentDocumentRequest.sendRequest,
         sendRequestSuccess: state.sentDocumentRequest.sendRequestSuccess,
         sendRequestError: state.sentDocumentRequest.sendRequestError,
         deleteRequest: state.sentDocumentRequest.deleteRequest,
         deleteRequestSuccess: state.sentDocumentRequest.deleteRequestSuccess,
-        deleteRequestError: state.sentDocumentRequest.deleteRequestError
+        deleteRequestError: state.sentDocumentRequest.deleteRequestError,
+        defaultColumns: state.misc.allTableColumns.data
     }))
 
     useEffect(() => {
         search(pageCount, currentPage)
-        dispatch(TypesActionCreator.getDocumentTypes('CL'))
-    }, [])
+    }, [advanceSearchObj, sortElement, sortType])
+
+    useEffect(() => {
+        if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
+            const columns = defaultColumns.filter((dC) => {
+                if (dC.tableName === 'documentFolder') {
+                    return dC
+                }
+            })
+            setColumnsSaved(columns[0].columnNames)
+        } else {
+            setColumnsSaved(columns)
+        }
+    }, [columns])
 
     useEffect(() => {
         if (sendRequestSuccess) {
@@ -98,11 +108,25 @@ const SentDocumentRequests = () => {
         deleteRequestSuccess,
         deleteRequestError])
 
-    const search = (pageSize = pageCount, pageNumber = 0) => {
-        dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest({
+    const search = (
+        pageSize = pageCount,
+        pageNumber = 0,
+        textValue = null,
+        sort = sortType,
+        column = sortElement
+    ) => {
+        let searchObj: any = {
             pageSize,
-            pageNumber
-        }))
+            pageNumber,
+            documentName: textValue,
+            sortOrder: sort,
+            sortParam: column
+        }
+        if (!checkIfAdvanceSearchIsActive(advanceSearchObj)) {
+            searchObj = { ...searchObj, ...advanceSearchObj }
+        }
+        dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest(searchObj))
+        setShowAdvanceSearch(false)
     }
 
     /**
@@ -130,160 +154,23 @@ const SentDocumentRequests = () => {
         aRef.current.href = filePath;
         aRef.current.download = document.documentName;
         aRef.current.click();
-        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
     }
+
 
     return (<>
         <a href="" ref={aRef} target="_blank"></a>
         <Col sm={12}>
             <Row>
-                <Col md={8} sm={8} className={Styles.search_input}>
-                    <CgSearch size={20} className={Styles.search} />
-                    <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
-                    <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
-                    {showAdvanceSearch && <div className={Styles.advance_search}>
-                        <Form >
-                            <br />
-                            <Row>
-                                <Col lg={12} md={12}>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12} >
-                                            <Form.Control
-                                                as="select"
-                                                name="service_offered"
-                                                className="select_custom white">
-                                                <option></option>
-                                                {
-                                                    (tenures && tenures.length > 0) &&
-                                                    tenures.map((tenure: any, index: number) => {
-                                                        return <option key={`cr_${index}`} value={tenure.statusCode}>{tenure.status}</option>
-                                                    })
-                                                }
-                                            </Form.Control>
-                                        </Col>
-                                        <Form.Label className="label_custom white">Document Type</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control className="select_custom white" type="text" name="document_name" />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Document Name</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                            </Row>
-                            <Col sm={12}>
-                                <Row>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Generation Date From</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Generation Date To</Form.Label>
-                                    </Form.Group>
-                                </Row>
-                            </Col>
-                            <Col sm={12}>
-                                <Row>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Upload Date From</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Upload Date To</Form.Label>
-                                    </Form.Group>
-                                </Row>
-                            </Col>
-                            <Col sm={12}>
-                                <Row>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Share Date From</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Share Date To</Form.Label>
-                                    </Form.Group>
-                                </Row>
-                            </Col>
-                            <Col sm={12}>
-                                <Row>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Received Date From</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <DatePicker
-                                                format={'MM/dd/yyyy'}
-                                                className="select_custom white"
-                                                monthPlaceholder={'mm'}
-                                                dayPlaceholder={'dd'}
-                                                yearPlaceholder={'yyyy'} />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Received Date To</Form.Label>
-                                    </Form.Group>
-
-                                </Row>
-                                <Col className={Styles.button_center}>
-                                    <Button variant="dark" type="submit">Search</Button>{" "}
-                                    <Button variant="dark">Reset</Button>
-                                </Col>
-                            </Col>
-                        </Form>
-                    </div>
-                    }
-                </Col>
+                <AdvanceSearch
+                    parentComponent={'sentDocumentRequest'}
+                    Styles={Styles}
+                    searchHandler={(criteria) => search(pageCount, 1, criteria)}
+                    setAdvanceSearchObj={(obj) => setAdvanceSearchObj(obj)}
+                    advanceSearchObj={advanceSearchObj}
+                    showAdvanceSearch={showAdvanceSearch}
+                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                />
                 <Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => setShowBulkRequest(true)}>Import Bulk Request</Button>
                 </Col>
@@ -318,10 +205,15 @@ const SentDocumentRequests = () => {
                 setCurrentPage={setCurrentPage}
                 parentComponent={'sentDocumentRequest'}
                 searchCriteria={{}}
+                hideShareArray={columnsSaved}
                 addEditArray={
                     {
                         download: (data) => downloadHandler(data),
-                        delete: (data) => handleDetails(data)
+                        delete: (data) => handleDetails(data),
+                        viewDocument: (data) => {
+                            setShowDocument(true)
+                            setDocumentToShow(data)
+                        }
                     }
                 }
                 onPaginationChange={(
@@ -331,7 +223,7 @@ const SentDocumentRequests = () => {
 
         {
             showRequestNewDocument
-            && <RequestNewDocument show={showRequestNewDocument} onHide={() => setShowRequestNewDocument(false)} documentTypes={documentTypes} dispatch={dispatch} />
+            && <RequestNewDocument show={showRequestNewDocument} onHide={() => setShowRequestNewDocument(false)} dispatch={dispatch} />
         }
         {
             showBulkRequest
@@ -347,14 +239,17 @@ const SentDocumentRequests = () => {
                 type='sentDocumentRequest'
             />
         }
+        {
+            showDocument &&
+            <ViewDocument show={showDocument} onHide={() => setShowDocument(false)} documentData={documentToShow} />
+        }
+
     </>)
 }
 
-const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
+const RequestNewDocument = ({ show, onHide, dispatch }) => {
     const ref = useRef<any>();
     const sendRequestRef = useRef<any>()
-    // const [loading, setLoading] = useState(false);
-    // const [users, setUsers] = useState(['aakashbehal@gmail.com', 'abc@gmail.com']);
     const [defaultSelect, setDefaultSelect] = useState<any>([])
     const [usersSelected, setUserSelected] = useState<any>([])
 
@@ -379,12 +274,6 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
             clientAccountNumber,
             docTypeCode
         } = sendRequestRef.current
-        usersSelected.push({
-            "firstName": "Sachin",
-            "principleId": 21,
-            "orgTypeCode": "CL",
-            "orgCode": "MRLT"
-        })
         dispatch(SentDocumentRequestActionCreator.sentDocumentRequest({
             "sendRequests": usersSelected,
             "originalAccountNumber": originalAccountNumber.value,
@@ -476,18 +365,7 @@ const RequestNewDocument = ({ show, onHide, documentTypes, dispatch }) => {
                         <Row>
                             <Col lg={12} md={6} >
                                 <Form.Group as={Col} className="mb-5">
-                                    <Form.Control
-                                        as="select"
-                                        name="docTypeCode"
-                                        className="select_custom white">
-                                        <option></option>
-                                        {
-                                            (documentTypes && documentTypes.length > 0) &&
-                                            documentTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} value={dT.shortCode}>{dT.documentType}</option>
-                                            })
-                                        }
-                                    </Form.Control>
+                                    <DocumentTypes />
                                     <Form.Label className="label_custom white">Document Type</Form.Label>
                                 </Form.Group>
                             </Col>

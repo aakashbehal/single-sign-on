@@ -6,16 +6,30 @@ const getMyDocumentFolders = async ({
     pageNumber,
     folderName,
     modifiedDateFrom,
-    modifiedDateTo
+    modifiedDateTo,
+    sortOrder,
+    sortParam,
+    docTypeCode,
+    documentName,
+    originalAccountNumber,
+    clientAccountNumber,
+    equabliAccountNumber
 }) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
-                folderName,
+                folderName: folderName || null,
                 modifiedDateFrom,
-                modifiedDateTo
+                modifiedDateTo,
+                sortOrder,
+                sortParam,
+                docTypeCode,
+                documentName,
+                originalAccountNumber,
+                clientAccountNumber,
+                equabliAccountNumber
             }
         )
         const data = handleResponse(response)
@@ -24,10 +38,10 @@ const getMyDocumentFolders = async ({
         responseModified.folders = folders.map((folder) => {
             folder.selected = false
             folder.fileSize = formatBytes(folder.fileSize)
-            folder.folderName = `Account-${folder.folderName}`
             return folder
         })
         responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.columns = data.response.metadata.columns
         return responseModified
     } catch (error: any) {
         throw error
@@ -37,16 +51,38 @@ const getMyDocumentFolders = async ({
 const getMyDocumentList = async ({
     pageSize,
     pageNumber,
+    sortOrder,
+    sortParam,
     accountNumber,
-    orgType
+    docTypeCode,
+    documentName,
+    generationDateFrom,
+    generationDateTo,
+    uploadDateFrom,
+    uploadDateTo,
+    shareDateFrom,
+    shareDateTo,
+    receiveDateFrom,
+    receiveDateTo
 }) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
-                accountNumber: accountNumber.replace("Account-", ""),
-                orgTypeCode: orgType,
                 pageSize,
-                pageNumber: pageNumber - 1
+                pageNumber: pageNumber - 1,
+                sortOrder,
+                sortParam,
+                accountNumber,
+                documentType: docTypeCode,
+                documentName,
+                generationDateFrom,
+                generationDateTo,
+                uploadDateFrom,
+                uploadDateTo,
+                shareDateFrom,
+                shareDateTo,
+                receiveDateFrom,
+                receiveDateTo
             }
         )
         const data = handleResponse(response)
@@ -58,6 +94,7 @@ const getMyDocumentList = async ({
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.columns = data.response.metadata.columns
         return responseModified
     } catch (error: any) {
         throw error

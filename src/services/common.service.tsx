@@ -156,7 +156,7 @@ const fetchAllTypes = () => {
         })
 }
 
-const getDocumentTypes = async (userType) => {
+const getDocumentTypes = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/type`)
         const data = handleResponse(response)
@@ -166,9 +166,39 @@ const getDocumentTypes = async (userType) => {
     }
 }
 
-const getProductTypes = async (userType) => {
+const getProductTypes = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/product/type`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const componentMap = {
+    myDocuments: "documentFolder",
+    documents: "document",
+    sentDocumentRequest: "sentDocumentRequest",
+    receiveDocumentRequest: "receiveDocumentRequest"
+}
+
+const saveColumn = async ({ parentComponent, showHideColumns }) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column`, {
+            tableName: componentMap[parentComponent],
+            columnNames: showHideColumns
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const getColumnForAllTables = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column/all`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -189,5 +219,7 @@ export const commonServices = {
     getAccountConfig,
     fetchAllTypes,
     getDocumentTypes,
-    getProductTypes
+    getProductTypes,
+    saveColumn,
+    getColumnForAllTables
 }

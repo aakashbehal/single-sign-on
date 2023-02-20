@@ -36,11 +36,11 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
          * Default available and selection
          */
         if (userType !== 'Client' || userType === "Equabli") {
-            selectedFields = ['CID', "DT", "CAN", "PC"]
-            notAvailableFields = ['CID', "DT", "CAN"]
+            selectedFields = ['CIDSC', "DT", "CAN", "PC"]
+            notAvailableFields = ['CIDSC', "DT", "CAN"]
         } else {
             selectedFields = ['CAN', "DT", "PC"]
-            notAvailableFields = ['CID', 'DT', 'CAN']
+            notAvailableFields = ['CIDSC', 'DT', 'CAN']
         }
     } else if (serverOptions && serverOptions.length > 0) {
         /**
@@ -77,8 +77,8 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
     if (userType === 'Partner' && !fieldsSelected[7]) {
         fieldsSelected[7] = null
     }
+    console.log(dataFieldOptionsFiltered, fieldsSelected)
     let Obj = { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
-    console.log(Obj)
     return Obj
 }
 

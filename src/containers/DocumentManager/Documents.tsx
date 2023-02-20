@@ -7,7 +7,6 @@ import ChartDataLabels from "chartjs-plugin-datalabels";
 import { CgOptions, CgSearch } from "react-icons/cg";
 
 import { BsArrowsAngleContract, BsArrowsAngleExpand } from "react-icons/bs"
-import TableComponent from "../../components/Table/Table";
 import MyDocuments from "./MyDocuments";
 import ReceivedDocumentRequests from "./ReceivedDocumentRequests";
 import SentDocumentRequests from "./SentDocumentRequests";
@@ -15,6 +14,7 @@ import DownloadHistory from "./DownloadHistory";
 import { useHistory } from "react-router-dom";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import { useDispatch, useSelector } from "react-redux";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -194,7 +194,7 @@ const Documents = ({ location }) => {
         loadingSent,
         loadingRequest,
         errorRequest,
-        reRender
+        reRender,
     } = useSelector((state: any) => ({
         requestedSummary: state.summary.requestedSummary,
         sentSummary: state.summary.sentSummary,
@@ -229,10 +229,10 @@ const Documents = ({ location }) => {
     useEffect(() => {
         dispatch(SummaryActionCreator.getSentSummary())
         dispatch(SummaryActionCreator.getReceiveSummary())
+        dispatch(MiscActionCreator.getColumnForAllTables())
     }, [])
 
     useEffect(() => {
-        console.log(reRender)
         if (reRender) {
             setDataSent({
                 labels: ['Fulfilled', 'Open', 'Overdue'],
@@ -285,14 +285,14 @@ const Documents = ({ location }) => {
     }, [location])
 
     const memoRequested = useMemo(() => {
-        console.log(`should re render request`, JSON.stringify(dataRequested))
+        // console.log(`should re render request`, JSON.stringify(dataRequested))
         // if (dataRequested && dataRequested.datasets && dataRequested.datasets[0].data.length > 0) {
         return <Doughnut data={dataRequested} options={options} />
         // }
     }, [dataRequested])
 
     const memoSent = useMemo(() => {
-        console.log(`should re render sent`, JSON.stringify(dataSent))
+        // console.log(`should re render sent`, JSON.stringify(dataSent))
         // if (dataSent && dataSent.datasets && dataSent.datasets[0].data.length > 0) {
         return <Doughnut data={dataSent} options={options} />
         // }

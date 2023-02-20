@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DatePicker from 'react-date-picker';
 
 import { Col, Form, Row, Button, Tab, Tabs } from "react-bootstrap";
@@ -11,10 +11,12 @@ import TableComponent from "../../components/Table/Table";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { useToasts } from "react-toast-notifications";
 import { createMessage } from "../../helpers/messages";
+import { getSignedURL } from "../../helpers/util";
 
 const DownloadHistory = () => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
+    const aRef = useRef<any>()
     const history = useHistory();
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('originalAccountNumber')
@@ -85,7 +87,17 @@ const DownloadHistory = () => {
         search(pageSize, pageNumber)
     }
 
+    const downloadHandler = async (document) => {
+        //download file
+        let filePath = await getSignedURL(document.filePath)
+        aRef.current.href = filePath;
+        aRef.current.download = document.fileName;
+        aRef.current.click();
+        // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+    }
+
     return (<>
+        <a href="" ref={aRef} target="_blank"></a>
         <Col>
             <TableComponent
                 data={data}
@@ -106,10 +118,16 @@ const DownloadHistory = () => {
                 setCurrentPage={setCurrentPage}
                 parentComponent={'downloadHistory'}
                 searchCriteria={{}}
+                hideShareArray={[
+                    "documentName",
+                    "documentsize",
+                    "downloadDate",
+                    "downloadStatus"
+                ]}
                 addEditArray={
                     {
                         pause: (data) => console.log(`pause Action`),
-                        restartDownload: (data) => console.log(`Restart Download action`),
+                        download: (data) => downloadHandler(data),
                         delete: (data) => {
                             dispatch(DownloadHistoryActionCreator.deleteDownloadHistory(data.id))
                         }

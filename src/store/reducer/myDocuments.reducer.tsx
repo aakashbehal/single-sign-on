@@ -5,13 +5,15 @@ const initialState = {
         loading: false,
         error: false,
         totalCount: 0,
-        data: []
+        data: [],
+        columns: []
     },
     documents: {
         loading: false,
         error: false,
         totalCount: 0,
-        data: []
+        data: [],
+        columns: []
     }
 }
 
@@ -23,7 +25,7 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                 folders: {
                     ...state.folders,
                     loading: true,
-                    error: false
+                    error: false,
                 }
             }
         case MyDocumentsFolder.MY_DOCUMENTS_FOLDER_SUCCESS:
@@ -33,7 +35,8 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     ...state.folders,
                     loading: false,
                     totalCount: action.payload.totalCount,
-                    data: action.payload.folders
+                    data: action.payload.folders,
+                    columns: action.payload.columns
                 }
             }
         case MyDocumentsFolder.MY_DOCUMENTS_FOLDER_FAILURE:
@@ -55,7 +58,8 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     loading: false,
                     error: false,
                     totalCount: 0,
-                    data: []
+                    data: [],
+                    columns: []
                 }
             }
         case MyDocumentsList.MY_DOCUMENTS_LIST_REQUEST:
@@ -74,7 +78,8 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     ...state.documents,
                     loading: false,
                     data: action.payload.documents,
-                    totalCount: action.payload.totalCount
+                    totalCount: action.payload.totalCount,
+                    columns: action.payload.columns
                 }
             }
         case MyDocumentsList.MY_DOCUMENTS_LIST_FAILURE:
@@ -96,7 +101,8 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     loading: false,
                     error: false,
                     totalCount: 0,
-                    data: []
+                    data: [],
+                    columns: []
                 }
             }
         default:

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { Button, Col, Container, Form, Modal, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
 import { AiOutlineCloudDownload, AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
-import { CgOptions, CgSearch } from "react-icons/cg";
+import { CgOptions, CgSearch, CgSpinnerAlt } from "react-icons/cg";
 import { FiEdit2 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "react-toast-notifications";
@@ -56,7 +56,7 @@ const DocumentCostConfiguration = () => {
 
     useEffect(() => {
         getDocumentCosts()
-        dispatch(TypesActionCreator.getDocumentTypes('CL'))
+        dispatch(TypesActionCreator.getDocumentTypes())
     }, [])
 
     useEffect(() => {
@@ -127,13 +127,13 @@ const DocumentCostConfiguration = () => {
                                         <Col md={12} sm={12} >
                                             <Form.Control
                                                 as="select"
-                                                name="service_offered"
+                                                name="document_type"
                                                 className="select_custom white">
                                                 <option></option>
                                                 {
                                                     (documentTypes && documentTypes.length > 0) &&
                                                     documentTypes.map((dT: any, index: number) => {
-                                                        return <option key={`cr_${index}`} value={dT.statusCode}>{dT.documentName}</option>
+                                                        return <option key={`cr_${index}`} value={dT.shortCode}>{dT.documentType}</option>
                                                     })
                                                 }
                                             </Form.Control>
@@ -168,54 +168,74 @@ const DocumentCostConfiguration = () => {
             <br />
         </Col>
         <Col>
+            {
+                loading &&
+                <div className={`table_loading`} >
+                    <CgSpinnerAlt className="spinner" size={50} />
+                </div >
+            }
             <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
-                <thead>
-                    <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                        <th>Document Type</th>
-                        <th>Client Name</th>
-                        <th>Cost</th>
-                        <th style={{ width: '120px' }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        cost && cost.length > 0 && cost.map((cT, index) => {
-                            return (<tr key={`cost_${index}`}>
-                                <td>{cT.documentType}</td>
-                                <td>{cT.clientName || '-'}</td>
-                                <td>${cT.cost}</td>
-                                <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                    <span>
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={
-                                                <Tooltip id={`tooltip-error`}>
-                                                    Edit
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                        </OverlayTrigger>
-                                    </span> &nbsp;
-                                    <span>
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={
-                                                <Tooltip id={`tooltip-error`}>
-                                                    Delete
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                        </OverlayTrigger>
-                                    </span>
-                                </td>
-                            </tr>)
-                        })
-                    }
-                </tbody>
+                {
+                    !loading && cost.length === 0
+                    && <thead>
+                        <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
+                            <th>No Records</th>
+                        </tr>
+                    </thead>
+                }
+                {
+                    !loading && cost.length > 0
+                    && <>
+                        <thead>
+                            <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                                <th>Document Type</th>
+                                <th>Client Name</th>
+                                <th>Cost</th>
+                                <th style={{ width: '120px' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                cost && cost.length > 0 && cost.map((cT, index) => {
+                                    return (<tr key={`cost_${index}`}>
+                                        <td>{cT.documentType}</td>
+                                        <td>{cT.clientName || '-'}</td>
+                                        <td>${cT.cost}</td>
+                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Edit
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span> &nbsp;
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Delete
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        </td>
+                                    </tr>)
+                                })
+                            }
+                        </tbody>
+                    </>
+                }
+
             </Table>
         </Col>
         {
@@ -335,7 +355,13 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
                         <Col sm={12}>
                             <Form.Group as={Col} className="mb-4">
                                 <Col md={12} sm={12}>
-                                    <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="cost" />
+                                    <Form.Control
+                                        defaultValue={editCost ? editCost.cost : ''}
+                                        className="select_custom white"
+                                        type="number"
+                                        name="cost"
+                                        step={0.1}
+                                    />
                                     <span style={{ color: 'red' }}><small>{formError["cost"] ? 'Cost is required' : ''}</small></span>
                                     <span style={{ color: 'red' }}><small>{formError["costLessThanZero"] ? 'Document Cost cannot be less the 0' : ''}</small></span>
                                 </Col>
@@ -345,8 +371,19 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
                     </Container>
                 </Modal.Body>
                 <Modal.Footer style={{ padding: '1rem 4rem 2rem' }}>
-                    <Button variant="dark" type="submit" style={{ width: '100%' }}>Save</Button>
-                    <Button variant="dark" type="submit" style={{ width: '100%' }} onClick={onHide}>Cancel</Button>
+                    {
+                        editCost
+                        &&
+                        <>
+                            <Button variant="dark" type="submit" style={{ width: '100%' }}>Save</Button>
+                            <Button variant="dark" style={{ width: '100%' }} onClick={onHide}>Cancel</Button>
+                        </>
+                    }
+                    {
+                        !editCost
+                        &&
+                        <Button variant="dark" type="submit" style={{ width: '100%' }}>Add</Button>
+                    }
                 </Modal.Footer>
             </Form>
         </Modal >

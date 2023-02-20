@@ -8,6 +8,8 @@ import {
     States,
     CommunicationChannel,
     AccountConfig,
+    SaveColumn,
+    AllTableColumns
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -150,7 +152,6 @@ export const MiscActionCreator = {
                 }
             )
     },
-
     getCommunicationChannel: (type: any) => (dispatch: any) => {
         const request = () => ({ type: CommunicationChannel.COMMUNICATION_CHANNEL_REQUEST })
         const success = (communication: any) => ({ type: CommunicationChannel.COMMUNICATION_CHANNEL_SUCCESS, payload: communication })
@@ -168,4 +169,40 @@ export const MiscActionCreator = {
                 }
             )
     },
+    saveColumn: (payload) => (dispatch: any) => {
+        const request = () => ({ type: SaveColumn.SAVE_COLUMN_REQUEST })
+        const success = (data: any) => ({ type: SaveColumn.SAVE_COLUMN_SUCCESS, payload: data })
+        const failure = (error: any) => ({ type: SaveColumn.SAVE_COLUMN_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.saveColumn(payload)
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+
+    getColumnForAllTables: () => (dispatch: any) => {
+        const request = () => ({ type: AllTableColumns.ALL_TABLE_COLUMN_REQUEST })
+        const success = (data: any) => ({ type: AllTableColumns.ALL_TABLE_COLUMN_SUCCESS, payload: data })
+        const failure = (error: any) => ({ type: AllTableColumns.ALL_TABLE_COLUMN_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getColumnForAllTables()
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    }
+
 }

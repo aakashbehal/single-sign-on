@@ -4,27 +4,32 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 const getSentDocumentRequest = async ({
     pageSize,
     pageNumber,
-    documentType,
+    docTypeCode,
     documentName,
     originalAccountNumber,
     equabliAccountNumber,
-    clientAccountNumber
+    clientAccountNumber,
+    sortOrder,
+    sortParam
 }) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
-            documentType,
+            documentType: docTypeCode,
             documentName,
             originalAccountNumber,
             equabliAccountNumber,
-            clientAccountNumber
+            clientAccountNumber,
+            sortOrder,
+            sortParam
         })
         const data = handleResponse(response)
         let sentRequests = data.response.datas
         const responseModified: any = {}
         responseModified.sentRequests = sentRequests
         responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.columns = data.response.metadata.columns
         return responseModified
     } catch (error: any) {
         throw error

@@ -451,3 +451,20 @@ export const ReRender: any = {
     RE_RENDER_REQUEST: "RE_RENDER_REQUEST",
     RE_RENDER_RESET: "RE_RENDER_RESET"
 }
+
+//=========================================
+// Column Save
+//=========================================
+export const SaveColumn: any = {
+    SAVE_COLUMN_REQUEST: 'SAVE_COLUMN_REQUEST',
+    SAVE_COLUMN_SUCCESS: "SAVE_COLUMN_SUCCESS",
+    SAVE_COLUMN_FAILURE: "SAVE_COLUMN_FAILURE",
+    SAVE_COLUMN_RESET: "SAVE_COLUMN_RESET"
+}
+
+export const AllTableColumns: any = {
+    ALL_TABLE_COLUMN_REQUEST: 'ALL_TABLE_COLUMN_REQUEST',
+    ALL_TABLE_COLUMN_SUCCESS: "ALL_TABLE_COLUMN_SUCCESS",
+    ALL_TABLE_COLUMN_FAILURE: "ALL_TABLE_COLUMN_FAILURE",
+    ALL_TABLE_COLUMN_RESET: "ALL_TABLE_COLUMN_RESET"
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Col, Container, Form, Modal, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
 import { AiOutlineCloudDownload, AiOutlineDelete, AiOutlineEye } from "react-icons/ai";
-import { CgOptions, CgSearch } from "react-icons/cg";
+import { CgOptions, CgSearch, CgSpinnerAlt } from "react-icons/cg";
 import { FiEdit2 } from "react-icons/fi";
 import { useDispatch, useSelector } from "react-redux";
 import { Typeahead } from "react-bootstrap-typeahead"
@@ -63,8 +63,8 @@ const RequiredDocuments = () => {
 
     useEffect(() => {
         getRequiredDocuments()
-        dispatch(TypesActionCreator.getProductTypes('CL'))
-        dispatch(TypesActionCreator.getDocumentTypes('CL'))
+        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(TypesActionCreator.getDocumentTypes())
     }, [])
 
     useEffect(() => {
@@ -125,7 +125,6 @@ const RequiredDocuments = () => {
     }
 
     const deleteAlert = () => {
-
         dispatch(RequiredDocumentActionCreator.deleteRequiredDocuments(details.productCode))
     }
 
@@ -138,7 +137,7 @@ const RequiredDocuments = () => {
     return (<>
         <Col sm={12}>
             <Row>
-                <Col md={10} sm={10} className={Styles.search_input}>
+                <Col md={10} sm={10} className={`${Styles.search_input} required_document_input`}>
                     <CgSearch size={20} className={Styles.search} />
                     <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
@@ -181,7 +180,7 @@ const RequiredDocuments = () => {
                     </div>
                     }
                 </Col>
-                <Col md={2} sm={2}>
+                <Col md={2} sm={2} className="required_document_button">
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => {
                         setEditRequired(null)
                         setAddEditRequired(true)
@@ -191,56 +190,75 @@ const RequiredDocuments = () => {
             <br />
         </Col>
         <Col>
+            {
+                loading &&
+                <div className={`table_loading`} >
+                    <CgSpinnerAlt className="spinner" size={50} />
+                </div >
+            }
             <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
-                <thead>
-                    <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                        <th>Product</th>
-                        <th>Required Documents</th>
-                        <th style={{ width: '120px' }}>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        requiredDocuments && requiredDocuments.map((cT, index) => {
-                            return (<tr key={`rD_${index}`}>
-                                <td>{cT.productName}</td>
-                                <td>
-                                    {cT.documents && cT.documents.map((dL, index) => {
-                                        return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentType}</span>
-                                    })}
-                                </td>
-                                <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                    <span>
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={
-                                                <Tooltip id={`tooltip-error`}>
-                                                    Edit
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                        </OverlayTrigger>
-                                    </span> &nbsp;
-                                    <span>
-                                        <OverlayTrigger
-                                            placement="bottom"
-                                            delay={{ show: 250, hide: 400 }}
-                                            overlay={
-                                                <Tooltip id={`tooltip-error`}>
-                                                    Delete
-                                                </Tooltip>
-                                            }
-                                        >
-                                            <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                        </OverlayTrigger>
-                                    </span>
-                                </td>
-                            </tr>)
-                        })
-                    }
-                </tbody>
+                {
+                    !loading && requiredDocuments.length === 0
+                    && <thead>
+                        <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
+                            <th>No Records</th>
+                        </tr>
+                    </thead>
+                }
+                {
+                    !loading && requiredDocuments.length > 0
+                    && <>
+                        <thead>
+                            <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                                <th>Product</th>
+                                <th>Required Documents</th>
+                                <th style={{ width: '120px' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                requiredDocuments && requiredDocuments.map((cT, index) => {
+                                    return (<tr key={`rD_${index}`}>
+                                        <td>{cT.productName}</td>
+                                        <td>
+                                            {cT.documents && cT.documents.map((dL, index) => {
+                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentType}</span>
+                                            })}
+                                        </td>
+                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Edit
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span> &nbsp;
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Delete
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        </td>
+                                    </tr>)
+                                })
+                            }
+                        </tbody>
+                    </>
+                }
             </Table>
         </Col>
         {
@@ -338,7 +356,19 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
                     </Container>
                 </Modal.Body>
                 <Modal.Footer style={{ padding: '1rem 4rem 2rem' }}>
-                    <Button variant="dark" type="submit" style={{ width: '100%' }}>Add</Button>
+                    {
+                        editRequired
+                        &&
+                        <>
+                            <Button variant="dark" type="submit" style={{ width: '100%' }}>Save</Button>
+                            <Button variant="dark" style={{ width: '100%' }} onClick={onHide}>Cancel</Button>
+                        </>
+                    }
+                    {
+                        !editRequired
+                        &&
+                        <Button variant="dark" type="submit" style={{ width: '100%' }}>Add</Button>
+                    }
                 </Modal.Footer>
             </Form>
         </Modal >

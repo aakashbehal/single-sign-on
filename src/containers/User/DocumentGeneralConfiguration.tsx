@@ -13,7 +13,7 @@ import { CgSpinnerAlt } from "react-icons/cg"
 
 const DocumentGeneralConfiguration = () => {
     const clientDefault = ["CAN", "DT", "PC"]
-    const partnerDefault = ["CAN", "DT", "CAN", "PC"]
+    const partnerDefault = ["CIDSC", "DT", "CAN", "PC"]
     const { addToast } = useToasts();
     UseDocumentTitle('Document General Configuration')
     const dispatch = useDispatch();
@@ -26,6 +26,7 @@ const DocumentGeneralConfiguration = () => {
     const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [userType, setUserType] = useState(null)
     const [fieldsSelected, setFieldSelected] = useState<any>({});
+    const [minMaxError, setMinMaxError] = useState<any>(false)
     const [mode, setMode] = useState([
         {
             keycode: 'KBF',
@@ -94,7 +95,7 @@ const DocumentGeneralConfiguration = () => {
             }
         } else {
             selectedTemp = {
-                1: 'CID',
+                1: 'CIDSC',
                 2: 'DT',
                 3: 'CAN',
                 4: 'PC',
@@ -234,15 +235,17 @@ const DocumentGeneralConfiguration = () => {
                 })
             }
         } else if (type === 'retention') {
-            const {
-                retention_policy
-            } = retentionRef.current
-            console.log(retention_policy.value)
-            configRequest.push({
-                "configShortCode": "RP",
-                "configValShortCode": retention_policy.value,
-                "orgTypeCode": "CT"
-            })
+            if (Number(retention) < 60 || Number(retention) > 365) {
+                setMinMaxError(true)
+                return
+            } else {
+                setMinMaxError(false)
+                configRequest.push({
+                    "configShortCode": "RP",
+                    "configValShortCode": retention,
+                    "orgTypeCode": "CT"
+                })
+            }
         } else if (type === 'mode') {
             configRequest.push({
                 "configShortCode": "DP",
@@ -267,7 +270,7 @@ const DocumentGeneralConfiguration = () => {
                 }
             } else {
                 selectedTemp = {
-                    1: 'CID',
+                    1: 'CIDSC',
                     2: 'DT',
                     3: 'CAN',
                     4: 'PC',
@@ -277,18 +280,18 @@ const DocumentGeneralConfiguration = () => {
                 }
             }
             configRef.current.conjunction.value = '_'
+            setFieldSelected(selectedTemp)
+            const tempMap = Object.values(selectedTemp)
+            let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
+                if (tempMap.indexOf(fO.shortCode) === -1) {
+                    fO.selected = false
+                    fO.available = true
+                }
+                return fO
+            })
+            setFilteredOptions(dataFieldOptionsFiltered)
             setTimeout(async () => {
                 configNameSaveRef.current.click()
-                setFieldSelected(selectedTemp)
-                const tempMap = Object.values(selectedTemp)
-                let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
-                    if (tempMap.indexOf(fO.shortCode) === -1) {
-                        fO.selected = false
-                        fO.available = true
-                    }
-                    return fO
-                })
-                setFilteredOptions(dataFieldOptionsFiltered)
             }, 100)
         } else if (type === 'retention') {
             setRetention(60)
@@ -304,6 +307,7 @@ const DocumentGeneralConfiguration = () => {
     }
 
     const disableHandler = (fieldName) => {
+        console.log(partnerDefault, fieldName)
         let flag = false
         if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
             flag = true
@@ -320,8 +324,8 @@ const DocumentGeneralConfiguration = () => {
         {
             !isLoading &&
             <Row style={{ margin: 0 }} className="form_container">
-                <Col sm={3}></Col>
-                <Col sm={6}>
+                <Col lg={3} sm={12}></Col>
+                <Col lg={6} sm={12}>
                     <Row>
                         <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>File Name Configuration</h5></Col>
                     </Row>
@@ -331,7 +335,7 @@ const DocumentGeneralConfiguration = () => {
                         {
                             JSON.stringify(dataUserConjunction) !== "{}"
                             && <Row>
-                                <Col lg={12} md={6} className="no_padding">
+                                <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-5">
                                         <Col md={12} sm={12}>
                                             <Form.Control
@@ -357,7 +361,7 @@ const DocumentGeneralConfiguration = () => {
                             && Object.keys(fieldsSelected).map((keyName, keyIndex) => {
                                 return (
                                     <Row key={`options_${keyIndex}`}>
-                                        <Col lg={12} md={6} className="no_padding">
+                                        <Col lg={12} md={12} className="no_padding">
                                             <Form.Group as={Col} className="mb-5">
                                                 <Col md={12} sm={12}>
                                                     <Form.Control
@@ -400,13 +404,13 @@ const DocumentGeneralConfiguration = () => {
                                     </Row>)
                             })
                         }
-                        <Col sm={12} style={{ marginLeft: '1rem' }}>
+                        <Col sm={12}>
                             <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
                             <Button variant="dark" style={{ width: "140px" }} onClick={(e) => resetHandler(e, 'config')}>Reset to Default</Button>
                         </Col>
                     </Form>
                 </Col >
-                <Col sm={3}></Col>
+                <Col lg={3} sm={12}></Col>
             </Row >
         }
         <br />
@@ -417,8 +421,8 @@ const DocumentGeneralConfiguration = () => {
                     !isLoadingRetention
                     &&
                     <Row style={{ margin: 0 }} className="form_container">
-                        <Col sm={3}></Col>
-                        <Col sm={6}>
+                        <Col lg={3} sm={12}></Col>
+                        <Col lg={6} sm={12}>
                             <Row>
                                 <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Document Retention Policy</h5></Col>
                             </Row>
@@ -426,7 +430,7 @@ const DocumentGeneralConfiguration = () => {
                             <br />
                             <Form ref={retentionRef} onSubmit={(e) => handleSave(e, 'retention')}>
                                 <Row>
-                                    <Col lg={12} md={6}>
+                                    <Col lg={12} md={12}>
                                         <Form.Group as={Col} className="mb-4">
                                             <Row>
                                                 <Col md={11} sm={11}>
@@ -434,10 +438,13 @@ const DocumentGeneralConfiguration = () => {
                                                         className="select_custom"
                                                         type="number"
                                                         name="retention_policy"
-                                                        onChange={(e) => setRetention(e.target.value)}
+                                                        onChange={(e) => {
+                                                            setRetention(e.target.value)
+                                                        }}
                                                         value={retention} />
                                                 </Col>
                                                 <Col md={1} style={{ display: 'flex', alignItems: 'center' }}><p style={{ margin: 0 }}>Days</p></Col>
+                                                <span style={{ color: 'red', marginLeft: "1rem" }}><small>{minMaxError ? 'Retention Policy Should be between 60 to 365 days' : ''}</small></span>
                                             </Row>
                                             <Form.Label className="label_custom" style={{ left: '10px' }}>Retain document after closure of account till</Form.Label>
                                         </Form.Group>
@@ -449,15 +456,15 @@ const DocumentGeneralConfiguration = () => {
                                 </Row>
                             </Form>
                         </Col>
-                        <Col sm={3}></Col>
+                        <Col lg={3} sm={12}></Col>
                     </Row>
                 }
                 <br />
                 {
                     !isLoadingDocumentPolicy
                     && <Row style={{ margin: 0 }} className="form_container">
-                        <Col sm={3}></Col>
-                        <Col sm={6}>
+                        <Col lg={3} sm={12}></Col>
+                        <Col lg={6} sm={12}>
                             <Row>
                                 <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Other Configuration</h5></Col>
                             </Row>
@@ -497,7 +504,7 @@ const DocumentGeneralConfiguration = () => {
                                 </Row>
                             </Form>
                         </Col>
-                        <Col sm={3}></Col>
+                        <Col lg={3} sm={12}></Col>
                     </Row>
                 }
 

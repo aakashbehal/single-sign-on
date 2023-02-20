@@ -18,6 +18,9 @@ import { FiShare2 } from "react-icons/fi"
 import { checkType } from '../../helpers/util';
 import PaginationComponent from './pagination';
 import { useHistory } from 'react-router-dom';
+import { RiUser3Fill } from 'react-icons/ri';
+import { MiscActionCreator } from '../../store/actions/common/misc.actions';
+import { useDispatch } from 'react-redux';
 
 const TableComponent = ({
     data,
@@ -39,8 +42,10 @@ const TableComponent = ({
     tableAction = [],
     parentComponent = '',
     loadingHeight = true,
+    hideShareArray = [],
     searchCriteria
 }: any) => {
+    const dispatch = useDispatch()
     const history = useHistory();
     const [isCheckAll, setIsCheckAll] = useState(false);
     const [isCheck, setIsCheck] = useState<any>([]);
@@ -48,6 +53,8 @@ const TableComponent = ({
     const [pageSize, setPageSize] = useState(10);
     const [show, setShow] = useState(false)
     const pageSizes = [10, 50, 100];
+    const [showHideColumns, setShowHideColumns] = useState<any>(hideShareArray)
+
     useEffect(() => {
         if (isPagination) {
             if (data && data.length > 0) {
@@ -58,16 +65,19 @@ const TableComponent = ({
     }, [currentPage, pageSize]);
 
     useEffect(() => {
-        if (data.length > 0) {
-            // var allHeaders: any = []
-            // for (let i in data) {
-            //     allHeaders = [...allHeaders, ...(Object.keys(data[i]))]
-            // }
-            // var uniqueHeaders: any = Array.from(new Set(allHeaders))
-            setHeaders(Object.keys(map));
+        if (hideShareArray.length > 0) {
+            setShowHideColumns(hideShareArray);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [data]);
+    }, [hideShareArray])
+
+    useEffect(() => {
+        if (data.length > 0) {
+            let headers = Object.keys(map).filter(item => {
+                return showHideColumns.includes(item)
+            })
+            setHeaders(headers);
+        }
+    }, [showHideColumns, data])
 
     const pageChangeHandler = (value: number) => {
         setCurrentPage(value);
@@ -77,6 +87,20 @@ const TableComponent = ({
         setPageSize(event.target.value);
         setCurrentPage(1);
     };
+
+    const handleClickHideShow = e => {
+        let { id, checked } = e.target;
+        let columnsTemp = Object.assign([], showHideColumns)
+        let columnUpdated: any = []
+        if (!checked) {
+            columnUpdated = columnsTemp.filter(item => item !== id)
+        } else {
+            columnUpdated = [...columnsTemp, id]
+        }
+        setShowHideColumns(columnUpdated);
+        dispatch(MiscActionCreator.saveColumn({ parentComponent, showHideColumns: columnUpdated }))
+    };
+    //         
 
     const sizeHandler = () => (
         <Row className='table_top_section'>
@@ -95,10 +119,34 @@ const TableComponent = ({
                     parentComponent === 'myDocuments'
                     || parentComponent === 'sentDocumentRequest'
                     || parentComponent === 'receiveDocumentRequest'
+                    || parentComponent === 'documents'
                 )
                 && <>
-                    <Button variant="dark" style={{ marginRight: '1rem' }}>Export</Button>
-                    <Button variant="dark" style={{ marginRight: '1rem' }}>Show/Hide Columns</Button>
+                    {
+                        (parentComponent === 'myDocuments' || parentComponent === 'documents') &&
+                        isCheck && isCheck.length > 0 &&
+                        <Button variant="dark" style={{ marginRight: '1rem' }}>Export</Button>
+                    }
+                    <CustomDropdown
+                        trigger={<button style={{ cursor: 'pointer' }}>Show/Hide Columns</button>}
+                        menu={(Object.keys(map)).map((h) => {
+                            return <button
+                                onClick={() => { }}
+                            >
+                                <Form.Control
+                                    type='Checkbox'
+                                    id={h}
+                                    // disabled={h === 'folderName' || h === 'name'}
+                                    defaultChecked={showHideColumns.includes(h)}
+                                    style={{ cursor: 'pointer', width: 'auto', marginRight: "1rem" }}
+                                    onClick={handleClickHideShow}
+                                ></Form.Control>
+                                <span>
+                                    {map[h]}
+                                </span>
+                            </button>
+                        })}
+                    />
                 </>
             }
             <Form.Group as={Row}>
@@ -357,14 +405,23 @@ const TableComponent = ({
 
     const handleAllSelect = () => {
         setIsCheckAll(!isCheckAll);
-        setIsCheck(data.map(li => li.folderName));
+        setIsCheck(data.map((li: any) => {
+            if (parentComponent === 'documents') {
+                return Number(li.id)
+            } else {
+                return li.folderName
+            }
+        }));
         if (isCheckAll) {
             setIsCheck([]);
         }
     }
 
     const handleClick = e => {
-        const { id, checked } = e.target;
+        let { id, checked } = e.target;
+        if (parentComponent === 'documents') {
+            id = Number(id)
+        }
         setIsCheck([...isCheck, id]);
         if (!checked) {
             setIsCheck(isCheck.filter(item => item !== id));
@@ -374,9 +431,9 @@ const TableComponent = ({
     const dueDateHandler = (data) => {
         if (parentComponent === 'sentDocumentRequest' || parentComponent === 'receiveDocumentRequest') {
             if (data.requestStatus === 'Open' && new Date(data.dueDate) >= new Date()) {
-                return '#b2e7d0'
-            } else if (data.requestStatus === 'Open' && new Date(data.dueDate) > new Date()) {
-                return '#fbbdc3'
+                return '#b2e7d0' // green
+            } else if (data.requestStatus === 'Open' && new Date(data.dueDate) < new Date()) {
+                return '#fbbdc3' // red
             } else if (data.requestStatus === 'Fulfilled') {
                 return 'white'
             }
@@ -416,16 +473,18 @@ const TableComponent = ({
 
     const handleDocumentName = (data) => {
         if (data['documentName']) {
-            return <td>
+            return (<td
+                className={`clickable_td td_string`}
+            >
                 <div style={{
                     display: 'inline-flex'
                 }}>
                     <BsFileEarmarkText size={24} />
-                    <span>
+                    <div className='file_name clickable_td_emp' onClick={() => addEditArray.viewDocument(data)}>
                         {data['documentName']}
-                    </span>
-                </div>
-            </td>
+                    </div>
+                </div >
+            </td >)
         } else {
             return <td
                 className='center_align_td'
@@ -562,7 +621,13 @@ const TableComponent = ({
                                             'alignItems': 'center'
                                         }
                                     }>
-                                    <Form.Control type='Checkbox' id={d.folderName} checked={isCheck.includes(d.folderName)} style={{ cursor: 'pointer' }} onChange={handleClick} ></Form.Control>
+                                    <Form.Control
+                                        type='Checkbox'
+                                        id={parentComponent === 'documents' ? d.id : d.folderName}
+                                        checked={isCheck.includes(parentComponent === 'documents' ? d.id : d.folderName)}
+                                        style={{ cursor: 'pointer' }}
+                                        onChange={handleClick}
+                                    ></Form.Control>
                                 </div>
                             </th>
                         }
@@ -929,6 +994,7 @@ const TableComponent = ({
                                         || parentComponent === 'myDocuments'
                                         || parentComponent === 'documents'
                                         || parentComponent === 'sentDocumentRequest'
+                                        || parentComponent === 'downloadHistory'
                                     )
                                     && <span>
                                         <OverlayTrigger
@@ -943,9 +1009,16 @@ const TableComponent = ({
                                             <AiOutlineCloudDownload
                                                 style={{
                                                     color: parentComponent === 'sentDocumentRequest' && !d["documentName"] ? "#bebebe" : "black",
-                                                    cursor: 'pointer'
+                                                    cursor: parentComponent === 'sentDocumentRequest' && !d["documentName"] ? "not-allowed" : 'pointer'
                                                 }}
-                                                onClick={() => addEditArray.download(d)} size={20} />
+                                                onClick={() => {
+                                                    if (parentComponent === 'sentDocumentRequest' && !d["documentName"]) {
+
+                                                    } else {
+                                                        addEditArray.download(d)
+                                                    }
+                                                }
+                                                } size={20} />
                                         </OverlayTrigger>
                                         &nbsp;
                                     </span>
@@ -1034,6 +1107,35 @@ const TableComponent = ({
                     onPageChange={(page: number) => pageChangeHandler(page)}
                 />
             )}
+        </div>
+    );
+};
+
+const CustomDropdown = ({ trigger, menu }) => {
+    const [open, setOpen] = React.useState(false);
+
+    const handleOpen = () => {
+        setOpen(!open);
+    };
+
+    return (
+        <div className="custom_dropdown">
+            {React.cloneElement(trigger, {
+                onClick: handleOpen,
+            })}
+            {open ? (
+                <ul className="custom_menu">
+                    {menu.map((menuItem, index) => (
+                        <li key={index} className="menu-item">
+                            {React.cloneElement(menuItem, {
+                                onClick: () => {
+                                    menuItem.props.onClick();
+                                },
+                            })}
+                        </li>
+                    ))}
+                </ul>
+            ) : null}
         </div>
     );
 };
