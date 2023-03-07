@@ -1,3 +1,4 @@
+@import "./../../../colors"
 .header
 	display: flex
 	justify-content: space-between
@@ -53,15 +54,15 @@
 	p
 		margin: 0
 .has_notification
-	border: 2px solid #ff7765
+	border: 2px solid $bittersweet
 .no_notification
 	border: 2px solid black
 .logout_yes
 	width: 50%
-	border: 2px solid #ff7765
-	background: #ff7765
+	border: 2px solid $bittersweet
+	background: $bittersweet
 	&:hover
-		background: darken(#ff7765, 10)
-		border-color: darken(#ff7765, 10)
+		background: darken($bittersweet, 10)
+		border-color: darken($bittersweet, 10)
 .logout_no
 	width: 50%

@@ -1,3 +1,4 @@
+@import "./../../colors"
 .overflow_col
     // overflow-x: auto
     // white-space: nowrap
@@ -6,14 +7,14 @@
     display: inline-block
     float: none
     background-color: white
-    border: 1px solid #dbdbdb
-    border-radius: 3px
+    border-radius: 1rem
+    box-shadow: 1px 1px 4px #c3baba
     padding: 1rem 2rem
     margin-right: 1rem
     margin-bottom: 1rem
 .progressbar
     background-color: white
-    border: 1px solid #ff7765
+    border: 1px solid $bittersweet
     font-size: 1rem
     font-weight: 600
 .ProgressTitle
@@ -21,18 +22,18 @@
 .ProgressDesc
     margin-top: .3rem
 .progress_container_outer
-    max-height: 355px
+    max-height: 395px
     overflow-y: scroll
 .progress_container
     margin-right: 1rem
 .clickable
-    color: #ff7765
+    color: $bittersweet
     font-weight: bold
     cursor: pointer
     &:hover
         text-decoration: underline
 .chart_container
-    height: 100%
+    height: auto
     h5
         text-align: center
 .right_border
@@ -68,7 +69,7 @@
 .show
     display: block
 .active
-    color: #ff7765
+    color: $bittersweet
 .inActive
     color: black
 .list_upload_container

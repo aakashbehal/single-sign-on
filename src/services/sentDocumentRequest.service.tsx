@@ -10,10 +10,11 @@ const getSentDocumentRequest = async ({
     equabliAccountNumber,
     clientAccountNumber,
     sortOrder,
-    sortParam
+    sortParam,
+    textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
@@ -22,7 +23,8 @@ const getSentDocumentRequest = async ({
             equabliAccountNumber,
             clientAccountNumber,
             sortOrder,
-            sortParam
+            sortParam,
+            textSearch
         })
         const data = handleResponse(response)
         let sentRequests = data.response.datas
@@ -38,7 +40,7 @@ const getSentDocumentRequest = async ({
 
 const sentDocumentRequest = async (requestBody) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request`, requestBody)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request`, requestBody)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -48,7 +50,7 @@ const sentDocumentRequest = async (requestBody) => {
 
 const deleteDocumentRequest = async (id) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

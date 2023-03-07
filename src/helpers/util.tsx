@@ -8,6 +8,7 @@ import { parseUrl } from "@aws-sdk/url-parser";
 import { Sha256 } from "@aws-crypto/sha256-browser";
 import { formatUrl } from "@aws-sdk/util-format-url";
 import { history } from "./history";
+import { result } from "lodash";
 
 export const axiosCustom = axios.create(); // export this and use it in all your components
 
@@ -315,7 +316,6 @@ export const getBrowserTimeZone = () => {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
-
 export const convertExclusionToInclusion = (result) => {
     const days = [
         { weekDay: 1, "key": "Sunday", "value": true, default: true, "time": [{ timeFrom: '08:00', timeTo: "21:00" }] },
@@ -466,29 +466,40 @@ export const getSignedURL = async (fileKey) => {
     return formatUrl(url);
 }
 
-export const createZipForFolderDownload = (filePaths, folderName) => {
+export const createZipForFolderDownload = (filePaths, folderName, isSave = true) => {
     return new Promise((resolve, reject) => {
         const zip = require('jszip')();
         var promises = filePaths.map(async (fP, index) => {
-            let signedPath = await getSignedURL(fP)
-            let filePathSplit = fP.split('/')
+            let folders = zip.folder(fP.folderName)
+            let signedPath = await getSignedURL(fP.filePath)
+            let filePathSplit = fP.filePath.split('/')
             const type = (filePathSplit[filePathSplit.length - 1]).split(".")
             await axios({
                 url: signedPath,
                 method: 'GET',
                 responseType: 'blob', // Important
             }).then((response) => {
-                const file = new File([response.data], `${filePathSplit[filePathSplit.length - 1]}`, { type: type[type.length - 1] === 'png' ? 'application/png' : 'application/pdf' });
-                return zip.file(`${filePathSplit[filePathSplit.length - 1]}`, file);
+                const file = new File(
+                    [response.data],
+                    `${filePathSplit[filePathSplit.length - 1]}`,
+                    { type: type[type.length - 1] === 'png' ? 'application/png' : 'application/pdf' }
+                );
+                return folders.file(`${filePathSplit[filePathSplit.length - 1]}`, file);
             });
         })
-        Promise.all(promises).then(function (results) {
+        console.log(promises)
+        Promise.allSettled(promises).then(function (results) {
             zip.generateAsync({ type: "blob" })
                 .then((content) => {
+                    console.log(content)
                     return new File([content], `${folderName}.zip`, { type: 'application/x-zip-compressed' })
                 })
                 .then((file) => {
-                    saveAs(file, `${folderName}.zip`);
+                    if (isSave) {
+                        saveAs(file, `${folderName}.zip`);
+                    } else {
+                        return true
+                    }
                 }).finally(() => {
                     resolve(true)
                 })
@@ -496,10 +507,34 @@ export const createZipForFolderDownload = (filePaths, folderName) => {
     })
 }
 
+export const downloadSignedFile = (document) => {
+    return new Promise(async (resolve, reject) => {
+        let signedPath = await getSignedURL(document.filePath)
+        const type = (document.documentName).split(".")
+        await axios({
+            url: signedPath,
+            method: 'GET',
+            responseType: 'blob', // Important
+        }).then((response) => {
+            const file = new File([response.data], `${document.documentName}`, { type: type[type.length - 1] === 'png' ? 'application/png' : 'application/pdf' });
+            saveAs(file, `${document.documentName}`);
+            resolve(true)
+        });
+    })
+}
+
 export const checkIfAdvanceSearchIsActive = (formObj) => {
     let formIsValid = true;
     for (let key in formObj) {
-        if (formObj[key] !== null) {
+        if (
+            (
+                key !== 'pageSize'
+                && key !== 'pageNumber'
+                && key !== 'textSearch'
+                && key !== 'sortOrder'
+                && key !== 'sortParam'
+                && key !== 'accountNumber'
+            ) && formObj[key] !== null) {
             formIsValid = false
             break
         }

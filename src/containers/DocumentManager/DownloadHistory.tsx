@@ -11,7 +11,7 @@ import TableComponent from "../../components/Table/Table";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { useToasts } from "react-toast-notifications";
 import { createMessage } from "../../helpers/messages";
-import { getSignedURL } from "../../helpers/util";
+import { downloadSignedFile, getSignedURL } from "../../helpers/util";
 
 const DownloadHistory = () => {
     const dispatch = useDispatch();
@@ -89,11 +89,9 @@ const DownloadHistory = () => {
 
     const downloadHandler = async (document) => {
         //download file
-        let filePath = await getSignedURL(document.filePath)
-        aRef.current.href = filePath;
-        aRef.current.download = document.fileName;
-        aRef.current.click();
-        // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        await downloadSignedFile(document)
+        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
     return (<>

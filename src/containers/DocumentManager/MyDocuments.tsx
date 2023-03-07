@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
 import { Col, Row, Button } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useToasts } from "react-toast-notifications";
 
 import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
 import DocumentUpload from "../../components/modal/DocumentUpload";
-import { useDispatch, useSelector } from "react-redux";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
-import { useHistory } from "react-router-dom";
-import { checkIfAdvanceSearchIsActive, createZipForFolderDownload } from "../../helpers/util";
+import { createZipForFolderDownload } from "../../helpers/util";
 import { createMessage } from "../../helpers/messages";
-import { useToasts } from "react-toast-notifications";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
+import Share from "../../components/modal/Share";
+import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 
 const MyDocuments = () => {
     const dispatch = useDispatch()
@@ -18,12 +20,13 @@ const MyDocuments = () => {
     const { addToast } = useToasts();
     const [sortElement, setSortElement] = useState('modifiedDate')
     const [sortType, setSortType] = useState('desc');
-    const [pageCount, setPageCount] = useState(10)
-    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10)
+    const [pageNumber, setPageNumber] = useState(1);
     const [uploadDocModal, setUploadDocModal] = useState(false)
-    const [advanceSearchObj, setAdvanceSearchObj] = useState({});
     const [columnsSaved, setColumnsSaved] = useState<any>([]);
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
+    const [showShare, setShowShare] = useState(null);
+    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const { folders,
         columns,
@@ -41,8 +44,20 @@ const MyDocuments = () => {
     }))
 
     useEffect(() => {
-        search(pageCount, currentPage)
-    }, [advanceSearchObj, sortElement, sortType])
+        setInitObj({
+            pageSize: pageSize,
+            pageNumber: pageNumber,
+            textSearch: null,
+            sortOrder: sortType,
+            sortParam: sortElement
+        })
+    }, [])
+
+    useEffect(() => {
+        if (searchObj !== null) {
+            search(pageSize, pageNumber)
+        }
+    }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -65,22 +80,10 @@ const MyDocuments = () => {
     }
 
     const search = (
-        pageSize = pageCount,
-        pageNumber = 1,
-        textValue = null,
-        sort = sortType,
-        column = sortElement
+        pageSize,
+        pageNumber
     ) => {
-        let searchObj: any = {
-            pageSize,
-            pageNumber,
-            folderName: textValue,
-            sortOrder: sort,
-            sortParam: column
-        }
-        if (!checkIfAdvanceSearchIsActive(advanceSearchObj)) {
-            searchObj = { ...searchObj, ...advanceSearchObj }
-        }
+        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders(searchObj))
         setShowAdvanceSearch(false)
     }
@@ -91,7 +94,7 @@ const MyDocuments = () => {
      * @param pageNumber 
      */
     const handlePagination = (pageSize: number, pageNumber: number) => {
-        setPageCount(pageSize)
+        setPageSize(pageSize)
         search(pageSize, pageNumber)
     }
 
@@ -101,18 +104,18 @@ const MyDocuments = () => {
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
-
     return (<>
         <Col sm={12}>
             <Row>
                 <AdvanceSearch
                     parentComponent={'myDocuments'}
                     Styles={Styles}
-                    searchHandler={(criteria) => search(pageCount, 1, criteria)}
-                    setAdvanceSearchObj={(obj) => setAdvanceSearchObj(obj)}
-                    advanceSearchObj={advanceSearchObj}
                     showAdvanceSearch={showAdvanceSearch}
                     setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    textSearchHook={textSearch}
+                    searchObj={searchObj}
+                    advanceSearchHook={advanceSearch}
+                    resetHandlerHook={resetHandler}
                 />
                 <Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => setUploadDocModal(true)}>Upload Document</Button>
@@ -139,15 +142,15 @@ const MyDocuments = () => {
                 currencyColumns={[]}
                 sortElement={(header) => setSortElement(header)}
                 sortType={(type) => setSortType(type)}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
+                currentPage={pageNumber}
+                setCurrentPage={setPageNumber}
                 parentComponent={'myDocuments'}
                 searchCriteria={{}}
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
                         download: (data) => downloadDocument(data),
-                        share: (data) => console.log(`share action`),
+                        share: (data) => setShowShare(data),
                         view: (data) => showDocumentListPage(data),
                         delete: (data) => console.log(`Delete Action`)
                     }
@@ -165,6 +168,15 @@ const MyDocuments = () => {
                 Styles={Styles}
                 parentComponent="myDocument"
                 search={search} />
+        }
+        {
+            showShare
+            && <Share
+                show={showShare}
+                parentComponent="myDocument"
+                searchHandler={() => search(pageSize, pageNumber)}
+                onHide={() => setShowShare(null)}
+            />
         }
     </>)
 }

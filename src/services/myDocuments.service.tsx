@@ -4,29 +4,30 @@ import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 const getMyDocumentFolders = async ({
     pageSize,
     pageNumber,
-    folderName,
     modifiedDateFrom,
     modifiedDateTo,
     sortOrder,
     sortParam,
     docTypeCode,
     documentName,
+    folderName,
     originalAccountNumber,
     clientAccountNumber,
-    equabliAccountNumber
+    equabliAccountNumber,
+    textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
-                folderName: folderName || null,
+                textSearch,
+                folderName: documentName ? documentName : folderName ? folderName : null,
                 modifiedDateFrom,
                 modifiedDateTo,
                 sortOrder,
                 sortParam,
                 docTypeCode,
-                documentName,
                 originalAccountNumber,
                 clientAccountNumber,
                 equabliAccountNumber
@@ -63,10 +64,11 @@ const getMyDocumentList = async ({
     shareDateFrom,
     shareDateTo,
     receiveDateFrom,
-    receiveDateTo
+    receiveDateTo,
+    textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -82,7 +84,8 @@ const getMyDocumentList = async ({
                 shareDateFrom,
                 shareDateTo,
                 receiveDateFrom,
-                receiveDateTo
+                receiveDateTo,
+                textSearch
             }
         )
         const data = handleResponse(response)
@@ -101,7 +104,18 @@ const getMyDocumentList = async ({
     }
 }
 
+const deleteDocument = async (documentId) => {
+    try {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
 export const myDocumentsService = {
     getMyDocumentFolders,
-    getMyDocumentList
+    getMyDocumentList,
+    deleteDocument
 }

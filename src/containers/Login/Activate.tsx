@@ -17,7 +17,7 @@ const Activate = ({ location }: any) => {
     }, [])
 
     const activateUser = async (id: any, loginKey: any) => {
-        const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/activateme?id=${id}&loginKey=${loginKey}`)
+        const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/activateme?id=${id}&loginKey=${loginKey}`)
         if (response.data.validation) {
             // user verified successfully
             setActivationStatus(`${response.data.message}, redirecting to password set page`)

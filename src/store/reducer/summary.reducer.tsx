@@ -1,7 +1,10 @@
 import {
     RequestedDocumentSummary,
     SentDocumentSummary,
-    ReRender
+    DocumentCoverage,
+    ReRender,
+    DocumentSummaryDocuments,
+    DocumentSummaryDocumentsNot
 } from "../types.d";
 
 const initialState = {
@@ -11,7 +14,24 @@ const initialState = {
     loadingSent: false,
     loadingRequest: false,
     errorRequest: false,
-    reRender: false
+    reRender: false,
+    documentCoverage: [],
+    loadingCoverage: false,
+    errorCoverage: false,
+    summaryDocuments: {
+        data: [],
+        loading: false,
+        error: false,
+        totalCount: 0,
+        columns: []
+    },
+    summaryDocumentsNot: {
+        data: [],
+        loading: false,
+        error: false,
+        totalCount: 0,
+        columns: []
+    }
 }
 
 const summaryReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -67,6 +87,109 @@ const summaryReducer = (state = initialState, action: { type: any; payload: any;
                 loadingSent: false,
                 errorSent: false,
                 sentSummary: {}
+            }
+        case DocumentCoverage.DOCUMENT_COVERAGE_REQUEST:
+            return {
+                ...state,
+                loadingCoverage: true,
+                errorCoverage: false,
+            }
+        case DocumentCoverage.DOCUMENT_COVERAGE_SUCCESS:
+            return {
+                ...state,
+                documentCoverage: action.payload,
+                loadingCoverage: false
+            }
+        case DocumentCoverage.DOCUMENT_COVERAGE_FAILURE:
+            return {
+                ...state,
+                loadingCoverage: false,
+                errorCoverage: true,
+            }
+        case DocumentCoverage.DOCUMENT_COVERAGE_RESET:
+            return {
+                ...state,
+                documentCoverage: false,
+                loadingCoverage: false,
+                errorCoverage: false,
+            }
+        case DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_REQUEST:
+            return {
+                ...state,
+                summaryDocuments: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_SUCCESS:
+            return {
+                ...state,
+                summaryDocuments: {
+                    loading: false,
+                    data: action.payload.documents,
+                    totalCount: action.payload.totalCount,
+                    columns: action.payload.columns
+                }
+            }
+        case DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_FAILURE:
+            return {
+                ...state,
+                summaryDocuments: {
+                    loading: false,
+                    error: true,
+                    totalCount: 0,
+                    data: []
+                }
+            }
+        case DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_RESET:
+            return {
+                ...state,
+                summaryDocuments: {
+                    data: [],
+                    loading: false,
+                    error: false,
+                    totalCount: 0,
+                    columns: []
+                }
+            }
+        case DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_REQUEST:
+            return {
+                ...state,
+                summaryDocumentsNot: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_SUCCESS:
+            return {
+                ...state,
+                summaryDocumentsNot: {
+                    loading: false,
+                    data: action.payload.documents,
+                    totalCount: action.payload.totalCount,
+                    columns: action.payload.columns
+                }
+            }
+        case DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_FAILURE:
+            return {
+                ...state,
+                summaryDocumentsNot: {
+                    loading: false,
+                    error: true,
+                    totalCount: 0,
+                    data: []
+                }
+            }
+        case DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_RESET:
+            return {
+                ...state,
+                summaryDocumentsNot: {
+                    data: [],
+                    loading: false,
+                    error: false,
+                    totalCount: 0,
+                    columns: []
+                }
             }
         case ReRender.RE_RENDER_REQUEST:
             return {

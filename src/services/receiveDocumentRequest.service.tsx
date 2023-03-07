@@ -8,17 +8,19 @@ const getReceiveDocumentRequest = async ({
     documentName,
     originalAccountNumber,
     equabliAccountNumber,
-    clientAccountNumber
+    clientAccountNumber,
+    textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
             documentName,
             originalAccountNumber,
             equabliAccountNumber,
-            clientAccountNumber
+            clientAccountNumber,
+            textSearch
         })
         const data = handleResponse(response)
         let sentRequests = data.response.datas
@@ -41,7 +43,7 @@ const downloadDocumentRequest = async (
     documentId
 ) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
             documentId
         })
         const data = handleResponse(response)
@@ -53,7 +55,7 @@ const downloadDocumentRequest = async (
 
 const deleteReceiveDocumentRequest = async (id) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

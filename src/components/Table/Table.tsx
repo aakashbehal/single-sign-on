@@ -1,6 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-    Table, Col, Form, Row, OverlayTrigger, Tooltip, Button, Dropdown
+    Table, Col, Form, Row, OverlayTrigger, Tooltip, Button
 } from 'react-bootstrap';
 import { CgSpinnerAlt } from 'react-icons/cg';
 import { TiArrowSortedDown, TiArrowSortedUp } from 'react-icons/ti';
@@ -9,18 +9,22 @@ import { GiSandsOfTime } from 'react-icons/gi';
 import { BiPencil } from "react-icons/bi";
 import { CgTrash } from "react-icons/cg"
 import { VscRunAll } from "react-icons/vsc"
-import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye, AiFillFileExclamation, AiOutlineUpload } from "react-icons/ai"
+import { useDispatch } from 'react-redux';
+import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuestionCircle, AiOutlineDelete, AiOutlineEye, AiFillFileExclamation } from "react-icons/ai"
 import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
 import { FiShare2 } from "react-icons/fi"
 
-import { checkType } from '../../helpers/util';
+import { checkType, createZipForFolderDownload } from '../../helpers/util';
 import PaginationComponent from './pagination';
 import { useHistory } from 'react-router-dom';
-import { RiUser3Fill } from 'react-icons/ri';
 import { MiscActionCreator } from '../../store/actions/common/misc.actions';
-import { useDispatch } from 'react-redux';
+
+interface ITempObj {
+    folderName: string;
+    filePath: string;
+}
 
 const TableComponent = ({
     data,
@@ -43,7 +47,8 @@ const TableComponent = ({
     parentComponent = '',
     loadingHeight = true,
     hideShareArray = [],
-    searchCriteria
+    searchCriteria,
+    handleDocumentManagerSummary
 }: any) => {
     const dispatch = useDispatch()
     const history = useHistory();
@@ -54,6 +59,7 @@ const TableComponent = ({
     const [show, setShow] = useState(false)
     const pageSizes = [10, 50, 100];
     const [showHideColumns, setShowHideColumns] = useState<any>(hideShareArray)
+    const [exportDocumentLinks, setExportDocumentLink] = useState({})
 
     useEffect(() => {
         if (isPagination) {
@@ -71,7 +77,7 @@ const TableComponent = ({
     }, [hideShareArray])
 
     useEffect(() => {
-        if (data.length > 0) {
+        if (data && data.length > 0) {
             let headers = Object.keys(map).filter(item => {
                 return showHideColumns.includes(item)
             })
@@ -88,6 +94,18 @@ const TableComponent = ({
         setCurrentPage(1);
     };
 
+    const showSummaryNotHaving = () => {
+        handleDocumentManagerSummary.documentType = handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")
+        let path = '/documents/document_summary_not'
+        if (parentComponent === 'documentNotSummary') {
+            path = '/documents/document_summary'
+        }
+        history.push({
+            pathname: path,
+            search: new URLSearchParams(handleDocumentManagerSummary).toString(),
+        });
+    }
+
     const handleClickHideShow = e => {
         let { id, checked } = e.target;
         let columnsTemp = Object.assign([], showHideColumns)
@@ -100,10 +118,49 @@ const TableComponent = ({
         setShowHideColumns(columnUpdated);
         dispatch(MiscActionCreator.saveColumn({ parentComponent, showHideColumns: columnUpdated }))
     };
-    //         
+
+    const exportHandler = async () => {
+        let fileLinks: any = {}
+        for (let key in exportDocumentLinks) {
+            let filePath = null;
+            if (parentComponent === 'documents') {
+                filePath = exportDocumentLinks[key].filePath
+                fileLinks = [...fileLinks, filePath]
+            } else {
+                filePath = exportDocumentLinks[key].documentPaths
+                if (fileLinks[exportDocumentLinks[key].folderName]) {
+                    fileLinks[exportDocumentLinks[key].folderName] = [...fileLinks, filePath]
+                } else {
+                    fileLinks[exportDocumentLinks[key].folderName] = [filePath]
+                }
+            }
+        }
+        let formatted: ITempObj[] = []
+        for (let key in fileLinks) {
+            for (let fileLink of fileLinks[key][0]) {
+                let obj: ITempObj = {
+                    folderName: key,
+                    filePath: fileLink
+                }
+                formatted.push(obj)
+            }
+        }
+        await createZipForFolderDownload(formatted, "Export")
+    }
 
     const sizeHandler = () => (
         <Row className='table_top_section'>
+            {
+                (parentComponent === 'documentSummary' || parentComponent === "documentNotSummary")
+                &&
+                <>
+                    <Button
+                        className='summary_history_button'
+                        onClick={() => showSummaryNotHaving()}
+                    >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
+                    </Button>
+                </>
+            }
             {
                 !isLoading
                 && (parentComponent === 'account'
@@ -120,23 +177,26 @@ const TableComponent = ({
                     || parentComponent === 'sentDocumentRequest'
                     || parentComponent === 'receiveDocumentRequest'
                     || parentComponent === 'documents'
+                    || parentComponent === 'documentSummary'
+                    || parentComponent === 'documentNotSummary'
                 )
                 && <>
                     {
                         (parentComponent === 'myDocuments' || parentComponent === 'documents') &&
                         isCheck && isCheck.length > 0 &&
-                        <Button variant="dark" style={{ marginRight: '1rem' }}>Export</Button>
+                        <Button variant="dark" style={{ marginRight: '1rem' }} onClick={() => exportHandler()}>Export</Button>
                     }
                     <CustomDropdown
                         trigger={<button style={{ cursor: 'pointer' }}>Show/Hide Columns</button>}
-                        menu={(Object.keys(map)).map((h) => {
+                        menu={(Object.keys(map)).map((h, index) => {
                             return <button
+                                key={`Hide_${index}`}
                                 onClick={() => { }}
                             >
                                 <Form.Control
                                     type='Checkbox'
                                     id={h}
-                                    // disabled={h === 'folderName' || h === 'name'}
+                                    disabled={index === 0}
                                     defaultChecked={showHideColumns.includes(h)}
                                     style={{ cursor: 'pointer', width: 'auto', marginRight: "1rem" }}
                                     onClick={handleClickHideShow}
@@ -405,25 +465,39 @@ const TableComponent = ({
 
     const handleAllSelect = () => {
         setIsCheckAll(!isCheckAll);
+        const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
         setIsCheck(data.map((li: any) => {
+            let id: any = null
             if (parentComponent === 'documents') {
-                return Number(li.id)
+                id = Number(li.id)
             } else {
-                return li.folderName
+                id = li.folderName
             }
+            exportDocumentLinksTemp[id] = li
+            setExportDocumentLink(exportDocumentLinksTemp)
+            return id
         }));
         if (isCheckAll) {
+            setExportDocumentLink({})
             setIsCheck([]);
         }
     }
 
     const handleClick = e => {
         let { id, checked } = e.target;
+        const data = JSON.parse(id)
+        const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
         if (parentComponent === 'documents') {
-            id = Number(id)
+            id = Number(data.id)
+        } else {
+            id = data.folderName
         }
+        exportDocumentLinksTemp[id] = data
+        setExportDocumentLink(exportDocumentLinksTemp)
         setIsCheck([...isCheck, id]);
         if (!checked) {
+            delete exportDocumentLinksTemp[id]
+            setExportDocumentLink(exportDocumentLinksTemp)
             setIsCheck(isCheck.filter(item => item !== id));
         }
     };
@@ -445,7 +519,7 @@ const TableComponent = ({
      * =============================================
      */
     const handleSharedWith = (sharedWith) => {
-        if (!sharedWith) {
+        if (sharedWith && sharedWith.length === 0) {
             return "-"
         } else {
             return (
@@ -458,11 +532,12 @@ const TableComponent = ({
                                 delay={{ show: 250, hide: 400 }}
                                 overlay={(
                                     <Tooltip id="tooltip-error">
-                                        {sW.name} - {sW.email}
+                                        {`Name: ${sW.name}
+                                        Email: ${sW.email}`}
                                     </Tooltip>
                                 )}
                             >
-                                <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW.name.charAt(0)}</span>
+                                <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW.name.charAt(0).toUpperCase()}</span>
                             </OverlayTrigger>
                         })
                     }
@@ -472,7 +547,7 @@ const TableComponent = ({
     }
 
     const handleDocumentName = (data) => {
-        if (data['documentName']) {
+        if (data['documentName'] || data["fileName"]) {
             return (<td
                 className={`clickable_td td_string`}
             >
@@ -481,7 +556,7 @@ const TableComponent = ({
                 }}>
                     <BsFileEarmarkText size={24} />
                     <div className='file_name clickable_td_emp' onClick={() => addEditArray.viewDocument(data)}>
-                        {data['documentName']}
+                        {data['documentName'] ? data['documentName'] : data['fileName']}
                     </div>
                 </div >
             </td >)
@@ -517,7 +592,12 @@ const TableComponent = ({
                                     'alignItems': 'center'
                                 }
                             }>
-                            <Form.Control type='Checkbox' onChange={() => handleAllSelect()} style={{ cursor: 'pointer' }}></Form.Control>
+                            <Form.Control
+                                type='Checkbox'
+                                onChange={() => handleAllSelect()}
+                                style={{ cursor: 'pointer' }}
+                            >
+                            </Form.Control>
                         </div>
                     </th>
                 }
@@ -623,7 +703,7 @@ const TableComponent = ({
                                     }>
                                     <Form.Control
                                         type='Checkbox'
-                                        id={parentComponent === 'documents' ? d.id : d.folderName}
+                                        id={JSON.stringify(d)}
                                         checked={isCheck.includes(parentComponent === 'documents' ? d.id : d.folderName)}
                                         style={{ cursor: 'pointer' }}
                                         onChange={handleClick}
@@ -723,7 +803,7 @@ const TableComponent = ({
                                     if (parentComponent !== 'partnerSearch' && header === "collections") {
                                         return <td key={`data_2${index2}`}>{collectionsHandler(d[header])}</td>
                                     }
-                                    if (header === "sharedWith") {
+                                    if (header === "sharedWith" || header === "shareBy" || header === "sharedBy") {
                                         return <td key={`data_2${index2}`}>{handleSharedWith(d[header])}</td>
                                     }
                                     if (header === "preview") {
@@ -759,7 +839,7 @@ const TableComponent = ({
                                         </td>
                                     }
                                     if (header === 'executionStatusVal') {
-                                        return (<td >
+                                        return (<td key={`data_2${index2}`}>
                                             <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                                 {d[header]}
                                                 <OverlayTrigger
@@ -778,7 +858,7 @@ const TableComponent = ({
                                     }
                                     if (header === 'complianceIds') {
                                         return (
-                                            <td className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}>
+                                            <td key={`data_2${index2}`} className={`clickable_td ${checkType(d[header], header) ? 'td_number' : 'td_string'}`}>
                                                 {complianceSplitter(d[header], d)}
                                             </td>
                                         )
@@ -1090,8 +1170,6 @@ const TableComponent = ({
         </div >
     );
 
-
-
     return (
         <div className="table_container">
             {isPagination && totalCount > 0 ? sizeHandler() : null}
@@ -1126,7 +1204,7 @@ const CustomDropdown = ({ trigger, menu }) => {
             {open ? (
                 <ul className="custom_menu">
                     {menu.map((menuItem, index) => (
-                        <li key={index} className="menu-item">
+                        <li key={`custom_${index}`} className="menu-item">
                             {React.cloneElement(menuItem, {
                                 onClick: () => {
                                     menuItem.props.onClick();

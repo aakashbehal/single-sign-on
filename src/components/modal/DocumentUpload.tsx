@@ -1,7 +1,5 @@
-import axios from 'axios';
-import React, { useEffect, useState, useRef } from 'react'
-import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap';
-import DatePicker from 'react-date-picker';
+import React, { useEffect, useState } from 'react'
+import { Button, Col, Container, Modal } from 'react-bootstrap';
 import { BsFileEarmarkPdf, BsFillFileEarmarkImageFill } from 'react-icons/bs';
 import { CgSpinnerAlt, CgSoftwareUpload } from 'react-icons/cg';
 import { MdOutlineDelete } from 'react-icons/md';
@@ -9,35 +7,77 @@ import { SiMicrosoftexcel } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import { saveAs } from 'file-saver';
+import { exportToExcel } from 'react-json-to-excel';
 
 import { createMessage } from '../../helpers/messages';
 import { axiosCustom, handleResponse } from '../../helpers/util';
-import { userService } from '../../services';
 import { SummaryActionCreator } from '../../store/actions/summary.actions';
 import FileUploadHook from '../CustomHooks/FileUploadHook';
 
+const SAMPLE_UPLOAD = [{
+    "Document Type": "",
+    "Portfolio id": "",
+    "Original Account Number": "",
+    "Client Account Number": "",
+    "Document Generation Date": "",
+    "Equabli Account Number": "",
+    "File Name": "",
+}]
 
 const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, search, details = null }: any) => {
     const { addToast } = useToasts();
-    const editRef = useRef<any>()
     const dispatch = useDispatch();
     const [fileToUpload, { zipTargetFiles }] = FileUploadHook(null)
     const [dragActive, setDragActive] = React.useState(false);
     const inputRef = React.useRef<any>(null);
     const [files, setFiles] = useState<any>([])
-    const [userLoggedIn, setUserLoggedIn] = useState<any>(null)
-    const [dateFrom, setDateFrom] = useState<any>(null)
-    const [fileTypeSelected, setFileTypeSelected] = useState('')
     const [formSubmitted, setFormSubmitted] = useState<any>(false)
     const [formError, setFormError] = useState<any>({
         fileLengthSingle: false,
         fileSize: false
     })
-    const [noMatrixFile, SetNoMatrixFile] = useState(false)
+    const [noMatrixFile, SetNoMatrixFile] = useState(false);
+    const [jsonForRequest, setJsonForRequest] = useState({})
+
     useEffect(() => {
-        const user = userService.getUser()
-        setUserLoggedIn(user)
+        if (parentComponent === 'documentNotSummary_request') {
+            getNotList()
+        }
     }, [])
+
+    useEffect(() => {
+        if (fileToUpload && JSON.stringify(fileToUpload) !== "{}") {
+            uploadFile()
+        }
+    }, [fileToUpload])
+
+    const getNotList = async () => {
+        try {
+            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+                pageSize: details.pageSize,
+                pageNumber: details.pageNumber - 1,
+                docTypeCode: details.docTypeCode,
+                tenture: details.tenture === 'null' ? null : details.tenture,
+                portfolio: details.portfolio === 'null' ? null : details.portfolio,
+                productCode: details.productCode === 'null' ? null : details.productCode,
+                userId: details.userId === 'null' ? null : details.userId
+            })
+            const data = handleResponse(response)
+            const tempJson = data && data.response && data.response.datas.map((data) => {
+                let obj = {
+                    "Document Type": details.docTypeCode,
+                    "Requested From": "",
+                    "Original Account Number": "",
+                    "Client Account Number": data,
+                    "Equabli Account Number": ""
+                }
+                return obj
+            })
+            setJsonForRequest(tempJson)
+        } catch (err) {
+            console.log(err)
+        }
+    }
 
     const validateUpload = (formObj) => {
         let formIsValid = true;
@@ -60,12 +100,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         setFormError(error)
         return formIsValid
     }
-
-    useEffect(() => {
-        if (fileToUpload && JSON.stringify(fileToUpload) !== "{}") {
-            uploadFile()
-        }
-    }, [fileToUpload])
 
     const onSubmitHandler = async (e: any) => {
         e.preventDefault();
@@ -94,7 +128,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
                 formData.append("files", file);
                 formData.append("files", matrixFile)
-                formData.append("fileUploadJson", JSON.stringify({ "bulkType": "upload", "orgType": 'CT' }))
+                formData.append("fileUploadJson", JSON.stringify({ "bulkType": "upload" }))
                 API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
                 const response = await axiosCustom.post(API_URL, formData, config)
                 const urls = handleResponse(response)
@@ -106,15 +140,36 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         "bulkType": "upload"
                     }
                 )
-                const data = handleResponse(responseFilePath)
+                handleResponse(responseFilePath)
                 addToast(createMessage('success', `uploaded`, 'File'), { appearance: 'success', autoDismiss: true })
                 setFormSubmitted(false)
                 onHide()
             } else {
-                formData.append("file", file);
-                formData.append("orgType", "CT")
+                if (parentComponent === "receiveDocumentRequest" && details !== null) {
+                    API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/fullfill`
+                    formData.append("file", file);
+                    formData.append("id", JSON.stringify(details.id))
+                } else if (parentComponent === "sentDocumentRequest" || parentComponent === 'documentNotSummary_request') {
+                    API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
+                    formData.append("files", file);
+                    formData.append("fileUploadVan", JSON.stringify({ "bulkType": "SendRequestDocument" }))
+                } else if (parentComponent === 'documentNotSummary') {
+                    API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/specific/accounts`;
+                    const requestObj = {
+                        docTypeCode: details.docTypeCode,
+                        // tenure: details.tenture === 'null' ? null : details.tenture,
+                        // portfolio: details.portfolio === 'null' ? null : details.portfolio,
+                        // productCode: details.productCode === 'null' ? null : details.productCode,
+                        // userId: details.userId === 'null' ? null : details.userId
+                    }
+                    console.log(requestObj)
+                    formData.append("file", file);
+                    formData.append("data", JSON.stringify(requestObj));
+                } else {
+                    formData.append("file", file);
+                }
                 const response = await axiosCustom.post(API_URL, formData, config)
-                const data = handleResponse(response)
+                handleResponse(response)
                 addToast(createMessage('success', `uploaded`, 'File'), { appearance: 'success', autoDismiss: true })
                 setFormSubmitted(false)
                 onHide()
@@ -126,18 +181,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             setFormSubmitted(false)
             addToast(createMessage('error', `uploading`, 'file'), { appearance: 'error', autoDismiss: false })
             throw error
-        }
-    }
-
-    const fileSizeHandler = (event) => {
-        const tempError = Object.assign({}, formError)
-        // 5MB limit
-        if ((event.target.files[0].size / 1024 / 1024) > 50) {
-            setFormError({ ...tempError, fileSize: true })
-            setFormSubmitted(true)
-        } else {
-            setFormError({ ...tempError, fileSize: false })
-            setFormSubmitted(false)
         }
     }
 
@@ -220,6 +263,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         (
                             parentComponent === 'myDocument'
                             || parentComponent === 'documents'
+                            || parentComponent === 'documentNotSummary'
+                            || parentComponent === 'documentNotSummary_request'
                         )
                             ? "Upload New Document"
                             :
@@ -299,11 +344,23 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 {
                     parentComponent === 'myDocument'
                     && files.length > 1
-                    && <Col sm={12} className='no_padding'>
+                    &&
+                    <Col sm={12} className='no_padding'>
                         <br />
                         <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
                         <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={downloadSampleFile} style={{ width: '100%' }}>Download Sample File</Button>
+                            <Button variant="dark" type="submit" onClick={() => exportToExcel(SAMPLE_UPLOAD, 'matrix')} style={{ width: '100%' }}>Download Sample File</Button>
+                        </Col>
+                    </Col>
+                }
+                {
+                    parentComponent === 'documentNotSummary_request'
+                    &&
+                    <Col sm={12} className='no_padding'>
+                        <br />
+                        <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
+                        <Col sm={12} className='no_padding'>
+                            <Button variant="dark" type="submit" onClick={() => exportToExcel(jsonForRequest, 'matrix')} style={{ width: '100%' }}>Download Sample File</Button>
                         </Col>
                     </Col>
                 }

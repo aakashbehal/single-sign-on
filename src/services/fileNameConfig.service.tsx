@@ -3,19 +3,18 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const getConfig = async (requestParams) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response.docMgrConfigs
     } catch (error: any) {
-        console.log(error)
         throw error
     }
 }
 
 const getUserConfig = async (requestParams) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response
@@ -77,14 +76,13 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
     if (userType === 'Partner' && !fieldsSelected[7]) {
         fieldsSelected[7] = null
     }
-    console.log(dataFieldOptionsFiltered, fieldsSelected)
     let Obj = { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
     return Obj
 }
 
 const saveUserConfiguration = async (requestBody) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             requestBody)
         const data = handleResponse(response)
         return data.response

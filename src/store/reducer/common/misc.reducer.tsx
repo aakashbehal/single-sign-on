@@ -9,7 +9,8 @@ import {
     AccountConfig,
     Status,
     SaveColumn,
-    AllTableColumns
+    AllTableColumns,
+    ClientAccountNumbers
 } from "../../types.d";
 
 const initialState = {
@@ -64,6 +65,11 @@ const initialState = {
         success: false
     },
     allTableColumns: {
+        data: [],
+        loading: false,
+        error: false
+    },
+    clientAccountNumbers: {
         data: [],
         loading: false,
         error: false
@@ -372,6 +378,39 @@ const miscReducer = (state = initialState, action: { type: any; payload: any; })
             return {
                 ...state,
                 allTableColumns: {
+                    loading: false,
+                    data: [],
+                    error: false
+                }
+            }
+        case ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_REQUEST:
+            return {
+                ...state,
+                clientAccountNumbers: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_SUCCESS:
+            return {
+                ...state,
+                clientAccountNumbers: {
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_FAILURE:
+            return {
+                ...state,
+                clientAccountNumbers: {
+                    loading: false,
+                    error: true
+                }
+            }
+        case ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_RESET:
+            return {
+                ...state,
+                clientAccountNumbers: {
                     loading: false,
                     data: [],
                     error: false

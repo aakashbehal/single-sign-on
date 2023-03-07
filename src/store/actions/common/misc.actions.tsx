@@ -9,7 +9,8 @@ import {
     CommunicationChannel,
     AccountConfig,
     SaveColumn,
-    AllTableColumns
+    AllTableColumns,
+    ClientAccountNumbers
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -203,6 +204,23 @@ export const MiscActionCreator = {
                     dispatch(failure(error))
                 }
             )
-    }
+    },
+    getClientAccountNumbers: () => (dispatch: any) => {
+        const request = () => ({ type: ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_REQUEST })
+        const success = (data: any) => ({ type: ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_SUCCESS, payload: data })
+        const failure = (error: any) => ({ type: ClientAccountNumbers.CLIENT_ACCOUNT_NUMBERS_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getClientAccountNumbers()
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
 
 }

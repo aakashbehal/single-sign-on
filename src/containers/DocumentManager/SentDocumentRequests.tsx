@@ -1,12 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import DatePicker from 'react-date-picker';
 import { Typeahead } from "react-bootstrap-typeahead"
-import { Col, Form, Row, ProgressBar, Button, Tab, Tabs, Modal, Container } from "react-bootstrap";
-import { CgOptions, CgSearch } from "react-icons/cg";
+import { Col, Form, Row, Button, Tab, Tabs, Modal, Container } from "react-bootstrap";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
 import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "react-toast-notifications";
-import { debounce } from "lodash"
 
 import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
@@ -14,13 +11,13 @@ import { SentDocumentRequestActionCreator } from "../../store/actions/sentDocume
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
-import { UserActionCreator } from "../../store/actions/user.actions";
-import { checkIfAdvanceSearchIsActive, getSignedURL } from "../../helpers/util";
-import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { downloadSignedFile } from "../../helpers/util";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
 import DocumentTypes from "../../components/Common/DocumentType";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
+import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+
 
 const SentDocumentRequests = () => {
     const dispatch = useDispatch();
@@ -29,17 +26,17 @@ const SentDocumentRequests = () => {
 
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('id')
-    const [sortType, setSortType] = useState('asc');
-    const [pageCount, setPageCount] = useState(10)
-    const [currentPage, setCurrentPage] = useState(1);
+    const [sortType, setSortType] = useState('desc');
+    const [pageSize, setPageSize] = useState(10)
+    const [pageNumber, setPageNumber] = useState(1);
     const [showBulkRequest, setShowBulkRequest] = useState(false)
     const [showRequestNewDocument, setShowRequestNewDocument] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
     const [showDocument, setShowDocument] = useState(false)
     const [documentToShow, setDocumentToShow] = useState(null);
-    const [advanceSearchObj, setAdvanceSearchObj] = useState({});
     const [columnsSaved, setColumnsSaved] = useState<any>([])
+    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
         sentDocumentRequests,
@@ -70,8 +67,20 @@ const SentDocumentRequests = () => {
     }))
 
     useEffect(() => {
-        search(pageCount, currentPage)
-    }, [advanceSearchObj, sortElement, sortType])
+        setInitObj({
+            pageSize: pageSize,
+            pageNumber: pageNumber,
+            textSearch: null,
+            sortOrder: sortType,
+            sortParam: sortElement
+        })
+    }, [])
+
+    useEffect(() => {
+        if (searchObj !== null) {
+            search(pageSize, pageNumber)
+        }
+    }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -90,7 +99,7 @@ const SentDocumentRequests = () => {
         if (sendRequestSuccess) {
             addToast(createMessage('success', `Sent`, 'Document Request'), { appearance: 'success', autoDismiss: true });
             setShowRequestNewDocument(false);
-            search(pageCount, currentPage)
+            search(pageSize, pageNumber)
             setTimeout(() => {
                 dispatch(SummaryActionCreator.reRender())
             }, 1000)
@@ -99,7 +108,7 @@ const SentDocumentRequests = () => {
         if (deleteRequestSuccess) {
             addToast(createMessage('success', `deleted`, 'Required Documents'), { appearance: 'success', autoDismiss: true });
             setShowDeleteConfirm(false)
-            search(pageCount, currentPage)
+            search(pageSize, pageNumber)
             dispatch(SummaryActionCreator.reRender())
         }
         if (deleteRequestError) { addToast(createMessage('error', `deleting`, 'required Documents'), { appearance: 'error', autoDismiss: false }); }
@@ -109,22 +118,10 @@ const SentDocumentRequests = () => {
         deleteRequestError])
 
     const search = (
-        pageSize = pageCount,
-        pageNumber = 0,
-        textValue = null,
-        sort = sortType,
-        column = sortElement
+        pageSize,
+        pageNumber
     ) => {
-        let searchObj: any = {
-            pageSize,
-            pageNumber,
-            documentName: textValue,
-            sortOrder: sort,
-            sortParam: column
-        }
-        if (!checkIfAdvanceSearchIsActive(advanceSearchObj)) {
-            searchObj = { ...searchObj, ...advanceSearchObj }
-        }
+        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest(searchObj))
         setShowAdvanceSearch(false)
     }
@@ -135,7 +132,7 @@ const SentDocumentRequests = () => {
      * @param pageNumber 
      */
     const handlePagination = (pageSize: number, pageNumber: number) => {
-        setPageCount(pageSize)
+        setPageSize(pageSize)
         search(pageSize, pageNumber)
     }
 
@@ -150,11 +147,9 @@ const SentDocumentRequests = () => {
 
     const downloadHandler = async (document) => {
         //download file
-        let filePath = await getSignedURL(document.filePath)
-        aRef.current.href = filePath;
-        aRef.current.download = document.documentName;
-        aRef.current.click();
-        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
+        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        await downloadSignedFile(document)
+        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
 
@@ -165,11 +160,12 @@ const SentDocumentRequests = () => {
                 <AdvanceSearch
                     parentComponent={'sentDocumentRequest'}
                     Styles={Styles}
-                    searchHandler={(criteria) => search(pageCount, 1, criteria)}
-                    setAdvanceSearchObj={(obj) => setAdvanceSearchObj(obj)}
-                    advanceSearchObj={advanceSearchObj}
                     showAdvanceSearch={showAdvanceSearch}
                     setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    textSearchHook={textSearch}
+                    searchObj={searchObj}
+                    advanceSearchHook={advanceSearch}
+                    resetHandlerHook={resetHandler}
                 />
                 <Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => setShowBulkRequest(true)}>Import Bulk Request</Button>
@@ -201,8 +197,8 @@ const SentDocumentRequests = () => {
                 currencyColumns={[]}
                 sortElement={(header) => setSortElement(header)}
                 sortType={(type) => setSortType(type)}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
+                currentPage={pageNumber}
+                setCurrentPage={setPageNumber}
                 parentComponent={'sentDocumentRequest'}
                 searchCriteria={{}}
                 hideShareArray={columnsSaved}
@@ -227,7 +223,7 @@ const SentDocumentRequests = () => {
         }
         {
             showBulkRequest
-            && <DocumentUpload show={showBulkRequest} onHide={() => setShowBulkRequest(false)} accountId={123} Styles={Styles} parentComponent="sentDocumentRequest" />
+            && <DocumentUpload show={showBulkRequest} onHide={() => setShowBulkRequest(false)} accountId={123} Styles={Styles} parentComponent="sentDocumentRequest" search={search} />
         }
         {
             showDeleteConfirm
@@ -252,34 +248,67 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
     const sendRequestRef = useRef<any>()
     const [defaultSelect, setDefaultSelect] = useState<any>([])
     const [usersSelected, setUserSelected] = useState<any>([])
+    const [formError, setFormError] = useState({
+        sendRequests: false,
+        originalAccountNumber: false,
+        clientAccountNumber: false,
+        docTypeCode: false
+    })
 
     const {
         users,
         loading,
-        error
+        error,
+        clientAccountNumbers
     } = useSelector((state: any) => ({
         users: state.users.data,
         loading: state.users.loading,
-        error: state.users.error
+        error: state.users.error,
+        clientAccountNumbers: state.misc.clientAccountNumbers.data,
     }))
 
-    useEffect(() => {
-        dispatch(UserActionCreator.getConnectedUsers())
-    }, [])
+    const validate = (formObj) => {
+        let formIsValid = true;
+        const error: any = {
+            sendRequests: false,
+            originalAccountNumber: false,
+            clientAccountNumber: false,
+            docTypeCode: false
+        }
+        for (let key in formObj) {
+            if (!formObj[key] || formObj[key] === "") {
+                error[key] = true
+            }
+            if (formObj["sendRequests"].length === 0) {
+                error["sendRequests"] = true
+            }
+        }
+        for (let k in error) {
+            if (error[k]) {
+                formIsValid = false
+            }
+        }
+        console.log(error)
+        setFormError(error)
+        return formIsValid
+    }
 
     const handleRequest = (e) => {
         e.preventDefault()
         const {
             originalAccountNumber,
             clientAccountNumber,
-            docTypeCode
+            document_type
         } = sendRequestRef.current
-        dispatch(SentDocumentRequestActionCreator.sentDocumentRequest({
+        const requestObj = {
             "sendRequests": usersSelected,
             "originalAccountNumber": originalAccountNumber.value,
             "clientAccountNumber": clientAccountNumber.value,
-            "docTypeCode": docTypeCode.value
-        }))
+            "docTypeCode": document_type.value
+        }
+        if (validate(requestObj)) {
+            dispatch(SentDocumentRequestActionCreator.sentDocumentRequest(requestObj))
+        }
     }
 
     return (
@@ -302,7 +331,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                         <br />
                         <Row>
                             <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Typeahead
                                             isLoading={loading}
@@ -315,19 +344,17 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                                             newSelectionPrefix='Not a Platform User: '
                                             onChange={(selected) => {
                                                 let selectedUpdated = selected.map((s: any) => {
-                                                    let temp = {
-                                                        "firstName": s.firstName,
-                                                        "principleId": s.principleId,
-                                                        "orgTypeCode": s.orgType,
-                                                        "orgCode": s.orgCode
+                                                    if (s.customOption) {
+                                                        return s.firstName
                                                     }
-                                                    return temp
+                                                    return s.emailAddress
                                                 })
                                                 setUserSelected(selectedUpdated)
                                             }}
                                             options={users}
                                         />
                                     </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["sendRequests"] ? 'At least one recipient is required ' : ''}</small></span>
                                     <Form.Label className="label_custom white">Send Request To</Form.Label>
                                 </Form.Group>
                             </Col>
@@ -344,28 +371,45 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                         </Row> */}
                         <Row>
                             <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="originalAccountNumber"></Form.Control>
                                     </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span>
                                     <Form.Label className="label_custom white">Original Account Number</Form.Label>
                                 </Form.Group>
                             </Col>
                         </Row>
                         <Row>
                             <Col lg={12} md={6} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4 ">
                                     <Col md={12} sm={12}>
-                                        <Form.Control type="text" name="clientAccountNumber"></Form.Control>
+                                        <Form.Control
+                                            as="select"
+                                            name="clientAccountNumber"
+                                            className="select_custom white"
+                                        >
+                                            <option value=""></option>
+                                            {
+                                                (clientAccountNumbers && clientAccountNumbers.length > 0) &&
+                                                clientAccountNumbers.map((cAn: any, index: number) => {
+                                                    return <option key={`cr_${index}`} value={cAn}>{cAn}</option>
+                                                })
+                                            }
+                                        </Form.Control>
                                     </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["clientAccountNumber"] ? 'Client Account Number is required' : ''}</small></span>
                                     <Form.Label className="label_custom white">Client Account Number</Form.Label>
                                 </Form.Group>
                             </Col>
                         </Row>
                         <Row>
                             <Col lg={12} md={6} >
-                                <Form.Group as={Col} className="mb-5">
-                                    <DocumentTypes />
+                                <Form.Group as={Col} className="mb-4">
+                                    <Col md={12} sm={12} className="no_padding">
+                                        <DocumentTypes />
+                                    </Col>
+                                    <span style={{ color: 'red' }}><small>{formError["docTypeCode"] ? 'Document Type is required' : ''}</small></span>
                                     <Form.Label className="label_custom white">Document Type</Form.Label>
                                 </Form.Group>
                             </Col>

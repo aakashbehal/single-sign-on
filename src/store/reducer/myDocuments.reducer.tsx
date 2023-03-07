@@ -1,4 +1,4 @@
-import { MyDocumentsFolder, MyDocumentsList } from "../types.d"
+import { MyDocumentsFolder, MyDocumentsList, DeleteDocument } from "../types.d"
 
 const initialState = {
     folders: {
@@ -13,7 +13,10 @@ const initialState = {
         error: false,
         totalCount: 0,
         data: [],
-        columns: []
+        columns: [],
+        deleteRequest: false,
+        deleteSuccess: false,
+        deleteError: false
     }
 }
 
@@ -103,6 +106,43 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     totalCount: 0,
                     data: [],
                     columns: []
+                }
+            }
+        case DeleteDocument.DELETE_DOCUMENTS_REQUEST:
+            return {
+                ...state,
+                documents: {
+                    ...state.documents,
+                    deleteRequest: true,
+                    deleteError: false,
+                }
+            }
+        case DeleteDocument.DELETE_DOCUMENTS_SUCCESS:
+            return {
+                ...state,
+                documents: {
+                    ...state.documents,
+                    deleteRequest: false,
+                    deleteSuccess: true
+                }
+            }
+        case DeleteDocument.DELETE_DOCUMENTS_FAILURE:
+            return {
+                ...state,
+                documents: {
+                    ...state.documents,
+                    deleteRequest: false,
+                    deleteError: true
+                }
+            }
+        case DeleteDocument.DELETE_DOCUMENTS_RESET:
+            return {
+                ...state,
+                documents: {
+                    ...state.documents,
+                    deleteRequest: false,
+                    deleteSuccess: false,
+                    deleteError: false,
                 }
             }
         default:

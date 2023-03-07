@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux"
-import { FaTasks, FaSearch, FaArchive, FaUserCog } from "react-icons/fa"
-import { MdDashboard, MdOutlineManageAccounts } from "react-icons/md"
-import { HiOutlineDocument } from "react-icons/hi"
-import { NavLink, Link, useHistory } from 'react-router-dom';
+import { FaTasks } from "react-icons/fa"
+import { Link, useHistory } from 'react-router-dom';
 import { NavDropdown } from "react-bootstrap"
 
 import Styles from "./BottomNavigation.module.sass"
@@ -37,7 +34,6 @@ const rolesMapping = {
 }
 
 const BottomNavigation = () => {
-    const dispatch = useDispatch()
     const history = useHistory();
     const [activeRoute, setActiveRoute] = useState<string>('documents')
     const [role, setRole] = useState<any>(null)

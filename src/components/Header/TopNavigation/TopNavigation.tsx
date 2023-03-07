@@ -1,22 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux"
+import { useDispatch } from "react-redux"
 import { Dropdown, Modal, Button } from "react-bootstrap"
 import { Link, useHistory } from "react-router-dom"
-import { RiLogoutCircleRLine, RiNotification4Fill, RiNotification4Line, RiUser3Fill } from "react-icons/ri"
+import { RiLogoutCircleRLine, RiUser3Fill } from "react-icons/ri"
 
 import Styles from "./TopNavigation.module.sass"
 import Logo from '../../../assets/img/logo.png'
 import { userService } from "../../../services/user.service";
-import Notification from "../../modal/Notifications"
 import { LoginActionCreator } from "../../../store/actions/auth.actions";
 
 
 const TopNavigation = () => {
     const history = useHistory()
     const dispatch = useDispatch();
-    const [showNotification, setShowNotification] = useState(false);
     const [currentUser, setCurrentUser] = useState<any>()
-    const [totalNotifications, setTotalNotifications] = useState<any>([])
     const [showConfirmLogout, setShowConfirmLogout] = useState<Boolean>(false)
 
     useEffect(() => {
@@ -30,20 +27,6 @@ const TopNavigation = () => {
 
     const approveHandler = () => {
         dispatch(LoginActionCreator.logout())
-    }
-
-    const setNotification = () => {
-        if (totalNotifications.length > 0) {
-            return <RiNotification4Fill size={25} fill="#ff7765" />
-        } else {
-            return <RiNotification4Line size={25} />
-        }
-    }
-
-    const toggleNotificationsHandler = () => {
-        setShowNotification((showNotification) => {
-            return !showNotification
-        })
     }
 
     const goToAccSearch = () => {

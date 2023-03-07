@@ -12,14 +12,14 @@ import {
 import { fileNameConfigService } from "../../services"
 
 export const FileNameConfigActionCreator = {
-    getConjunction: (userType) => (dispatch: any) => {
+    getConjunction: () => (dispatch: any) => {
         const request = () => ({ type: Conjunction.CONJUNCTION_REQUEST })
         const success = (user: any) => ({ type: Conjunction.CONJUNCTION_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: Conjunction.CONJUNCTION_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ orgType: userType.orgType, fileNameConfig: 'SEPARATOR' })
+        fileNameConfigService.getConfig({ fileNameConfig: 'SEPARATOR' })
             .then(
                 user => {
                     dispatch(success(user))
@@ -29,14 +29,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getFieldOptions: (userType) => (dispatch: any) => {
+    getFieldOptions: () => (dispatch: any) => {
         const request = () => ({ type: FieldOptions.FIELD_OPTIONS_REQUEST })
         const success = (user: any) => ({ type: FieldOptions.FIELD_OPTIONS_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: FieldOptions.FIELD_OPTIONS_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ orgType: userType.orgType, fileNameConfig: 'FIELD' })
+        fileNameConfigService.getConfig({ fileNameConfig: 'FIELD' })
             .then(
                 user => {
                     dispatch(success(user))
@@ -46,14 +46,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getRetentionPolicy: (userType) => (dispatch: any) => {
+    getRetentionPolicy: () => (dispatch: any) => {
         const request = () => ({ type: RetentionPolicy.RETENTION_POLICY_REQUEST })
         const success = (user: any) => ({ type: RetentionPolicy.RETENTION_POLICY_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: RetentionPolicy.RETENTION_POLICY_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ orgType: userType.orgType, fileNameConfig: 'RETENTION_POLICY' })
+        fileNameConfigService.getConfig({ fileNameConfig: 'RETENTION_POLICY' })
             .then(
                 user => {
                     dispatch(success(user))
@@ -63,14 +63,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getDocumentPolicy: (userType) => (dispatch: any) => {
+    getDocumentPolicy: () => (dispatch: any) => {
         const request = () => ({ type: DocumentPolicy.DOCUMENT_POLICY_REQUEST })
         const success = (user: any) => ({ type: DocumentPolicy.DOCUMENT_POLICY_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: DocumentPolicy.DOCUMENT_POLICY_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ orgType: userType.orgType, fileNameConfig: 'DOCUMENT_POLICY' })
+        fileNameConfigService.getConfig({ fileNameConfig: 'DOCUMENT_POLICY' })
             .then(
                 user => {
                     dispatch(success(user))
@@ -80,14 +80,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getUserConfig: (userType) => (dispatch: any) => {
+    getUserConfig: () => (dispatch: any) => {
         const request = () => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_REQUEST })
         const success = (userNameConfig: any) => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: UserFileNamingConfig.USER_FILE_NAMING_CONFIG_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getUserConfig({ orgType: userType.orgType, fileNameConfig: 'FIELD' })
+        fileNameConfigService.getUserConfig({ fileNameConfig: 'FIELD' })
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))
@@ -97,14 +97,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getUserRetentionPolicy: (userType) => (dispatch: any) => {
+    getUserRetentionPolicy: () => (dispatch: any) => {
         const request = () => ({ type: UserRetentionPolicy.USER_RETENTION_POLICY_REQUEST })
         const success = (userNameConfig: any) => ({ type: UserRetentionPolicy.USER_RETENTION_POLICY_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: UserRetentionPolicy.USER_RETENTION_POLICY_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getUserConfig({ orgType: userType.orgType, fileNameConfig: 'RETENTION_POLICY' })
+        fileNameConfigService.getUserConfig({ fileNameConfig: 'RETENTION_POLICY' })
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))
@@ -114,14 +114,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getUserSeparator: (userType) => (dispatch: any) => {
+    getUserSeparator: () => (dispatch: any) => {
         const request = () => ({ type: UserSeparator.USER_SEPARATOR_REQUEST })
         const success = (userNameConfig: any) => ({ type: UserSeparator.USER_SEPARATOR_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: UserSeparator.USER_SEPARATOR_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getUserConfig({ orgType: userType.orgType, fileNameConfig: 'SEPARATOR' })
+        fileNameConfigService.getUserConfig({ fileNameConfig: 'SEPARATOR' })
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))
@@ -131,14 +131,14 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    getUserDocumentPolicy: (userType) => (dispatch: any) => {
+    getUserDocumentPolicy: () => (dispatch: any) => {
         const request = () => ({ type: UserDocumentPolicy.USER_DOCUMENT_POLICY_REQUEST })
         const success = (userNameConfig: any) => ({ type: UserDocumentPolicy.USER_DOCUMENT_POLICY_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: UserDocumentPolicy.USER_DOCUMENT_POLICY_FAILURE, payload: error })
 
         dispatch(request())
 
-        fileNameConfigService.getUserConfig({ orgType: userType.orgType, fileNameConfig: 'DOCUMENT_POLICY' })
+        fileNameConfigService.getUserConfig({ fileNameConfig: 'DOCUMENT_POLICY' })
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))

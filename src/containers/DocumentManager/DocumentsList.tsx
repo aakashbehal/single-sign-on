@@ -1,37 +1,41 @@
 import { useState, useEffect, useRef } from "react";
-import DatePicker from 'react-date-picker';
+import { saveAs } from 'file-saver';
+import { Col, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
+import { useToasts } from "react-toast-notifications";
+import { useDispatch, useSelector } from "react-redux";
 
-
-import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
-import { CgOptions, CgSearch } from "react-icons/cg";
 import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
 import DocumentUpload from "../../components/modal/DocumentUpload";
-import { useDispatch, useSelector } from "react-redux";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
-import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
-import { checkIfAdvanceSearchIsActive, dateFormatterForRequestDocManager, getSignedURL } from "../../helpers/util";
-import DocumentTypes from "../../components/Common/DocumentType";
-import { debounce } from "lodash";
+import { checkIfAdvanceSearchIsActive, downloadSignedFile } from "../../helpers/util";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
+import { createMessage } from "../../helpers/messages";
+import DeleteConfirm from "../../components/modal/DeleteConfirm";
+import Share from "../../components/modal/Share";
+import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 
 
 const DocumentsList = ({ location }) => {
     const dispatch = useDispatch();
-    const params = new URLSearchParams(location.search);
+    const { addToast } = useToasts();
     const aRef = useRef<any>()
+    const params = new URLSearchParams(location.search);
     const AccountId = params.get('account_id');
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('documentName')
     const [sortType, setSortType] = useState('desc');
-    const [pageCount, setPageCount] = useState(10)
-    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10)
+    const [pageNumber, setPageNumber] = useState(1);
     const [uploadDocModal, setUploadDocModal] = useState(false)
     const [showDocument, setShowDocument] = useState(false)
     const [documentToShow, setDocumentToShow] = useState(null);
-    const [advanceSearchObj, setAdvanceSearchObj] = useState({});
     const [columnsSaved, setColumnsSaved] = useState<any>([])
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [details, setDetails] = useState<any>(null);
+    const [showShare, setShowShare] = useState(null);
+    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
         documents,
@@ -39,25 +43,40 @@ const DocumentsList = ({ location }) => {
         error,
         columns,
         loading,
-        defaultColumns
+        defaultColumns,
+        deleteRequest,
+        deleteSuccess,
+        deleteError
     } = useSelector((state: any) => ({
         documents: state.myDocuments.documents.data,
         totalCount: state.myDocuments.documents.totalCount,
         error: state.myDocuments.documents.error,
         columns: state.myDocuments.documents.columns,
         loading: state.myDocuments.documents.loading,
-        defaultColumns: state.misc.allTableColumns.data
+        defaultColumns: state.misc.allTableColumns.data,
+        deleteRequest: state.myDocuments.documents.deleteRequest,
+        deleteSuccess: state.myDocuments.documents.deleteSuccess,
+        deleteError: state.myDocuments.documents.deleteError
     }))
 
     useEffect(() => {
+        setInitObj({
+            pageSize: pageSize,
+            pageNumber: pageNumber,
+            textSearch: null,
+            sortOrder: sortType,
+            sortParam: sortElement
+        })
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
     }, []);
 
     useEffect(() => {
-        search(pageCount, currentPage)
-    }, [advanceSearchObj, sortElement, sortType])
+        if (searchObj !== null) {
+            search(pageSize, pageNumber)
+        }
+    }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -72,18 +91,23 @@ const DocumentsList = ({ location }) => {
         }
     }, [columns])
 
-    const search = (pageSize = pageCount, pageNumber = 1, documentName = null, sort = sortType, column = sortElement) => {
-        let searchObj: any = {
-            pageSize,
-            pageNumber,
-            accountNumber: AccountId,
-            documentName,
-            sortOrder: sort,
-            sortParam: column
+
+    useEffect(() => {
+        if (deleteSuccess) {
+            addToast(createMessage('success', `deleted`, 'Document'), { appearance: 'success', autoDismiss: true });
+            setShowDeleteConfirm(false)
+            search(pageSize, pageNumber)
         }
-        if (!checkIfAdvanceSearchIsActive(advanceSearchObj)) {
-            searchObj = { ...searchObj, ...advanceSearchObj }
-        }
+        if (deleteError) { addToast(createMessage('error', `deleting`, 'document'), { appearance: 'error', autoDismiss: false }); }
+    }, [
+        deleteSuccess,
+        deleteError])
+
+    const search = (
+        pageSize,
+        pageNumber
+    ) => {
+        searchObj = { ...searchObj, pageSize, pageNumber, accountNumber: AccountId, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentList(searchObj))
         setShowAdvanceSearch(false)
     }
@@ -92,34 +116,41 @@ const DocumentsList = ({ location }) => {
      * function is used in pagination
      * @param pageSize 
      * @param pageNumber 
-     */
+    */
     const handlePagination = (pageSize: number, pageNumber: number) => {
-        setPageCount(pageSize)
+        setPageSize(pageSize)
         search(pageSize, pageNumber)
     }
 
     const downloadHandler = async (document) => {
         //download file
-        let filePath = await getSignedURL(document.objectKey)
-        aRef.current.href = filePath;
-        aRef.current.download = document.fileName;
-        aRef.current.click();
-        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        await downloadSignedFile(document)
+        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
+    const handleDetails = (document) => {
+        setDetails(document)
+        setShowDeleteConfirm(true)
+    }
+
+    const deleteAlert = () => {
+        dispatch(MyDocumentsActionCreator.deleteDocument(details.id))
+    }
 
     return (<>
-        <a href="" ref={aRef} target="_blank"></a>
+        <a href="" ref={aRef} target="_self"></a>
         <Col sm={12}>
             <Row>
                 <AdvanceSearch
                     parentComponent={'documents'}
                     Styles={Styles}
-                    searchHandler={(criteria) => search(pageCount, 1, criteria)}
-                    setAdvanceSearchObj={(obj) => setAdvanceSearchObj(obj)}
-                    advanceSearchObj={advanceSearchObj}
                     showAdvanceSearch={showAdvanceSearch}
                     setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    textSearchHook={textSearch}
+                    searchObj={searchObj}
+                    advanceSearchHook={advanceSearch}
+                    resetHandlerHook={resetHandler}
                 />
                 <Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => setUploadDocModal(true)}>Upload Document</Button>
@@ -138,7 +169,7 @@ const DocumentsList = ({ location }) => {
                     equabliAccountNo: "Equabli Account Number",
                     clientAccountNo: "Client Account Number",
                     generateDate: "Generated Date",
-                    uploadDate: "upload Date",
+                    uploadDate: "Upload Date",
                     shareDate: "Share Date",
                     receiveDate: "Receive Date",
                     fileSize: "File Size",
@@ -154,20 +185,20 @@ const DocumentsList = ({ location }) => {
                 currencyColumns={[]}
                 sortElement={(header) => setSortElement(header)}
                 sortType={(type) => setSortType(type)}
-                currentPage={currentPage}
-                setCurrentPage={setCurrentPage}
+                currentPage={pageNumber}
+                setCurrentPage={setPageNumber}
                 parentComponent={'documents'}
                 searchCriteria={{}}
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
                         download: (data) => downloadHandler(data),
-                        share: (data) => console.log(`share action`, data),
+                        share: (data) => setShowShare(data),
                         view: (data) => {
                             setShowDocument(true)
                             setDocumentToShow(data)
                         },
-                        delete: (data) => console.log(`Delete Action`, data)
+                        delete: (data) => handleDetails(data)
                     }
                 }
                 onPaginationChange={(
@@ -181,6 +212,25 @@ const DocumentsList = ({ location }) => {
         {
             showDocument &&
             <ViewDocument show={showDocument} onHide={() => setShowDocument(false)} documentData={documentToShow} />
+        }
+        {
+            showDeleteConfirm
+            && <DeleteConfirm
+                show={showDeleteConfirm}
+                onHide={() => setShowDeleteConfirm(false)}
+                confirmDelete={() => deleteAlert()}
+                details={details}
+                type='documents'
+            />
+        }
+        {
+            showShare
+            && <Share
+                show={showShare}
+                parentComponent="documents"
+                onHide={() => setShowShare(null)}
+                searchHandler={() => search(pageSize, pageNumber)}
+            />
         }
     </>)
 }

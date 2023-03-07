@@ -1,8 +1,8 @@
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getRequiredDocuments = async (requestData) => {
+const getRequiredDocuments = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/all`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/all`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -12,7 +12,7 @@ const getRequiredDocuments = async (requestData) => {
 
 const saveRequiredDocuments = async (requestData) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require`, requestData)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require`, requestData)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -23,7 +23,7 @@ const saveRequiredDocuments = async (requestData) => {
 const deleteRequiredDocuments = async (id) => {
     console.log(id)
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

@@ -30,6 +30,8 @@ const DocumentGeneralConfiguration = lazy(() => import("./containers/User/Docume
 const DocumentsList = lazy(() => import("./containers/DocumentManager/DocumentsList"));
 const DocumentCostConfiguration = lazy(() => import("./containers/User/DocumentCostConfiguration"));
 const RequiredDocuments = lazy(() => import("./containers/User/RequiredDocuments"));
+const SummaryDrillDownHave = lazy(() => import("./containers/DocumentManager/SummaryDrillDownHave"));
+const SummaryDrillDownNotHave = lazy(() => import("./containers/DocumentManager/SummaryDrillDownNotHave"));
 /**
  * Applications starting point
  * @returns 
@@ -70,6 +72,8 @@ const App = () => {
               <PrivateRoute exact path="/documents/templates" component={Documents} />
               <PrivateRoute exact path="/documents/download_history" component={Documents} />
               <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
+              <PrivateRoute exact path="/documents/document_summary" component={SummaryDrillDownHave} />
+              <PrivateRoute exact path="/documents/document_summary_not" component={SummaryDrillDownNotHave} />
 
             </Switch>
           </ErrorBoundary>

@@ -121,7 +121,7 @@ const RequiredDocuments = () => {
     }
 
     const getRequiredDocuments = () => {
-        dispatch(RequiredDocumentActionCreator.getRequiredDocuments('CL'))
+        dispatch(RequiredDocumentActionCreator.getRequiredDocuments())
     }
 
     const deleteAlert = () => {

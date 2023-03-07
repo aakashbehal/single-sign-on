@@ -11,9 +11,8 @@ const ViewDocument = ({ onHide, show, documentData }) => {
     const [documentType, setDocumentType] = useState('')
     const [imageUrl, setImageUrl] = useState<any>("")
     const [loadingImage, setLoadingImage] = useState(false)
-
+    console.log(documentType)
     useEffect(() => {
-        console.log(documentData)
         const splitDocumentName = documentData.fileName ? documentData.fileName.split('.') : documentData.documentName.split('.')
         setDocumentType(splitDocumentName[splitDocumentName.length - 1])
     }, [documentData])
@@ -23,7 +22,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
     }, [documentType])
 
     const viewImage = async () => {
-        if (documentType === 'pdf' || documentType === 'png') {
+        if (documentType === 'pdf' || documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg') {
             setLoadingImage(true)
         }
         let fileUrl = await getSignedURL(documentData.objectKey || documentData.filePath)
@@ -31,7 +30,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
     }
 
     const handleNoPreview = () => {
-        return <p>Preview not available, Please download</p>
+        return <p><b>Preview not available, Please download</b></p>
     }
 
     return (
@@ -53,7 +52,7 @@ const ViewDocument = ({ onHide, show, documentData }) => {
                         && <CgSpinnerAlt className="spinner" size={50} style={{ position: 'absolute' }} />
                     }
                     {
-                        documentType === 'png'
+                        (documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg')
                         && <img onLoad={() => setLoadingImage(false)} src={imageUrl} alt={documentData.fileName} width="100%" />
                     }
                     {
@@ -68,6 +67,9 @@ const ViewDocument = ({ onHide, show, documentData }) => {
                         (
                             documentType === 'txt'
                             || documentType === 'xlsx'
+                            || documentType === ""
+                            || documentType === null
+                            || documentType === undefined
                         )
                         && handleNoPreview()
                     }

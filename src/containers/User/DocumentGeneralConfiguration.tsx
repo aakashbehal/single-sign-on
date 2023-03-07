@@ -105,14 +105,14 @@ const DocumentGeneralConfiguration = () => {
             }
         }
         setFieldSelected(selectedTemp)
-        dispatch(FileNameConfigActionCreator.getUserConfig({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getFieldOptions({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getConjunction({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getDocumentPolicy({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getRetentionPolicy({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getUserRetentionPolicy({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getUserSeparator({ orgType: 'CT' }))
-        dispatch(FileNameConfigActionCreator.getUserDocumentPolicy({ orgType: 'CT' }))
+        dispatch(FileNameConfigActionCreator.getUserConfig())
+        dispatch(FileNameConfigActionCreator.getFieldOptions())
+        dispatch(FileNameConfigActionCreator.getConjunction())
+        dispatch(FileNameConfigActionCreator.getDocumentPolicy())
+        dispatch(FileNameConfigActionCreator.getRetentionPolicy())
+        dispatch(FileNameConfigActionCreator.getUserRetentionPolicy())
+        dispatch(FileNameConfigActionCreator.getUserSeparator())
+        dispatch(FileNameConfigActionCreator.getUserDocumentPolicy())
     }, [])
 
     useEffect(() => {
@@ -186,52 +186,52 @@ const DocumentGeneralConfiguration = () => {
                 field_4,
                 field_5,
                 field_6,
+                field_7
             } = configRef.current
             configRequest.push({
                 "configShortCode": "SEPARATOR",
-                "configValShortCode": conjunction.value,
-                "orgTypeCode": "CT"
+                "configValShortCode": conjunction.value
             })
             if (field_1.value) {
                 configRequest.push({
                     "configShortCode": "field1",
-                    "configValShortCode": field_1.value,
-                    "orgTypeCode": "CT"
+                    "configValShortCode": field_1.value
                 })
             }
             if (field_2.value) {
                 configRequest.push({
                     "configShortCode": "field2",
-                    "configValShortCode": field_2.value,
-                    "orgTypeCode": "CT"
+                    "configValShortCode": field_2.value
                 })
             }
             if (field_3.value) {
                 configRequest.push({
                     "configShortCode": "field3",
-                    "configValShortCode": field_3.value,
-                    "orgTypeCode": "CT"
+                    "configValShortCode": field_3.value
                 })
             }
             if (field_4.value) {
                 configRequest.push({
                     "configShortCode": "field4",
-                    "configValShortCode": field_4.value,
-                    "orgTypeCode": "CT"
+                    "configValShortCode": field_4.value
                 })
             }
             if (field_5.value) {
                 configRequest.push({
                     "configShortCode": "field5",
-                    "configValShortCode": field_5.value,
-                    "orgTypeCode": "CT"
+                    "configValShortCode": field_5.value
                 })
             }
             if (field_6.value) {
                 configRequest.push({
                     "configShortCode": "field6",
                     "configValShortCode": field_6.value,
-                    "orgTypeCode": "CT"
+                })
+            }
+            if (field_7 && field_7.value) {
+                configRequest.push({
+                    "configShortCode": "field7",
+                    "configValShortCode": field_7.value,
                 })
             }
         } else if (type === 'retention') {
@@ -307,7 +307,6 @@ const DocumentGeneralConfiguration = () => {
     }
 
     const disableHandler = (fieldName) => {
-        console.log(partnerDefault, fieldName)
         let flag = false
         if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
             flag = true

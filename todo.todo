@@ -1,0 +1,57 @@
+✔ Text search for all @done (2/22/2023, 5:37:36 PM)
+Document Summary
+	✔ Filter based document Summary list @done (2/22/2023, 10:11:13 PM)
+	✔ @high Specific Document Drilldown @done (3/1/2023, 12:45:44 PM)
+		✔ @high List of accounts which do not have a specific document @done (2/25/2023, 10:32:22 PM)
+		✔ @high upload document to fulfill account(s) missing document @done (3/1/2023, 12:45:38 PM)
+		✔ @high request document fulfillment on bulk @done (3/1/2023, 12:45:39 PM)
+		✔ @high hide/show @done (2/25/2023, 10:32:36 PM)
+		✔ @high Search @done (2/25/2023, 10:32:37 PM)
+		✔ @high Advance Search @done (2/25/2023, 10:32:37 PM)
+
+Document Requirement
+	☐ @low Filter implementation
+
+Usage
+	☐ @high Show usage
+	☐ @low limit file upload if usage is meet
+	☐ @low Subscriptions
+	☐ @low Upgrafe subscriptions
+
+My Document
+	✔ @today  Export documents from multiple folders / Accounts @done (2/22/2023, 11:54:23 PM)
+	☐ @low  delete folder / Account
+	✔ @high Share folder / Account (duplicate the documents or share the same) @done (3/1/2023, 5:09:03 PM)
+	☐ @low Upload Document
+		☐ @low  upload zip which has multiple documents in multiple folders
+		✔ @today Provide dummy matrix file as a download @done (2/22/2023, 11:19:06 PM)
+
+Document list
+	✔ @high  share Document (duplicate the documents or share the same) @done (3/1/2023, 5:08:25 PM)
+	☐ @high  Upload document to a specific folder
+	✔ @today export multiple documents @done (2/23/2023, 12:02:53 AM)
+
+Sent Document Request
+	✔ @today Import Bulk request @done (2/22/2023, 10:39:20 PM)
+	✔ @high Request users which are not part of EQ collect system @done (2/25/2023, 10:32:08 PM)
+
+Received Document Request
+	✔ @high Fulfill bulk request @done (2/22/2023, 10:51:56 PM)
+	☐ @high Fulfill specific request
+
+Download History
+	☐ @low pause download
+	☐ @low show status
+
+Templates
+	☐ @low Show templates
+
+Share
+	✔ @high share to users @done (2/25/2023, 10:32:17 PM)
+	✔ @high revoke the share @done (2/25/2023, 10:32:17 PM)
+
+Misc
+	☐ @low  Client & Partner Onboarding
+	☐ @low Integration with Eq Collect
+	☐ @high share / request email templates which redirect to the platform
+	☐ @high Create API to get signed file URL

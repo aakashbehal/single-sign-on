@@ -4,7 +4,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/login`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_USER_SERVICE}/login`, {
             loginKey: username.trim(),
             loginSecret: password.trim()
         })
@@ -34,8 +34,8 @@ const login = async (username: string, password: string) => {
 async function logout() {
     // const user = getUser()
     try {
-        // console.log(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`)
-        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
+        // console.log(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_USER_SERVICE}/logout`)
+        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
         //     principleId: user.principleId,
         //     loginKey: user.loginKey
         // })

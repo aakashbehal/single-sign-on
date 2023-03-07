@@ -1,7 +1,10 @@
 import {
     RequestedDocumentSummary,
     SentDocumentSummary,
-    ReRender
+    ReRender,
+    DocumentCoverage,
+    DocumentSummaryDocuments,
+    DocumentSummaryDocumentsNot
 } from "../types.d";
 import { summaryService } from "../../services"
 
@@ -31,6 +34,57 @@ export const SummaryActionCreator = {
         dispatch(request())
 
         summaryService.getSentSummary()
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure())
+                }
+            )
+    },
+    getDocumentCoverage: (payload) => (dispatch: any) => {
+        const request = () => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_REQUEST, payload: [] })
+        const success = (data: any) => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_SUCCESS, payload: data })
+        const failure = () => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_FAILURE, payload: [] })
+
+        dispatch(request())
+
+        summaryService.getDocumentCoverage(payload)
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure())
+                }
+            )
+    },
+    getSummaryDrillDown: (payload) => (dispatch: any) => {
+        const request = () => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_REQUEST, payload: [] })
+        const success = (data: any) => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_SUCCESS, payload: data })
+        const failure = () => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_FAILURE, payload: [] })
+
+        dispatch(request())
+
+        summaryService.getSummaryDrillDown(payload)
+            .then(
+                data => {
+                    dispatch(success(data))
+                },
+                error => {
+                    dispatch(failure())
+                }
+            )
+    },
+    getSummaryDrillDownNot: (payload) => (dispatch: any) => {
+        const request = () => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_REQUEST, payload: [] })
+        const success = (data: any) => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_SUCCESS, payload: data })
+        const failure = () => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_FAILURE, payload: [] })
+
+        dispatch(request())
+
+        summaryService.getSummaryDrillDownNot(payload)
             .then(
                 data => {
                     dispatch(success(data))
