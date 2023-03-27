@@ -8,6 +8,7 @@ import { useHistory } from "react-router-dom";
 import Styles from "./DocumentManager.module.sass";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import SummaryFilters from "../../components/Common/SummaryFilters";
+import SkeletonLoading from "../../helpers/skeleton-loading";
 
 
 const DocumentCoverage = ({ collapse }: any) => {
@@ -32,7 +33,14 @@ const DocumentCoverage = ({ collapse }: any) => {
     }))
 
     useEffect(() => {
+        return () => {
+            dispatch(SummaryActionCreator.resetDocumentSummary())
+        }
+    }, [])
+
+    useEffect(() => {
         dispatch(SummaryActionCreator.getDocumentCoverage(searchObj))
+
     }, [searchObj])
 
     const drillDownHandler = (data) => {
@@ -67,19 +75,20 @@ const DocumentCoverage = ({ collapse }: any) => {
                     <AiFillWarning size={20} className={Styles.details_warning} />
                 </OverlayTrigger>
             }
-            {
-                !errorCoverage && loadingCoverage &&
-                <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
-            }
             <Col sm={12} className={`no_padding ${Styles.progress_container_outer}`}>
+                {
+                    !errorCoverage && loadingCoverage &&
+                    <SkeletonLoading repeats={3} />
+                    // <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                }
                 {
                     documentCoverage && documentCoverage.length > 0
                     && documentCoverage.map((dC, index) => {
                         // if (dC.total) {
                         return (
-                            <div key={`dC_${index}`} className={Styles.progress_container}>
+                            <div key={`dC_${index}`} className={`${Styles.progress_container}`}>
                                 <p className={Styles.ProgressTitle}><b>{dC.title}</b></p>
-                                <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}%`} />
+                                <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}% `} />
                                 <p className={Styles.ProgressDesc}><span className={Styles.clickable} onClick={() => drillDownHandler(dC)}>{dC.complete}</span> out of <b>{dC.total}</b> accounts has <b>{dC.documentType}</b></p>
                                 <hr />
                             </div>

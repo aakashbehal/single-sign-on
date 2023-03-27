@@ -117,7 +117,9 @@ const SummaryDrillDownHave = ({ location }) => {
                     equabliAccountNumber: "Equabli Account Number",
                     fileName: "File Name",
                     generateDate: "Generation Date",
-                    uploadDate: "Upload Date"
+                    uploadDate: "Upload Date",
+                    fileSize: "File Size",
+                    sharedBy: "Shared By",
                 }}
                 totalCount={totalCount}
                 actionArray={['fileName']}

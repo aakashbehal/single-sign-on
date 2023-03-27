@@ -3,9 +3,92 @@ import { debounce } from 'lodash';
 import { CgOptions, CgSearch } from 'react-icons/cg'
 import DatePicker from 'react-date-picker';
 import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Typeahead } from 'react-bootstrap-typeahead';
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import DocumentTypes from './DocumentType';
 import { checkIfAdvanceSearchIsActive, dateFormatterForRequestDocManager } from '../../helpers/util';
+import { useDispatch, useSelector } from 'react-redux';
+import { UserActionCreator } from '../../store/actions/user.actions';
+
+const FIELD_MAPPER = {
+    myDocuments: [
+        "originalAccountNumber",
+        "equabliAccountNumber",
+        "clientAccountNumber",
+        "documentName",
+        "DocumentType",
+        "DocumentTypeNot",
+        "modifiedDateFrom",
+        "modifiedDateTo",
+        "shareDateFrom",
+        "shareDateTo",
+        "ReceiveDateFrom",
+        "ReceiveDateTo",
+        "shareBy",
+        "shareWith"
+    ],
+    documents: [
+        "documentName",
+        "DocumentType",
+        "shareDateFrom",
+        "shareDateTo",
+        "ReceiveDateFrom",
+        "ReceiveDateTo",
+        "shareBy",
+        "shareWith",
+        "uploadDateFrom",
+        "uploadDateTo",
+        "generatedDateFrom",
+        "generatedDateTo"
+    ],
+    sentDocumentRequest: [
+        "documentName",
+        "DocumentType",
+        "originalAccountNumber",
+        "equabliAccountNumber",
+        "clientAccountNumber",
+        "requestedDateFrom",
+        "requestedDateTo",
+        "dueDateFrom",
+        "dueDateTo",
+        "fulfillmentDateFrom",
+        "fulfillmentDateTo",
+        "requestedFrom",
+        "requestedStatus"
+    ],
+    receiveDocumentRequest: [
+        "documentName",
+        "DocumentType",
+        "originalAccountNumber",
+        "equabliAccountNumber",
+        "clientAccountNumber",
+        "requestedDateFrom",
+        "requestedDateTo",
+        "dueDateFrom",
+        "dueDateTo",
+        "fulfillmentDateFrom",
+        "fulfillmentDateTo",
+        "requestedBy",
+        "requestedStatus"
+    ],
+    documentSummary: [
+        "documentName",
+        "originalAccountNumber",
+        "equabliAccountNumber",
+        "clientAccountNumber",
+        "shareBy",
+        "uploadDateFrom",
+        "uploadDateTo",
+        "generatedDateFrom",
+        "generatedDateTo"
+    ],
+    documentNotSummary: [
+        "originalAccountNumber",
+        "equabliAccountNumber",
+        "clientAccountNumber",
+    ]
+}
 
 const AdvanceSearch = ({ parentComponent,
     Styles,
@@ -16,10 +99,16 @@ const AdvanceSearch = ({ parentComponent,
     resetHandlerHook,
     searchObj
 }: any) => {
+    const dispatch = useDispatch();
+    const ref = useRef<any>();
     const advanceSearchRef = useRef<any>();
     const documentTypeRef = useRef<any>();
     const textSearchRef = useRef<HTMLInputElement | null>(null);
     const [advanceSearchActive, setAdvanceSearchActive] = useState<any>(false);
+    const [requestedFromSelected, setRequestedFromSelected] = useState<any>([])
+    const [requestedBySelected, setRequestedBySelected] = useState<any>([])
+    const [sharedBySelected, setSharedBySelected] = useState<any>([])
+    const [sharedWithSelected, setSharedWithSelected] = useState<any>([])
     const [dates, setDates] = useState<any>({
         generationDateFrom: null,
         generationDateTo: null,
@@ -27,11 +116,30 @@ const AdvanceSearch = ({ parentComponent,
         uploadDateTo: null,
         shareDateFrom: null,
         shareDateTo: null,
-        receivedDateFrom: null,
-        receivedDateTo: null
+        receiveDateFrom: null,
+        receiveDateTo: null,
+        modifiedDateFrom: null,
+        modifiedDateTo: null,
+        requestedDateFrom: null,
+        requestedDateTo: null,
+        dueDateFrom: null,
+        dueDateTo: null,
+        fulfillmentDateFrom: null,
+        fulFillmentDateTo: null
     })
 
+    const {
+        users,
+        loading,
+        error,
+    } = useSelector((state: any) => ({
+        users: state.users.data,
+        loading: state.users.loading,
+        error: state.users.error
+    }))
+
     useEffect(() => {
+        dispatch(UserActionCreator.getConnectedUsers())
         if (!checkIfAdvanceSearchIsActive(searchObj)) {
             setAdvanceSearchActive(true)
         } else {
@@ -60,10 +168,12 @@ const AdvanceSearch = ({ parentComponent,
                 original_account_number,
                 client_account_number,
                 equabli_account_number,
+                requested_status
                 // portfolio_id
             } = advanceSearchRef.current
+            console.log(requested_status?.value)
             advanceSearchTemp.docTypeCode = document_type?.value || null
-            advanceSearchTemp.documentName = document_name?.value || null
+            advanceSearchTemp.documentName = document_name?.value.trim() || null
             advanceSearchTemp.generationDateFrom = dates.generationDateFrom ? dateFormatterForRequestDocManager(dates.generationDateFrom) : null
             advanceSearchTemp.generationDateTo = dates.generationDateTo ? dateFormatterForRequestDocManager(dates.generationDateTo) : null
             advanceSearchTemp.uploadDateFrom = dates.uploadDateFrom ? dateFormatterForRequestDocManager(dates.uploadDateFrom) : null
@@ -72,46 +182,65 @@ const AdvanceSearch = ({ parentComponent,
             advanceSearchTemp.shareDateTo = dates.shareDateTo ? dateFormatterForRequestDocManager(dates.shareDateTo) : null
             advanceSearchTemp.receiveDateFrom = dates.receivedDateFrom ? dateFormatterForRequestDocManager(dates.receivedDateFrom) : null
             advanceSearchTemp.receiveDateTo = dates.receivedDateTo ? dateFormatterForRequestDocManager(dates.receivedDateTo) : null
-            advanceSearchTemp.originalAccountNumber = original_account_number?.value || null
-            advanceSearchTemp.clientAccountNumber = client_account_number?.value || null
-            advanceSearchTemp.equabliAccountNumber = equabli_account_number?.value || null
+            advanceSearchTemp.modifiedDateFrom = dates.modifiedDateFrom ? dateFormatterForRequestDocManager(dates.modifiedDateFrom) : null
+            advanceSearchTemp.modifiedDateTo = dates.modifiedDateTo ? dateFormatterForRequestDocManager(dates.modifiedDateTo) : null
+            advanceSearchTemp.requestedDateFrom = dates.requestedDateFrom ? dateFormatterForRequestDocManager(dates.requestedDateFrom) : null
+            advanceSearchTemp.requestedDateTo = dates.requestedDateTo ? dateFormatterForRequestDocManager(dates.requestedDateTo) : null
+            advanceSearchTemp.dueDateFrom = dates.dueDateFrom ? dateFormatterForRequestDocManager(dates.dueDateFrom) : null
+            advanceSearchTemp.dueDateTo = dates.dueDateTo ? dateFormatterForRequestDocManager(dates.dueDateTo) : null
+            advanceSearchTemp.fulFillmentDateFrom = dates.fulFillmentDateFrom ? dateFormatterForRequestDocManager(dates.fulFillmentDateFrom) : null
+            advanceSearchTemp.fulFillmentDateTo = dates.fulFillmentDateTo ? dateFormatterForRequestDocManager(dates.fulFillmentDateTo) : null
+            advanceSearchTemp.originalAccountNumber = original_account_number?.value.trim() || null
+            advanceSearchTemp.clientAccountNumber = client_account_number?.value.trim() || null
+            advanceSearchTemp.equabliAccountNumber = equabli_account_number?.value.trim() || null
+            advanceSearchTemp.sharedBy = sharedBySelected.length === 0 ? null : sharedBySelected[0]
+            advanceSearchTemp.sharedWith = sharedWithSelected.length === 0 ? null : sharedWithSelected[0]
+            advanceSearchTemp.requestedFrom = requestedFromSelected.length === 0 ? null : requestedFromSelected[0]
+            advanceSearchTemp.requestedBy = requestedBySelected.length === 0 ? null : requestedBySelected[0]
+            advanceSearchTemp.requestStatus = requested_status?.value || null
             advanceSearchHook(advanceSearchTemp)
         }
     }
 
     const handleReset = async () => {
         // Common
-        if (parentComponent !== "documentSummary" && parentComponent !== "documentNotSummary") {
-            documentTypeRef.current.reset();
-            advanceSearchRef.current["document_name"].value = ""
-        }
-        if (parentComponent === 'documents') {
-            // Document list
-            setDates({
-                generationDateFrom: null,
-                generationDateTo: null,
-                uploadDateFrom: null,
-                uploadDateTo: null,
-                shareDateFrom: null,
-                shareDateTo: null,
-                receivedDateFrom: null,
-                receivedDateTo: null
-            })
-        } else {
-            // Document Folder
-            advanceSearchRef.current["original_account_number"].value = ""
-            advanceSearchRef.current["client_account_number"].value = ""
-            advanceSearchRef.current["equabli_account_number"].value = ""
-        }
-        // if (parentComponent === 'sentDocumentRequest') {
-        //     advanceSearchRef.current["portfolio_id"].value = ""
-        // }
+        documentTypeRef.current.reset();
+        advanceSearchRef.current["document_name"].value = ""
+        setDates({
+            generationDateFrom: null,
+            generationDateTo: null,
+            uploadDateFrom: null,
+            uploadDateTo: null,
+            shareDateFrom: null,
+            shareDateTo: null,
+            receiveDateFrom: null,
+            receiveDateTo: null,
+            modifiedDateFrom: null,
+            modifiedDateTo: null,
+            requestedDateFrom: null,
+            requestedDateTo: null,
+            dueDateFrom: null,
+            dueDateTo: null,
+            fulFillmentDateFrom: null,
+            fulFillmentDateTo: null
+        })
+        advanceSearchRef.current["original_account_number"].value = ""
+        advanceSearchRef.current["client_account_number"].value = ""
+        advanceSearchRef.current["equabli_account_number"].value = ""
+        advanceSearchRef.current["requested_status"].value = ""
+        setRequestedFromSelected([])
+        setRequestedBySelected([])
+        setSharedBySelected([])
+        setSharedWithSelected([])
+        ref.current?.clear()
         resetHandlerHook({})
     }
 
     const dateHandler = (from, date) => {
         const dateTemp = Object.assign({}, dates)
+        console.log(from, date)
         dateTemp[from] = date
+        console.log(dateTemp)
         setDates(dateTemp)
     }
 
@@ -139,227 +268,435 @@ const AdvanceSearch = ({ parentComponent,
                 onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
             <div className={`${Styles.advance_search} ${showAdvanceSearch ? Styles.show : Styles.hide}`}>
                 <Form ref={advanceSearchRef} onSubmit={(e) => advanceSearchHandler(e)}>
-                    <Row>
-                        <Col lg={12} md={12}>
+                    <Col sm={12}>
+                        <Row className="align-items-center">
                             {
-                                parentComponent !== 'documentNotSummary'
-                                &&
-                                < Form.Group as={Col} className="mb-4 mt-4">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control className="select_custom white" type="text" name="document_name" />
-                                    </Col>
+                                FIELD_MAPPER[parentComponent].includes('documentName')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Form.Control className="select_custom white" type="text" name="document_name" />
                                     <Form.Label className="label_custom white">{parentComponent === 'myDocuments' ? "Folder Name" : "Document Name"}</Form.Label>
-                                </Form.Group>
-                            }
-                            {
-                                parentComponent !== "documentSummary" && parentComponent !== "documentNotSummary"
-                                &&
-                                <Form.Group as={Col} className="mb-4">
-                                    <Col md={12} sm={12} >
-                                        <DocumentTypes ref={documentTypeRef} />
-                                    </Col>
-                                    <Form.Label className="label_custom white">{parentComponent === 'myDocuments' ? "Folder that contain Document Type" : "Document Type"}</Form.Label>
-                                </Form.Group>
-                            }
-                            {/* <Form.Group as={Col} className="mb-4">
-                                <Col md={12} sm={12} >
-                                    <DocumentTypes ref={documentTypeNoRef} />
                                 </Col>
-                                <Form.Label className="label_custom white">Folder that do not contain Document Type</Form.Label>
-                            </Form.Group> */}
+                            }
+
+                            {
+                                FIELD_MAPPER[parentComponent].includes('DocumentType')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DocumentTypes ref={documentTypeRef} />
+                                    <Form.Label className="label_custom white">{parentComponent === 'myDocuments' ? "Folder that contain Document Type" : "Document Type"}</Form.Label>
+                                </Col>
+                            }
                             {/* {
-                                parentComponent === 'sentDocumentRequest'
-                                &&
-                                <Form.Group as={Col} className="mb-4">
-                                    <Col md={12} sm={12}>
-                                        <Form.Control
-                                            className="select_custom white"
-                                            type="text"
-                                            name="portfolio_id" />
-                                    </Col>
+                                FIELD_MAPPER[parentComponent].includes('documentName')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DocumentTypes ref={documentTypeRef} />
+                                    <Form.Label className="label_custom white">Folder that do not contain Document Type</Form.Label>
+                                </Col>
+                            } */}
+                            {/* {
+                                FIELD_MAPPER[parentComponent].includes('documentName')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Form.Control
+                                        className="select_custom white"
+                                        type="text"
+                                        name="portfolio_id" />
                                     <Form.Label className="label_custom white">Portfolio Id</Form.Label>
-                                </Form.Group>
+                                </Col>
                             } */}
                             {
-                                parentComponent !== 'documents'
-                                && <>
-                                    <Form.Group as={Col} className={`mb-4 ${parentComponent === "documentNotSummary" ? 'mt-4' : ''}`}>
-                                        <Col md={12} sm={12}>
-                                            <Form.Control
-                                                className="select_custom white"
-                                                type="text"
-                                                name="original_account_number" />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Original Account Number</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control
-                                                className="select_custom white"
-                                                type="text"
-                                                name="client_account_number" />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Client Account Number</Form.Label>
-                                    </Form.Group>
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control
-                                                className="select_custom white"
-                                                type="text"
-                                                name="equabli_account_number" />
-                                        </Col>
-                                        <Form.Label className="label_custom white">Equabli Account Number</Form.Label>
-                                    </Form.Group>
-                                </>
+                                FIELD_MAPPER[parentComponent].includes('originalAccountNumber')
+                                && <Col sm={12} className="my-1 mt-4">
+                                    <Form.Control
+                                        className="select_custom white"
+                                        type="text"
+                                        name="original_account_number" />
+                                    <Form.Label className="label_custom white">Original Account Number</Form.Label>
+                                </Col>
                             }
                             {
-                                (parentComponent === 'documents'
-                                    || parentComponent === 'documentSummary')
-                                && <>
-                                    <Col sm={12}>
-                                        <Row>
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12}>
-                                                    <DatePicker
-                                                        format={'MM/dd/yyyy'}
-                                                        className="select_custom white"
-                                                        monthPlaceholder={'mm'}
-                                                        dayPlaceholder={'dd'}
-                                                        value={dates["generationDateFrom"]}
-                                                        onChange={(date) => dateHandler("generationDateFrom", date)}
-                                                        yearPlaceholder={'yyyy'} />
-                                                </Col>
-                                                <Form.Label className="label_custom white">Generation Date From</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12}>
-                                                    <DatePicker
-                                                        format={'MM/dd/yyyy'}
-                                                        className="select_custom white"
-                                                        monthPlaceholder={'mm'}
-                                                        dayPlaceholder={'dd'}
-                                                        value={dates["generationDateTo"]}
-                                                        minDate={new Date(dates["generationDateFrom"])}
-                                                        onChange={(date) => dateHandler("generationDateTo", date)}
-                                                        yearPlaceholder={'yyyy'} />
-                                                </Col>
-                                                <Form.Label className="label_custom white">Generation Date To</Form.Label>
-                                            </Form.Group>
-                                        </Row>
-                                    </Col>
-                                    <Col sm={12}>
-                                        <Row>
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12}>
-                                                    <DatePicker
-                                                        format={'MM/dd/yyyy'}
-                                                        className="select_custom white"
-                                                        monthPlaceholder={'mm'}
-                                                        dayPlaceholder={'dd'}
-                                                        value={dates["uploadDateFrom"]}
-                                                        onChange={(date) => dateHandler("uploadDateFrom", date)}
-                                                        yearPlaceholder={'yyyy'} />
-                                                </Col>
-                                                <Form.Label className="label_custom white">Upload Date From</Form.Label>
-                                            </Form.Group>
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12}>
-                                                    <DatePicker
-                                                        format={'MM/dd/yyyy'}
-                                                        className="select_custom white"
-                                                        monthPlaceholder={'mm'}
-                                                        dayPlaceholder={'dd'}
-                                                        value={dates["uploadDateTo"]}
-                                                        minDate={new Date(dates["uploadDateFrom"])}
-                                                        onChange={(date) => dateHandler("uploadDateTo", date)}
-                                                        yearPlaceholder={'yyyy'} />
-                                                </Col>
-                                                <Form.Label className="label_custom white">Upload Date To</Form.Label>
-                                            </Form.Group>
-                                        </Row>
-                                    </Col>
-                                    {
-                                        parentComponent === 'documents'
-                                        && <>
-                                            <Col sm={12}>
-                                                <Row>
-                                                    <Form.Group as={Col} className="mb-4">
-                                                        <Col md={12} sm={12}>
-                                                            <DatePicker
-                                                                format={'MM/dd/yyyy'}
-                                                                className="select_custom white"
-                                                                monthPlaceholder={'mm'}
-                                                                dayPlaceholder={'dd'}
-                                                                value={dates["shareDateFrom"]}
-                                                                onChange={(date) => dateHandler("shareDateFrom", date)}
-                                                                yearPlaceholder={'yyyy'} />
-                                                        </Col>
-                                                        <Form.Label className="label_custom white">Share Date From</Form.Label>
-                                                    </Form.Group>
-                                                    <Form.Group as={Col} className="mb-4">
-                                                        <Col md={12} sm={12}>
-                                                            <DatePicker
-                                                                format={'MM/dd/yyyy'}
-                                                                className="select_custom white"
-                                                                monthPlaceholder={'mm'}
-                                                                dayPlaceholder={'dd'}
-                                                                value={dates["shareDateTo"]}
-                                                                minDate={new Date(dates["shareDateFrom"])}
-                                                                onChange={(date) => dateHandler("shareDateTo", date)}
-                                                                yearPlaceholder={'yyyy'} />
-                                                        </Col>
-                                                        <Form.Label className="label_custom white">Share Date To</Form.Label>
-                                                    </Form.Group>
-                                                </Row>
-                                            </Col>
-                                            <Col sm={12}>
-                                                <Row>
-                                                    <Form.Group as={Col} className="mb-4">
-                                                        <Col md={12} sm={12}>
-                                                            <DatePicker
-                                                                format={'MM/dd/yyyy'}
-                                                                className="select_custom white"
-                                                                monthPlaceholder={'mm'}
-                                                                dayPlaceholder={'dd'}
-                                                                value={dates["receivedDateFrom"]}
-                                                                onChange={(date) => dateHandler("receivedDateFrom", date)}
-                                                                yearPlaceholder={'yyyy'} />
-                                                        </Col>
-                                                        <Form.Label className="label_custom white">Received Date From</Form.Label>
-                                                    </Form.Group>
-                                                    <Form.Group as={Col} className="mb-4">
-                                                        <Col md={12} sm={12}>
-                                                            <DatePicker
-                                                                format={'MM/dd/yyyy'}
-                                                                className="select_custom white"
-                                                                monthPlaceholder={'mm'}
-                                                                dayPlaceholder={'dd'}
-                                                                value={dates["receivedDateTo"]}
-                                                                minDate={new Date(dates["receivedDateFrom"])}
-                                                                onChange={(date) => dateHandler("receivedDateTo", date)}
-                                                                yearPlaceholder={'yyyy'} />
-                                                        </Col>
-                                                        <Form.Label className="label_custom white">Received Date To</Form.Label>
-                                                    </Form.Group>
-
-                                                </Row>
-                                            </Col>
-                                        </>
-                                    }
-
-                                </>
-                            }
-                            <Col className={Styles.button_right}>
-                                <Col>
-                                    <Button variant="dark" type="submit">Search</Button>{" "}
-                                    <Button variant="dark" onClick={() => handleReset()}>Reset</Button>{" "}
-                                    <Button variant="" onClick={() => setShowAdvanceSearch(false)}>Cancel</Button>{ }
+                                FIELD_MAPPER[parentComponent].includes('clientAccountNumber')
+                                && <Col sm={12} className="my-1 mt-4">
+                                    <Form.Control
+                                        className="select_custom white"
+                                        type="text"
+                                        name="client_account_number" />
+                                    <Form.Label className="label_custom white">Client Account Number</Form.Label>
                                 </Col>
-                            </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('equabliAccountNumber')
+                                && <Col sm={12} className="my-1 mt-4">
+                                    <Form.Control
+                                        className="select_custom white"
+                                        type="text"
+                                        name="equabli_account_number" />
+                                    <Form.Label className="label_custom white">Equabli Account Number</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('generatedDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["generationDateFrom"]}
+                                        onChange={(date) => dateHandler("generationDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Generation Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('modifiedDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["modifiedDateFrom"]}
+                                        onChange={(date) => dateHandler("modifiedDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Modified Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('modifiedDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["modifiedDateTo"]}
+                                        onChange={(date) => dateHandler("modifiedDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Modified Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('generatedDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["generationDateTo"]}
+                                        minDate={new Date(dates["generationDateFrom"])}
+                                        onChange={(date) => dateHandler("generationDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Generation Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('uploadDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["uploadDateFrom"]}
+                                        onChange={(date) => dateHandler("uploadDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Upload Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('uploadDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["uploadDateTo"]}
+                                        minDate={new Date(dates["uploadDateFrom"])}
+                                        onChange={(date) => dateHandler("uploadDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Upload Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('shareDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["shareDateFrom"]}
+                                        onChange={(date) => dateHandler("shareDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Share Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('shareDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["shareDateTo"]}
+                                        minDate={new Date(dates["shareDateFrom"])}
+                                        onChange={(date) => dateHandler("shareDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Share Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('requestedDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["requestedDateFrom"]}
+                                        onChange={(date) => dateHandler("requestedDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Requested Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('requestedDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["requestedDateTo"]}
+                                        minDate={new Date(dates["requestedDateFrom"])}
+                                        onChange={(date) => dateHandler("requestedDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Requested Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('ReceiveDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["receivedDateFrom"]}
+                                        onChange={(date) => dateHandler("receivedDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Received Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('ReceiveDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["receivedDateTo"]}
+                                        minDate={new Date(dates["receivedDateFrom"])}
+                                        onChange={(date) => dateHandler("receivedDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Received Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('dueDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["dueDateFrom"]}
+                                        onChange={(date) => dateHandler("dueDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Due Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('dueDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["dueDateTo"]}
+                                        minDate={new Date(dates["dueDateFrom"])}
+                                        onChange={(date) => dateHandler("dueDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Due Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('fulfillmentDateFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["fulfillmentDateFrom"]}
+                                        onChange={(date) => dateHandler("fulfillmentDateFrom", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Fulfillment Date From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('fulfillmentDateTo')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <DatePicker
+                                        format={'MM/dd/yyyy'}
+                                        className="select_custom white"
+                                        monthPlaceholder={'mm'}
+                                        dayPlaceholder={'dd'}
+                                        value={dates["fulfillmentDateTo"]}
+                                        minDate={new Date(dates["fulfillmentDateFrom"])}
+                                        onChange={(date) => dateHandler("fulfillmentDateTo", date)}
+                                        yearPlaceholder={'yyyy'} />
+                                    <Form.Label className="label_custom white">Fulfillment Date To</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('requestedFrom')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Typeahead
+                                        isLoading={loading}
+                                        id="public-methods-example"
+                                        labelKey="firstName"
+                                        multiple
+                                        ref={ref}
+                                        className="input_custom_type_ahead"
+                                        allowNew={true}
+                                        newSelectionPrefix='Not a Platform User: '
+                                        onChange={(selected) => {
+                                            let selectedUpdated = selected.map((s: any) => {
+                                                if (s.customOption) {
+                                                    return s.firstName
+                                                }
+                                                return s.emailAddress
+                                            })
+                                            setRequestedFromSelected(selectedUpdated)
+                                        }}
+                                        options={users}
+                                    />
+                                    <Form.Label className="label_custom white">Requested From</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('requestedBy')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Typeahead
+                                        isLoading={loading}
+                                        id="public-methods-example"
+                                        labelKey="firstName"
+                                        ref={ref}
+                                        className="input_custom_type_ahead"
+                                        allowNew={true}
+                                        newSelectionPrefix='Not a Platform User: '
+                                        onChange={(selected) => {
+                                            let selectedUpdated = selected.map((s: any) => {
+                                                return s.firstName
+                                            })
+                                            setRequestedBySelected(selectedUpdated)
+                                        }}
+                                        options={users}
+                                    />
+                                    <Form.Label className="label_custom white">Requested By</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('requestedStatus')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Form.Control
+                                        as="select"
+                                        name="requested_status"
+                                        className="select_custom">
+                                        <option></option>
+                                        {
+                                            [
+                                                {
+                                                    shortCode: 'open',
+                                                    value: 'Open'
+                                                },
+                                                {
+                                                    shortCode: 'fulfilled',
+                                                    value: 'Fulfilled'
+                                                }
+                                            ].map((agency: any, index: number) => {
+                                                return (
+                                                    <option
+                                                        key={`agency_${index}`}
+                                                        value={agency.shortCode}
+                                                    >
+                                                        {agency.value}
+                                                    </option>
+                                                )
+                                            })
+                                        }
+                                    </Form.Control>
+                                    <Form.Label className="label_custom white">Requested Status</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('shareBy')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Typeahead
+                                        isLoading={loading}
+                                        id="public-methods-example"
+                                        labelKey="firstName"
+                                        ref={ref}
+                                        className="input_custom_type_ahead"
+                                        newSelectionPrefix='Not a Platform User: '
+                                        onChange={(selected) => {
+                                            let selectedUpdated = selected.map((s: any) => {
+                                                return s.firstName
+                                            })
+                                            setSharedBySelected(selectedUpdated)
+                                        }}
+                                        options={users}
+                                    />
+                                    <Form.Label className="label_custom white">Shared By</Form.Label>
+                                </Col>
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('shareWith')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Typeahead
+                                        isLoading={loading}
+                                        id="public-methods-example"
+                                        labelKey="firstName"
+                                        ref={ref}
+                                        className="input_custom_type_ahead"
+                                        newSelectionPrefix='Not a Platform User: '
+                                        onChange={(selected) => {
+                                            let selectedUpdated = selected.map((s: any) => {
+                                                return s.firstName
+                                            })
+                                            setSharedWithSelected(selectedUpdated)
+                                        }}
+                                        options={users}
+                                    />
+                                    <Form.Label className="label_custom white">SharedWith</Form.Label>
+                                </Col>
+                            }
+                        </Row>
+                    </Col>
+                    <Col className={`${Styles.button_right} mt-4 no_padding`}>
+                        <Col>
+                            <Button variant="dark" type="submit">Search</Button>{" "}
+                            <Button variant="dark" onClick={() => handleReset()}>Reset</Button>{" "}
+                            <Button variant="" onClick={() => setShowAdvanceSearch(false)}>Cancel</Button>{ }
                         </Col>
-                    </Row>
-                </Form>
-            </div>
+                    </Col>
+                </Form >
+            </div >
         </Col >
     )
 }

@@ -109,7 +109,7 @@ const summaryReducer = (state = initialState, action: { type: any; payload: any;
         case DocumentCoverage.DOCUMENT_COVERAGE_RESET:
             return {
                 ...state,
-                documentCoverage: false,
+                documentCoverage: [],
                 loadingCoverage: false,
                 errorCoverage: false,
             }

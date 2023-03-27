@@ -13,6 +13,7 @@ import { createMessage } from "../../helpers/messages";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import Share from "../../components/modal/Share";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import DeleteConfirm from "../../components/modal/DeleteConfirm";
 
 const MyDocuments = () => {
     const dispatch = useDispatch()
@@ -26,6 +27,8 @@ const MyDocuments = () => {
     const [columnsSaved, setColumnsSaved] = useState<any>([]);
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [showShare, setShowShare] = useState(null);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [details, setDetails] = useState<any>(null);
     let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const { folders,
@@ -33,14 +36,20 @@ const MyDocuments = () => {
         totalCount,
         error,
         loading,
-        defaultColumns
+        defaultColumns,
+        deleteRequest,
+        deleteSuccess,
+        deleteError
     } = useSelector((state: any) => ({
         folders: state.myDocuments.folders.data,
         columns: state.myDocuments.folders.columns,
         totalCount: state.myDocuments.folders.totalCount,
         error: state.myDocuments.folders.error,
         loading: state.myDocuments.folders.loading,
-        defaultColumns: state.misc.allTableColumns.data
+        defaultColumns: state.misc.allTableColumns.data,
+        deleteRequest: state.myDocuments.documents.deleteRequest,
+        deleteSuccess: state.myDocuments.documents.deleteSuccess,
+        deleteError: state.myDocuments.documents.deleteError
     }))
 
     useEffect(() => {
@@ -72,6 +81,17 @@ const MyDocuments = () => {
         }
     }, [columns])
 
+    useEffect(() => {
+        if (deleteSuccess) {
+            addToast(createMessage('success', `deleted`, 'Document'), { appearance: 'success', autoDismiss: true });
+            setShowDeleteConfirm(false)
+            search(pageSize, pageNumber)
+        }
+        if (deleteError) { addToast(createMessage('error', `deleting`, 'document'), { appearance: 'error', autoDismiss: false }); }
+    }, [
+        deleteSuccess,
+        deleteError])
+
     const showDocumentListPage = (data) => {
         history.push({
             pathname: '/documents/document_list',
@@ -102,6 +122,15 @@ const MyDocuments = () => {
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await createZipForFolderDownload(document.documentPaths, document.folderName)
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+    }
+
+    const handleDetails = (document) => {
+        setDetails(document)
+        setShowDeleteConfirm(true)
+    }
+
+    const deleteHandler = () => {
+        dispatch(MyDocumentsActionCreator.deleteDocument(details.folderName))
     }
 
     return (<>
@@ -152,13 +181,23 @@ const MyDocuments = () => {
                         download: (data) => downloadDocument(data),
                         share: (data) => setShowShare(data),
                         view: (data) => showDocumentListPage(data),
-                        delete: (data) => console.log(`Delete Action`)
+                        delete: (data) => handleDetails(data)
                     }
                 }
                 onPaginationChange={(
                     pageSize: number, pageNumber: number
                 ) => handlePagination(pageSize, pageNumber)}></TableComponent >
         </Col>
+        {
+            showDeleteConfirm
+            && <DeleteConfirm
+                show={showDeleteConfirm}
+                onHide={() => setShowDeleteConfirm(false)}
+                confirmDelete={() => deleteHandler()}
+                details={details}
+                type='myDocument'
+            />
+        }
         {
             uploadDocModal
             && <DocumentUpload

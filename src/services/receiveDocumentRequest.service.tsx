@@ -5,22 +5,36 @@ const getReceiveDocumentRequest = async ({
     pageSize,
     pageNumber,
     docTypeCode,
+    sortOrder,
+    sortParam,
     documentName,
     originalAccountNumber,
     equabliAccountNumber,
     clientAccountNumber,
-    textSearch
+    textSearch,
+    requestedDate,
+    dueDate,
+    fullfillmentDate,
+    requestedBy,
+    requestStatus
 }) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
+            sortOrder,
+            sortParam,
             documentName,
             originalAccountNumber,
             equabliAccountNumber,
             clientAccountNumber,
-            textSearch
+            textSearch,
+            requestedDate,
+            dueDate,
+            fullfillmentDate,
+            requestedBy,
+            requestStatus
         })
         const data = handleResponse(response)
         let sentRequests = data.response.datas

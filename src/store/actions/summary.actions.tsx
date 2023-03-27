@@ -60,6 +60,9 @@ export const SummaryActionCreator = {
                 }
             )
     },
+    resetDocumentSummary: () => (dispatch: any) => {
+        dispatch({ type: DocumentCoverage.DOCUMENT_COVERAGE_RESET })
+    },
     getSummaryDrillDown: (payload) => (dispatch: any) => {
         const request = () => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_REQUEST, payload: [] })
         const success = (data: any) => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_SUCCESS, payload: data })

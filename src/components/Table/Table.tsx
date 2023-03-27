@@ -20,6 +20,7 @@ import { checkType, createZipForFolderDownload } from '../../helpers/util';
 import PaginationComponent from './pagination';
 import { useHistory } from 'react-router-dom';
 import { MiscActionCreator } from '../../store/actions/common/misc.actions';
+import SkeletonLoading from '../../helpers/skeleton-loading';
 
 interface ITempObj {
     folderName: string;
@@ -1165,17 +1166,21 @@ const TableComponent = ({
     );
 
     const loadingData = () => (
-        <div className={`table_loading ${loadingHeight ? null : 'no_min_height'}`} >
-            <CgSpinnerAlt className="spinner" size={50} />
+        // className={`table_loading ${loadingHeight ? null : 'no_min_height'}`}
+        <div  >
+            <SkeletonLoading isTable={true} repeats={5} />
         </div >
     );
 
     return (
         <div className="table_container">
             {isPagination && totalCount > 0 ? sizeHandler() : null}
-            <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
-                {totalCount > 0 ? tableHandler() : emptyTable()}
-            </Table>
+            {
+                !isLoading &&
+                <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                    {totalCount > 0 ? tableHandler() : emptyTable()}
+                </Table>
+            }
             {isLoading && loadingData()}
             {isPagination && (
                 <PaginationComponent

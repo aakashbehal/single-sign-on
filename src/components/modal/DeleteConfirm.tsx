@@ -26,6 +26,16 @@ const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionT
                 </Modal.Title>
             </Modal.Header>
             {
+                details && type === 'myDocument' &&
+                < Modal.Body className="show-grid">
+                    <Container>
+                        <p>
+                            Are you sure you want to delete the <b>{details.folderName}</b> folder
+                        </p>
+                    </Container>
+                </Modal.Body>
+            }
+            {
                 details && type === 'costConfiguration' &&
                 < Modal.Body className="show-grid">
                     <Container>

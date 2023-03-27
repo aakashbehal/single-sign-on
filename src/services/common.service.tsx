@@ -218,6 +218,16 @@ const getClientAccountNumbers = async () => {
     }
 }
 
+const getUsage = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/usage`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
 export const commonServices = {
     getFilterTypes,
     getClients,
@@ -234,5 +244,6 @@ export const commonServices = {
     getProductTypes,
     saveColumn,
     getColumnForAllTables,
-    getClientAccountNumbers
+    getClientAccountNumbers,
+    getUsage
 }

@@ -338,7 +338,6 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                                             id="public-methods-example"
                                             labelKey="firstName"
                                             multiple
-                                            defaultSelected={defaultSelect}
                                             ref={ref}
                                             allowNew={true}
                                             newSelectionPrefix='Not a Platform User: '

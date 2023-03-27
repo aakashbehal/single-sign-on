@@ -9,6 +9,7 @@ import Styles from "./DocumentManager.module.sass";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import SummaryFilters from "../../components/Common/SummaryFilters";
 import { userService } from "../../services";
+import { CgSpinnerAlt } from "react-icons/cg";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
@@ -250,9 +251,13 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
             <br />
             <SummaryFilters searchObj={searchObj} setSearchObj={setSearchObj} />
             <hr />
-            <Row style={{ maxHeight: '395px' }}>
+            <Row style={{ maxHeight: '395px', minHeight: '395px' }}>
                 <Col sm={7} className={`${Styles.chart_container} ${Styles.right_border}`}>
                     <h5>{userType === 'Client' ? "Received Requests" : "Sent Requests"}</h5>
+                    {
+                        (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
+                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                    }
                     {
                         userType === 'Client' ?
                             <>
@@ -273,25 +278,28 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                 </Col>
                 <Col sm={5} className={Styles.chart_container}>
                     <h5>{userType === 'Client' ? "Sent Requests" : "Received Requests"}</h5>
+                    {
+                        (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
+                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                    }
                     <div style={{
                         display: "flex",
                         alignItems: 'end',
                         height: "93%"
                     }}>
                         {
-                            userType === 'Client' ?
+                            userType !== 'Client' ?
                                 <>
                                     {
                                         !loadingRequest &&
-                                        memoSent
+                                        memoRequested
                                     }
                                 </>
-
                                 :
                                 <>
                                     {
                                         !loadingSent &&
-                                        memoRequested
+                                        memoSent
                                     }
                                 </>
                         }
