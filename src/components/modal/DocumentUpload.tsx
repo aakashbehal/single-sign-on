@@ -53,7 +53,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
     const getNotList = async () => {
         try {
-            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
                 pageSize: details.pageSize,
                 pageNumber: details.pageNumber - 1,
                 docTypeCode: details.docTypeCode,

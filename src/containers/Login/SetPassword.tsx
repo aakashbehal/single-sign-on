@@ -50,7 +50,7 @@ const SetPassword = ({ location }: any) => {
 
     const getSecretQuestions = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
             console.log(response)
             const data = handleResponse(response)
             console.log(data)
@@ -205,7 +205,7 @@ const SetPassword = ({ location }: any) => {
                 ]
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/setPasswordAndSecurityQues`, requestObj)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/setPasswordAndSecurityQues`, requestObj)
             const data = handleResponse(response)
             addToast(createMessage('success', `set`, `Password`), { appearance: 'success', autoDismiss: true })
             history.push({

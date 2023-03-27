@@ -1,4 +1,4 @@
-import { MyDocumentsFolder, MyDocumentsList, DeleteDocument } from "../types.d"
+import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder } from "../types.d"
 import { myDocumentsService } from "../../services"
 
 export const MyDocumentsActionCreator = {
@@ -54,6 +54,27 @@ export const MyDocumentsActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
+            ).finally(
+                dispatch({ type: DeleteDocument.DELETE_DOCUMENTS_RESET })
+            )
+    },
+    deleteFolder: (clientAccountNo) => (dispatch: any) => {
+        const request = () => ({ type: DeleteFolder.DELETE_FOLDER_REQUEST })
+        const success = (document: any) => ({ type: DeleteFolder.DELETE_FOLDER_SUCCESS, payload: document })
+        const failure = (error: any) => ({ type: DeleteFolder.DELETE_FOLDER_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.deleteFolder(clientAccountNo)
+            .then(
+                document => {
+                    dispatch(success(document))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(
+                dispatch({ type: DeleteFolder.DELETE_FOLDER_RESET })
             )
     },
 }

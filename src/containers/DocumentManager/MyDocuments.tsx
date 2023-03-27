@@ -47,9 +47,9 @@ const MyDocuments = () => {
         error: state.myDocuments.folders.error,
         loading: state.myDocuments.folders.loading,
         defaultColumns: state.misc.allTableColumns.data,
-        deleteRequest: state.myDocuments.documents.deleteRequest,
-        deleteSuccess: state.myDocuments.documents.deleteSuccess,
-        deleteError: state.myDocuments.documents.deleteError
+        deleteRequest: state.myDocuments.folders.deleteRequest,
+        deleteSuccess: state.myDocuments.folders.deleteSuccess,
+        deleteError: state.myDocuments.folders.deleteError
     }))
 
     useEffect(() => {
@@ -130,7 +130,7 @@ const MyDocuments = () => {
     }
 
     const deleteHandler = () => {
-        dispatch(MyDocumentsActionCreator.deleteDocument(details.folderName))
+        dispatch(MyDocumentsActionCreator.deleteFolder(details.folderName))
     }
 
     return (<>

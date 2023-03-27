@@ -3,7 +3,7 @@ import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 
 const getReceiveSummary = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -13,7 +13,7 @@ const getReceiveSummary = async () => {
 
 const getSentSummary = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -28,7 +28,7 @@ const getDocumentCoverage = async ({
     userId
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
             duration,
             product,
             portfolio,
@@ -63,7 +63,7 @@ const getSummaryDrillDown = async ({
     uploadDateTo
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
@@ -121,7 +121,7 @@ const getSummaryDrillDownNot = async ({
     uploadDateTo
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,

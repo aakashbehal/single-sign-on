@@ -6,7 +6,7 @@ const getDownloadHistory = async ({
     pageNumber
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/all`, {
             pageSize,
             pageNumber: pageNumber - 1
         })
@@ -30,7 +30,7 @@ const saveDownloadHistory = async (
     documentId
 ) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download`, {
             documentId
         })
         const data = handleResponse(response)
@@ -42,7 +42,7 @@ const saveDownloadHistory = async (
 
 const deleteDownloadHistory = async (id) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

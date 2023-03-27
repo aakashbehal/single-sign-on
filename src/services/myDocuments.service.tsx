@@ -17,7 +17,7 @@ const getMyDocumentFolders = async ({
     textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -68,7 +68,7 @@ const getMyDocumentList = async ({
     textSearch
 }) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -106,7 +106,17 @@ const getMyDocumentList = async ({
 
 const deleteDocument = async (documentId) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANANGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
+const deleteFolder = async (clientAccountNo) => {
+    try {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folder/${clientAccountNo}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -117,5 +127,6 @@ const deleteDocument = async (documentId) => {
 export const myDocumentsService = {
     getMyDocumentFolders,
     getMyDocumentList,
-    deleteDocument
+    deleteDocument,
+    deleteFolder
 }
