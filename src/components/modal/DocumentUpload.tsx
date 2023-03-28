@@ -128,7 +128,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
                 formData.append("files", file);
                 formData.append("files", matrixFile)
-                formData.append("fileUploadJson", JSON.stringify({ "bulkType": "upload" }))
+                formData.append("fileUploadVan", JSON.stringify({ "bulkType": "upload" }))
                 API_URL = `${process.env.REACT_APP_BASE_FILE}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
                 const response = await axiosCustom.post(API_URL, formData, config)
                 const urls = handleResponse(response)
