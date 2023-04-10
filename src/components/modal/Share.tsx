@@ -18,6 +18,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
     const [formError, setFormError] = useState({
         shareDetail: false,
     })
+    const [isEnable, setIsEnable] = useState<boolean>(false)
     const [toSentList, setToSentList] = useState<any>([])
     const [emailToRemove, setEmailToRemove] = useState<any>(null)
     const [usersUpdates, setUsersUpdated] = useState<any>([])
@@ -67,6 +68,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
             const detailTemp: any = Object.assign({}, details)
             detailTemp.sharedWith.push(...toSentList)
             ref.current.clear()
+            setIsEnable(false)
             setDetails(detailTemp)
             searchHandler()
         }
@@ -90,6 +92,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                     return dT
                 }
             })
+            setIsEnable(false)
             setDetails(detailTemp)
             setEmailToRemove(null)
             searchHandler()
@@ -194,8 +197,8 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                                         allowNew={true}
                                         newSelectionPrefix='Not a Platform User: '
                                         onChange={(selected) => {
+                                            setIsEnable(true)
                                             let selectedUpdated = selected.map((s: any) => {
-                                                console.log(s)
                                                 let temp = {
                                                     "name": s.firstName,
                                                     "email": s.loginKey || s.firstName,
@@ -279,7 +282,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                 </Col>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="dark" style={{ width: '100%' }} onClick={onSubmitHandler}>Share</Button>
+                <Button variant="dark" style={{ width: '100%' }} disabled={!isEnable} onClick={onSubmitHandler}>Share</Button>
             </Modal.Footer>
         </Modal >
     )

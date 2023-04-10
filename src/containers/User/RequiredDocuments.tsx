@@ -290,18 +290,49 @@ const RequiredDocuments = () => {
 const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editRequired, productTypes, dispatch, selectedProduct }) => {
     const formRef = useRef<any>()
     const [documentTypesSelected, setDocumentTypesSelected] = useState<any>([])
+    const [formError, setFormError] = useState<any>({
+        productCode: false,
+        requiredDoc: false
+    })
+
+    const validateUpload = (formObj) => {
+        let formIsValid = true;
+        const error: any = {
+            productCode: false,
+            requiredDoc: false
+        }
+        for (let key in formObj) {
+            if (!formObj[key] || formObj[key] === "") {
+                error[key] = true
+            }
+        }
+        if (documentTypesSelected.length === 0) {
+            error.requiredDoc = true
+        }
+        for (let k in error) {
+            if (error[k]) {
+                formIsValid = false
+            }
+        }
+        setFormError(error)
+        console.log(error)
+        return formIsValid
+    }
 
     const handleSubmit = (e) => {
         e.preventDefault()
         const {
             productType
-        } = formRef.current
-        dispatch(RequiredDocumentActionCreator.saveRequiredDocuments({
+        } = formRef.current;
+
+        const payload = {
             "productCode": productType.value,
-            "docTypeCode": documentTypesSelected.map((dT) => {
-                return dT.shortCode
-            })
-        }))
+            "docTypeCode": documentTypesSelected.map((dT) => dT.shortCode)
+        }
+
+        if (validateUpload(payload)) {
+            dispatch(RequiredDocumentActionCreator.saveRequiredDocuments(payload))
+        }
     }
 
     return (
@@ -339,6 +370,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
                                             })
                                         }
                                     </Form.Control>
+                                    <span style={{ color: 'red' }}><small>{formError["productCode"] ? 'Product is required' : ''}</small></span>
                                 </Col>
                                 <Form.Label className="label_custom white">Product</Form.Label>
                             </Form.Group>
@@ -349,6 +381,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
                                 <Col md={12} sm={12}>
                                     {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
                                     <PublicMethodsExample documentTypes={documentTypes} editRequired={editRequired} setDocumentTypesSelected={setDocumentTypesSelected} />
+                                    <span style={{ color: 'red' }}><small>{formError["requiredDoc"] ? 'At least One Document Type is required' : ''}</small></span>
                                 </Col>
                                 <Form.Label className="label_custom white">Required Documents</Form.Label>
                             </Form.Group>

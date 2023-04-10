@@ -76,7 +76,9 @@ const SummaryDrillDownHave = ({ location }) => {
         pageSize,
         pageNumber
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, docTypeCode: searchParams.docTypeCode, sortParam: sortElement, sortOrder: sortType }
+        searchObj = {
+            ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType, ...searchParams
+        }
         dispatch(SummaryActionCreator.getSummaryDrillDown(searchObj))
         setShowAdvanceSearch(false)
     }
