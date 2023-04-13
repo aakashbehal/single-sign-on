@@ -60,7 +60,7 @@ const SummaryDrillDownHave = ({ location }) => {
     }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
-        if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
+        if (!loading && columns?.length === 0 && (defaultColumns?.length > 0)) {
             const columns = defaultColumns.filter((dC) => {
                 if (dC.tableName === 'accounts') {
                     return dC

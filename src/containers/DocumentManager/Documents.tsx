@@ -136,16 +136,16 @@ const Documents = ({ location }) => {
                     onSelect={handleSelect}
                 >
                     <Tab eventKey="my_documents" title="My Documents">
-                        {selectedTab === "my_documents" && <MyDocuments />}
+                        {(selectedTab === "my_documents" || selectedTab === "my_documents_side") && <MyDocuments />}
                     </Tab>
                     <Tab eventKey="sent_document_requests" title="Sent Document Requests">
-                        {selectedTab === "sent_document_requests" && <SentDocumentRequests />}
+                        {(selectedTab === "sent_document_requests" || selectedTab === "sent_document_requests_side") && <SentDocumentRequests />}
                     </Tab>
                     <Tab eventKey="received_document_requests" title="Received Document Request">
-                        {selectedTab === "received_document_requests" && <ReceivedDocumentRequests />}
+                        {(selectedTab === "received_document_requests" || selectedTab === "received_document_requests_side") && <ReceivedDocumentRequests />}
                     </Tab>
                     <Tab eventKey="download_history" title="Download History">
-                        {selectedTab === "download_history" && <DownloadHistory />}
+                        {(selectedTab === "download_history" || selectedTab === "download_history_side") && <DownloadHistory />}
                     </Tab>
                     {/*<Tab eventKey="templates" title="">
                     </Tab> */}

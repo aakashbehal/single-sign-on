@@ -36,57 +36,68 @@ const initialState = {
 
 const summaryReducer = (state = initialState, action: { type: any; payload: any; }) => {
     switch (action.type) {
-        case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_REQUEST:
-            return {
-                ...state,
-                loadingRequest: true,
-                errorRequest: null
-            }
-        case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_SUCCESS:
-            return {
-                ...state,
-                loadingRequest: false,
-                requestedSummary: action.payload
-            }
-        case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_FAILURE:
-            return {
-                ...state,
-                loadingRequest: false,
-                errorRequest: true,
-                requestedSummary: {}
-            }
-        case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_RESET:
-            return {
-                ...state,
-                loadingRequest: false,
-                errorRequest: false,
-                requestedSummary: {}
-            }
+        // case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_REQUEST:
+        //     return {
+        //         ...state,
+        //         loadingRequest: true,
+        //         errorRequest: null
+        //     }
+        // case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_SUCCESS:
+        //     return {
+        //         ...state,
+        //         loadingRequest: false,
+        //         requestedSummary: action.payload
+        //     }
+        // case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_FAILURE:
+        //     return {
+        //         ...state,
+        //         loadingRequest: false,
+        //         errorRequest: true,
+        //         requestedSummary: {}
+        //     }
+        // case RequestedDocumentSummary.REQUESTED_DOCUMENT_SUMMARY_RESET:
+        //     return {
+        //         ...state,
+        //         loadingRequest: false,
+        //         errorRequest: false,
+        //         requestedSummary: {}
+        //     }
         case SentDocumentSummary.SENT_DOCUMENT_SUMMARY_REQUEST:
             return {
                 ...state,
                 loadingSent: true,
-                errorSent: null
+                errorSent: null,
+                loadingRequest: true,
+                errorRequest: null
             }
         case SentDocumentSummary.SENT_DOCUMENT_SUMMARY_SUCCESS:
+            console.log(action.payload)
             return {
                 ...state,
                 loadingSent: false,
-                sentSummary: action.payload
+                sentSummary: action.payload.sent,
+                loadingRequest: false,
+                requestedSummary: action.payload.received
             }
         case SentDocumentSummary.SENT_DOCUMENT_SUMMARY_FAILURE:
             return {
                 ...state,
                 loadingSent: false,
                 errorSent: true,
-                sentSummary: {}
+                sentSummary: {},
+                loadingRequest: false,
+                errorRequest: true,
+                requestedSummary: {}
             }
         case SentDocumentSummary.SENT_DOCUMENT_SUMMARY_RESET:
             return {
                 ...state,
                 loadingSent: false,
                 errorSent: false,
-                sentSummary: {}
+                sentSummary: {},
+                loadingRequest: false,
+                errorRequest: false,
+                requestedSummary: {}
             }
         case DocumentCoverage.DOCUMENT_COVERAGE_REQUEST:
             return {

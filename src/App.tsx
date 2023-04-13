@@ -22,6 +22,7 @@ import ChangePassword from "./containers/Login/ChangePassword";
 import Registration from "./containers/Registration/Registration";
 import { sessions } from "./helpers/sessions"
 import { MyCustomToast } from "./helpers/customToaster";
+import WithSidebar from "./components/PrivateRoute/SideBarRoute";
 
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
@@ -74,6 +75,8 @@ const App = () => {
               <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
               <PrivateRoute exact path="/documents/document_summary" component={SummaryDrillDownHave} />
               <PrivateRoute exact path="/documents/document_summary_not" component={SummaryDrillDownNotHave} />
+
+              <WithSidebar exact path="/my_documents_side" component={Documents} />
 
             </Switch>
           </ErrorBoundary>

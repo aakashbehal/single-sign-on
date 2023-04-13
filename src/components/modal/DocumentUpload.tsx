@@ -174,8 +174,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 setFormSubmitted(false)
                 onHide()
             }
-            dispatch(SummaryActionCreator.getReceiveSummary())
-            dispatch(SummaryActionCreator.getSentSummary())
+            // dispatch(SummaryActionCreator.getReceiveSummary())
+            dispatch(SummaryActionCreator.getSentSummary({}))
             search()
         } catch (error: any) {
             setFormSubmitted(false)

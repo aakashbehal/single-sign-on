@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Col, Row } from "react-bootstrap";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
@@ -13,14 +13,22 @@ import { CgSpinnerAlt } from "react-icons/cg";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
-const options_2 = {
+const options: any = {
     responsive: true,
     // maintainAspectRatio: false,
-    cutout: 100,
+    cutout: 50,
+    layout: {
+        padding: 20
+    },
     plugins: {
         datalabels: {
             color: 'white',
             padding: 6,
+            font: {
+                weight: 'bold',
+                size: '12px',
+                family: `'VisbyCF-Regular', Arial, Helvetica, sans-serif`
+            }
         },
         legend: {
             position: 'bottom' as const,
@@ -28,20 +36,6 @@ const options_2 = {
     },
 }
 
-const options_1 = {
-    responsive: true,
-    // maintainAspectRatio: false,
-    cutout: 70,
-    plugins: {
-        datalabels: {
-            color: 'white',
-            padding: 6,
-        },
-        legend: {
-            position: 'bottom' as const,
-        },
-    },
-}
 
 export const DATA_REQUESTED = {
     labels: ['Fulfilled', 'Open', 'Overdue'],
@@ -176,9 +170,11 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
 
     useEffect(() => {
         setUserType(userService.getUserType())
-        dispatch(SummaryActionCreator.getSentSummary())
-        dispatch(SummaryActionCreator.getReceiveSummary())
     }, [])
+
+    useEffect(() => {
+        dispatch(SummaryActionCreator.getSentSummary(searchObj))
+    }, [searchObj])
 
     useEffect(() => {
         if (reRender) {
@@ -222,23 +218,16 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                     },
                 ],
             })
-            dispatch(SummaryActionCreator.getSentSummary())
-            dispatch(SummaryActionCreator.getReceiveSummary())
+            dispatch(SummaryActionCreator.getSentSummary({}))
         }
     }, [reRender])
 
     const memoRequested = useMemo(() => {
-        // console.log(`should re render request`, JSON.stringify(dataRequested))
-        // if (dataRequested && dataRequested.datasets && dataRequested.datasets[0].data.length > 0) {
-        return <Doughnut data={dataRequested} options={userType === 'Client' ? options_2 : options_1} />
-        // }
+        return <Doughnut data={dataRequested} options={userType === 'Client' ? options : { ...options, cutout: 100 }} redraw />
     }, [dataRequested])
 
     const memoSent = useMemo(() => {
-        // console.log(`should re render sent`, JSON.stringify(dataSent))
-        // if (dataSent && dataSent.datasets && dataSent.datasets[0].data.length > 0) {
-        return <Doughnut data={dataSent} options={userType === 'Client' ? options_1 : options_2} />
-        // }
+        return <Doughnut data={dataSent} options={userType === 'Client' ? { ...options, cutout: 100 } : options} redraw />
     }, [dataSent])
 
     return (
@@ -252,31 +241,7 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
             <SummaryFilters searchObj={searchObj} setSearchObj={setSearchObj} />
             <hr />
             <Row style={{ maxHeight: '395px', minHeight: '395px' }}>
-                <Col sm={7} className={`${Styles.chart_container} ${Styles.right_border}`}>
-                    <h5>{userType === 'Client' ? "Received Requests" : "Sent Requests"}</h5>
-                    {
-                        (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
-                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
-                    }
-                    {
-                        userType === 'Client' ?
-                            <>
-                                {
-                                    !loadingRequest &&
-                                    memoRequested
-                                }
-                            </>
-
-                            :
-                            <>
-                                {
-                                    !loadingSent &&
-                                    memoSent
-                                }
-                            </>
-                    }
-                </Col>
-                <Col sm={5} className={Styles.chart_container}>
+                <Col sm={7} className={Styles.chart_container}>
                     <h5>{userType === 'Client' ? "Sent Requests" : "Received Requests"}</h5>
                     {
                         (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
@@ -285,7 +250,7 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                     <div style={{
                         display: "flex",
                         alignItems: 'end',
-                        height: "93%"
+                        height: "90%"
                     }}>
                         {
                             userType !== 'Client' ?
@@ -305,8 +270,37 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                         }
                     </div>
                 </Col>
-            </Row>
-        </Col>
+                <Col sm={5} className={Styles.chart_container}>
+                    <h5>{userType === 'Client' ? "Received Requests" : "Sent Requests"}</h5>
+                    {
+                        (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
+                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                    }
+                    <div style={{
+                        display: "flex",
+                        alignItems: 'end',
+                        height: "90%"
+                    }}>
+                        {
+                            userType !== 'Client' ?
+                                <>
+                                    {
+                                        !loadingSent &&
+                                        memoSent
+                                    }
+                                </>
+                                :
+                                <>
+                                    {
+                                        !loadingRequest &&
+                                        memoRequested
+                                    }
+                                </>
+                        }
+                    </div>
+                </Col>
+            </Row >
+        </Col >
     )
 }
 

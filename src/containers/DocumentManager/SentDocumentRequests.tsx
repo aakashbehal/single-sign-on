@@ -288,7 +288,6 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                 formIsValid = false
             }
         }
-        console.log(error)
         setFormError(error)
         return formIsValid
     }

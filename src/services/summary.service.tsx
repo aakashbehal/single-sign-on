@@ -1,22 +1,47 @@
 
 import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 
-const getReceiveSummary = async () => {
-    try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
-        const data = handleResponse(response)
-        return data.response
-    } catch (error: any) {
-        throw error
-    }
-}
+// const getReceiveSummary = async () => {
+//     try {
+//         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
+//         const data = handleResponse(response)
+//         return data.response
+//     } catch (error: any) {
+//         throw error
+//     }
+// }
 
-const getSentSummary = async () => {
+const getSentSummary = async ({
+    duration,
+    product,
+    portfolio,
+    userId
+}) => {
+    console.log(`called`)
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`, {
+            duration,
+            product,
+            portfolio,
+            userId
+        })
         const data = handleResponse(response)
-        return data.response
+        let modifiedData = {
+            sent: (data.response.filter((d) => {
+                if (d.name === 'sentDocumentSummary') {
+                    console.log(d)
+                    return d
+                } else return false
+            }))[0].summary,
+            received: (data.response.filter((d) => {
+                if (d.name === 'receiveDocumentSummary') {
+                    return d
+                } else return false
+            }))[0].summary
+        }
+        return modifiedData
     } catch (error: any) {
+        console.log(error)
         throw error
     }
 }
@@ -167,7 +192,7 @@ const getSummaryDrillDownNot = async ({
 
 
 export const summaryService = {
-    getReceiveSummary,
+    // getReceiveSummary,
     getSentSummary,
     getDocumentCoverage,
     getSummaryDrillDown,

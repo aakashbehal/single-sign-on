@@ -40,7 +40,6 @@ const DocumentCoverage = ({ collapse }: any) => {
 
     useEffect(() => {
         dispatch(SummaryActionCreator.getDocumentCoverage(searchObj))
-
     }, [searchObj])
 
     const drillDownHandler = (data) => {
@@ -82,7 +81,7 @@ const DocumentCoverage = ({ collapse }: any) => {
                     // <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
                 }
                 {
-                    documentCoverage && documentCoverage.length > 0
+                    !loadingCoverage && documentCoverage && documentCoverage.length > 0
                     && documentCoverage.map((dC, index) => {
                         // if (dC.total) {
                         return (
