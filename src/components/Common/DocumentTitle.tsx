@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react'
 
-const useDocumentTitle = (title, prefix = true, prevailOnUnmount = false) => {
+const useDocumentTitle = (title: any, prefix = true, prevailOnUnmount = false) => {
     const defaultTitle = useRef(document.title);
 
     useEffect(() => {

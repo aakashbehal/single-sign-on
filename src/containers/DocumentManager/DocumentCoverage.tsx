@@ -42,11 +42,11 @@ const DocumentCoverage = ({ collapse }: any) => {
         dispatch(SummaryActionCreator.getDocumentCoverage(searchObj))
     }, [searchObj])
 
-    const drillDownHandler = (data) => {
+    const drillDownHandler = (data: any) => {
         let searchObjTemp = { ...searchObj, ...data }
         const params = new URLSearchParams(searchObjTemp).toString();
         history.push({
-            pathname: '/documents/document_summary',
+            pathname: '/documents/accounts_documents',
             search: params,
         });
     }
@@ -82,7 +82,7 @@ const DocumentCoverage = ({ collapse }: any) => {
                 }
                 {
                     !loadingCoverage && documentCoverage && documentCoverage.length > 0
-                    && documentCoverage.map((dC, index) => {
+                    && documentCoverage.map((dC: any, index: any) => {
                         // if (dC.total) {
                         return (
                             <div key={`dC_${index}`} className={`${Styles.progress_container}`}>

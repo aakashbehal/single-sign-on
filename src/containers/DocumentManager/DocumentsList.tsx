@@ -15,9 +15,10 @@ import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import Share from "../../components/modal/Share";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 
 
-const DocumentsList = ({ location }) => {
+const DocumentsList = ({ location }: { location: any }) => {
     const dispatch = useDispatch();
     const { addToast } = useToasts();
     const aRef = useRef<any>()
@@ -80,7 +81,7 @@ const DocumentsList = ({ location }) => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC) => {
+            const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'documentFolder') {
                     return dC
                 }
@@ -104,8 +105,8 @@ const DocumentsList = ({ location }) => {
         deleteError])
 
     const search = (
-        pageSize,
-        pageNumber
+        pageSize: any,
+        pageNumber: any
     ) => {
         searchObj = { ...searchObj, pageSize, pageNumber, accountNumber: AccountId, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentList(searchObj))
@@ -122,14 +123,16 @@ const DocumentsList = ({ location }) => {
         search(pageSize, pageNumber)
     }
 
-    const downloadHandler = async (document) => {
+    const downloadHandler = async (document: any) => {
         //download file
+        console.log(document)
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
-    const handleDetails = (document) => {
+    const handleDetails = (document: any) => {
         setDetails(document)
         setShowDeleteConfirm(true)
     }
@@ -146,7 +149,7 @@ const DocumentsList = ({ location }) => {
                     parentComponent={'documents'}
                     Styles={Styles}
                     showAdvanceSearch={showAdvanceSearch}
-                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
                     textSearchHook={textSearch}
                     searchObj={searchObj}
                     advanceSearchHook={advanceSearch}
@@ -178,13 +181,13 @@ const DocumentsList = ({ location }) => {
                 }}
                 totalCount={totalCount}
                 actionArray={['documentName']}
-                handleNavigate={(data) => {
+                handleNavigate={(data: any) => {
                     setShowDocument(true)
                     setDocumentToShow(data)
                 }}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={pageNumber}
                 setCurrentPage={setPageNumber}
                 parentComponent={'documents'}
@@ -192,13 +195,13 @@ const DocumentsList = ({ location }) => {
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
-                        download: (data) => downloadHandler(data),
-                        share: (data) => setShowShare(data),
-                        view: (data) => {
+                        download: (data: any) => downloadHandler(data),
+                        share: (data: any) => setShowShare(data),
+                        view: (data: any) => {
                             setShowDocument(true)
                             setDocumentToShow(data)
                         },
-                        delete: (data) => handleDetails(data)
+                        delete: (data: any) => handleDetails(data)
                     }
                 }
                 onPaginationChange={(

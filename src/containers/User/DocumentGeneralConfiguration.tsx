@@ -138,7 +138,7 @@ const DocumentGeneralConfiguration = () => {
         setFieldSelected(selectionFinal)
     }
 
-    const handleMove = async (field, direction) => {
+    const handleMove = async (field: any, direction: any) => {
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
         let temp = null
         if (direction === 'down') {
@@ -153,11 +153,11 @@ const DocumentGeneralConfiguration = () => {
         setFieldSelected(fieldsSelectedTemp)
     }
 
-    const handleSelection = (field, selected) => {
+    const handleSelection = (field: any, selected: any) => {
         const fieldsSelectedTemp = Object.assign({}, fieldsSelected)
         fieldsSelectedTemp[field] = selected
         const tempMap = Object.values(fieldsSelectedTemp)
-        let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
+        let dataFieldOptionsFiltered = filteredOptions.map((fO: any) => {
             if (selected === fO.shortCode) {
                 fO.available = false
             }
@@ -174,7 +174,7 @@ const DocumentGeneralConfiguration = () => {
         setFieldSelected(fieldsSelectedTemp)
     }
 
-    const handleSave = (e, type) => {
+    const handleSave = (e: any, type: any) => {
         e.preventDefault();
         const configRequest: any = []
         if (type === 'config') {
@@ -256,7 +256,7 @@ const DocumentGeneralConfiguration = () => {
         dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
     }
 
-    const resetHandler = async (e, type) => {
+    const resetHandler = async (e: any, type: any) => {
         if (type === 'config') {
             let selectedTemp = {}
             if (userType === 'Client' || userType === 'Equabli') {
@@ -282,7 +282,7 @@ const DocumentGeneralConfiguration = () => {
             configRef.current.conjunction.value = '_'
             setFieldSelected(selectedTemp)
             const tempMap = Object.values(selectedTemp)
-            let dataFieldOptionsFiltered = filteredOptions.map((fO) => {
+            let dataFieldOptionsFiltered = filteredOptions.map((fO: any) => {
                 if (tempMap.indexOf(fO.shortCode) === -1) {
                     fO.selected = false
                     fO.available = true
@@ -306,7 +306,7 @@ const DocumentGeneralConfiguration = () => {
         }
     }
 
-    const disableHandler = (fieldName) => {
+    const disableHandler = (fieldName: any) => {
         let flag = false
         if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
             flag = true

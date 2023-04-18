@@ -2,7 +2,7 @@ import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder } from
 import { myDocumentsService } from "../../services"
 
 export const MyDocumentsActionCreator = {
-    getMyDocumentFolders: (payload) => (dispatch: any) => {
+    getMyDocumentFolders: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_REQUEST })
         const success = (user: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_FAILURE, payload: error })
@@ -19,7 +19,7 @@ export const MyDocumentsActionCreator = {
                 }
             )
     },
-    getMyDocumentList: (payload) => (dispatch: any) => {
+    getMyDocumentList: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: MyDocumentsList.MY_DOCUMENTS_LIST_REQUEST })
         const success = (user: any) => ({ type: MyDocumentsList.MY_DOCUMENTS_LIST_SUCCESS, payload: user })
         const failure = (error: any) => ({ type: MyDocumentsList.MY_DOCUMENTS_LIST_FAILURE, payload: error })
@@ -39,7 +39,7 @@ export const MyDocumentsActionCreator = {
     resetDocumentList: () => (dispatch: any) => {
         dispatch(() => dispatch({ type: MyDocumentsList.MY_DOCUMENTS_LIST_RESET }))
     },
-    deleteDocument: (documentId) => (dispatch: any) => {
+    deleteDocument: (documentId: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocument.DELETE_DOCUMENTS_REQUEST })
         const success = (document: any) => ({ type: DeleteDocument.DELETE_DOCUMENTS_SUCCESS, payload: document })
         const failure = (error: any) => ({ type: DeleteDocument.DELETE_DOCUMENTS_FAILURE, payload: error })
@@ -58,7 +58,7 @@ export const MyDocumentsActionCreator = {
                 dispatch({ type: DeleteDocument.DELETE_DOCUMENTS_RESET })
             )
     },
-    deleteFolder: (clientAccountNo) => (dispatch: any) => {
+    deleteFolder: (clientAccountNo: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteFolder.DELETE_FOLDER_REQUEST })
         const success = (document: any) => ({ type: DeleteFolder.DELETE_FOLDER_SUCCESS, payload: document })
         const failure = (error: any) => ({ type: DeleteFolder.DELETE_FOLDER_FAILURE, payload: error })

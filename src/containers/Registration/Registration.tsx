@@ -22,7 +22,7 @@ import { registrationService } from "../../services";
 import { TiTick } from "react-icons/ti";
 
 let isValidOrg = false
-let orgId = null
+let orgId: any = null
 
 const Registration = () => {
     const { addToast } = useToasts();
@@ -107,7 +107,7 @@ const Registration = () => {
             orgName
         } = step4Ref.current
         let resultFlag = true
-        console.log(isValidOrg)
+
         if (!isValidOrg) {
             resultFlag = false
         }
@@ -137,7 +137,7 @@ const Registration = () => {
         return resultFlag
     }
 
-    const validateEmail = (email) => {
+    const validateEmail = (email: any) => {
         return String(email)
             .toLowerCase()
             .match(
@@ -145,7 +145,7 @@ const Registration = () => {
             );
     };
 
-    const validatePhone = (phone) => {
+    const validatePhone = (phone: any) => {
         return String(phone)
             .toLowerCase()
             .match(

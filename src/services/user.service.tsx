@@ -99,7 +99,11 @@ const getConnectedUsers = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_AUTH_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/connected`)
         const data = handleResponse(response)
-        return data.response
+        const modifiedResponse = data.response.map((res: any) => {
+            res.modifiedFirstName = `${res.orgCode} - ${res.firstName} ${res.lastName}`
+            return res
+        })
+        return modifiedResponse
     } catch (error: any) {
         throw error
     }

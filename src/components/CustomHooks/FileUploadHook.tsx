@@ -1,8 +1,8 @@
 import { useState } from "react"
 
-const FileUploadHook = (files) => {
+const FileUploadHook = (files: any) => {
     const [state, setState] = useState<any>(null)
-    const zipTargetFiles: any = async (files) => {
+    const zipTargetFiles: any = async (files: any) => {
         let zipFile: any = null
         if (files.length === 1) {
             setState({
@@ -25,10 +25,10 @@ const FileUploadHook = (files) => {
             }
             if (!zipFile) {
                 zip.generateAsync({ type: "blob" })
-                    .then((content) => {
+                    .then((content: any) => {
                         return new File([content], 'new.zip', { type: 'application/x-zip-compressed' })
                     })
-                    .then((file) => {
+                    .then((file: any) => {
                         setState({
                             matrixFile,
                             file: file

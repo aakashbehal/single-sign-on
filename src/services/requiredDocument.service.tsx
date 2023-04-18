@@ -10,7 +10,7 @@ const getRequiredDocuments = async () => {
     }
 }
 
-const saveRequiredDocuments = async (requestData) => {
+const saveRequiredDocuments = async (requestData: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require`, requestData)
         const data = handleResponse(response)
@@ -20,7 +20,7 @@ const saveRequiredDocuments = async (requestData) => {
     }
 }
 
-const deleteRequiredDocuments = async (id) => {
+const deleteRequiredDocuments = async (id: any) => {
     console.log(id)
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/require/${id}`)

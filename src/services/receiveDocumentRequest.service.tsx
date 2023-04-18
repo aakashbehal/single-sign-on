@@ -17,7 +17,7 @@ const getReceiveDocumentRequest = async ({
     fullfillmentDate,
     requestedBy,
     requestStatus
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
             pageSize,
@@ -39,7 +39,7 @@ const getReceiveDocumentRequest = async ({
         const data = handleResponse(response)
         let sentRequests = data.response.datas
         const responseModified: any = {}
-        responseModified.sentRequests = sentRequests.map((sR) => {
+        responseModified.sentRequests = sentRequests.map((sR: any) => {
             sR.documentName = sR.documentName === 'pending' ? null : sR.documentName
             sR.requestStatus = !sR.documentName || sR.documentName === 'pending' ? 'Open' : 'Fulfilled'
             sR.dueDate = '03/10/2023'
@@ -54,7 +54,7 @@ const getReceiveDocumentRequest = async ({
 }
 
 const downloadDocumentRequest = async (
-    documentId
+    documentId: any
 ) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
@@ -67,7 +67,7 @@ const downloadDocumentRequest = async (
     }
 }
 
-const deleteReceiveDocumentRequest = async (id) => {
+const deleteReceiveDocumentRequest = async (id: any) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
         const data = handleResponse(response)

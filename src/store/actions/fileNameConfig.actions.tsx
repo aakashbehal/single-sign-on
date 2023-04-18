@@ -148,7 +148,7 @@ export const FileNameConfigActionCreator = {
                 }
             )
     },
-    saveUserConfiguration: (requestBody) => (dispatch: any) => {
+    saveUserConfiguration: (requestBody: any) => (dispatch: any) => {
         const request = () => ({ type: SaveUserConfiguration.SAVE_USER_CONFIG_REQUEST })
         const success = (userNameConfig: any) => ({ type: SaveUserConfiguration.SAVE_USER_CONFIG_SUCCESS, payload: userNameConfig })
         const failure = (error: any) => ({ type: SaveUserConfiguration.SAVE_USER_CONFIG_FAILURE, payload: error })

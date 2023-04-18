@@ -70,8 +70,8 @@ const RequiredDocuments = () => {
     useEffect(() => {
         if (requiredDocuments && requiredDocuments.length > 0) {
             let tempRequiredDocuments = Object.assign([], requiredDocuments)
-            tempRequiredDocuments = tempRequiredDocuments.map((tRD) => {
-                tRD.documents = tRD.documents.map((d) => {
+            tempRequiredDocuments = tempRequiredDocuments.map((tRD: any) => {
+                tRD.documents = tRD.documents.map((d: any) => {
                     d.shortCode = d.documentCode
                     d.documentType = d.documentName
                     d.description = d.documentName
@@ -82,7 +82,7 @@ const RequiredDocuments = () => {
                 return tRD
             })
             // setRequiredDocumentsUpdated()
-            let tempC = requiredDocuments.map((c) => {
+            let tempC = requiredDocuments.map((c: any) => {
                 return c.productCode
             })
             setSelectedProduct(tempC)
@@ -115,7 +115,7 @@ const RequiredDocuments = () => {
         deleteSuccessful,
         deleteError])
 
-    const handleEdit = (required) => {
+    const handleEdit = (required: any) => {
         setEditRequired(required)
         setAddEditRequired(true)
     }
@@ -128,7 +128,7 @@ const RequiredDocuments = () => {
         dispatch(RequiredDocumentActionCreator.deleteRequiredDocuments(details.productCode))
     }
 
-    const handleDetails = (required) => {
+    const handleDetails = (required: any) => {
         setDetails(required)
         setShowDeleteConfirm(true)
     }
@@ -217,11 +217,11 @@ const RequiredDocuments = () => {
                         </thead>
                         <tbody>
                             {
-                                requiredDocuments && requiredDocuments.map((cT, index) => {
+                                requiredDocuments && requiredDocuments.map((cT: any, index: any) => {
                                     return (<tr key={`rD_${index}`}>
                                         <td>{cT.productName}</td>
                                         <td>
-                                            {cT.documents && cT.documents.map((dL, index) => {
+                                            {cT.documents && cT.documents.map((dL: any, index: any) => {
                                                 return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentType}</span>
                                             })}
                                         </td>
@@ -287,7 +287,7 @@ const RequiredDocuments = () => {
     </>)
 }
 
-const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editRequired, productTypes, dispatch, selectedProduct }) => {
+const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editRequired, productTypes, dispatch, selectedProduct }: any) => {
     const formRef = useRef<any>()
     const [documentTypesSelected, setDocumentTypesSelected] = useState<any>([])
     const [formError, setFormError] = useState<any>({
@@ -295,7 +295,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
         requiredDoc: false
     })
 
-    const validateUpload = (formObj) => {
+    const validateUpload = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             productCode: false,
@@ -319,7 +319,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
         return formIsValid
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault()
         const {
             productType
@@ -327,7 +327,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
 
         const payload = {
             "productCode": productType.value,
-            "docTypeCode": documentTypesSelected.map((dT) => dT.shortCode)
+            "docTypeCode": documentTypesSelected.map((dT: any) => dT.shortCode)
         }
 
         if (validateUpload(payload)) {
@@ -408,7 +408,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
     )
 }
 
-const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSelected }) => {
+const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSelected }: any) => {
     const ref = useRef<any>();
     return (
         <>

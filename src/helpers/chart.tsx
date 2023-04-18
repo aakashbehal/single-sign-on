@@ -4,7 +4,7 @@ import { OverlayTrigger, Tooltip } from "react-bootstrap";
 import { merge } from "./util";
 
 
-const COLOR_PALETTE = {
+const COLOR_PALETTE: any = {
     GREY: 'rgba(0,0,0,.8)',
     BITTER_SWEET: 'rgba(255, 119, 101, 0.8)',
     BLUE: 'rgba(10, 87, 250, 0.8)',
@@ -14,7 +14,7 @@ const COLOR_PALETTE = {
     PURPLE: 'rgba(168, 112, 252, 0.8)',
 }
 
-const SECONDARY_COLOR = {
+const SECONDARY_COLOR: any = {
     GREY: 'rgba(0,0,0, 0.5)',
     BITTER_SWEET: 'rgba(255, 144, 129, 0.9)',
     BLUE_TINT: 'rgba(148, 222, 252, 0.9)',
@@ -24,7 +24,7 @@ const SECONDARY_COLOR = {
     PURPLE_TINT: 'rgba(219, 199, 255, 0.9)'
 }
 
-export const numberFormatter_number_chart = (value, prefix) => {
+export const numberFormatter_number_chart = (value: any, prefix: any) => {
     // if (value >= 1000000) {
     //     return `${prefix} ${(value / 1000000) % 1 !== 0 ? (value / 1000000).toFixed(2) : (value / 1000000)}Mil`
     // } else if (value >= 1000) {
@@ -35,11 +35,11 @@ export const numberFormatter_number_chart = (value, prefix) => {
     return prefix + ' ' + value.toLocaleString("en-US")
 }
 
-export const numberFormatter_number_chart_without_prefix = (value) => {
+export const numberFormatter_number_chart_without_prefix = (value: any) => {
     return '$' + value.toLocaleString("en-US")
 }
 
-export const numberFormatter = (value) => {
+export const numberFormatter = (value: any) => {
     if (value >= 1000000) {
         return ` ${(value / 1000000) % 1 != 0 ? (value / 1000000) : (value / 1000000)}Mil`
     } else if (value >= 1000) {
@@ -60,9 +60,9 @@ for (let key in SECONDARY_COLOR) {
     secondary_colors.push(SECONDARY_COLOR[key])
 }
 
-export const createBackgroundColor = (dataSet, chartType) => {
+export const createBackgroundColor = (dataSet: any, chartType: any) => {
     if (chartType === 'SIMPLE_STACKED_BAR' || chartType === 'SIMPLE_BAR') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -70,7 +70,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
             }
         })
     } else if (chartType === 'SIMPLE_PCE' || chartType === 'Doughnut') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -95,7 +95,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
             yAxisID: 'y1'
         }
     } else if (chartType === 'SIMPLE_BAR_HORIZONTAL') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -105,7 +105,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
             }
         })
     } else if (chartType === 'Bar_Double') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -113,7 +113,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
             }
         })
     } else if (chartType === 'Line_fill') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -123,7 +123,7 @@ export const createBackgroundColor = (dataSet, chartType) => {
             }
         })
     } else if (chartType === 'Line_stacked' || chartType === 'Line') {
-        dataSet = dataSet.map((w, index) => {
+        dataSet = dataSet.map((w: any, index: any) => {
             return {
                 label: w.label,
                 data: w.data,
@@ -845,7 +845,7 @@ export const commissionsDefault = () => {
     }
 }
 
-export const dataSet = (key1, key2, value1, value2, Styles) => {
+export const dataSet = (key1: any, key2: any, value1: any, value2: any, Styles: any) => {
     return (
         <div className={Styles.numberWidget}>
             <div className={Styles.mtd}>

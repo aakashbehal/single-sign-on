@@ -2,7 +2,7 @@ import { Registration, validateOrgName } from "../types.d";
 import { registrationService } from "../../services"
 
 export const RegistrationActionCreator = {
-    registration: (requestData) => (dispatch: any) => {
+    registration: (requestData: any) => (dispatch: any) => {
         const request = () => ({ type: Registration.REGISTRATION_REQUEST })
         const success = (report: any) => ({ type: Registration.REGISTRATION_SUCCESS, payload: report })
         const failure = (error: any) => ({ type: Registration.REGISTRATION_FAILURE, payload: error })
@@ -22,7 +22,7 @@ export const RegistrationActionCreator = {
                 dispatch({ type: Registration.REGISTRATION_RESET })
             })
     },
-    validateOrgName: (orgName, orgType) => (dispatch: any) => {
+    validateOrgName: (orgName: any, orgType: any) => (dispatch: any) => {
         const request = () => ({ type: validateOrgName.ORG_NAME_VALIDATION_REQUEST })
         const success = (report: any) => ({ type: validateOrgName.ORG_NAME_VALIDATION_SUCCESS, payload: report })
         const failure = (error: any) => ({ type: validateOrgName.ORG_NAME_VALIDATION_FAILURE, payload: error })

@@ -60,7 +60,7 @@ const TableComponent = ({
     const [show, setShow] = useState(false)
     const pageSizes = [10, 50, 100];
     const [showHideColumns, setShowHideColumns] = useState<any>(hideShareArray)
-    const [exportDocumentLinks, setExportDocumentLink] = useState({})
+    const [exportDocumentLinks, setExportDocumentLink] = useState<any>({})
 
     useEffect(() => {
         if (isPagination) {
@@ -97,9 +97,9 @@ const TableComponent = ({
 
     const showSummaryNotHaving = () => {
         handleDocumentManagerSummary.documentType = handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")
-        let path = '/documents/document_summary_not'
+        let path = '/documents/accounts_missing_documents'
         if (parentComponent === 'documentNotSummary') {
-            path = '/documents/document_summary'
+            path = '/documents/accounts_documents'
         }
         history.push({
             pathname: path,
@@ -107,12 +107,12 @@ const TableComponent = ({
         });
     }
 
-    const handleClickHideShow = e => {
+    const handleClickHideShow = (e: any) => {
         let { id, checked } = e.target;
         let columnsTemp = Object.assign([], showHideColumns)
         let columnUpdated: any = []
         if (!checked) {
-            columnUpdated = columnsTemp.filter(item => item !== id)
+            columnUpdated = columnsTemp.filter((item: any) => item !== id)
         } else {
             columnUpdated = [...columnsTemp, id]
         }
@@ -384,17 +384,17 @@ const TableComponent = ({
         element.classList.add('active');
     };
 
-    const goToCompliance = (complianceId, data) => {
+    const goToCompliance = (complianceId: any, data: any) => {
         history.push({
             pathname: `/search/${parentComponent === 'inventory' ? 'inventory' : 'account_search'}/compliance_details`,
             search: `cId=${complianceId}&clientId=${data.clientId}&cAn=${data.clientAccountNumber}&aId=${data.equabliAccountNumber}`,
         })
     }
 
-    const complianceSplitter = (complianceIds, data) => {
+    const complianceSplitter = (complianceIds: any, data: any) => {
         if (!complianceIds) return ''
         let split = complianceIds.split(',')
-        split = split.map((complianceId, index) => {
+        split = split.map((complianceId: any, index: any) => {
             return <span id='index' key={`compliance_${index}`} onClick={() => goToCompliance(complianceId, data)} className="clickable_td_emp">{complianceId}{index < split.length - 1 ? ', ' : ''} </span>
         })
         return split
@@ -403,9 +403,9 @@ const TableComponent = ({
     /**======================================= */
     /**Eligible partner handlers */
     /**======================================= */
-    const keyContactsHandler = (contacts) => {
+    const keyContactsHandler = (contacts: any) => {
         return (
-            contacts && contacts.map((contact, index) => {
+            contacts && contacts.map((contact: any, index: any) => {
                 return <p style={{ textAlign: 'left', paddingLeft: '1rem' }} key={`contact_${index}`}>
                     <span>{contact.name}</span> <br />
                     <span>{contact.phone}</span>
@@ -414,7 +414,7 @@ const TableComponent = ({
         )
     }
 
-    const serviceOfferedHandler = (services) => {
+    const serviceOfferedHandler = (services: any) => {
         return (
             <div style={{
                 "display": "flex",
@@ -422,7 +422,7 @@ const TableComponent = ({
                 "flexWrap": "wrap"
             }}>
                 {
-                    services && services.map((service, index) => {
+                    services && services.map((service: any, index: any) => {
                         return <p key={`service_${index}`} style={{ background: '#ff7765', color: 'white', borderRadius: '.3rem', padding: '.1rem .5rem', marginRight: '1rem' }}>{service}</p>
                     })
                 }
@@ -430,33 +430,33 @@ const TableComponent = ({
         )
     }
 
-    const capacityHandler = (data) => {
+    const capacityHandler = (data: any) => {
         return (
-            data && data.map((d, index) => {
+            data && data.map((d: any, index: any) => {
                 return <p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }} key={`capacity_${index}`}>
                     <span><b>{d.type}</b>: {`${d.count} Accounts/Week`}</span>
                 </p>
             })
         )
     }
-    const commissionRateHandler = (data) => {
+    const commissionRateHandler = (data: any) => {
         return (
-            data && data.map((d, index) => {
+            data && data.map((d: any, index: any) => {
                 return <p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }} key={`commission_${index}`}>
                     <span><b>{d.type}</b>: {`${d.percentage}%`}</span>
                 </p>
             })
         )
     }
-    const complianceHandler = (data) => {
+    const complianceHandler = (data: any) => {
         return (<p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }}>
             <span><b>{data}%</b> of accounts receive disputes of complaints</span>
         </p>
         )
     }
-    const collectionsHandler = (data) => {
+    const collectionsHandler = (data: any) => {
         return (
-            data && data.map((d, index) => {
+            data && data.map((d: any, index: any) => {
                 return <p style={{ textAlign: 'left', marginBottom: '0', paddingLeft: '1rem' }} key={`collection_${index}`}>
                     <span><b>{d.type}</b>: {`$${d.amount}`}</span>
                 </p>
@@ -484,7 +484,7 @@ const TableComponent = ({
         }
     }
 
-    const handleClick = e => {
+    const handleClick = (e: any) => {
         let { id, checked } = e.target;
         const data = JSON.parse(id)
         const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
@@ -499,11 +499,11 @@ const TableComponent = ({
         if (!checked) {
             delete exportDocumentLinksTemp[id]
             setExportDocumentLink(exportDocumentLinksTemp)
-            setIsCheck(isCheck.filter(item => item !== id));
+            setIsCheck(isCheck.filter((item: any) => item !== id));
         }
     };
 
-    const dueDateHandler = (data) => {
+    const dueDateHandler = (data: any) => {
         if (parentComponent === 'sentDocumentRequest' || parentComponent === 'receiveDocumentRequest') {
             if (data.requestStatus === 'Open' && new Date(data.dueDate) >= new Date()) {
                 return '#b2e7d0' // green
@@ -519,14 +519,14 @@ const TableComponent = ({
      * My Documents
      * =============================================
      */
-    const handleSharedWith = (sharedWith) => {
+    const handleSharedWith = (sharedWith: any) => {
         if (sharedWith && sharedWith.length === 0) {
             return "-"
         } else {
             return (
                 <div className='share_With_parent'>
                     {
-                        sharedWith && sharedWith.map((sW, index) => {
+                        sharedWith && sharedWith.map((sW: any, index: any) => {
                             return <OverlayTrigger
                                 key={`sw_${index}`}
                                 placement="bottom"
@@ -547,7 +547,7 @@ const TableComponent = ({
         }
     }
 
-    const handleDocumentName = (data) => {
+    const handleDocumentName = (data: any) => {
         if (data['documentName'] || data["fileName"]) {
             return (<td
                 className={`clickable_td td_string`}
@@ -1194,7 +1194,7 @@ const TableComponent = ({
     );
 };
 
-const CustomDropdown = ({ trigger, menu }) => {
+const CustomDropdown = ({ trigger, menu }: { trigger: any, menu: any }) => {
     const [open, setOpen] = React.useState(false);
 
     const handleOpen = () => {
@@ -1208,7 +1208,7 @@ const CustomDropdown = ({ trigger, menu }) => {
             })}
             {open ? (
                 <ul className="custom_menu">
-                    {menu.map((menuItem, index) => (
+                    {menu.map((menuItem: any, index: any) => (
                         <li key={`custom_${index}`} className="menu-item">
                             {React.cloneElement(menuItem, {
                                 onClick: () => {

@@ -62,7 +62,7 @@ const Login: FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const validateEmail = (email) => {
+    const validateEmail = (email: any) => {
         return String(email)
             .toLowerCase()
             .match(

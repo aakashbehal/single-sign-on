@@ -7,7 +7,7 @@ import {
 import { shareService } from "../../services"
 
 export const ShareActionCreator = {
-    shareFolder: (payload) => (dispatch: any) => {
+    shareFolder: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: ShareFolder.SHARE_FOLDER_REQUEST, payload: [] })
         const success = (data: any) => ({ type: ShareFolder.SHARE_FOLDER_SUCCESS, payload: data })
         const failure = () => ({ type: ShareFolder.SHARE_FOLDER_FAILURE, payload: [] })
@@ -27,7 +27,7 @@ export const ShareActionCreator = {
                 dispatch({ type: ShareFolder.SHARE_FOLDER_RESET })
             })
     },
-    shareDocument: (payload) => (dispatch: any) => {
+    shareDocument: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: ShareFile.SHARE_FILE_REQUEST, payload: [] })
         const success = (data: any) => ({ type: ShareFile.SHARE_FILE_SUCCESS, payload: data })
         const failure = () => ({ type: ShareFile.SHARE_FILE_FAILURE, payload: [] })
@@ -47,7 +47,7 @@ export const ShareActionCreator = {
                 dispatch({ type: ShareFile.SHARE_FILE_RESET })
             })
     },
-    revokeShareFolder: (payload) => (dispatch: any) => {
+    revokeShareFolder: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: RevokeFolder.REVOKE_FOLDER_REQUEST, payload: [] })
         const success = (data: any) => ({ type: RevokeFolder.REVOKE_FOLDER_SUCCESS, payload: data })
         const failure = () => ({ type: RevokeFolder.REVOKE_FOLDER_FAILURE, payload: [] })
@@ -67,7 +67,7 @@ export const ShareActionCreator = {
                 dispatch({ type: RevokeFolder.REVOKE_FOLDER_RESET })
             })
     },
-    revokeShareDocument: (payload) => (dispatch: any) => {
+    revokeShareDocument: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: RevokeFile.REVOKE_FILE_REQUEST, payload: [] })
         const success = (data: any) => ({ type: RevokeFile.REVOKE_FILE_SUCCESS, payload: data })
         const failure = () => ({ type: RevokeFile.REVOKE_FILE_FAILURE, payload: [] })

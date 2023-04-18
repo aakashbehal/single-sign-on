@@ -1,4 +1,4 @@
-const MESSAGES = {
+const MESSAGES: any = {
     FILE_NAME_CONFIGURATION_SAVED_SUCCESS: "Great! File Name Configuration saved successfully",
     DOWNLOAD_REPORT_REQUEST: "Great! Download request submitted",
     ASSISTANCE: "Please wait and try your request again. If the issue persists, please contact the Equabli administrator at support@equabli.com",
@@ -13,7 +13,8 @@ const MESSAGES = {
     CONTACT_REQUEST: "Contact request generated successfully, someone from Itsupport@equabli.com and/or support@equabli.com will get back to you soon.",
     ADDITION_TIME_NOTE: "User to note that only one extension request for resolving a compliance item will be approved. Please read and close this message and then proceed to review the new SLA due date for the compliance item.",
     DOWNLOAD_STARTED: "Download Started",
-    DOWNLOAD_SUCCESSFUL: "Download Finished"
+    DOWNLOAD_SUCCESSFUL: "Download Finished",
+    FILE_LARGE: "Total File size is more than 100 MB, please use SFTP to upload"
 }
 
 /**
@@ -22,7 +23,7 @@ const MESSAGES = {
  * @param messageFrom: alert || account search .etc
  * @param messageType: updating || adding .etc 
  */
-export const createMessage = (type, messageFrom, messageType?) => {
+export const createMessage = (type: any, messageFrom: any, messageType?: any) => {
     if (type === 'error') {
         return `Error in ${messageFrom} ${messageType}. ${MESSAGES.ASSISTANCE}`
     } else if (type === 'success') {

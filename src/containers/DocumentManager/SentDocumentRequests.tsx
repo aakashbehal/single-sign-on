@@ -17,6 +17,7 @@ import ViewDocument from "../../components/modal/ViewDocument";
 import DocumentTypes from "../../components/Common/DocumentType";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 
 
 const SentDocumentRequests = () => {
@@ -84,7 +85,7 @@ const SentDocumentRequests = () => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC) => {
+            const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'documentFolder') {
                     return dC
                 }
@@ -118,8 +119,8 @@ const SentDocumentRequests = () => {
         deleteRequestError])
 
     const search = (
-        pageSize,
-        pageNumber
+        pageSize: any,
+        pageNumber: any
     ) => {
         searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest(searchObj))
@@ -140,15 +141,17 @@ const SentDocumentRequests = () => {
         dispatch(SentDocumentRequestActionCreator.deleteDocumentRequest(details.id))
     }
 
-    const handleDetails = (document) => {
+    const handleDetails = (document: any) => {
         setDetails(document)
         setShowDeleteConfirm(true)
     }
 
-    const downloadHandler = async (document) => {
+    const downloadHandler = async (document: any) => {
         //download file
+        console.log(document)
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
@@ -161,7 +164,7 @@ const SentDocumentRequests = () => {
                     parentComponent={'sentDocumentRequest'}
                     Styles={Styles}
                     showAdvanceSearch={showAdvanceSearch}
-                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
                     textSearchHook={textSearch}
                     searchObj={searchObj}
                     advanceSearchHook={advanceSearch}
@@ -195,8 +198,8 @@ const SentDocumentRequests = () => {
                 actionArray={[]}
                 handleNavigate={() => { }}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={pageNumber}
                 setCurrentPage={setPageNumber}
                 parentComponent={'sentDocumentRequest'}
@@ -204,9 +207,9 @@ const SentDocumentRequests = () => {
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
-                        download: (data) => downloadHandler(data),
-                        delete: (data) => handleDetails(data),
-                        viewDocument: (data) => {
+                        download: (data: any) => downloadHandler(data),
+                        delete: (data: any) => handleDetails(data),
+                        viewDocument: (data: any) => {
                             setShowDocument(true)
                             setDocumentToShow(data)
                         }
@@ -243,7 +246,7 @@ const SentDocumentRequests = () => {
     </>)
 }
 
-const RequestNewDocument = ({ show, onHide, dispatch }) => {
+const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any, dispatch: any }) => {
     const ref = useRef<any>();
     const sendRequestRef = useRef<any>()
     const [defaultSelect, setDefaultSelect] = useState<any>([])
@@ -267,7 +270,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
         clientAccountNumbers: state.misc.clientAccountNumbers.data,
     }))
 
-    const validate = (formObj) => {
+    const validate = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             sendRequests: false,
@@ -292,7 +295,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
         return formIsValid
     }
 
-    const handleRequest = (e) => {
+    const handleRequest = (e: any) => {
         e.preventDefault()
         const {
             originalAccountNumber,
@@ -335,7 +338,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                                         <Typeahead
                                             isLoading={loading}
                                             id="public-methods-example"
-                                            labelKey="firstName"
+                                            labelKey="modifiedFirstName"
                                             multiple
                                             ref={ref}
                                             allowNew={true}
@@ -345,7 +348,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }) => {
                                                     if (s.customOption) {
                                                         return s.firstName
                                                     }
-                                                    return s.emailAddress
+                                                    return s.loginKey
                                                 })
                                                 setUserSelected(selectedUpdated)
                                             }}

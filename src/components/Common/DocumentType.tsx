@@ -61,7 +61,7 @@ const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false }: { 
                 onChange={(e) => { setValue(e.target.value) }}>
                 <option></option>
                 {
-                    documentTypes && documentTypes.sort(function (a, b) {
+                    documentTypes && documentTypes.sort(function (a: any, b: any) {
                         if (a.partnerName < b.partnerName) { return -1; }
                         if (a.partnerName > b.partnerName) { return 1; }
                         return 0;

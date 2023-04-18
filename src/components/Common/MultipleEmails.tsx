@@ -2,19 +2,19 @@ import React, { useState } from 'react'
 
 import Styles from "./Common.module.sass"
 
-const MultipleEmails = ({ emails, setEmails }) => {
+const MultipleEmails = ({ emails, setEmails }: { emails: any, setEmails: any }) => {
     const [value, setValue] = useState('')
     const [error, setError] = useState(null)
 
-    const isEmail = (email) => {
+    const isEmail = (email: any) => {
         return /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/.test(email);
     }
 
-    const isInList = (email) => {
+    const isInList = (email: any) => {
         return emails.includes(email)
     }
 
-    const isValidElement = (email) => {
+    const isValidElement = (email: any) => {
         let error: any = null;
 
         if (!isEmail(email)) {
@@ -32,12 +32,12 @@ const MultipleEmails = ({ emails, setEmails }) => {
         return true
     }
 
-    const handleChange = (evt) => {
+    const handleChange = (evt: any) => {
         setError(null)
         setValue(evt.target.value)
     }
 
-    const handleKeyDown = (evt) => {
+    const handleKeyDown = (evt: any) => {
         if (['Enter', 'Tab', ','].includes(evt.key)) {
             evt.preventDefault();
 
@@ -50,15 +50,15 @@ const MultipleEmails = ({ emails, setEmails }) => {
         }
     }
 
-    const handleDelete = (toBeRemoved) => {
-        setEmails((emails) => {
-            return emails.filter(email => email !== toBeRemoved)
+    const handleDelete = (toBeRemoved: any) => {
+        setEmails((emails: any) => {
+            return emails.filter((email: any) => email !== toBeRemoved)
         })
     }
 
     return (
         <>
-            {emails.map(email => (
+            {emails.map((email: any) => (
                 <div key={email} className={Styles.tag_item}>
                     {email}
                     <button className={Styles.tag_item_button} type="button" onClick={() => handleDelete(email)}>&times;</button>

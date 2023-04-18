@@ -170,7 +170,7 @@ export const MiscActionCreator = {
                 }
             )
     },
-    saveColumn: (payload) => (dispatch: any) => {
+    saveColumn: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: SaveColumn.SAVE_COLUMN_REQUEST })
         const success = (data: any) => ({ type: SaveColumn.SAVE_COLUMN_SUCCESS, payload: data })
         const failure = (error: any) => ({ type: SaveColumn.SAVE_COLUMN_FAILURE, payload: error })

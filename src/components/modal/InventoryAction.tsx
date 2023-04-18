@@ -33,7 +33,7 @@ const InventoryAction = ({ show, onHide, queue, searchCriteria }: any) => {
     }, [formInputs])
 
     useEffect(() => {
-        const n = accountConfig.filter((ac) => {
+        const n = accountConfig.filter((ac: any) => {
             if (ac.queueId === Number(queue)) return ac
             else return false
         })
@@ -42,7 +42,7 @@ const InventoryAction = ({ show, onHide, queue, searchCriteria }: any) => {
     }, [accountConfig])
 
 
-    const validate = (formObj) => {
+    const validate = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             toQueueCode: false,
@@ -101,7 +101,7 @@ const InventoryAction = ({ show, onHide, queue, searchCriteria }: any) => {
                         <Form.Label column md={5} sm={12}>New Queue</Form.Label>
                         <Col md={7} sm={12}>
                             <Form.Control as="select" name="new_queue" onChange={(e) => {
-                                const nAccountStatus = accountConfig.filter((aC) => {
+                                const nAccountStatus = accountConfig.filter((aC: any) => {
                                     if (aC.queueId === +e.target.value) return aC
                                     else return false
                                 })

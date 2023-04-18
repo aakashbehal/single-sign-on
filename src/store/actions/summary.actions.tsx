@@ -26,7 +26,7 @@ export const SummaryActionCreator = {
     //             }
     //         )
     // },
-    getSentSummary: (payload) => (dispatch: any) => {
+    getSentSummary: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: SentDocumentSummary.SENT_DOCUMENT_SUMMARY_REQUEST, payload: [] })
         const success = (data: any) => ({ type: SentDocumentSummary.SENT_DOCUMENT_SUMMARY_SUCCESS, payload: data })
         const failure = () => ({ type: SentDocumentSummary.SENT_DOCUMENT_SUMMARY_FAILURE, payload: [] })
@@ -43,7 +43,7 @@ export const SummaryActionCreator = {
                 }
             )
     },
-    getDocumentCoverage: (payload) => (dispatch: any) => {
+    getDocumentCoverage: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_REQUEST, payload: [] })
         const success = (data: any) => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_SUCCESS, payload: data })
         const failure = () => ({ type: DocumentCoverage.DOCUMENT_COVERAGE_FAILURE, payload: [] })
@@ -63,7 +63,7 @@ export const SummaryActionCreator = {
     resetDocumentSummary: () => (dispatch: any) => {
         dispatch({ type: DocumentCoverage.DOCUMENT_COVERAGE_RESET })
     },
-    getSummaryDrillDown: (payload) => (dispatch: any) => {
+    getSummaryDrillDown: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_REQUEST, payload: [] })
         const success = (data: any) => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_SUCCESS, payload: data })
         const failure = () => ({ type: DocumentSummaryDocuments.DOCUMENT_SUMMARY_DOCUMENTS_FAILURE, payload: [] })
@@ -80,7 +80,7 @@ export const SummaryActionCreator = {
                 }
             )
     },
-    getSummaryDrillDownNot: (payload) => (dispatch: any) => {
+    getSummaryDrillDownNot: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_REQUEST, payload: [] })
         const success = (data: any) => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_SUCCESS, payload: data })
         const failure = () => ({ type: DocumentSummaryDocumentsNot.DOCUMENT_SUMMARY_DOCUMENTS_NOT_FAILURE, payload: [] })

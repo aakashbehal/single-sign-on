@@ -1,7 +1,8 @@
 import React, { useEffect, useRef } from 'react'
 import { Modal, Button, Container } from "react-bootstrap"
 
-const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionText = 'Delete', details, type }) => {
+
+const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionText = 'Delete', details, type }: IDeleteConfirm) => {
     const deleteRef: any = useRef<any>(null);
 
     useEffect(() => {

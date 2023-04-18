@@ -2,7 +2,7 @@ import { GetSentDocumentRequest, SentDocumentRequest, DeleteDocumentRequest } fr
 import { sentDocumentRequestService } from "../../services"
 
 export const SentDocumentRequestActionCreator = {
-    getSentDocumentRequest: (requestPayload) => (dispatch: any) => {
+    getSentDocumentRequest: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: GetSentDocumentRequest.GET_SENT_DOCUMENT_REQUEST_REQUEST })
         const success = (sent: any) => ({ type: GetSentDocumentRequest.GET_SENT_DOCUMENT_REQUEST_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: GetSentDocumentRequest.GET_SENT_DOCUMENT_REQUEST_FAILURE, payload: error })
@@ -20,7 +20,7 @@ export const SentDocumentRequestActionCreator = {
             )
     },
 
-    sentDocumentRequest: (requestPayload) => (dispatch: any) => {
+    sentDocumentRequest: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_REQUEST })
         const success = (sent: any) => ({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_FAILURE, payload: error })
@@ -37,7 +37,7 @@ export const SentDocumentRequestActionCreator = {
                 }
             ).finally(() => dispatch({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_RESET }))
     },
-    deleteDocumentRequest: (id) => (dispatch: any) => {
+    deleteDocumentRequest: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_REQUEST })
         const success = (sent: any) => ({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_FAILURE, payload: error })

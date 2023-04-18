@@ -87,7 +87,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
     useEffect(() => {
         if (revokeFolderSuccess || revokeFileSuccess) {
             const detailTemp: any = Object.assign({}, details)
-            detailTemp.sharedWith = detailTemp.sharedWith.filter((dT) => {
+            detailTemp.sharedWith = detailTemp.sharedWith.filter((dT: any) => {
                 if (dT.email !== emailToRemove) {
                     return dT
                 }
@@ -108,10 +108,10 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
         dispatch(UserActionCreator.getConnectedUsers())
     }, [])
 
-    const filterUserList = (details) => {
+    const filterUserList = (details: any) => {
         let tempUsers: any = []
         let sharedWithTemp = Object.assign({}, details)
-        let sharedArray = sharedWithTemp.sharedWith.map((shared) => shared.email)
+        let sharedArray = sharedWithTemp.sharedWith.map((shared: any) => shared.email)
         users.map((user: any) => {
             if (sharedArray.indexOf(user.loginKey) === -1) {
                 tempUsers.push(user)
@@ -121,7 +121,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
         setUsersUpdated(tempUsers)
     }
 
-    const validate = (formObj) => {
+    const validate = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             shareDetail: false,
@@ -157,7 +157,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
         }
     }
 
-    const revokeHandler = (data) => {
+    const revokeHandler = (data: any) => {
         let formObj: any = {}
         formObj["email"] = data.email
         setEmailToRemove(data.email)
@@ -191,7 +191,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                                     <Typeahead
                                         isLoading={loading}
                                         id="public-methods-example"
-                                        labelKey="firstName"
+                                        labelKey="modifiedFirstName"
                                         multiple
                                         ref={ref}
                                         allowNew={true}
@@ -244,7 +244,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                     {
                         details.sharedWith && details.sharedWith.length > 0 && <ul className={Styles.share_with_ul}>
                             {
-                                details.sharedWith.map((sW: any, index) => {
+                                details.sharedWith.map((sW: any, index: any) => {
                                     return <li className={Styles.share_with_li} key={`li_${index}`}>
                                         <div className={Styles.share_with_div}>
                                             <div className='share_With_parent' style={{ marginRight: '1rem' }}>
@@ -253,7 +253,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                                                 </span>
                                             </div>
                                             <div>
-                                                <p className={Styles.share_with_p}>{sW.name}</p>
+                                                <p className={Styles.share_with_p}>{sW.userOrgCode} - {sW.name}</p>
                                                 <p className={Styles.share_with_p}>{sW.email}</p>
                                             </div>
                                         </div>

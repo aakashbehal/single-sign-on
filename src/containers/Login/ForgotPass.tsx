@@ -177,7 +177,7 @@ const ForgotPassword = () => {
         }
     }
 
-    const isEmail = (email) => {
+    const isEmail = (email: any) => {
         return /[\w\d.-]+@[\w\d.-]+\.[\w\d.-]+/.test(email);
     }
 

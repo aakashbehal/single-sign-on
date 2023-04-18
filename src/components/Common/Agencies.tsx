@@ -86,7 +86,7 @@ const Agencies = forwardRef(({ selectedValue = '', isDisabled = false }: { selec
                 onChange={(e) => { setValue(e.target.value) }}>
                 <option></option>
                 {
-                    agencies && agencies.sort(function (a, b) {
+                    agencies && agencies.sort(function (a: any, b: any) {
                         if (a.partnerName < b.partnerName) { return -1; }
                         if (a.partnerName > b.partnerName) { return 1; }
                         return 0;

@@ -14,6 +14,7 @@ import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 
 
 const ReceivedDocumentRequests = () => {
@@ -78,7 +79,7 @@ const ReceivedDocumentRequests = () => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC) => {
+            const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'documentFolder') {
                     return dC
                 }
@@ -110,8 +111,8 @@ const ReceivedDocumentRequests = () => {
         deleteRequestError])
 
     const search = (
-        pageSize,
-        pageNumber
+        pageSize: any,
+        pageNumber: any
     ) => {
         searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(ReceiveDocumentRequestActionCreator.getReceiveDocumentRequest(searchObj))
@@ -133,15 +134,16 @@ const ReceivedDocumentRequests = () => {
         dispatch(SummaryActionCreator.reRender())
     }
 
-    const handleDetails = (document) => {
+    const handleDetails = (document: any) => {
         setDetails(document)
         setShowDeleteConfirm(true)
     }
 
-    const downloadHandler = async (document) => {
+    const downloadHandler = async (document: any) => {
         //download file
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
@@ -157,7 +159,7 @@ const ReceivedDocumentRequests = () => {
                     parentComponent={'receiveDocumentRequest'}
                     Styles={Styles}
                     showAdvanceSearch={showAdvanceSearch}
-                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
                     textSearchHook={textSearch}
                     searchObj={searchObj}
                     advanceSearchHook={advanceSearch}
@@ -188,8 +190,8 @@ const ReceivedDocumentRequests = () => {
                 actionArray={[]}
                 handleNavigate={() => { }}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={pageNumber}
                 setCurrentPage={setPageNumber}
                 parentComponent={'receiveDocumentRequest'}
@@ -197,13 +199,13 @@ const ReceivedDocumentRequests = () => {
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
-                        download: (data) => downloadHandler(data),
-                        upload: (data) => {
+                        download: (data: any) => downloadHandler(data),
+                        upload: (data: any) => {
                             setDetails(data)
                             setUploadDocModal(true)
                         },
-                        delete: (data) => handleDetails(data),
-                        viewDocument: (data) => {
+                        delete: (data: any) => handleDetails(data),
+                        viewDocument: (data: any) => {
                             setShowDocument(true)
                             setDocumentToShow(data)
                         }

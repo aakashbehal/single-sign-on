@@ -124,9 +124,9 @@ export const useAxiosLoader = () => {
         const dec = () => setCounter(counter => counter - 1);
 
         return ({
-            request: config => (inc(), config),
-            response: response => (dec(), response),
-            error: error => (dec(), Promise.reject(error)),
+            request: (config: any) => (inc(), config),
+            response: (response: any) => (dec(), response),
+            error: (error: any) => (dec(), Promise.reject(error)),
         });
     }, []); // create the interceptors
 
@@ -220,7 +220,7 @@ export const httpInterceptor = () => {
     )
 }
 
-function getRange(start, end) {
+function getRange(start: any, end: any) {
     let startN = +(start.split(":")[0])
     let endN = +(end.split(":")[0])
     let range: any = []
@@ -237,7 +237,7 @@ function getRange(start, end) {
     return range
 }
 
-export const convertInclusionToExclusion = (result) => {
+export const convertInclusionToExclusion = (result: any) => {
     const days = [
         { weekDay: 1, "key": "Sunday", "value": true, "excludedTime": [{ timeFrom: '08:00', timeTo: "21:00" }] },
         { weekDay: 2, "key": "Monday", "value": true, "excludedTime": [{ timeFrom: '08:00', timeTo: "21:00" }] },
@@ -251,7 +251,7 @@ export const convertInclusionToExclusion = (result) => {
     for (let i = 0; i < includedWeekDays.length; i++) {
         days[i].value = includedWeekDays[i].value
     }
-    let includedTimes = {}
+    let includedTimes: any = {}
     for (let i = 0; i < includedWeekDays.length; i++) {
         includedTimes[includedWeekDays[i].weekDay] = []
         if (
@@ -316,7 +316,7 @@ export const getBrowserTimeZone = () => {
     return Intl.DateTimeFormat().resolvedOptions().timeZone
 }
 
-export const convertExclusionToInclusion = (result) => {
+export const convertExclusionToInclusion = (result: any) => {
     const days = [
         { weekDay: 1, "key": "Sunday", "value": true, default: true, "time": [{ timeFrom: '08:00', timeTo: "21:00" }] },
         { weekDay: 2, "key": "Monday", "value": true, default: true, "time": [{ timeFrom: '08:00', timeTo: "21:00" }] },
@@ -327,7 +327,7 @@ export const convertExclusionToInclusion = (result) => {
         { weekDay: 7, "key": "Saturday", "value": true, default: true, "time": [{ timeFrom: '08:00', timeTo: "21:00" }] }
     ]
     let excludedWeekDay = result.excludedWeekDay
-    let exclusionTimes = {}
+    let exclusionTimes: any = {}
     for (let i = 0; i < excludedWeekDay.length; i++) {
         exclusionTimes[excludedWeekDay[i].weekDay] = [];
         if (
@@ -392,7 +392,7 @@ export const convertExclusionToInclusion = (result) => {
     return result
 }
 
-export const merge = (a, b) => {
+export const merge = (a: any, b: any) => {
     return Object.entries(b).reduce((o, [k, v]) => {
         o[k] = v && typeof v === 'object'
             ? merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v)
@@ -402,7 +402,7 @@ export const merge = (a, b) => {
 }
 
 
-export const passwordRegexCheck = (password) => {
+export const passwordRegexCheck = (password: any) => {
     const passRegex = /^((?=.*?[A-Z])(?=.*?[a-z])(?=.*[^A-Za-z0-9\s])|(?=.*?[0-9])(?=.*?[a-z])(?=.*[^A-Za-z0-9\s])|(?=.*?[0-9])(?=.*?[A-Z])(?=.*[^A-Za-z0-9\s])|(?=.*?[0-9])(?=.*?[A-Z])(?=.*?[a-z]))(?=.{14,})/
     return passRegex.test(password)
 }
@@ -436,7 +436,7 @@ export const decimalToFixed = (x: any) => {
     return valueToReturn
 }
 
-export const formatBytes = (bytes, decimals = 2) => {
+export const formatBytes = (bytes: any, decimals = 2) => {
     if (!+bytes) return '0 Bytes'
 
     const k = 1024
@@ -449,7 +449,7 @@ export const formatBytes = (bytes, decimals = 2) => {
 }
 
 
-export const getSignedURL = async (fileKey) => {
+export const getSignedURL = async (fileKey: any) => {
     const region = "us-east-1"
     const credentials: any = {
         accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
@@ -466,10 +466,10 @@ export const getSignedURL = async (fileKey) => {
     return formatUrl(url);
 }
 
-export const createZipForFolderDownload = (filePaths, folderName, isSave = true) => {
+export const createZipForFolderDownload = (filePaths: any, folderName: any, isSave = true) => {
     return new Promise((resolve, reject) => {
         const zip = require('jszip')();
-        var promises = filePaths.map(async (fP, index) => {
+        var promises = filePaths.map(async (fP: any, index: any) => {
             let folders = zip.folder(fP.folderName)
             let signedPath = await getSignedURL(fP.filePath)
             let filePathSplit = fP.filePath.split('/')
@@ -490,11 +490,11 @@ export const createZipForFolderDownload = (filePaths, folderName, isSave = true)
         console.log(promises)
         Promise.allSettled(promises).then(function (results) {
             zip.generateAsync({ type: "blob" })
-                .then((content) => {
+                .then((content: any) => {
                     console.log(content)
                     return new File([content], `${folderName}.zip`, { type: 'application/x-zip-compressed' })
                 })
-                .then((file) => {
+                .then((file: any) => {
                     if (isSave) {
                         saveAs(file, `${folderName}.zip`);
                     } else {
@@ -507,7 +507,7 @@ export const createZipForFolderDownload = (filePaths, folderName, isSave = true)
     })
 }
 
-export const downloadSignedFile = (document) => {
+export const downloadSignedFile = (document: any) => {
     return new Promise(async (resolve, reject) => {
         let signedPath = await getSignedURL(document.filePath)
         const type = (document.documentName).split(".")
@@ -523,7 +523,7 @@ export const downloadSignedFile = (document) => {
     })
 }
 
-export const checkIfAdvanceSearchIsActive = (formObj) => {
+export const checkIfAdvanceSearchIsActive = (formObj: any) => {
     let formIsValid = true;
     for (let key in formObj) {
         if (

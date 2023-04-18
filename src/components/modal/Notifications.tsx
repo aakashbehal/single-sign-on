@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Container, Row, Col, Button } from "react-bootstrap"
 
-const Notifications = ({ show, onHide, data }) => {
+const Notifications = ({ show, onHide, data }: { show: any, onHide: any, data: any }) => {
     const [notification, setNotification] = useState([])
     useEffect(() => {
-        const d = data.filter((dd) => {
+        const d = data.filter((dd: any) => {
             if (dd.requestStatus === 'Requested') return dd
             else return false
         })

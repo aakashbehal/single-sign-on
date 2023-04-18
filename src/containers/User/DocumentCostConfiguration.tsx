@@ -61,7 +61,7 @@ const DocumentCostConfiguration = () => {
 
     useEffect(() => {
         if (cost && cost.length > 0) {
-            let tempC = cost.map((c) => {
+            let tempC = cost.map((c: any) => {
                 return c.docTypeCode
             })
             setCostAlreadyAdded(tempC)
@@ -94,7 +94,7 @@ const DocumentCostConfiguration = () => {
         deleteSuccessful,
         deleteError])
 
-    const handleEdit = (cost) => {
+    const handleEdit = (cost: any) => {
         setEditCost(cost)
         setAddEditCost(true)
     }
@@ -107,7 +107,7 @@ const DocumentCostConfiguration = () => {
         dispatch(DocumentCostConfigActionCreator.deleteDocumentCost(details.docTypeCode))
     }
 
-    const handleDetails = (cost) => {
+    const handleDetails = (cost: any) => {
         setDetails(cost)
         setShowDeleteConfirm(true)
     }
@@ -196,7 +196,7 @@ const DocumentCostConfiguration = () => {
                         </thead>
                         <tbody>
                             {
-                                cost && cost.length > 0 && cost.map((cT, index) => {
+                                cost && cost.length > 0 && cost.map((cT: any, index: any) => {
                                     return (<tr key={`cost_${index}`}>
                                         <td>{cT.documentType}</td>
                                         <td>{cT.clientName || '-'}</td>
@@ -263,7 +263,7 @@ const DocumentCostConfiguration = () => {
     </>)
 }
 
-const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, costAlreadyAdded }) => {
+const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, costAlreadyAdded }: any) => {
     const addEditRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
         docTypeCode: false,
@@ -271,7 +271,7 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
         costLessThanZero: false
     })
 
-    const validateUpload = (formObj) => {
+    const validateUpload = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             docTypeCode: false,
@@ -296,7 +296,7 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
         return formIsValid
     }
 
-    const handleSave = (e) => {
+    const handleSave = (e: any) => {
         e.preventDefault()
         const {
             documentType,

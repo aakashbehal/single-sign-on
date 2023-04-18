@@ -4,7 +4,7 @@ import { handleResponse, axiosCustom, formatBytes, dateFormatterForRequest } fro
 const getDownloadHistory = async ({
     pageSize,
     pageNumber
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/all`, {
             pageSize,
@@ -13,7 +13,7 @@ const getDownloadHistory = async ({
         const data = handleResponse(response)
         let downloadHistory = data.response.datas
         const responseModified: any = {}
-        responseModified.sentRequests = downloadHistory.map((dH) => {
+        responseModified.sentRequests = downloadHistory.map((dH: any) => {
             dH.documentsize = formatBytes(dH.documentsize)
             dH.downloadDate = dateFormatterForRequest(dH.downloadAt)
             dH.downloadStatus = "Completed"
@@ -27,7 +27,7 @@ const getDownloadHistory = async ({
 }
 
 const saveDownloadHistory = async (
-    documentId
+    documentId: any
 ) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download`, {
@@ -40,7 +40,7 @@ const saveDownloadHistory = async (
     }
 }
 
-const deleteDownloadHistory = async (id) => {
+const deleteDownloadHistory = async (id: any) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/${id}`)
         const data = handleResponse(response)

@@ -32,7 +32,7 @@ const appReducer = combineReducers({
     share: shareReducer
 })
 
-const rootReducer = (state, action) => {
+const rootReducer = (state: any, action: any) => {
     if (action.type === 'LOGIN_RESET' || action.type === 'LOGOUT') {
         return appReducer(undefined, action)
     }

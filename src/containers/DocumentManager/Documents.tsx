@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer, useState } from "react";
 import { Col, Form, Row, ProgressBar, Button, Tab, Tabs } from "react-bootstrap";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
 
 import Styles from "./DocumentManager.module.sass";
@@ -12,10 +12,11 @@ import DownloadHistory from "./DownloadHistory";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 import DocumentRequirement from "./DocumentRequirement";
 import DocumentCoverage from "./DocumentCoverage";
-import { commonServices } from "../../services";
+import { commonServices, userService } from "../../services";
 import SkeletonLoading from "../../helpers/skeleton-loading";
+import Subscription from "./Subscription";
 
-const usageReducer = (state, action) => {
+const usageReducer = (state: any, action: any) => {
     switch (action.type) {
         case 'SET_USAGE_LOADING':
             return {
@@ -42,14 +43,49 @@ const usageReducer = (state, action) => {
 
 const initState = { used: '', percentage: 0, total: '', totalDocument: 0, loading: false, error: false }
 
-const Documents = ({ location }) => {
+interface invoice {
+    org: string
+    amount: number
+}
+
+const Documents = ({ location }: { location: any }) => {
     const history = useHistory();
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
+    const [userType, setUserType] = useState<string>()
     const [collapse, setCollapse] = useState(false);
     const [selectedTab, setSelectedTab] = useState('');
     const [usage, setUsage] = useReducer(usageReducer, initState);
+    const [showSubscription, setShowSubscription] = useState(false);
+    const [invoicing, setInvoicing] = useState<invoice[]>([])
+
+    const {
+        connectedUsers
+    } = useSelector((state: any) => ({
+        connectedUsers: state.users.data,
+        loading: state.users.loading,
+        error: state.users.error,
+    }))
 
     useEffect(() => {
+        let org: any = {}
+        let invoicingTemp: invoice[] = []
+        connectedUsers.map((user: any) => {
+            if (!org[user.orgCode]) {
+                org[user.orgCode] = 1
+                let amount = 0
+                if (user.orgCode === "FRECS") {
+                    amount = 80
+                } else {
+                    amount = 425
+                }
+                invoicingTemp.push({ org: user.orgCode, amount })
+            }
+        })
+        setInvoicing(invoicingTemp)
+    }, [connectedUsers])
+
+    useEffect(() => {
+        setUserType(userService.getUserType())
         dispatch(MiscActionCreator.getColumnForAllTables())
         getUsage()
     }, [])
@@ -63,7 +99,7 @@ const Documents = ({ location }) => {
         try {
             setUsage({ type: 'SET_USAGE_LOADING' })
             const usage = await commonServices.getUsage()
-            setUsage({ type: 'SET_USAGE_SUCCESS', payload: { ...usage, percentage: 30 } })
+            setUsage({ type: 'SET_USAGE_SUCCESS', payload: usage })
         } catch (error) {
             setUsage({ type: 'SET_USAGE_ERROR' })
         }
@@ -106,17 +142,61 @@ const Documents = ({ location }) => {
                                         <br />
                                         <p><b>{(usage.used).toUpperCase()} used out of {usage.total}</b></p>
                                         <p><b>Total {usage.totalDocument} document{usage.totalDocument > 1 ? "s" : ""}</b></p>
-                                        <Button variant="dark">Upgrade Your Plan</Button>
+                                        <Button variant="dark" onClick={() => setShowSubscription(true)}>Upgrade Your Plan</Button>
                                     </div>
                                 </Col>
                             }
                         </Col>
+                        {
+                            userType === 'Client' &&
+                            <Col className={Styles.inner_document_summary}
+                                style={{
+                                    borderWidth: collapse ? '0' : '1px',
+                                    background: collapse ? '#e9ecef' : 'white'
+                                }}>
+                                <h5>{userType === 'Client' ? 'Invoices' : 'Payment Invoice'}</h5>
+                                <br />
+                                {
+                                    !usage.error && usage.loading &&
+                                    <SkeletonLoading repeats={1} />
+                                }
+                                {
+                                    !usage.error && !usage.loading &&
+                                    <Col sm={12} className="no_padding">
+                                        <div className={Styles.progress_container} style={{
+                                            background: '#ebeaea',
+                                            padding: '1rem',
+                                            borderRadius: '6px',
+                                            margin: 0,
+                                            marginBottom: '1rem'
+                                        }}>
+                                            {
+                                                invoicing && invoicing.map((invoice: invoice) => {
+                                                    return <p style={{
+                                                        borderBottom: '2px solid white',
+                                                        justifyContent: 'space-between',
+                                                        display: 'flex',
+                                                        padding: '5px 0',
+                                                        margin: 0
+                                                    }}><span>{invoice.org}</span> - <span><b>$ {invoice.amount}.05</b></span></p>
+                                                })
+                                            }
+                                            <h3 style={{
+                                                textAlign: 'right',
+                                                marginTop: '1rem'
+                                            }}>$505.10</h3>
+                                        </div>
+                                        <Button variant="dark" onClick={() => setShowSubscription(true)}>Download Detailed Report</Button>
+                                    </Col>
+                                }
+                            </Col>
+                        }
                     </Col>
                 </Row >
             </Col >
         </Col >
     }
-    const handleSelect = (e) => {
+    const handleSelect = (e: any) => {
         history.push({
             pathname: `/documents/${e}`
         });
@@ -151,6 +231,7 @@ const Documents = ({ location }) => {
                     </Tab> */}
                 </Tabs >
             </Col >
+            <Subscription onHide={setShowSubscription} show={showSubscription} />
         </>
     )
 };

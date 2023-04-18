@@ -16,7 +16,7 @@ const getSentSummary = async ({
     product,
     portfolio,
     userId
-}) => {
+}: any) => {
     console.log(`called`)
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`, {
@@ -27,13 +27,13 @@ const getSentSummary = async ({
         })
         const data = handleResponse(response)
         let modifiedData = {
-            sent: (data.response.filter((d) => {
+            sent: (data.response.filter((d: any) => {
                 if (d.name === 'sentDocumentSummary') {
                     console.log(d)
                     return d
                 } else return false
             }))[0].summary,
-            received: (data.response.filter((d) => {
+            received: (data.response.filter((d: any) => {
                 if (d.name === 'receiveDocumentSummary') {
                     return d
                 } else return false
@@ -51,7 +51,7 @@ const getDocumentCoverage = async ({
     product,
     portfolio,
     userId
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
             duration,
@@ -86,7 +86,7 @@ const getSummaryDrillDown = async ({
     generationDateTo,
     uploadDateFrom,
     uploadDateTo
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
             pageSize,
@@ -112,7 +112,7 @@ const getSummaryDrillDown = async ({
         const data = handleResponse(response)
         let documents = data.response.datas
         const responseModified: any = {}
-        responseModified.documents = documents.map((document) => {
+        responseModified.documents = documents.map((document: any) => {
             document.fileSize = formatBytes(document.fileSize)
             return document
         })
@@ -144,7 +144,7 @@ const getSummaryDrillDownNot = async ({
     generationDateTo,
     uploadDateFrom,
     uploadDateTo
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
             pageSize,
@@ -170,7 +170,7 @@ const getSummaryDrillDownNot = async ({
         const data = handleResponse(response)
         let documents = data.response.datas
         const responseModified: any = {}
-        responseModified.documents = documents.map((document) => {
+        responseModified.documents = documents.map((document: any) => {
             const obj = {
                 clientAccountNumber: document,
                 originalAccountNumber: null,

@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import { Button, Col, Container, Modal } from 'react-bootstrap';
 import { BsFileEarmarkPdf, BsFillFileEarmarkImageFill } from 'react-icons/bs';
@@ -7,10 +8,10 @@ import { SiMicrosoftexcel } from 'react-icons/si';
 import { useDispatch } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
 import { saveAs } from 'file-saver';
-import { exportToExcel } from 'react-json-to-excel';
+import xlsx from 'json-as-xlsx';
 
 import { createMessage } from '../../helpers/messages';
-import { axiosCustom, handleResponse } from '../../helpers/util';
+import { axiosCustom, formatBytes, handleResponse } from '../../helpers/util';
 import { SummaryActionCreator } from '../../store/actions/summary.actions';
 import FileUploadHook from '../CustomHooks/FileUploadHook';
 
@@ -51,6 +52,13 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         }
     }, [fileToUpload])
 
+    const downloadExcel = (fileName: any, data: any) => {
+        let settings = {
+            fileName
+        }
+        xlsx(data, settings)
+    }
+
     const getNotList = async () => {
         try {
             const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
@@ -63,7 +71,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 userId: details.userId === 'null' ? null : details.userId
             })
             const data = handleResponse(response)
-            const tempJson = data && data.response && data.response.datas.map((data) => {
+            const tempJson = data && data.response && data.response.datas.map((data: any) => {
                 let obj = {
                     "Document Type": details.docTypeCode,
                     "Requested From": "",
@@ -79,7 +87,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         }
     }
 
-    const validateUpload = (formObj) => {
+    const validateUpload = (formObj: any) => {
         let formIsValid = true;
         const error: any = {
             file: false
@@ -125,6 +133,12 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         }
         let formData: any = new FormData()
         try {
+            // size of the file should not be more than 10
+            if (file.size > 10485760) {
+                addToast(createMessage('info', `FILE_LARGE`, ''), { appearance: 'info', autoDismiss: true })
+                setFormSubmitted(false)
+                return
+            }
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
                 formData.append("files", file);
                 formData.append("files", matrixFile)
@@ -162,7 +176,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         // productCode: details.productCode === 'null' ? null : details.productCode,
                         // userId: details.userId === 'null' ? null : details.userId
                     }
-                    console.log(requestObj)
                     formData.append("file", file);
                     formData.append("data", JSON.stringify(requestObj));
                 } else {
@@ -185,7 +198,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }
 
     // handle drag events
-    const handleDrag = function (e) {
+    const handleDrag = function (e: any) {
         e.preventDefault();
         e.stopPropagation();
         if (e.type === "dragenter" || e.type === "dragover") {
@@ -195,7 +208,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         }
     };
 
-    const handleFiles = (file) => {
+    const handleFiles = (file: any) => {
         let tempFiles = Object.assign([], files)
         if (tempFiles.length === 0) {
             tempFiles = Array.from(file)
@@ -206,7 +219,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }
 
     // triggers when file is dropped
-    const handleDrop = function (e) {
+    const handleDrop = function (e: any) {
         e.preventDefault();
         e.stopPropagation();
         setDragActive(false);
@@ -216,7 +229,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     };
 
     // triggers when file is selected with click
-    const handleChange = function (e) {
+    const handleChange = function (e: any) {
         e.preventDefault();
         if (e.target.files && e.target.files[0]) {
             handleFiles(e.target.files);
@@ -228,7 +241,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         inputRef.current.click();
     };
 
-    const deleteHandler = (index) => {
+    const deleteHandler = (index: any) => {
         let tempFiles = Object.assign([], files)
         tempFiles.splice(index, 1);
         setFiles(tempFiles)
@@ -284,7 +297,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     <Col sm={12}>
                         <div className={Styles.list_upload_container}>
                             {
-                                files && files.length > 0 && files.map((file, index) => {
+                                files && files.length > 0 && files.map((file: any, index: any) => {
                                     return <div className={Styles.list_upload} key={`file_${index}`}>
                                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                                             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -349,7 +362,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         <br />
                         <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
                         <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={() => exportToExcel(SAMPLE_UPLOAD, 'matrix')} style={{ width: '100%' }}>Download Sample File</Button>
+                            <Button variant="dark" type="submit" onClick={() => downloadExcel('matrix', SAMPLE_UPLOAD)} style={{ width: '100%' }}>Download Sample File</Button>
                         </Col>
                     </Col>
                 }
@@ -360,7 +373,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         <br />
                         <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
                         <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={() => exportToExcel(jsonForRequest, 'matrix')} style={{ width: '100%' }}>Download Sample File</Button>
+                            <Button variant="dark" type="submit" onClick={() => downloadExcel('matrix', jsonForRequest)} style={{ width: '100%' }}>Download Sample File</Button>
                         </Col>
                     </Col>
                 }

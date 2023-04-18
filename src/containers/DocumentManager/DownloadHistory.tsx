@@ -63,7 +63,7 @@ const DownloadHistory = () => {
         }
     }, [deleteDownloadHistorySuccess, deleteDownloadHistoryError])
 
-    const showDocumentListPage = (data, column) => {
+    const showDocumentListPage = (data: any, column: any) => {
         history.push({
             pathname: '/documents/document_list',
             search: `account_id=${data.folderName}`,
@@ -87,7 +87,7 @@ const DownloadHistory = () => {
         search(pageSize, pageNumber)
     }
 
-    const downloadHandler = async (document) => {
+    const downloadHandler = async (document: any) => {
         //download file
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
@@ -108,10 +108,10 @@ const DownloadHistory = () => {
                 }}
                 totalCount={totalCount}
                 actionArray={['folderName']}
-                handleNavigate={(data, column) => showDocumentListPage(data, column)}
+                handleNavigate={(data: any, column: any) => showDocumentListPage(data, column)}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={currentPage}
                 setCurrentPage={setCurrentPage}
                 parentComponent={'downloadHistory'}
@@ -124,9 +124,9 @@ const DownloadHistory = () => {
                 ]}
                 addEditArray={
                     {
-                        pause: (data) => console.log(`pause Action`),
-                        download: (data) => downloadHandler(data),
-                        delete: (data) => {
+                        pause: (data: any) => console.log(`pause Action`),
+                        download: (data: any) => downloadHandler(data),
+                        delete: (data: any) => {
                             dispatch(DownloadHistoryActionCreator.deleteDownloadHistory(data.id))
                         }
                     }

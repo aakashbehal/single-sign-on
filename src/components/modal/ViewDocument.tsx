@@ -6,7 +6,7 @@ import { getSignedURL } from '../../helpers/util';
 
 import Styles from "./Modal.module.sass";
 
-const ViewDocument = ({ onHide, show, documentData }) => {
+const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, documentData: any }) => {
 
     const [documentType, setDocumentType] = useState('')
     const [imageUrl, setImageUrl] = useState<any>("")

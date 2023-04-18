@@ -35,7 +35,7 @@ const rolesMapping = {
 }
 
 
-const Sidebar = ({ isClosed }) => {
+const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
     const history = useHistory();
     const [activeRoute, setActiveRoute] = useState<string>('documents')
     const [role, setRole] = useState<any>(null)

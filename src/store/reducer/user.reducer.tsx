@@ -1,6 +1,6 @@
 import { ConnectedUsers } from "../types.d";
 
-const initialState = {
+const initialState: IUsers = {
     data: [],
     error: null,
     loading: false

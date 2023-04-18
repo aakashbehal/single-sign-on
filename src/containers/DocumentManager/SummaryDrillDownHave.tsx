@@ -10,7 +10,7 @@ import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 
-const SummaryDrillDownHave = ({ location }) => {
+const SummaryDrillDownHave = ({ location }: { location: any }) => {
     const dispatch = useDispatch();
     const params = location.search.replace("?", "");
     const searchParams = JSON.parse('{"' + decodeURI(params).replace(/"/g, '\\"').replace(/&/g, '","').replace(/=/g, '":"') + '"}')
@@ -61,7 +61,7 @@ const SummaryDrillDownHave = ({ location }) => {
 
     useEffect(() => {
         if (!loading && columns?.length === 0 && (defaultColumns?.length > 0)) {
-            const columns = defaultColumns.filter((dC) => {
+            const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'accounts') {
                     return dC
                 }
@@ -73,8 +73,8 @@ const SummaryDrillDownHave = ({ location }) => {
     }, [columns])
 
     const search = (
-        pageSize,
-        pageNumber
+        pageSize: any,
+        pageNumber: any
     ) => {
         searchObj = {
             ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType, ...searchParams
@@ -100,7 +100,7 @@ const SummaryDrillDownHave = ({ location }) => {
                     parentComponent={'documentSummary'}
                     Styles={Styles}
                     showAdvanceSearch={showAdvanceSearch}
-                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
                     textSearchHook={textSearch}
                     searchObj={searchObj}
                     advanceSearchHook={advanceSearch}
@@ -125,13 +125,13 @@ const SummaryDrillDownHave = ({ location }) => {
                 }}
                 totalCount={totalCount}
                 actionArray={['fileName']}
-                handleNavigate={(data) => {
+                handleNavigate={(data: any) => {
                     setShowDocument(true)
                     setDocumentToShow(data)
                 }}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={pageNumber}
                 setCurrentPage={setPageNumber}
                 parentComponent={'documentSummary'}
@@ -139,7 +139,7 @@ const SummaryDrillDownHave = ({ location }) => {
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
-                        download: (data) => console.log(data),
+                        download: (data: any) => console.log(data),
                     }
                 }
                 handleDocumentManagerSummary={searchParams}

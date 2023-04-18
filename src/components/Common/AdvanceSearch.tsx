@@ -11,7 +11,7 @@ import { checkIfAdvanceSearchIsActive, dateFormatterForRequestDocManager } from 
 import { useDispatch, useSelector } from 'react-redux';
 import { UserActionCreator } from '../../store/actions/user.actions';
 
-const FIELD_MAPPER = {
+const FIELD_MAPPER: any = {
     myDocuments: [
         "originalAccountNumber",
         "equabliAccountNumber",
@@ -151,11 +151,11 @@ const AdvanceSearch = ({ parentComponent,
         textSearchHook(criteria)
     }, 500);
 
-    async function handleSearchInput(e) {
+    async function handleSearchInput(e: any) {
         debouncedSearch(e.target.value);
     }
 
-    const advanceSearchHandler = (e) => {
+    const advanceSearchHandler = (e: any) => {
         e.preventDefault()
         if (showAdvanceSearch) {
             if (textSearchRef && textSearchRef.current?.value) {
@@ -236,7 +236,7 @@ const AdvanceSearch = ({ parentComponent,
         resetHandlerHook({})
     }
 
-    const dateHandler = (from, date) => {
+    const dateHandler = (from: any, date: any) => {
         const dateTemp = Object.assign({}, dates)
         console.log(from, date)
         dateTemp[from] = date
@@ -259,7 +259,7 @@ const AdvanceSearch = ({ parentComponent,
                 className={Styles.my_document_search}
                 onMouseDown={() => setShowAdvanceSearch(false)}
                 onChange={(e) => handleSearchInput(e)}
-                onKeyDown={(e) => { if (e.code === 'Enter') handleSearchInput(e) }}
+                onKeyDown={(e: any) => { if (e.code === 'Enter') handleSearchInput(e) }}
                 placeholder="Search"
             ></Form.Control>
             <CgOptions
@@ -569,7 +569,7 @@ const AdvanceSearch = ({ parentComponent,
                                     <Typeahead
                                         isLoading={loading}
                                         id="public-methods-example"
-                                        labelKey="firstName"
+                                        labelKey="modifiedFirstName"
                                         multiple
                                         ref={ref}
                                         className="input_custom_type_ahead"
@@ -580,7 +580,7 @@ const AdvanceSearch = ({ parentComponent,
                                                 if (s.customOption) {
                                                     return s.firstName
                                                 }
-                                                return s.emailAddress
+                                                return s.loginKey
                                             })
                                             setRequestedFromSelected(selectedUpdated)
                                         }}
@@ -595,7 +595,7 @@ const AdvanceSearch = ({ parentComponent,
                                     <Typeahead
                                         isLoading={loading}
                                         id="public-methods-example"
-                                        labelKey="firstName"
+                                        labelKey="modifiedFirstName"
                                         ref={ref}
                                         className="input_custom_type_ahead"
                                         allowNew={true}
@@ -650,7 +650,7 @@ const AdvanceSearch = ({ parentComponent,
                                     <Typeahead
                                         isLoading={loading}
                                         id="public-methods-example"
-                                        labelKey="firstName"
+                                        labelKey="modifiedFirstName"
                                         ref={ref}
                                         className="input_custom_type_ahead"
                                         newSelectionPrefix='Not a Platform User: '
@@ -671,7 +671,7 @@ const AdvanceSearch = ({ parentComponent,
                                     <Typeahead
                                         isLoading={loading}
                                         id="public-methods-example"
-                                        labelKey="firstName"
+                                        labelKey="modifiedFirstName"
                                         ref={ref}
                                         className="input_custom_type_ahead"
                                         newSelectionPrefix='Not a Platform User: '

@@ -19,7 +19,7 @@ const getClients = async () => {
         const data = handleResponse(response)
         let clientArray = data.response
         if (user.orgType === 'CL') {
-            clientArray = clientArray.filter((client) => {
+            clientArray = clientArray.filter((client: any) => {
                 if (client.clientId === user.clientId) {
                     return client
                 } else {
@@ -52,7 +52,7 @@ const getAgencies = async () => {
         const data = handleResponse(response)
         let partnerArray = data.response
         if (user.orgType === 'PT') {
-            partnerArray = partnerArray.filter((partner) => {
+            partnerArray = partnerArray.filter((partner: any) => {
                 if (partner.partnerId === user.partnerId) {
                     return partner
                 } else {
@@ -122,7 +122,7 @@ const getRegulatory = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMMON_URL}/getActiveRegulatoryBody`)
         const data = handleResponse(response)
-        let regulators = data.response.filter((d) => {
+        let regulators = data.response.filter((d: any) => {
             if (d.daysFirstSla && d.daysLastSla) {
                 return d
             }
@@ -176,7 +176,7 @@ const getProductTypes = async () => {
     }
 }
 
-const componentMap = {
+const componentMap: any = {
     myDocuments: "documentFolder",
     documents: "document",
     sentDocumentRequest: "sentDocumentRequest",
@@ -185,7 +185,7 @@ const componentMap = {
     documentNotSummary: "accounts"
 }
 
-const saveColumn = async ({ parentComponent, showHideColumns }) => {
+const saveColumn = async ({ parentComponent, showHideColumns }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column`, {
             tableName: componentMap[parentComponent],

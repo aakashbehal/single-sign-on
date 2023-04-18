@@ -3,12 +3,12 @@ import { useDispatch } from "react-redux"
 import { useToasts } from 'react-toast-notifications';
 import { LoginActionCreator } from '../store/actions/auth.actions';
 
-export const sessions = WrappedComponent => {
+export const sessions = (WrappedComponent: any) => {
     const HOC = forwardRef((props, ref) => {
         // const { addToast, removeAllToasts } = useToasts();
         const dispatch = useDispatch();
-        let warningTimeout
-        let logoutTimeout
+        let warningTimeout: any
+        let logoutTimeout: any
         const state = {
             warningTime: 1000 * 60 * 59,
             signOutTime: 1000 * 60 * 60
@@ -32,19 +32,19 @@ export const sessions = WrappedComponent => {
             }
         }, [])
 
-        const addListeners = (events) => {
+        const addListeners = (events: any) => {
             for (let i = 0; i < events.length; i++) {
                 window.addEventListener(events[i], resetTimeout)
             }
         }
 
-        const removeListeners = (events) => {
+        const removeListeners = (events: any) => {
             for (let i = 0; i < events.length; i++) {
                 window.removeEventListener(events[i], resetTimeout)
             }
         }
 
-        const resetTimeout = (e) => {
+        const resetTimeout = (e: any) => {
             clearTimer()
             setTimeoutHandler()
         }

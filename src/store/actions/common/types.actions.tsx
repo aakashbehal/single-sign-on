@@ -19,7 +19,7 @@ export const TypesActionCreator = {
         commonServices.getFilterTypes(type)
             .then(
                 compliance => {
-                    compliance.sort((a, b) => {
+                    compliance.sort((a: any, b: any) => {
                         if (a.keyvalue > b.keyvalue) return 1
                         else if (a.keyvalue < b.keyvalue) return -1
                         else return 0

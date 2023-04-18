@@ -1,6 +1,6 @@
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const registration = async (requestData) => {
+const registration = async (requestData: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/registration`, requestData)
         const data = handleResponse(response)
@@ -10,7 +10,7 @@ const registration = async (requestData) => {
     }
 }
 
-const validateOrgName = async (orgName, orgType) => {
+const validateOrgName = async (orgName: any, orgType: any) => {
     let requestBody: any = {
         orgType
     }

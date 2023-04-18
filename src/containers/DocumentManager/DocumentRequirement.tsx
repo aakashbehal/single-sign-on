@@ -16,7 +16,7 @@ ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 const options: any = {
     responsive: true,
     // maintainAspectRatio: false,
-    cutout: 50,
+    cutout: 70,
     layout: {
         padding: 20
     },
@@ -223,12 +223,21 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
     }, [reRender])
 
     const memoRequested = useMemo(() => {
-        return <Doughnut data={dataRequested} options={userType === 'Client' ? options : { ...options, cutout: 100 }} redraw />
+        return <Doughnut data={dataRequested} options={options} redraw />
     }, [dataRequested])
 
     const memoSent = useMemo(() => {
-        return <Doughnut data={dataSent} options={userType === 'Client' ? { ...options, cutout: 100 } : options} redraw />
+        return <Doughnut data={dataSent} options={options} redraw />
     }, [dataSent])
+
+
+    const isChartEmpty = (data: any) => {
+        if ((data.fullfilled + data.open + data.overDue) === 0) {
+            return true
+        } else {
+            return false
+        }
+    }
 
     return (
         <Col sm={12} className={Styles.inner_document_summary}
@@ -241,37 +250,41 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
             <SummaryFilters searchObj={searchObj} setSearchObj={setSearchObj} />
             <hr />
             <Row style={{ maxHeight: '395px', minHeight: '395px' }}>
-                <Col sm={7} className={Styles.chart_container}>
-                    <h5>{userType === 'Client' ? "Sent Requests" : "Received Requests"}</h5>
+                <Col sm={6} className={Styles.chart_container}>
+                    <h5>{userType !== 'Client' ? "Sent Requests" : "Received Requests"}</h5>
                     {
                         (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
                         <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
                     }
-                    <div style={{
-                        display: "flex",
-                        alignItems: 'end',
-                        height: "90%"
-                    }}>
-                        {
-                            userType !== 'Client' ?
-                                <>
-                                    {
-                                        !loadingRequest &&
-                                        memoRequested
-                                    }
-                                </>
-                                :
-                                <>
-                                    {
-                                        !loadingSent &&
-                                        memoSent
-                                    }
-                                </>
-                        }
-                    </div>
+                    {
+
+                        <div style={{
+                            display: "flex",
+                            alignItems: 'end',
+                            height: "90%",
+                            justifyContent: 'center'
+                        }}>
+                            {
+                                userType === 'Client' ?
+                                    <>
+                                        {
+                                            !loadingRequest &&
+                                            (isChartEmpty(requestedSummary) ? 'No Data to display' : memoRequested)
+                                        }
+                                    </>
+                                    :
+                                    <>
+                                        {
+                                            !loadingSent &&
+                                            (isChartEmpty(sentSummary) ? 'No Data to display' : memoSent)
+                                        }
+                                    </>
+                            }
+                        </div>
+                    }
                 </Col>
-                <Col sm={5} className={Styles.chart_container}>
-                    <h5>{userType === 'Client' ? "Received Requests" : "Sent Requests"}</h5>
+                <Col sm={6} className={Styles.chart_container}>
+                    <h5>{userType !== 'Client' ? "Received Requests" : "Sent Requests"}</h5>
                     {
                         (!errorRequest && loadingRequest) && (!errorSent && loadingSent) &&
                         <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
@@ -279,21 +292,22 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                     <div style={{
                         display: "flex",
                         alignItems: 'end',
-                        height: "90%"
+                        height: "90%",
+                        justifyContent: 'center'
                     }}>
                         {
-                            userType !== 'Client' ?
+                            userType === 'Client' ?
                                 <>
                                     {
                                         !loadingSent &&
-                                        memoSent
+                                        (isChartEmpty(sentSummary) ? 'No Data to display' : memoSent)
                                     }
                                 </>
                                 :
                                 <>
                                     {
                                         !loadingRequest &&
-                                        memoRequested
+                                        (isChartEmpty(requestedSummary) ? 'No Data to display' : memoRequested)
                                     }
                                 </>
                         }

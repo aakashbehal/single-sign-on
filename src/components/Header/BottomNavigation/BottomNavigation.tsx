@@ -6,7 +6,7 @@ import { NavDropdown } from "react-bootstrap"
 import Styles from "./BottomNavigation.module.sass"
 import { userService } from "../../../services";
 
-const rolesMapping = {
+const rolesMapping: any = {
     "Equabli": [
         'documents',
         'my_documents',

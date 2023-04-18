@@ -7,7 +7,7 @@ export const configureFakeBackend = () => {
     // authentication api
     mock.restore();
 
-    mock.onPost("/authenticate").reply((opts) => {
+    mock.onPost("/authenticate").reply((opts: any) => {
         const body = opts.data && JSON.parse(opts.data)
         const { loginKey, loginSecret } = body;
         let role = 'Client'
@@ -30,7 +30,7 @@ export const configureFakeBackend = () => {
     });
 
     // Field options APC
-    mock.onGet("/fileNamesConfig").reply((opts) => {
+    mock.onGet("/fileNamesConfig").reply((opts: any) => {
         const params = opts.params
         if (params.fileNameConfig === 'SEPARATOR') {
             return [200, {
@@ -707,7 +707,7 @@ export const configureFakeBackend = () => {
     /**
      * Get user File config
      */
-    mock.onGet("/user/file/configuration").reply((opts) => {
+    mock.onGet("/user/file/configuration").reply((opts: any) => {
         const params = opts.params
         if (params.fileNameConfig === 'FIELD') {
             return [200, {
@@ -873,7 +873,7 @@ export const configureFakeBackend = () => {
     /**
      * Save Retention Policy
      */
-    mock.onPost("/retantionPolicy").reply((opts) => {
+    mock.onPost("/retantionPolicy").reply((opts: any) => {
         return [200, {
             "message": "Global config with 14 id is created successfully",
             "status": "SUCCESS",
@@ -885,7 +885,7 @@ export const configureFakeBackend = () => {
     /**
     * Save Duplicate 
     */
-    mock.onPost("/documentConfiguration").reply((opts) => {
+    mock.onPost("/documentConfiguration").reply((opts: any) => {
         return [200, {
             "message": "Global config with 14 id is created successfully",
             "status": "SUCCESS",
@@ -897,7 +897,7 @@ export const configureFakeBackend = () => {
     /**
      * Get Folder Structure
      */
-    mock.onGet("/document/folders").reply((opts) => {
+    mock.onGet("/document/folders").reply((opts: any) => {
         return [200, {
             "status": "SUCCESS",
             "response": {
@@ -939,7 +939,7 @@ export const configureFakeBackend = () => {
     /**
      * Get Documents
      */
-    mock.onGet("/document/documents").reply((opts) => {
+    mock.onGet("/document/documents").reply((opts: any) => {
         return [200, {
             "status": "SUCCESS",
             "response": {
@@ -998,7 +998,7 @@ export const configureFakeBackend = () => {
     /**
      * Document Type List
      */
-    mock.onGet("/document/documentType").reply((opts) => {
+    mock.onGet("/document/documentType").reply((opts: any) => {
         return [200, {
             "message": "Document type fetch successfully",
             "status": "SUCCESS",
@@ -1036,7 +1036,7 @@ export const configureFakeBackend = () => {
     /**
      * Document Cost list
      */
-    mock.onGet("/document/costs").reply((opts) => {
+    mock.onGet("/document/costs").reply((opts: any) => {
         return [200, {
             "status": "SUCCESS",
             "validation": true,
@@ -1060,7 +1060,7 @@ export const configureFakeBackend = () => {
     /**
      * Product Type list
      */
-    mock.onGet("/document/productType").reply((opts) => {
+    mock.onGet("/document/productType").reply((opts: any) => {
         return [200, {
             "message": "Product config with  is created successfully",
             "status": "SUCCESS",
@@ -1123,7 +1123,7 @@ export const configureFakeBackend = () => {
     /**
      * Product Type list
      */
-    mock.onGet("/document/requiredDocuments").reply((opts) => {
+    mock.onGet("/document/requiredDocuments").reply((opts: any) => {
         return [200, {
             "message": "Document type fetch successfully",
             "status": "SUCCESS",
@@ -1183,7 +1183,7 @@ export const configureFakeBackend = () => {
     /**
     * Product Type list
     */
-    mock.onGet("/requestReceive/sentDocuments").reply((opts) => {
+    mock.onGet("/requestReceive/sentDocuments").reply((opts: any) => {
         return [200, {
             "status": "SUCCESS",
             "response": {

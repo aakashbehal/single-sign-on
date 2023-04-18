@@ -47,19 +47,20 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                     part = `admin/alerts`
                     break
                 case 'profile':
-                    part = `profile/user_account`
+                    part = `profile/document_general_configuration`
                     break
                 case 'documents':
                     part = `documents/my_documents`
             }
 
-            const gotoPage = (part) => {
+            const gotoPage = (part: any) => {
                 if (!isActive) {
                     if (part === 'account_details' || part === 'details' || part === 'compliance_all_requests' || part === 'compliance_my_requests') {
                         history.goBack()
                     } else if (part === 'report') {
                         // do nothing
-                    } else {
+                    }
+                    else {
                         history.push({
                             pathname: `/${part}`,
                         })

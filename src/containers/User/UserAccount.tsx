@@ -176,7 +176,7 @@ const UserAccount = () => {
         }
     }
 
-    const toggleDemo = (isChecked) => {
+    const toggleDemo = (isChecked: any) => {
         localStorage.setItem('isDemo', isChecked)
         setDemoDashboard(isChecked)
     }

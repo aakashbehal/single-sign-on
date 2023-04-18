@@ -6,7 +6,7 @@ import {
 import { downloadHistory } from "../../services"
 
 export const DownloadHistoryActionCreator = {
-    getDownloadHistory: (requestPayload) => (dispatch: any) => {
+    getDownloadHistory: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: GetDownloadHistory.GET_DOWNLOAD_HISTORY_REQUEST })
         const success = (sent: any) => ({ type: GetDownloadHistory.GET_DOWNLOAD_HISTORY_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: GetDownloadHistory.GET_DOWNLOAD_HISTORY_FAILURE, payload: error })
@@ -24,7 +24,7 @@ export const DownloadHistoryActionCreator = {
             )
     },
 
-    saveDownloadHistory: (requestPayload) => (dispatch: any) => {
+    saveDownloadHistory: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_REQUEST })
         const success = (sent: any) => ({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_FAILURE, payload: error })
@@ -41,7 +41,7 @@ export const DownloadHistoryActionCreator = {
                 }
             ).finally(() => dispatch({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_RESET }))
     },
-    deleteDownloadHistory: (id) => (dispatch: any) => {
+    deleteDownloadHistory: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_REQUEST })
         const success = (sent: any) => ({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_SUCCESS, payload: sent })
         const failure = (error: any) => ({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_FAILURE, payload: error })

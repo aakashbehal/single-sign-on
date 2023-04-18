@@ -73,8 +73,8 @@ const App = () => {
               <PrivateRoute exact path="/documents/templates" component={Documents} />
               <PrivateRoute exact path="/documents/download_history" component={Documents} />
               <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
-              <PrivateRoute exact path="/documents/document_summary" component={SummaryDrillDownHave} />
-              <PrivateRoute exact path="/documents/document_summary_not" component={SummaryDrillDownNotHave} />
+              <PrivateRoute exact path="/documents/accounts_documents" component={SummaryDrillDownHave} />
+              <PrivateRoute exact path="/documents/accounts_missing_documents" component={SummaryDrillDownNotHave} />
 
               <WithSidebar exact path="/my_documents_side" component={Documents} />
 

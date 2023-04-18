@@ -19,7 +19,7 @@ export const RequiredDocumentActionCreator = {
                 }
             )
     },
-    saveRequiredDocuments: (requestData) => (dispatch: any) => {
+    saveRequiredDocuments: (requestData: any) => (dispatch: any) => {
         const request = () => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_REQUEST })
         const success = (costs: any) => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_SUCCESS, payload: costs })
         const failure = (error: any) => ({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_FAILURE, payload: error })
@@ -36,7 +36,7 @@ export const RequiredDocumentActionCreator = {
                 }
             ).finally(() => dispatch({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_RESET }))
     },
-    deleteRequiredDocuments: (id) => (dispatch: any) => {
+    deleteRequiredDocuments: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_REQUEST })
         const success = (costs: any) => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_SUCCESS, payload: costs })
         const failure = (error: any) => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_FAILURE, payload: error })

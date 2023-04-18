@@ -12,7 +12,7 @@ const getSentDocumentRequest = async ({
     sortOrder,
     sortParam,
     textSearch
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
             pageSize,
@@ -38,7 +38,7 @@ const getSentDocumentRequest = async ({
     }
 }
 
-const sentDocumentRequest = async (requestBody) => {
+const sentDocumentRequest = async (requestBody: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request`, requestBody)
         const data = handleResponse(response)
@@ -48,7 +48,7 @@ const sentDocumentRequest = async (requestBody) => {
     }
 }
 
-const deleteDocumentRequest = async (id) => {
+const deleteDocumentRequest = async (id: any) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/${id}`)
         const data = handleResponse(response)

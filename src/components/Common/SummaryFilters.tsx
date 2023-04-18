@@ -23,7 +23,7 @@ const TENURES = [
 ]
 
 
-const SummaryFilters = ({ searchObj, setSearchObj }) => {
+const SummaryFilters = ({ searchObj, setSearchObj }: { searchObj: any, setSearchObj: any }) => {
     const dispatch = useDispatch();
     const formSearchAccount = useRef<any>();
     const [tenures, setTenures] = useState<{ statusCode: string, status: string }[]>([])
@@ -58,7 +58,7 @@ const SummaryFilters = ({ searchObj, setSearchObj }) => {
 
     }, [])
 
-    const coverageHandler = (type, e) => {
+    const coverageHandler = (type: any, e: any) => {
         const tempCoverage = Object.assign({}, searchObj)
         tempCoverage[type] = e.target.value === "" ? null : e.target.value
         setSearchObj(tempCoverage)

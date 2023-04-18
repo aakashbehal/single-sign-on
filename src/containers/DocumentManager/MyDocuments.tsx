@@ -70,7 +70,7 @@ const MyDocuments = () => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC) => {
+            const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'documentFolder') {
                     return dC
                 }
@@ -92,7 +92,7 @@ const MyDocuments = () => {
         deleteSuccess,
         deleteError])
 
-    const showDocumentListPage = (data) => {
+    const showDocumentListPage = (data: any) => {
         history.push({
             pathname: '/documents/document_list',
             search: `account_id=${data.folderName}`,
@@ -100,8 +100,8 @@ const MyDocuments = () => {
     }
 
     const search = (
-        pageSize,
-        pageNumber
+        pageSize: any,
+        pageNumber: any
     ) => {
         searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders(searchObj))
@@ -118,13 +118,13 @@ const MyDocuments = () => {
         search(pageSize, pageNumber)
     }
 
-    const downloadDocument = async (document) => {
+    const downloadDocument = async (document: any) => {
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await createZipForFolderDownload(document.documentPaths, document.folderName)
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
-    const handleDetails = (document) => {
+    const handleDetails = (document: any) => {
         setDetails(document)
         setShowDeleteConfirm(true)
     }
@@ -140,7 +140,7 @@ const MyDocuments = () => {
                     parentComponent={'myDocuments'}
                     Styles={Styles}
                     showAdvanceSearch={showAdvanceSearch}
-                    setShowAdvanceSearch={(flag) => setShowAdvanceSearch(flag)}
+                    setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
                     textSearchHook={textSearch}
                     searchObj={searchObj}
                     advanceSearchHook={advanceSearch}
@@ -167,10 +167,10 @@ const MyDocuments = () => {
                 }}
                 totalCount={totalCount}
                 actionArray={['folderName']}
-                handleNavigate={(data, column) => showDocumentListPage(data)}
+                handleNavigate={(data: any, column: any) => showDocumentListPage(data)}
                 currencyColumns={[]}
-                sortElement={(header) => setSortElement(header)}
-                sortType={(type) => setSortType(type)}
+                sortElement={(header: any) => setSortElement(header)}
+                sortType={(type: any) => setSortType(type)}
                 currentPage={pageNumber}
                 setCurrentPage={setPageNumber}
                 parentComponent={'myDocuments'}
@@ -178,10 +178,10 @@ const MyDocuments = () => {
                 hideShareArray={columnsSaved}
                 addEditArray={
                     {
-                        download: (data) => downloadDocument(data),
-                        share: (data) => setShowShare(data),
-                        view: (data) => showDocumentListPage(data),
-                        delete: (data) => handleDetails(data)
+                        download: (data: any) => downloadDocument(data),
+                        share: (data: any) => setShowShare(data),
+                        view: (data: any) => showDocumentListPage(data),
+                        delete: (data: any) => handleDetails(data)
                     }
                 }
                 onPaginationChange={(

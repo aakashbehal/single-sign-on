@@ -15,7 +15,7 @@ const getMyDocumentFolders = async ({
     clientAccountNumber,
     equabliAccountNumber,
     textSearch
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
@@ -36,7 +36,7 @@ const getMyDocumentFolders = async ({
         const data = handleResponse(response)
         let folders = data.response.datas
         const responseModified: any = {}
-        responseModified.folders = folders.map((folder) => {
+        responseModified.folders = folders.map((folder: any) => {
             folder.selected = false
             folder.fileSize = formatBytes(folder.fileSize)
             return folder
@@ -66,7 +66,7 @@ const getMyDocumentList = async ({
     receiveDateFrom,
     receiveDateTo,
     textSearch
-}) => {
+}: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
@@ -91,9 +91,11 @@ const getMyDocumentList = async ({
         const data = handleResponse(response)
         let documents = data.response.datas
         const responseModified: any = {}
-        responseModified.documents = documents.map((document) => {
+        responseModified.documents = documents.map((document: any) => {
+            let doc = document.objectKey.split("/")
             document.selected = false
             document.fileSize = formatBytes(document.fileSize)
+            document.documentName = doc[doc.length - 1]
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount
@@ -104,7 +106,7 @@ const getMyDocumentList = async ({
     }
 }
 
-const deleteDocument = async (documentId) => {
+const deleteDocument = async (documentId: any) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
         const data = handleResponse(response)
@@ -114,7 +116,7 @@ const deleteDocument = async (documentId) => {
     }
 }
 
-const deleteFolder = async (clientAccountNo) => {
+const deleteFolder = async (clientAccountNo: any) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folder/${clientAccountNo}`)
         const data = handleResponse(response)

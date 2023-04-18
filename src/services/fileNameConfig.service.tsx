@@ -1,7 +1,7 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getConfig = async (requestParams) => {
+const getConfig = async (requestParams: any) => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
@@ -12,7 +12,7 @@ const getConfig = async (requestParams) => {
     }
 }
 
-const getUserConfig = async (requestParams) => {
+const getUserConfig = async (requestParams: any) => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
@@ -23,7 +23,7 @@ const getUserConfig = async (requestParams) => {
     }
 }
 
-const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, userType, fieldsSelected) => {
+const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any) => {
     let allFields = [];
     if (dataFieldOptions && dataFieldOptions.length > 0) {
         allFields = dataFieldOptions[0].configVals
@@ -45,7 +45,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
         /**
          * Saved selections
          */
-        serverOptions.forEach((field, index) => {
+        serverOptions.forEach((field: any, index: any) => {
             fieldsSelected[index + 1] = field.configValSelectedCode
             selectedFields.push(field.configValSelectedCode)
             notAvailableFields.push(field.configValSelectedCode)
@@ -80,7 +80,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions, serverOptions, u
     return Obj
 }
 
-const saveUserConfiguration = async (requestBody) => {
+const saveUserConfiguration = async (requestBody: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             requestBody)
