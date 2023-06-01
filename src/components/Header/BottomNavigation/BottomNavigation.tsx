@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaTasks } from "react-icons/fa"
+import { MdOutlinePhonelinkSetup } from "react-icons/md"
 import { Link, useHistory } from 'react-router-dom';
 import { NavDropdown } from "react-bootstrap"
 
@@ -21,7 +22,9 @@ const rolesMapping: any = {
         "sent_document_requests",
         "received_document_requests",
         "download_history",
-        "templates"
+        "templates",
+        "client",
+        "partner"
     ],
     "Partner": [
         'documents',
@@ -108,17 +111,49 @@ const BottomNavigation = () => {
                                     active={"download_history" === activeRoute}
                                     to="/documents/download_history">Download History</NavDropdown.Item>
                             }
-                            {
+                            {/* {
                                 role && rolesMapping[role].includes('templates')
                                 && <NavDropdown.Item
                                     eventKey={"templates"}
                                     as={Link}
                                     active={"templates" === activeRoute}
                                     to="/documents/templates">Templates</NavDropdown.Item>
-                            }
+                            } */}
                         </NavDropdown>
                     </li>
                 }
+                <li className={Styles.dropdown_link}>
+                    <NavDropdown title={
+                        <>
+                            <MdOutlinePhonelinkSetup /> &nbsp;
+                            <span>Setup</span>
+                        </>
+                    }
+                        active={
+                            activeRoute === 'client'
+                            || activeRoute === "partner"
+                        }
+                        id="collasible-nav-dropdown"
+                        onSelect={handleSelect}
+                        className={Styles.dropdown_nav}>
+                        {
+                            role && rolesMapping[role].includes('client')
+                            && <NavDropdown.Item
+                                eventKey={"client"}
+                                as={Link}
+                                active={"client" === activeRoute}
+                                to="/setup/client">Clients</NavDropdown.Item>
+                        }
+                        {
+                            role && rolesMapping[role].includes('partner')
+                            && <NavDropdown.Item
+                                eventKey={"partner"}
+                                as={Link}
+                                active={"partner" === activeRoute}
+                                to="/setup/partner">Partners</NavDropdown.Item>
+                        }
+                    </NavDropdown>
+                </li>
             </ul >
         )
     }

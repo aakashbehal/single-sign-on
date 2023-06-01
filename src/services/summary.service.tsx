@@ -3,7 +3,7 @@ import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 
 // const getReceiveSummary = async () => {
 //     try {
-//         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
+//         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/summary`)
 //         const data = handleResponse(response)
 //         return data.response
 //     } catch (error: any) {
@@ -17,9 +17,8 @@ const getSentSummary = async ({
     portfolio,
     userId
 }: any) => {
-    console.log(`called`)
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`, {
             duration,
             product,
             portfolio,
@@ -29,7 +28,6 @@ const getSentSummary = async ({
         let modifiedData = {
             sent: (data.response.filter((d: any) => {
                 if (d.name === 'sentDocumentSummary') {
-                    console.log(d)
                     return d
                 } else return false
             }))[0].summary,
@@ -41,7 +39,6 @@ const getSentSummary = async ({
         }
         return modifiedData
     } catch (error: any) {
-        console.log(error)
         throw error
     }
 }
@@ -53,7 +50,7 @@ const getDocumentCoverage = async ({
     userId
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
             duration,
             product,
             portfolio,
@@ -88,14 +85,14 @@ const getSummaryDrillDown = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
             sortParam,
             docTypeCode,
             specificDocument,
-            tenture: duration === 'null' ? null : duration,
+            tenure: duration === 'null' ? null : duration,
             portfolio: portfolio === 'null' ? null : portfolio,
             productCode: product === 'null' ? null : product,
             userId: userId === 'null' ? null : userId,
@@ -113,6 +110,7 @@ const getSummaryDrillDown = async ({
         let documents = data.response.datas
         const responseModified: any = {}
         responseModified.documents = documents.map((document: any) => {
+            document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)
             return document
         })
@@ -146,14 +144,14 @@ const getSummaryDrillDownNot = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
             sortParam,
             docTypeCode,
             specificDocument,
-            tenture: duration === 'null' ? null : duration,
+            tenure: duration === 'null' ? null : duration,
             portfolio: portfolio === 'null' ? null : portfolio,
             productCode: product === 'null' ? null : product,
             userId: userId === 'null' ? null : userId,

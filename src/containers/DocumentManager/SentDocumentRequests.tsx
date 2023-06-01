@@ -148,7 +148,6 @@ const SentDocumentRequests = () => {
 
     const downloadHandler = async (document: any) => {
         //download file
-        console.log(document)
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
         dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
@@ -302,6 +301,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
             clientAccountNumber,
             document_type
         } = sendRequestRef.current
+        console.log(document_type.value)
         const requestObj = {
             "sendRequests": usersSelected,
             "originalAccountNumber": originalAccountNumber.value,
@@ -346,7 +346,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
                                             onChange={(selected) => {
                                                 let selectedUpdated = selected.map((s: any) => {
                                                     if (s.customOption) {
-                                                        return s.firstName
+                                                        return s.modifiedFirstName
                                                     }
                                                     return s.loginKey
                                                 })

@@ -1,4 +1,4 @@
-import { userService } from "../services";
+import { userService, commonServices } from "../services";
 import axios from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { saveAs } from 'file-saver';
@@ -8,7 +8,6 @@ import { parseUrl } from "@aws-sdk/url-parser";
 import { Sha256 } from "@aws-crypto/sha256-browser";
 import { formatUrl } from "@aws-sdk/util-format-url";
 import { history } from "./history";
-import { result } from "lodash";
 
 export const axiosCustom = axios.create(); // export this and use it in all your components
 
@@ -449,21 +448,23 @@ export const formatBytes = (bytes: any, decimals = 2) => {
 }
 
 
-export const getSignedURL = async (fileKey: any) => {
-    const region = "us-east-1"
-    const credentials: any = {
-        accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.REACT_APP_AWS_ACCESS_KEY_SECRET
-    }
-    const s3ObjectUrl = parseUrl(`https://eq-dev-dm.s3.${region}.amazonaws.com/${fileKey}`);
-    const presigner = new S3RequestPresigner({
-        credentials,
-        region,
-        sha256: Sha256 // In browsers
-    });
-    // Create a GET request from S3 url.
-    const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
-    return formatUrl(url);
+export const getSignedURL = async (ObjectKey: any, fileSize: any) => {
+    // const region = "us-east-1"
+    // const credentials: any = {
+    //     accessKeyId: process.env.REACT_APP_AWS_ACCESS_KEY_ID,
+    //     secretAccessKey: process.env.REACT_APP_AWS_ACCESS_KEY_SECRET
+    // }
+    // const s3ObjectUrl = parseUrl(`https://eq-dev-dm.s3.${region}.amazonaws.com/${fileKey}`);
+    // const presigner = new S3RequestPresigner({
+    //     credentials,
+    //     region,
+    //     sha256: Sha256 // In browsers
+    // });
+    // // Create a GET request from S3 url.
+    // const url = await presigner.presign(new HttpRequest(s3ObjectUrl));
+    // return formatUrl(url);
+    const presignedURL: any = await commonServices.getSignedURL(ObjectKey, fileSize)
+    return presignedURL
 }
 
 export const createZipForFolderDownload = (filePaths: any, folderName: any, isSave = true) => {
@@ -471,7 +472,7 @@ export const createZipForFolderDownload = (filePaths: any, folderName: any, isSa
         const zip = require('jszip')();
         var promises = filePaths.map(async (fP: any, index: any) => {
             let folders = zip.folder(fP.folderName)
-            let signedPath = await getSignedURL(fP.filePath)
+            let signedPath = await getSignedURL(fP.filePath, fP.fileSizeOriginal)
             let filePathSplit = fP.filePath.split('/')
             const type = (filePathSplit[filePathSplit.length - 1]).split(".")
             await axios({
@@ -487,11 +488,9 @@ export const createZipForFolderDownload = (filePaths: any, folderName: any, isSa
                 return folders.file(`${filePathSplit[filePathSplit.length - 1]}`, file);
             });
         })
-        console.log(promises)
         Promise.allSettled(promises).then(function (results) {
             zip.generateAsync({ type: "blob" })
                 .then((content: any) => {
-                    console.log(content)
                     return new File([content], `${folderName}.zip`, { type: 'application/x-zip-compressed' })
                 })
                 .then((file: any) => {
@@ -509,7 +508,7 @@ export const createZipForFolderDownload = (filePaths: any, folderName: any, isSa
 
 export const downloadSignedFile = (document: any) => {
     return new Promise(async (resolve, reject) => {
-        let signedPath = await getSignedURL(document.filePath)
+        let signedPath = await getSignedURL(document.filePath, document.fileSizeOriginal)
         const type = (document.documentName).split(".")
         await axios({
             url: signedPath,
@@ -541,3 +540,4 @@ export const checkIfAdvanceSearchIsActive = (formObj: any) => {
     }
     return formIsValid
 }
+

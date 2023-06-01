@@ -33,6 +33,8 @@ const DocumentCostConfiguration = lazy(() => import("./containers/User/DocumentC
 const RequiredDocuments = lazy(() => import("./containers/User/RequiredDocuments"));
 const SummaryDrillDownHave = lazy(() => import("./containers/DocumentManager/SummaryDrillDownHave"));
 const SummaryDrillDownNotHave = lazy(() => import("./containers/DocumentManager/SummaryDrillDownNotHave"));
+const ClientSetup = lazy(() => import("./containers/Setup/ClientSetup"));
+const PartnerSetup = lazy(() => import("./containers/Setup/PartnerSetup"));
 /**
  * Applications starting point
  * @returns 
@@ -55,7 +57,7 @@ const App = () => {
               <PublicRoute path="/login" component={Login} />
               <PublicRoute path="/activate" component={Activate} />
               <PublicRoute path="/set_password" component={SetPassword} />
-              <PublicRoute path="/forgot_password" component={ForgotPassword} />
+              <PublicRoute path="/forgot_password" component={ForgotPassword} />s
               <PublicRoute path="/change_password" component={ChangePassword} />
               <PublicRoute path="/onboarding" component={Registration} />
 
@@ -77,6 +79,10 @@ const App = () => {
               <PrivateRoute exact path="/documents/accounts_missing_documents" component={SummaryDrillDownNotHave} />
 
               <WithSidebar exact path="/my_documents_side" component={Documents} />
+
+              {/* Setup */}
+              <PrivateRoute exact path="/setup/client" component={ClientSetup} />
+              <PrivateRoute exact path="/setup/partner" component={PartnerSetup} />
 
             </Switch>
           </ErrorBoundary>

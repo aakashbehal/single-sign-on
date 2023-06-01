@@ -14,7 +14,7 @@ const getSentDocumentRequest = async ({
     textSearch
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
@@ -29,7 +29,10 @@ const getSentDocumentRequest = async ({
         const data = handleResponse(response)
         let sentRequests = data.response.datas
         const responseModified: any = {}
-        responseModified.sentRequests = sentRequests
+        responseModified.sentRequests = sentRequests.map((sR: any) => {
+            sR.fileSizeOriginal = sR.fileSize
+            return sR
+        })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columns
         return responseModified
@@ -40,7 +43,7 @@ const getSentDocumentRequest = async ({
 
 const sentDocumentRequest = async (requestBody: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request`, requestBody)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request`, requestBody)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -50,7 +53,7 @@ const sentDocumentRequest = async (requestBody: any) => {
 
 const deleteDocumentRequest = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

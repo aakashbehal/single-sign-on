@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { FaTasks } from "react-icons/fa"
-import { Link, useHistory } from 'react-router-dom';
+import { Link, NavLink, useHistory } from 'react-router-dom';
 import { NavDropdown } from "react-bootstrap"
+import { MdInventory2, MdOutlinePendingActions, MdOutlineDashboardCustomize, MdOutlineAdminPanelSettings, MdLiveHelp, MdOutlinePhonelinkSetup } from "react-icons/md";
 
 import Styles from "./Common.module.sass"
 import { userService } from "../../services";
 import LogoSmall from '../../assets/img/logo_small.png'
+import Logo from '../../assets/img/logo.png'
+import { BsSearch, BsUiChecks } from "react-icons/bs";
+import { HiOutlinePresentationChartLine } from "react-icons/hi";
+import { GrHelp } from "react-icons/gr";
 
 const rolesMapping = {
     "Equabli": [
@@ -39,6 +44,16 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
     const history = useHistory();
     const [activeRoute, setActiveRoute] = useState<string>('documents')
     const [role, setRole] = useState<any>(null)
+    const [menuDrop, setMenuDrop] = useState<any>({
+        action: false,
+        search: false,
+        inventory: false,
+        compliance: false,
+        report: false,
+        admin: false,
+        help: false,
+        documents: false
+    })
 
     useEffect(() => {
         const user = userService.getUser()
@@ -49,133 +64,83 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
             const locationArr: any = window.location.hash.split('/')
             setActiveRoute(locationArr[locationArr.length - 1])
         }
+        return () => {
+            setActiveRoute('documents')
+            setRole('null')
+            setMenuDrop({
+                action: false,
+                search: false,
+                inventory: false,
+                compliance: false,
+                report: false,
+                admin: false,
+                help: false,
+                documents: false
+            })
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const handleSelect = (eventKey: any) => {
-        setActiveRoute(eventKey)
+    useEffect(() => {
+        history.listen((a) => {
+            const locationArr: any = a?.pathname.split('/')
+            setActiveRoute(locationArr[locationArr.length - 1])
+        })
+    }, [history])
+
+    const gotToMyDocuments = () => {
+        history.push({
+            pathname: "/documents/my_documents",
+        })
     }
 
     return (
-        <div className={`sidebar ${!isClosed ? 'close' : ''}`}>
+        <div className={`sidebar ${!isClosed ? 'close_sidebar' : ''}`}>
             <div className="logo-details">
-                <img src={LogoSmall} alt="Equabli" height="100%" width="50px" style={{ cursor: 'pointer' }} />
-                <span className="logo_name">Equabli</span>
+                <img onClick={gotToMyDocuments} src={LogoSmall} alt="Equabli" height="100%" width="50px" style={{ cursor: 'pointer' }} />
+                {isClosed && <span className="logo_name">Equabli</span>}
             </div>
             <ul className="nav-links">
-                <li>
-                    <a href="#">
-                        <i className='bx bx-grid-alt' ></i>
-                        <span className="link_name">Dashboard</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">Category</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <div className="iocn-link">
-                        <a href="#">
-                            <i className='bx bx-collection' ></i>
-                            <span className="link_name">Category</span>
-                        </a>
-                        <i className='bx bxs-chevron-down arrow' ></i>
+                <li className={`${menuDrop.documents ? 'showMenu' : ''}`} onClick={() => {
+                    setMenuDrop((state: any) => {
+                        return { ...state, documents: !state.documents }
+                    })
+                }}>
+                    <div className={`icon-link ${(activeRoute === 'my_documents' || activeRoute === 'sent_document_requests' || activeRoute === 'received_document_requests' || activeRoute === 'download_history') ? 'active' : ''}`}>
+                        <NavLink to="/documents/my_documents">
+                            <MdOutlinePendingActions size={30} />
+                            <span className="link_name">Documents</span>
+                        </NavLink>
+                        <i className='bx bxs-chevron-down arrow'></i>
                     </div>
                     <ul className="sub-menu">
-                        <li><a className="link_name" href="#">Category</a></li>
-                        <li><a href="#">HTML & CSS</a></li>
-                        <li><a href="#">JavaScript</a></li>
-                        <li><a href="#">PHP & MySQL</a></li>
+                        <li><a className="link_name" onClick={(e) => void e}>Documents</a></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/my_documents">My Documents</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/sent_document_requests">Sent Document Requests</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/received_document_requests">Received Document Requests</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/download_history">Download History</NavLink></li>
                     </ul>
                 </li>
-                <li>
-                    <div className="iocn-link">
-                        <a href="#">
-                            <i className='bx bx-book-alt' ></i>
-                            <span className="link_name">Posts</span>
-                        </a>
-                        <i className='bx bxs-chevron-down arrow' ></i>
+                <li className={`${menuDrop.documents ? 'showMenu' : ''}`} onClick={() => {
+                    setMenuDrop((state: any) => {
+                        return { ...state, documents: !state.documents }
+                    })
+                }}>
+                    <div className={`icon-link ${(activeRoute === 'client' || activeRoute === 'partner') ? 'active' : ''}`}>
+                        <NavLink to="/documents/my_documents">
+                            <MdOutlinePhonelinkSetup size={30} />
+                            <span className="link_name">Setup</span>
+                        </NavLink>
+                        <i className='bx bxs-chevron-down arrow'></i>
                     </div>
                     <ul className="sub-menu">
-                        <li><a className="link_name" href="#">Posts</a></li>
-                        <li><a href="#">Web Design</a></li>
-                        <li><a href="#">Login Form</a></li>
-                        <li><a href="#">Card Design</a></li>
+                        <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
                     </ul>
                 </li>
-                <li>
-                    <a href="#">
-                        <i className='bx bx-pie-chart-alt-2' ></i>
-                        <span className="link_name">Analytics</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">Analytics</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i className='bx bx-line-chart' ></i>
-                        <span className="link_name">Chart</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">Chart</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <div className="iocn-link">
-                        <a href="#">
-                            <i className='bx bx-plug' ></i>
-                            <span className="link_name">Plugins</span>
-                        </a>
-                        <i className='bx bxs-chevron-down arrow' ></i>
-                    </div>
-                    <ul className="sub-menu">
-                        <li><a className="link_name" href="#">Plugins</a></li>
-                        <li><a href="#">UI Face</a></li>
-                        <li><a href="#">Pigments</a></li>
-                        <li><a href="#">Box Icons</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i className='bx bx-compass' ></i>
-                        <span className="link_name">Explore</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">Explore</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i className='bx bx-history'></i>
-                        <span className="link_name">History</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">History</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="#">
-                        <i className='bx bx-cog' ></i>
-                        <span className="link_name">Setting</span>
-                    </a>
-                    <ul className="sub-menu blank">
-                        <li><a className="link_name" href="#">Setting</a></li>
-                    </ul>
-                </li>
-                {/* <li>
-                    <div className="profile-details">
-                        <div className="profile-content">
-                            <img src="image/profile.jpg" alt="profileImg">
-                        </div>
-                        <div className="name-job">
-                            <div className="profile_name">Prem Shahi</div>
-                            <div className="job">Web Desginer</div>
-                        </div>
-                        <i className='bx bx-log-out' ></i>
-                    </div>
-                </li> */}
             </ul>
-        </div>
+        </div >
     );
 };
 

@@ -123,7 +123,7 @@ const SummaryFilters = ({ searchObj, setSearchObj }: { searchObj: any, setSearch
                                 {
                                     (productTypes && productTypes.length > 0) &&
                                     productTypes.map((product: any, index: number) => {
-                                        return <option key={`cr_${index}`} value={product.productCode}>{product.name}</option>
+                                        return <option key={`cr_${index}`} value={product.shortName}>{product.fullName}</option>
                                     })
                                 }
                             </Form.Control>

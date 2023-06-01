@@ -47,7 +47,7 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                     part = `admin/alerts`
                     break
                 case 'profile':
-                    part = `profile/document_general_configuration`
+                    part = `profile/user_account`
                     break
                 case 'documents':
                     part = `documents/my_documents`

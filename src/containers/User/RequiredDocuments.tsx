@@ -13,6 +13,7 @@ import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import Styles from "./User.module.sass";
 import { RequiredDocumentActionCreator } from "../../store/actions/requiredDocuments.actions";
 import { createMessage } from "../../helpers/messages"
+import NoRecord from "../../components/Common/NoResult";
 
 const RequiredDocuments = () => {
     const dispatch = useDispatch()
@@ -155,7 +156,7 @@ const RequiredDocuments = () => {
                                                 {
                                                     (productTypes && productTypes.length > 0) &&
                                                     productTypes.map((dT: any, index: number) => {
-                                                        return <option key={`cr_${index}`} value={dT.productCode}>{dT.name}</option>
+                                                        return <option key={`cr_${index}`} value={dT.shortName}>{dT.fullName}</option>
                                                     })
                                                 }
                                             </Form.Control>
@@ -201,7 +202,7 @@ const RequiredDocuments = () => {
                     !loading && requiredDocuments.length === 0
                     && <thead>
                         <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                            <th>No Records</th>
+                            <NoRecord />
                         </tr>
                     </thead>
                 }
@@ -315,7 +316,6 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
             }
         }
         setFormError(error)
-        console.log(error)
         return formIsValid
     }
 
@@ -366,7 +366,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
                                         {
                                             (productTypes && productTypes.length > 0) &&
                                             productTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} disabled={selectedProduct.indexOf(dT.productCode) !== -1} value={dT.productCode}>{dT.name}</option>
+                                                return <option key={`cr_${index}`} disabled={selectedProduct.indexOf(dT.shortName) !== -1} value={dT.shortName}>{dT.fullName}</option>
                                             })
                                         }
                                     </Form.Control>

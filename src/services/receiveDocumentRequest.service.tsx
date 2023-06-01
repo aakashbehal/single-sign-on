@@ -19,7 +19,7 @@ const getReceiveDocumentRequest = async ({
     requestStatus
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
@@ -42,7 +42,7 @@ const getReceiveDocumentRequest = async ({
         responseModified.sentRequests = sentRequests.map((sR: any) => {
             sR.documentName = sR.documentName === 'pending' ? null : sR.documentName
             sR.requestStatus = !sR.documentName || sR.documentName === 'pending' ? 'Open' : 'Fulfilled'
-            sR.dueDate = '03/10/2023'
+            sR.fileSizeOriginal = sR.fileSize
             return sR
         })
         responseModified.totalCount = data.response.metadata.recordCount
@@ -57,7 +57,7 @@ const downloadDocumentRequest = async (
     documentId: any
 ) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
             documentId
         })
         const data = handleResponse(response)
@@ -69,7 +69,7 @@ const downloadDocumentRequest = async (
 
 const deleteReceiveDocumentRequest = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

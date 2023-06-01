@@ -22,21 +22,20 @@ const WithSidebar = ({ component: Component, auth, ...rest }: any) => {
             render={props =>
                 userService.isLoggedIn() ? (
                     <div>
-
                         <div>
-                            {/* sidebar */}
                             <Sidebar isClosed={isClosed} />
                         </div>
-                        <section className="home-section">
+                        <section className={`home-section ${!isClosed ? 'close_sidebar' : ''} `} >
                             <div className="home-content">
                                 <i className='bx bx-menu' onClick={handleClick}></i>
-                                <Suspense fallback={LoadingIndicator()}>
-                                    <div style={{ padding: "20px", height: '100%' }}>
-                                        <Breadcrumbs />
-                                        <Component {...props} />
-                                    </div>
-                                </Suspense>
+                                <TopNavigation isSidebar={true} />
                             </div>
+                            <Suspense fallback={LoadingIndicator()}>
+                                <div style={{ padding: "20px", height: '100%' }}>
+                                    <Breadcrumbs />
+                                    <Component {...props} />
+                                </div>
+                            </Suspense>
                         </section>
                         {/* top container */}
 

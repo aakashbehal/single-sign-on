@@ -4,6 +4,8 @@ import { Form, Button } from "react-bootstrap"
 import { CgSpinnerAlt } from "react-icons/cg"
 import { useToasts } from 'react-toast-notifications';
 import ReCAPTCHA from "react-google-recaptcha";
+import { initializeApp } from "firebase/app";
+import { getToken, getMessaging, onMessage } from 'firebase/messaging';
 
 import { history } from "../../helpers";
 import Styles from './Login.module.sass';
@@ -12,8 +14,10 @@ import { LoginActionCreator } from "../../store/actions/auth.actions"
 import { encryptPassword } from "../../helpers/util"
 import { userService } from "../../services";
 import useDocumentTitle from "../../components/Common/DocumentTitle";
+import { requestForToken } from "../../helpers/firebase"
 
 const Login: FC = () => {
+
     useDocumentTitle('Equabli - Document Manager', true);
     const { addToast, removeAllToasts } = useToasts();
     const dispatch = useDispatch();
@@ -40,6 +44,7 @@ const Login: FC = () => {
 
     useEffect(() => {
         if (user && JSON.stringify(user) !== "{}") {
+            requestForToken()
             removeAllToasts()
             if (userService.isPasswordResetRequired()) {
                 addToast("Password expired, Please change Password", { appearance: 'error', autoDismiss: false })

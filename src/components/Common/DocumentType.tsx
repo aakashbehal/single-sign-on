@@ -59,7 +59,7 @@ const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false }: { 
                 value={value}
                 className="select_custom"
                 onChange={(e) => { setValue(e.target.value) }}>
-                <option></option>
+                <option hidden disabled>Select Document Type...</option>
                 {
                     documentTypes && documentTypes.sort(function (a: any, b: any) {
                         if (a.partnerName < b.partnerName) { return -1; }

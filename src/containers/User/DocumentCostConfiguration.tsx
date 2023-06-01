@@ -12,6 +12,7 @@ import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import { createMessage } from "../../helpers/messages"
 
 import Styles from "./User.module.sass";
+import NoRecord from "../../components/Common/NoResult";
 
 const DocumentCostConfiguration = () => {
     const dispatch = useDispatch();
@@ -179,7 +180,7 @@ const DocumentCostConfiguration = () => {
                     !loading && cost.length === 0
                     && <thead>
                         <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                            <th>No Records</th>
+                            <NoRecord />
                         </tr>
                     </thead>
                 }
@@ -200,7 +201,7 @@ const DocumentCostConfiguration = () => {
                                     return (<tr key={`cost_${index}`}>
                                         <td>{cT.documentType}</td>
                                         <td>{cT.clientName || '-'}</td>
-                                        <td>${cT.cost}</td>
+                                        <td>${(Number(cT.cost)).toFixed(2)}</td>
                                         <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
                                             <span>
                                                 <OverlayTrigger
@@ -292,7 +293,6 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
             }
         }
         setFormError(error)
-        console.log(error)
         return formIsValid
     }
 

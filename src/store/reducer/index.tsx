@@ -14,6 +14,12 @@ import sentDocumentRequestReducer from "./sentDocumentRequest.reducer";
 import shareReducer from "./share.reducer";
 import summaryReducer from "./summary.reducer";
 import userReducer from "./user.reducer";
+import subscriptionReducer from "./subscription.reducer";
+import usageReducer from "./usage.reducer";
+import invoiceReducer from "./invoice.reducer";
+import clientSetupReducer from "./clientSetup.reducer";
+import partnerSetupReducer from "./partnerSetup.reducer";
+import notificationReducer from "./notification.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -29,7 +35,13 @@ const appReducer = combineReducers({
     downloadHistory: downloadHistoryRequestReducer,
     users: userReducer,
     summary: summaryReducer,
-    share: shareReducer
+    share: shareReducer,
+    subscription: subscriptionReducer,
+    usage: usageReducer,
+    invoice: invoiceReducer,
+    clients: clientSetupReducer,
+    partners: partnerSetupReducer,
+    notification: notificationReducer
 })
 
 const rootReducer = (state: any, action: any) => {

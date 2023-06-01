@@ -11,7 +11,6 @@ export const configureFakeBackend = () => {
         const body = opts.data && JSON.parse(opts.data)
         const { loginKey, loginSecret } = body;
         let role = 'Client'
-        console.log(loginKey, loginKey === 'abehal@equabli.com')
         if (loginKey === 'abehal@equabli.com') {
             role = 'Partner'
         }

@@ -125,7 +125,6 @@ const DocumentsList = ({ location }: { location: any }) => {
 
     const downloadHandler = async (document: any) => {
         //download file
-        console.log(document)
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
         dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
@@ -210,7 +209,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         </Col>
         {
             uploadDocModal
-            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} />
+            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} details={{ accountId: AccountId }} />
         }
         {
             showDocument &&

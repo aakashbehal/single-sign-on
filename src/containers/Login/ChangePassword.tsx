@@ -91,13 +91,12 @@ const ChangePassword = () => {
             req.clientId = tempUser.clientId
         }
         try {
-            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/changePasswordByUserDetails`, req)
+            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/changePasswordByUserDetails`, req)
             const data = handleResponse(response)
             addToast("Password Changed Successfully, Please login with new Credentials", { appearance: 'success', autoDismiss: true })
             localStorage.removeItem('tempUser')
             history.push('/login')
         } catch (error: any) {
-            console.log(error)
             addToast(error?.data?.message || error || 'Issue while resetting user password', { appearance: 'error', autoDismiss: false })
             throw error
         }

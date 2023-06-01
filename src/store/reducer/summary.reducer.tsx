@@ -71,7 +71,6 @@ const summaryReducer = (state = initialState, action: { type: any; payload: any;
                 errorRequest: null
             }
         case SentDocumentSummary.SENT_DOCUMENT_SUMMARY_SUCCESS:
-            console.log(action.payload)
             return {
                 ...state,
                 loadingSent: false,

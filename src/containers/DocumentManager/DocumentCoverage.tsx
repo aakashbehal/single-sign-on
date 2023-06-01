@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import { Col, ProgressBar, OverlayTrigger, Tooltip } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillWarning } from "react-icons/ai";
-import { CgSpinnerAlt } from "react-icons/cg";
 import { useHistory } from "react-router-dom";
 
 import Styles from "./DocumentManager.module.sass";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import SummaryFilters from "../../components/Common/SummaryFilters";
 import SkeletonLoading from "../../helpers/skeleton-loading";
+import NoRecord from "../../components/Common/NoResult";
 
 
 const DocumentCoverage = ({ collapse }: any) => {
@@ -78,6 +78,11 @@ const DocumentCoverage = ({ collapse }: any) => {
                 {
                     !errorCoverage && loadingCoverage &&
                     <SkeletonLoading repeats={3} />
+                    // <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                }
+                {
+                    !errorCoverage && !loadingCoverage && documentCoverage.length === 0 &&
+                    <NoRecord />
                     // <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
                 }
                 {

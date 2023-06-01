@@ -389,6 +389,10 @@ select option
 			font-weight: 600
 .progress-bar
 	background-color: $bittersweet
+.is_low
+	&>div
+		color: $black
+		padding-top: 2px
 .table_top_section
 	align-items: baseline
 	justify-content: right
@@ -397,15 +401,18 @@ select option
 	display: flex
 	justify-content: center
 	padding: .1rem
-	.shared_with
+	.shared_with, .profile_pic_share
 		padding: 0rem 0.65rem
 		color: white
 		font-weight: 600
 		border-radius: 50%
+		border: 3px solid white
 		&:nth-child(even)
 			background: lighten(red, 25)
 		&:nth-child(odd)
 			background: lighten(black,10)
+	.profile_pic_share
+		padding: 0
 .quicksight-embedding-iframe
 	height: 90vh !important
 .select_custom:disabled
@@ -565,7 +572,7 @@ select option
 		left: 0
 		transform: translateX(-100%)
 		background-image: linear-gradient(90deg,rgba(#fff, 0) 0,rgba(#fff, 0.2) 20%,rgba(#fff, 0.5) 60%,rgba(#fff, 0))
-		animation: shimmer 2s infinite
+		animation: shimmer 1.2s infinite
 		content: ''
 .skeleton-box-small
 	width: 50%
@@ -600,228 +607,6 @@ select option
 .input_custom_type_ahead
 	.rbt-input-multi
 		height: 3rem !important
-
-// ========================================
-//  Sidebar
-// ========================================
-.sidebar
-	position: fixed
-	top: 0
-	left: 0
-	height: 100%
-	width: 260px
-	background: #11101d
-	z-index: 100
-	transition: all ease 0.3s
-	&.close
-		width: 78px
-	& .logo-details
-		height: 60px
-		width: 100%
-		display: flex
-		align-items: center
-		justify-content: center
-		padding-top: 1rem
-	& .logo-details img
-		font-size: 30px
-		color: #fff
-		height: 50px
-		text-align: center
-		line-height: 50px
-		margin-right: .5rem
-	& .logo-details .logo_name
-		font-size: 2.5rem
-		color: #fff
-		font-weight: 600
-		transition: 0.3s ease
-		transition-delay: 0.1s
-	&.close .logo-details .logo_name
-		transition-delay: 0s
-		opacity: 0
-		pointer-events: none
-	& .nav-links
-		height: 100%
-		padding: 30px 0 150px 0
-		overflow: auto
-	&.close .nav-links
-		overflow: visible
-	& .nav-links::-webkit-scrollbar
-		display: none
-	& .nav-links li
-		position: relative
-		list-style: none
-		transition: all 0.4s ease
-	& .nav-links li:hover
-		background: #1d1b31
-	& .nav-links li .iocn-link
-		display: flex
-		align-items: center
-		justify-content: space-between
-	&.close .nav-links li .iocn-link
-		display: block
-	& .nav-links li i
-		height: 50px
-		min-width: 78px
-		text-align: center
-		line-height: 50px
-		color: #fff
-		font-size: 20px
-		cursor: pointer
-		transition: all 0.3s ease
-	& .nav-links li.showMenu i.arrow
-		transform: rotate(-180deg)
-	&.close .nav-links i.arrow
-		display: none
-	& .nav-links li a
-		display: flex
-		align-items: center
-		text-decoration: none
-	& .nav-links li a .link_name
-		font-size: 18px
-		font-weight: 400
-		color: #fff
-		transition: all 0.4s ease
-	&.close .nav-links li a .link_name
-		opacity: 0
-		pointer-events: none
-	& .nav-links li .sub-menu
-		padding: 6px 6px 14px 80px
-		margin-top: -10px
-		background: #1d1b31
-		display: none
-	& .nav-links li.showMenu .sub-menu
-		display: block
-	& .nav-links li .sub-menu a
-		color: #fff
-		font-size: 15px
-		padding: 5px 0
-		white-space: nowrap
-		opacity: 0.6
-		transition: all 0.3s ease
-	& .nav-links li .sub-menu a:hover
-		opacity: 1
-	&.close .nav-links li .sub-menu
-		position: absolute
-		left: 100%
-		top: -10px
-		margin-top: 0
-		padding: 10px 20px
-		border-radius: 0 6px 6px 0
-		opacity: 0
-		display: block
-		pointer-events: none
-		transition: 0s
-	&.close .nav-links li:hover .sub-menu
-		top: 0
-		opacity: 1
-		pointer-events: auto
-		transition: all 0.4s ease
-	& .nav-links li .sub-menu .link_name
-		display: none
-	&.close .nav-links li .sub-menu .link_name
-		font-size: 18px
-		opacity: 1
-		display: block
-	& .nav-links li .sub-menu.blank
-		opacity: 1
-		pointer-events: auto
-		padding: 3px 20px 6px 16px
-		opacity: 0
-		pointer-events: none
-	& .nav-links li:hover .sub-menu.blank
-		top: 50%
-		transform: translateY(-50%)
-	& .profile-details
-		position: fixed
-		bottom: 0
-		width: 260px
-		display: flex
-		align-items: center
-		justify-content: space-between
-		background: #1d1b31
-		padding: 12px 0
-		transition: all 0.5s ease
-	&.close .profile-details
-		background: none
-	&.close .profile-details
-		width: 78px
-	& .profile-details .profile-content
-		display: flex
-		align-items: center
-	& .profile-details img
-		height: 52px
-		width: 52px
-		object-fit: cover
-		border-radius: 16px
-		margin: 0 14px 0 12px
-		background: #1d1b31
-		transition: all 0.5s ease
-	&.close .profile-details img
-		padding: 10px
-
-.sidebar .profile-details .profile_name,
-.sidebar .profile-details .job
-	color: #fff
-	font-size: 18px
-	font-weight: 500
-	white-space: nowrap
-
-.sidebar.close .profile-details i,
-.sidebar.close .profile-details .profile_name,
-.sidebar.close .profile-details .job
-	display: none
-
-.sidebar .profile-details .job
-	font-size: 12px
-
-.sidebar.close .home-section
-	left: 78px
-	width: calc(100% - 78px)
-
-.home-section
-	position: relative
-	background: #E4E9F7
-	height: 100vh
-	left: 260px
-	width: calc(100% - 260px)
-	transition: all 0.5s ease
-
-	& .home-content
-		height: 60px
-		display: flex
-		align-items: center
-
-.home-section .home-content .bx-menu,
-.home-section .home-content .text
-	color: #11101d
-	font-size: 35px
-
-.home-section .home-content .bx-menu
-	margin: 0 15px
-	cursor: pointer
-
-.home-section .home-content .text
-	font-size: 26px
-	font-weight: 600
-
-@media (max-width: 400px)
-	.sidebar.close .nav-links li .sub-menu
-		display: none
-
-	.sidebar
-		width: 78px
-		&.close
-			width: 0
-
-	.home-section
-		left: 78px
-		width: calc(100% - 78px)
-		z-index: 100
-
-	.sidebar.close ~ .home-section
-		width: 100%
-		left: 0
-
 // ================================
 // Pricing Table
 // ================================
@@ -900,6 +685,7 @@ select option
 	font-weight: 700
 
 .pricing-button
+	cursor: pointer
 	border: 1px solid #9dd1ff
 	border-radius: 10px
 	color: #348EFE
@@ -920,3 +706,295 @@ select option
 .pricing-button.is-featured:hover,
 .pricing-button.is-featured:active
 	background-color: #269aff
+
+.no_result
+	display: flex
+	justify-content: center
+	align-items: center
+	div
+		display: block
+		margin: 0 auto
+		padding-top: 1rem
+		svg
+			display: block
+			margin: 0 auto
+.profile_pic_share
+	width: 2.2rem
+	object-fit: cover
+	height: 2.2rem
+	border-radius: 50%
+.profile_pic_account
+	width: 2.2rem
+	border-radius: 50%
+	height: 2.2rem
+	object-fit: cover
+	margin-right: 1rem
+	border: 2px solid white
+	background: black
+.profile_picture_container
+	display: flex
+	justify-content: center
+	border-right: 1px solid white
+	height: 100%
+	position: relative
+	>div
+		img
+			width: 10rem
+			height: 10rem
+			border-radius: 50%
+			object-fit: cover
+			border: 2px solid white
+			background: white
+			margin: 0 auto
+			display: block
+		h5, p
+			text-align: center
+			font-weight: 600
+			margin-top: 2rem
+		p
+			padding: 0.2rem 1rem
+			background: white
+			border-radius: 28px
+.edit_profile_pic
+	background: white
+	height: 2rem
+	width: 2rem
+	justify-content: center
+	display: flex
+	align-items: center
+	border-radius: 50%
+	position: absolute
+	top: 120px
+	right: 55px
+	box-shadow: 0px 0px 5px 0px #6d6c6c
+	cursor: pointer
+.temp_image
+	img
+		width: 15rem
+		height: 15rem
+		object-fit: cover
+		border-radius: 50%
+		border: 3px dashed black
+
+// ==================================
+// Sidebar 
+// ==================================
+.sidebar
+	position: fixed
+	top: 0
+	left: 0
+	height: 100%
+	width: 375px
+	background: #11101d
+	z-index: 100
+	transition: all 0.1s ease
+	&.close_sidebar
+		width: 78px
+		.logo-details
+			.logo_name
+				transition-delay: 0s
+				opacity: 0
+				pointer-events: none
+		.nav-links
+			overflow: visible
+			li
+				.icon-link
+					display: block
+				a
+					.link_name
+						opacity: 0
+						pointer-events: none
+				i.arrow
+					display: none
+				.sub-menu
+					position: absolute
+					left: 100%
+					top: -10px
+					margin-top: 0
+					padding: 10px 20px
+					border-radius: 0 6px 6px 0
+					opacity: 0
+					display: block
+					pointer-events: none
+					transition: 0s
+					.link_name
+						font-size: 18px
+						opacity: 1
+						display: block
+				&:hover
+					.sub-menu
+						top: 0
+						opacity: 1
+						pointer-events: auto
+						transition: all 0.4s ease
+	.logo-details
+		height: 60px
+		width: 100%
+		display: flex
+		align-items: center
+		justify-content: center
+		img
+			font-size: 30px
+			color: #fff
+			height: 45px
+			min-width: 55px
+			text-align: center
+			line-height: 50px
+			margin-right: .3rem
+		.logo_name
+			font-size: 30px
+			color: #fff
+			font-weight: 600
+			transition: 0.3s ease
+			transition-delay: 0.1s
+	.nav-links
+		height: 100%
+		padding: 30px 0 150px 0
+		overflow: auto
+		li
+			position: relative
+			list-style: none
+			transition: all 0.4s ease
+			&:hover
+				background: #1d1b31
+				.sub-menu.blank
+					// top: 50%
+					// transform: translateY(-50%)
+					top: 0
+					opacity: 1
+					pointer-events: auto
+					transition: all 0.4s ease
+			.icon-link
+				display: flex
+				align-items: center
+				justify-content: space-between
+				a
+					height: 62px
+				&.active
+					background: #ff7765
+			a
+				display: flex
+				align-items: center
+				text-decoration: none
+				.link_name
+					font-size: 18px
+					font-weight: 400
+					color: #fff
+					transition: all 0.2s ease
+					transition-delay: 0.2s
+			i
+				min-width: 78px
+				text-align: center
+				line-height: 50px
+				color: #fff
+				font-size: 20px
+				cursor: pointer
+				transition: all 0.3s ease
+			svg
+				min-width: 78px
+				text-align: center
+				line-height: 50px
+				color: #fff
+				font-size: 20px
+				cursor: pointer
+				transition: all 0.3s ease
+			.sub-menu
+				padding: 6px 6px 14px 80px
+				margin-top: -10px
+				background: #1d1b31
+				display: none
+				li
+					margin-left: 1rem
+					&:first-child
+						margin: 0
+				a
+					color: #fff
+					font-size: 15px
+					padding: 5px 0
+					white-space: nowrap
+					opacity: 0.6
+					transition: all 0.3s ease
+					&.link_name
+						display: none
+					&.active
+						font-weight: 600
+						color: white
+						opacity: 1
+				.blank
+					opacity: 1
+					pointer-events: auto
+					padding: 3px 20px 6px 16px
+					opacity: 0
+					pointer-events: none
+			&.showMenu
+				i.arrow
+					transform: rotate(-180deg)
+				.sub-menu
+					display: block
+
+.home-section
+	position: relative
+	height: 100vh
+	left: 375px
+	width: calc(100% - 375px)
+	transition: all 0.1s ease
+	&.close_sidebar
+		left: 78px
+		width: calc(100% - 78px)
+		.home-content
+			transition-delay: 0s
+			width: calc( 100% - 78px )
+			.menu
+				transform: rotate(0deg)
+
+.home-section .home-content
+	height: 60px
+	display: flex
+	align-items: center
+	background: #e9ecef
+	position: fixed
+	width: calc( 100% - 375px )
+	box-shadow: -1px 0px 1px 0px black
+	transition-delay: 0s
+	z-index: 999
+	.menu
+		transition: transform 0.3s ease
+		transform: rotate(180deg)
+
+.home-section .home-content .menu,
+.home-section .home-content .text
+	color: #11101d
+	font-size: 35px
+
+.home-section .home-content .menu
+	margin: 0 15px
+	cursor: pointer
+
+.home-section .home-content .text
+	font-size: 26px
+	font-weight: 600
+
+@media (max-width: 400px)
+	.sidebar.close .nav-links li .sub-menu
+		display: none
+	.sidebar
+		width: 78px
+
+		&.close
+			width: 0
+	.home-section
+		left: 78px
+		width: calc(100% - 78px)
+		z-index: 100
+	.sidebar.close ~ .home-section
+		width: 100%
+		left: 0
+.closeHandler
+	height: 100%
+	display: flex
+	justify-content: center
+	align-items: center
+	border-top-right-radius: 50%
+	border-bottom-right-radius: 50%
+	svg
+		fill: black

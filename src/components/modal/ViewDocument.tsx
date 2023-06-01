@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, Container } from "react-bootstrap"
 import { CgSpinnerAlt } from 'react-icons/cg';
-import { getSignedURL } from '../../helpers/util';
-
 
 import Styles from "./Modal.module.sass";
+import { commonServices } from '../../services';
 
 const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, documentData: any }) => {
 
     const [documentType, setDocumentType] = useState('')
     const [imageUrl, setImageUrl] = useState<any>("")
     const [loadingImage, setLoadingImage] = useState(false)
-    console.log(documentType)
     useEffect(() => {
         const splitDocumentName = documentData.fileName ? documentData.fileName.split('.') : documentData.documentName.split('.')
         setDocumentType(splitDocumentName[splitDocumentName.length - 1])
@@ -25,7 +23,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
         if (documentType === 'pdf' || documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg') {
             setLoadingImage(true)
         }
-        let fileUrl = await getSignedURL(documentData.objectKey || documentData.filePath)
+        let fileUrl = await commonServices.getSignedURL(documentData.objectKey || documentData.filePath, documentData.fileSizeOriginal)
         setImageUrl(fileUrl)
     }
 

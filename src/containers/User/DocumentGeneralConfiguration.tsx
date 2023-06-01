@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { Col, Row, Form, Button } from "react-bootstrap"
+import { Col, Row, Form, Button, OverlayTrigger, Tooltip } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
 import { HiArrowNarrowDown, HiArrowNarrowUp } from "react-icons/hi"
 
@@ -10,6 +10,9 @@ import UseDocumentTitle from "../../helpers/useDocumentTitle"
 import { useToasts } from "react-toast-notifications"
 import { createMessage } from "../../helpers/messages"
 import { CgSpinnerAlt } from "react-icons/cg"
+import { BsFillQuestionCircleFill } from "react-icons/bs"
+import { TypesActionCreator } from "../../store/actions/common/types.actions"
+import xlsx from "json-as-xlsx"
 
 const DocumentGeneralConfiguration = () => {
     const clientDefault = ["CAN", "DT", "PC"]
@@ -53,7 +56,9 @@ const DocumentGeneralConfiguration = () => {
         isLoadingDocumentPolicy,
         saveLoading,
         saveSuccess,
-        saveError
+        saveError,
+        productTypes,
+        documentTypes
     } = useSelector((state: any) => ({
         dataConjunction: state.fileNameConfig.conjunction.data,
         isLoading: state.fileNameConfig.conjunction.loading,
@@ -68,7 +73,9 @@ const DocumentGeneralConfiguration = () => {
         dataDocumentPolicy: state.fileNameConfig.documentPolicy.data,
         saveLoading: state.fileNameConfig.saveConfig.loading,
         saveSuccess: state.fileNameConfig.saveConfig.success,
-        saveError: state.fileNameConfig.saveConfig.error
+        saveError: state.fileNameConfig.saveConfig.error,
+        productTypes: state.types.productType.data,
+        documentTypes: state.types.documentType.data,
     }))
 
     useEffect(() => {
@@ -113,6 +120,8 @@ const DocumentGeneralConfiguration = () => {
         dispatch(FileNameConfigActionCreator.getUserRetentionPolicy())
         dispatch(FileNameConfigActionCreator.getUserSeparator())
         dispatch(FileNameConfigActionCreator.getUserDocumentPolicy())
+        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(TypesActionCreator.getDocumentTypes())
     }, [])
 
     useEffect(() => {
@@ -316,6 +325,64 @@ const DocumentGeneralConfiguration = () => {
         return flag
     }
 
+    const downloadProductCodes = (fileName: string) => {
+        let settings = {
+            fileName: fileName
+        }
+        let objToDownload: any = []
+        let tempJson: any = []
+        if (fileName === 'Product Codes') {
+            objToDownload = [
+                {
+                    sheet: "Matrix",
+                    columns: [
+                        { label: "Product Code", value: "productCode" },
+                        { label: "Product Name", value: "productName" }
+                    ],
+                    content: [],
+                }
+            ]
+            tempJson = productTypes && productTypes.map((data: any) => {
+                let obj: any = {
+                    "productCode": data.shortName,
+                    "productName": data.fullName
+                }
+                return obj
+            })
+        } else {
+            objToDownload = [
+                {
+                    sheet: "Matrix",
+                    columns: [
+                        { label: "Document Code", value: "documentCode" },
+                        { label: "Document Name", value: "documentName" }
+                    ],
+                    content: [],
+                }
+            ]
+            tempJson = documentTypes && documentTypes.map((data: any) => {
+                let obj: any = {
+                    "documentCode": data.shortCode,
+                    "documentName": data.documentType
+                }
+                return obj
+            })
+        }
+
+        objToDownload[0].content = tempJson
+        xlsx(objToDownload, settings)
+    }
+
+    const showExample = (json: any) => {
+        let index: number = 0
+        let documentNameGenerated = ''
+        for (let key in fieldsSelected) {
+            documentNameGenerated += `${index === 0 ? '' : json.conj}${json[fieldsSelected[key]]}`
+            index++
+        }
+        return documentNameGenerated
+    }
+
     return <>
         {
             isLoading && <CgSpinnerAlt className="spinner" size={50} />
@@ -379,12 +446,23 @@ const DocumentGeneralConfiguration = () => {
                                                         {
                                                             (filteredOptions && filteredOptions.length > 0) &&
                                                             filteredOptions.map((cR: any, index: number) => {
-                                                                return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>{cR.fieldValue}</option>
+                                                                return <option disabled={!cR.available} key={`cr_${index}`} value={cR.shortCode}>
+                                                                    {cR.fieldValue}
+                                                                </option>
                                                             })
                                                         }
                                                     </Form.Control>
                                                 </Col>
-                                                <Form.Label className="label_custom">Field {keyIndex + 1} </Form.Label>
+                                                <Form.Label className="label_custom">Field {keyIndex + 1}
+                                                    {
+                                                        (fieldsSelected[keyName] === 'PC' || fieldsSelected[keyName] === 'DT') &&
+                                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Codes')} />
+                                                    }
+
+                                                    {
+                                                        (fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>
+                                                    }
+                                                </Form.Label>
                                                 <div className={Styles.movement_group}>
                                                     {
                                                         keyIndex !== 0
@@ -409,7 +487,39 @@ const DocumentGeneralConfiguration = () => {
                         </Col>
                     </Form>
                 </Col >
-                <Col lg={3} sm={12}></Col>
+                <Col lg={3} sm={12}>
+                    <Row>
+                        <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Examples</h5></Col>
+                    </Row>
+                    <br />
+                    <br />
+                    <Row style={{ padding: '0 2rem' }}>
+                        <ul>
+                            <li>
+                                <span> Conjunction = </span><b>Underscore[_]</b><br />
+                                <span> Client Account Number =</span> <b>40001</b><br />
+                                <span> Document Type = </span><b>Bill of Sales </b><br />
+                                <span> Product Code = </span><b>Credit Card</b><br />
+                                <span> Original Account Number = </span><b>250001</b><br />
+                                <span> Document Generation Date = </span><b>20 December 2023</b><br />
+                                <span> Document Name =</span> <b>Bills</b><br />
+                            </li>
+                        </ul>
+                        <p className={Styles.document_name_example_p}>
+                            {
+                                showExample({
+                                    conj: dataUserConjunction ? dataUserConjunction.configValSelectedCode : dataConjunction.defaultValue,
+                                    CAN: 40001,
+                                    DT: 'BS',
+                                    PC: 'CC',
+                                    OAN: 250001,
+                                    DGD: 20122023,
+                                    DN: 'Bills'
+                                })
+                            }
+                        </p>
+                    </Row>
+                </Col>
             </Row >
         }
         <br />

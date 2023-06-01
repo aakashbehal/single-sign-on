@@ -15,7 +15,6 @@ export const MyCustomToast = ({ children, ...props }: any) => (
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Button variant='dark' style={{ marginRight: '1rem' }} onClick={() => {
                         const state: any = store.getState()
-                        console.log(state)
                     }}>Report Issue</Button>
                     <OverlayTrigger
                         placement="right"

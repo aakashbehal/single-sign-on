@@ -10,12 +10,14 @@ import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import SummaryFilters from "../../components/Common/SummaryFilters";
 import { userService } from "../../services";
 import { CgSpinnerAlt } from "react-icons/cg";
+import { InvoiceActionCreator } from "../../store/actions/invoice.actions";
+import NoRecord from "../../components/Common/NoResult";
 
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 const options: any = {
     responsive: true,
-    // maintainAspectRatio: false,
+    maintainAspectRatio: false,
     cutout: 70,
     layout: {
         padding: 20
@@ -174,6 +176,10 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
 
     useEffect(() => {
         dispatch(SummaryActionCreator.getSentSummary(searchObj))
+        if (searchObj.duration) {
+            dispatch(InvoiceActionCreator.getInvoice(searchObj.duration))
+        }
+
     }, [searchObj])
 
     useEffect(() => {
@@ -260,7 +266,7 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
 
                         <div style={{
                             display: "flex",
-                            alignItems: 'end',
+                            alignItems: userType === 'Client' && !isChartEmpty(requestedSummary) ? 'end' : '',
                             height: "90%",
                             justifyContent: 'center'
                         }}>
@@ -269,14 +275,14 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                                     <>
                                         {
                                             !loadingRequest &&
-                                            (isChartEmpty(requestedSummary) ? 'No Data to display' : memoRequested)
+                                            (isChartEmpty(requestedSummary) ? <NoRecord /> : memoRequested)
                                         }
                                     </>
                                     :
                                     <>
                                         {
                                             !loadingSent &&
-                                            (isChartEmpty(sentSummary) ? 'No Data to display' : memoSent)
+                                            (isChartEmpty(sentSummary) ? <NoRecord /> : memoSent)
                                         }
                                     </>
                             }
@@ -291,7 +297,7 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                     }
                     <div style={{
                         display: "flex",
-                        alignItems: 'end',
+                        alignItems: userType === 'Client' && !isChartEmpty(sentSummary) ? 'end' : '',
                         height: "90%",
                         justifyContent: 'center'
                     }}>
@@ -300,14 +306,14 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
                                 <>
                                     {
                                         !loadingSent &&
-                                        (isChartEmpty(sentSummary) ? 'No Data to display' : memoSent)
+                                        (isChartEmpty(sentSummary) ? <NoRecord /> : memoSent)
                                     }
                                 </>
                                 :
                                 <>
                                     {
                                         !loadingRequest &&
-                                        (isChartEmpty(requestedSummary) ? 'No Data to display' : memoRequested)
+                                        (isChartEmpty(requestedSummary) ? <NoRecord /> : memoRequested)
                                     }
                                 </>
                         }

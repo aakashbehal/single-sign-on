@@ -248,12 +248,18 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                                     return <li className={Styles.share_with_li} key={`li_${index}`}>
                                         <div className={Styles.share_with_div}>
                                             <div className='share_With_parent' style={{ marginRight: '1rem' }}>
-                                                <span className={`shared_with ${Styles.share_with_span_pic}`}>
-                                                    <span>{sW.name.charAt(0)}</span>
-                                                </span>
+                                                {
+                                                    sW.profilePicture && <img src={sW.profilePicture} className='profile_pic_account' alt="" />
+                                                }
+                                                {
+                                                    !sW.profilePicture
+                                                    && <span className={`shared_with ${Styles.share_with_span_pic}`}>
+                                                        <span>{sW.name.charAt(0)}</span>
+                                                    </span>
+                                                }
                                             </div>
                                             <div>
-                                                <p className={Styles.share_with_p}>{sW.userOrgCode} - {sW.name}</p>
+                                                <p className={Styles.share_with_p}>{sW.userOrgCode || sW.orgCode} - {sW.name}</p>
                                                 <p className={Styles.share_with_p}>{sW.email}</p>
                                             </div>
                                         </div>

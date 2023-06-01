@@ -17,7 +17,7 @@ const getMyDocumentFolders = async ({
     textSearch
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -38,6 +38,7 @@ const getMyDocumentFolders = async ({
         const responseModified: any = {}
         responseModified.folders = folders.map((folder: any) => {
             folder.selected = false
+            folder.fileSizeOriginal = folder.fileSize
             folder.fileSize = formatBytes(folder.fileSize)
             return folder
         })
@@ -68,7 +69,7 @@ const getMyDocumentList = async ({
     textSearch
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -92,23 +93,27 @@ const getMyDocumentList = async ({
         let documents = data.response.datas
         const responseModified: any = {}
         responseModified.documents = documents.map((document: any) => {
-            let doc = document.objectKey.split("/")
+            let doc = document?.objectKey?.split("/")
             document.selected = false
+            document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)
-            document.documentName = doc[doc.length - 1]
+            // if (doc) {
+            //     document.documentName = doc[doc.length - 1]
+            // }
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columns
         return responseModified
     } catch (error: any) {
+        console.log(error)
         throw error
     }
 }
 
 const deleteDocument = async (documentId: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -118,7 +123,7 @@ const deleteDocument = async (documentId: any) => {
 
 const deleteFolder = async (clientAccountNo: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folder/${clientAccountNo}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folder/${clientAccountNo}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

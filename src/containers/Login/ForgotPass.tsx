@@ -45,7 +45,7 @@ const ForgotPassword = () => {
 
     const getSecretQuestions = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
             const data = handleResponse(response)
             setSecretQuestions(data.response)
             setSecretQuestions1(data.response)
@@ -57,7 +57,7 @@ const ForgotPassword = () => {
 
     const getOrganizationTypes = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/record_source`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/record_source`)
             const data = handleResponse(response)
             setOrgTypes(data.response)
         } catch (error: any) {
@@ -125,7 +125,7 @@ const ForgotPassword = () => {
             }
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/getSecurityQuesByUserDetails`, reqObj)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/getSecurityQuesByUserDetails`, reqObj)
             const data = handleResponse(response)
             setSq(data.response)
             // addToast('Your password was successfully changed!', { appearance: 'success', autoDismiss: true })
@@ -159,7 +159,7 @@ const ForgotPassword = () => {
             ]
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/validateSecurityQuesByUserDetails`, reqObj)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/validateSecurityQuesByUserDetails`, reqObj)
             const data = handleResponse(response)
             addToast("Security Questions verified successfully", { appearance: 'success', autoDismiss: true })
             setStep(step)
@@ -232,7 +232,7 @@ const ForgotPassword = () => {
             reqObj.partnerName = step1.partnerName
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/resetPasswordByUserDetails`, reqObj)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/resetPasswordByUserDetails`, reqObj)
             const data = handleResponse(response)
             addToast("Password reset successfully", { appearance: 'success', autoDismiss: true })
             history.push('/login')

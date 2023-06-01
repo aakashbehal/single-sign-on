@@ -21,10 +21,12 @@ import PaginationComponent from './pagination';
 import { useHistory } from 'react-router-dom';
 import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
+import NoRecord from '../Common/NoResult';
 
 interface ITempObj {
     folderName: string;
     filePath: string;
+    fileSizeOriginal: number
 }
 
 const TableComponent = ({
@@ -121,31 +123,45 @@ const TableComponent = ({
     };
 
     const exportHandler = async () => {
-        let fileLinks: any = {}
+        let fileLinks: any = []
+        let formatted: ITempObj[] = []
         for (let key in exportDocumentLinks) {
             let filePath = null;
             if (parentComponent === 'documents') {
                 filePath = exportDocumentLinks[key].filePath
-                fileLinks = [...fileLinks, filePath]
+                if (filePath) {
+                    fileLinks = [...fileLinks, filePath]
+                }
+                console.log(fileLinks)
+                for (let key of fileLinks) {
+                    let obj: any = {
+                        filePath: key,
+                        fileSizeOriginal: 111111111
+                    }
+                    formatted.push(obj)
+                }
             } else {
                 filePath = exportDocumentLinks[key].documentPaths
-                if (fileLinks[exportDocumentLinks[key].folderName]) {
-                    fileLinks[exportDocumentLinks[key].folderName] = [...fileLinks, filePath]
-                } else {
-                    fileLinks[exportDocumentLinks[key].folderName] = [filePath]
+                if (filePath) {
+                    if (fileLinks[exportDocumentLinks[key].folderName]) {
+                        fileLinks[exportDocumentLinks[key].folderName] = [...fileLinks, filePath]
+                    } else {
+                        fileLinks[exportDocumentLinks[key].folderName] = [filePath]
+                    }
+                }
+                for (let key in fileLinks) {
+                    for (let fileLink of fileLinks[key][0]) {
+                        let obj: ITempObj = {
+                            folderName: key,
+                            filePath: fileLink,
+                            fileSizeOriginal: 111111111
+                        }
+                        formatted.push(obj)
+                    }
                 }
             }
         }
-        let formatted: ITempObj[] = []
-        for (let key in fileLinks) {
-            for (let fileLink of fileLinks[key][0]) {
-                let obj: ITempObj = {
-                    folderName: key,
-                    filePath: fileLink
-                }
-                formatted.push(obj)
-            }
-        }
+        console.log(formatted)
         await createZipForFolderDownload(formatted, "Export")
     }
 
@@ -197,7 +213,6 @@ const TableComponent = ({
                                 <Form.Control
                                     type='Checkbox'
                                     id={h}
-                                    disabled={index === 0}
                                     defaultChecked={showHideColumns.includes(h)}
                                     style={{ cursor: 'pointer', width: 'auto', marginRight: "1rem" }}
                                     onClick={handleClickHideShow}
@@ -527,19 +542,36 @@ const TableComponent = ({
                 <div className='share_With_parent'>
                     {
                         sharedWith && sharedWith.map((sW: any, index: any) => {
-                            return <OverlayTrigger
-                                key={`sw_${index}`}
-                                placement="bottom"
-                                delay={{ show: 250, hide: 400 }}
-                                overlay={(
-                                    <Tooltip id="tooltip-error">
-                                        {`Name: ${sW.name}
+                            if (sW.profilePicture) {
+                                return <OverlayTrigger
+                                    key={`sw_${index}`}
+                                    placement="bottom"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={(
+                                        <Tooltip id="tooltip-error">
+                                            {`Name: ${sW.name}
                                         Email: ${sW.email}`}
-                                    </Tooltip>
-                                )}
-                            >
-                                <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW.name.charAt(0).toUpperCase()}</span>
-                            </OverlayTrigger>
+                                        </Tooltip>
+                                    )}
+                                >
+                                    <img src={sW.profilePicture} style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }} loading='lazy' alt="" className='profile_pic_share' />
+                                </OverlayTrigger>
+                            } else {
+                                return <OverlayTrigger
+                                    key={`sw_${index}`}
+                                    placement="bottom"
+                                    delay={{ show: 250, hide: 400 }}
+                                    overlay={(
+                                        <Tooltip id="tooltip-error">
+                                            {`Name: ${sW.name}
+                                        Email: ${sW.email}`}
+                                        </Tooltip>
+                                    )}
+                                >
+                                    <span className='shared_with' style={{ marginLeft: index !== 0 ? '-.5rem' : '', marginBottom: '0' }}>{sW?.name?.charAt(0).toUpperCase() || 'E'}</span>
+                                </OverlayTrigger>
+                            }
+
                         })
                     }
                 </div>
@@ -547,9 +579,10 @@ const TableComponent = ({
         }
     }
 
-    const handleDocumentName = (data: any) => {
+    const handleDocumentName = (data: any, index: number) => {
         if (data['documentName'] || data["fileName"]) {
             return (<td
+                key={`documentName_${index}`}
                 className={`clickable_td td_string`}
             >
                 <div style={{
@@ -563,6 +596,7 @@ const TableComponent = ({
             </td >)
         } else {
             return <td
+                key={`documentName_${index}`}
                 className='center_align_td'
             >
                 <AiFillFileExclamation
@@ -605,8 +639,7 @@ const TableComponent = ({
                 {
                     // eslint-disable-next-line array-callback-return
                     headers && headers.map((header, index) => {
-                        if (header !== 'clientId'
-                            && header !== 'recordStatusVal'
+                        if (header !== 'recordStatusVal'
                             && header !== 'batchSchedulerGroupId'
                             && header !== 'logDescription'
                             && header !== 'queueId'
@@ -664,6 +697,8 @@ const TableComponent = ({
                         || parentComponent === 'sentDocumentRequest'
                         || parentComponent === 'receiveDocumentRequest'
                         || parentComponent === 'downloadHistory'
+                        || parentComponent === 'clientSetup'
+                        || parentComponent === 'partnerSetup'
                     )
                     && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
                 }
@@ -715,8 +750,7 @@ const TableComponent = ({
                         {
                             // eslint-disable-next-line array-callback-return
                             headers.map((header: any, index2) => {
-                                if (header !== 'clientId'
-                                    && header !== 'recordStatusVal'
+                                if (header !== 'recordStatusVal'
                                     && header !== 'batchSchedulerGroupId'
                                     && header !== 'logDescription'
                                     && header !== 'slaStatus'
@@ -780,6 +814,12 @@ const TableComponent = ({
                                     if (header === 'isAdditionalTimeRequired') {
                                         return <td key={`data_2${index2}`}>{d[header] ? 'Yes' : 'No'}</td>;
                                     }
+                                    if (header === 'isMasterserviced') {
+                                        return <td key={`data_2${index2}`}>{d[header] ? 'Yes' : 'No'}</td>;
+                                    }
+                                    if (header === 'isEqassociate') {
+                                        return <td key={`data_2${index2}`}>{d[header] ? 'Yes' : 'No'}</td>;
+                                    }
                                     if (header === 'keyContacts') {
                                         return <td key={`data_2${index2}`}>{keyContactsHandler(d[header])}</td>
                                     }
@@ -817,7 +857,7 @@ const TableComponent = ({
                                         return <td key={`data_2${index2}`}><AiOutlineCloudDownload size={24} /></td>
                                     }
                                     if (header === 'fileName') {
-                                        return handleDocumentName(d)
+                                        return handleDocumentName(d, index2)
                                     }
                                     if (!d[header]) {
                                         return <td key={`data_2${index2}`}><b>-</b></td>
@@ -910,7 +950,7 @@ const TableComponent = ({
                                                         </Tooltip>
                                                     }
                                                 >
-                                                    <BiPencil onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                    <BiPencil onClick={() => addEditArray.edit(d)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
                                                 </OverlayTrigger>
                                             }
                                             {
@@ -924,7 +964,7 @@ const TableComponent = ({
                                                         </Tooltip>
                                                     }
                                                 >
-                                                    <BsEye onClick={() => addEditArray.edit(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                    <BsEye onClick={() => addEditArray.edit(d)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
                                                 </OverlayTrigger>
                                             }
                                             {
@@ -939,7 +979,7 @@ const TableComponent = ({
                                                         </Tooltip>
                                                     }
                                                 >
-                                                    <CgTrash onClick={() => addEditArray.delete(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
+                                                    <AiOutlineDelete onClick={() => addEditArray.delete(index)} size={20} style={{ margin: '0 .5rem', cursor: 'pointer' }} />
                                                 </OverlayTrigger>
                                             }
                                             {
@@ -1031,6 +1071,8 @@ const TableComponent = ({
                                 || parentComponent === 'sentDocumentRequest'
                                 || parentComponent === 'receiveDocumentRequest'
                                 || parentComponent === 'downloadHistory'
+                                || parentComponent === 'clientSetup'
+                                || parentComponent === 'partnerSetup'
                             )
                             && <td key={`data_${index}`} className='span1' style={{ minWidth: '140px', textAlign: 'center' }}>
                                 {
@@ -1122,6 +1164,23 @@ const TableComponent = ({
                                     </span>
                                 }
                                 {
+                                    typeof addEditArray.editClient !== 'undefined'
+                                    && <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Share
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <BiPencil size={20} onClick={() => addEditArray.editClient(d)} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+                                {
                                     typeof addEditArray.delete !== 'undefined'
                                     &&
                                     <span>
@@ -1160,7 +1219,9 @@ const TableComponent = ({
     const emptyTable = () => (
         <thead>
             <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                <th>No Records</th>
+                <td>
+                    <NoRecord />
+                </td>
             </tr>
         </thead>
     );

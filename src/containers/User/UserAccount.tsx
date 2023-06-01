@@ -7,6 +7,8 @@ import { userService } from "../../services"
 import { MiscActionCreator } from "../../store/actions/common/misc.actions"
 import { handleResponse, axiosCustom } from "../../helpers/util"
 import { createMessage } from "../../helpers/messages";
+import { HiPencil } from "react-icons/hi";
+import DocumentUpload from "../../components/modal/DocumentUpload";
 
 
 const UserAccount = () => {
@@ -22,6 +24,7 @@ const UserAccount = () => {
     const [userPreferences, setUserPreferences] = useState<any>(null)
     const [emailConsent, setEmailConsent] = useState<any>(false)
     const [phoneConsent, setPhoneConsent] = useState<any>(false)
+    const [uploadDocModal, setUploadDocModal] = useState(false)
     const [demoDashboard, setDemoDashboard] = useState<any>(false)
 
     const {
@@ -91,21 +94,22 @@ const UserAccount = () => {
 
     const getUserPreference = async (loginKey: any) => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/getUserPreference?loginKey=${loginKey}`)
+
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/getUserPreference?loginKey=${loginKey}`)
             const data = handleResponse(response)
             setUserPreferences(data.response)
             setSelectedState(data.response.state)
             setSelectedQuestion1(data.response.secretAnswers[0].question)
             setSelectedQuestion2(data.response.secretAnswers[1].question)
+            userService.setImage(data.response.profilePicture)
         } catch (error: any) {
             setSecretQuestions([])
         }
     }
 
-
     const getSecretQuestions = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
             const data = handleResponse(response)
             setSecretQuestions(data.response)
             setSecretQuestions1(data.response)
@@ -168,7 +172,7 @@ const UserAccount = () => {
             ]
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/updateUserPreference`, reqBody)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/updateUserPreference`, reqBody)
             const data = handleResponse(response)
             addToast(createMessage('success', `updated`, 'User details'), { appearance: 'success', autoDismiss: true })
         } catch (error: any) {
@@ -181,9 +185,24 @@ const UserAccount = () => {
         setDemoDashboard(isChecked)
     }
 
+
     return <>
-        <Row style={{ margin: 0 }} className="form_container">
-            <Col sm={3}></Col>
+        <Row style={{ margin: 0, paddingTop: '2rem' }} className="form_container">
+            <Col sm={2}></Col>
+            <Col sm={2}>
+                {
+                    userPreferences
+                    &&
+                    <div className="profile_picture_container">
+                        <div>
+                            <img src={userPreferences?.profilePicture} alt="" loading="lazy" />
+                            <div onClick={() => setUploadDocModal(true)} className="edit_profile_pic" ><HiPencil /></div>
+                            <h5>{`${userPreferences?.firstName} ${userPreferences?.middleName} ${userPreferences?.lastName}`}</h5>
+                            <p>{userPreferences.emailAddress}</p>
+                        </div>
+                    </div>
+                }
+            </Col>
             <Col sm={6} >
                 {
                     userPreferences
@@ -478,7 +497,7 @@ const UserAccount = () => {
                                 </Form.Group>
                             </Col>
                         </Row>
-                        {
+                        {/* {
                             window.location.host !== 'stage.equabli.net'
                             && window.location.host !== 'www.equabli.net'
                             && <Row >
@@ -497,7 +516,7 @@ const UserAccount = () => {
                                     </Form.Group>
                                 </Col>
                             </Row>
-                        }
+                        } */}
                         <Col sm={12}>
                             <div style={{ display: 'flex', justifyContent: 'center' }}>
                                 <Button variant="dark" style={{ marginRight: '10px' }} type="submit">Submit</Button>
@@ -506,8 +525,18 @@ const UserAccount = () => {
                     </Form>
                 }
             </Col>
-            <Col sm={3}></Col>
+            <Col sm={2}></Col>
         </Row>
+        {
+            uploadDocModal
+            && <DocumentUpload
+                show={uploadDocModal}
+                onHide={() => setUploadDocModal(false)}
+                accountId={123}
+                Styles={{}}
+                parentComponent="profile"
+                search={() => getUserPreference(userPreferences.loginKey)} />
+        }
     </>
 }
 

@@ -171,7 +171,6 @@ const AdvanceSearch = ({ parentComponent,
                 requested_status
                 // portfolio_id
             } = advanceSearchRef.current
-            console.log(requested_status?.value)
             advanceSearchTemp.docTypeCode = document_type?.value || null
             advanceSearchTemp.documentName = document_name?.value.trim() || null
             advanceSearchTemp.generationDateFrom = dates.generationDateFrom ? dateFormatterForRequestDocManager(dates.generationDateFrom) : null
@@ -238,9 +237,7 @@ const AdvanceSearch = ({ parentComponent,
 
     const dateHandler = (from: any, date: any) => {
         const dateTemp = Object.assign({}, dates)
-        console.log(from, date)
         dateTemp[from] = date
-        console.log(dateTemp)
         setDates(dateTemp)
     }
 
@@ -341,7 +338,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["generationDateFrom"]}
-                                        onChange={(date) => dateHandler("generationDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("generationDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Generation Date From</Form.Label>
                                 </Col>
@@ -355,7 +352,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["modifiedDateFrom"]}
-                                        onChange={(date) => dateHandler("modifiedDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("modifiedDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Modified Date From</Form.Label>
                                 </Col>
@@ -369,7 +366,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["modifiedDateTo"]}
-                                        onChange={(date) => dateHandler("modifiedDateTo", date)}
+                                        onChange={(date: any) => dateHandler("modifiedDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Modified Date To</Form.Label>
                                 </Col>
@@ -384,7 +381,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["generationDateTo"]}
                                         minDate={new Date(dates["generationDateFrom"])}
-                                        onChange={(date) => dateHandler("generationDateTo", date)}
+                                        onChange={(date: any) => dateHandler("generationDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Generation Date To</Form.Label>
                                 </Col>
@@ -398,7 +395,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["uploadDateFrom"]}
-                                        onChange={(date) => dateHandler("uploadDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("uploadDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Upload Date From</Form.Label>
                                 </Col>
@@ -413,7 +410,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["uploadDateTo"]}
                                         minDate={new Date(dates["uploadDateFrom"])}
-                                        onChange={(date) => dateHandler("uploadDateTo", date)}
+                                        onChange={(date: any) => dateHandler("uploadDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Upload Date To</Form.Label>
                                 </Col>
@@ -427,7 +424,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["shareDateFrom"]}
-                                        onChange={(date) => dateHandler("shareDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("shareDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Share Date From</Form.Label>
                                 </Col>
@@ -442,7 +439,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["shareDateTo"]}
                                         minDate={new Date(dates["shareDateFrom"])}
-                                        onChange={(date) => dateHandler("shareDateTo", date)}
+                                        onChange={(date: any) => dateHandler("shareDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Share Date To</Form.Label>
                                 </Col>
@@ -456,7 +453,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["requestedDateFrom"]}
-                                        onChange={(date) => dateHandler("requestedDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("requestedDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Requested Date From</Form.Label>
                                 </Col>
@@ -471,7 +468,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["requestedDateTo"]}
                                         minDate={new Date(dates["requestedDateFrom"])}
-                                        onChange={(date) => dateHandler("requestedDateTo", date)}
+                                        onChange={(date: any) => dateHandler("requestedDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Requested Date To</Form.Label>
                                 </Col>
@@ -485,7 +482,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["receivedDateFrom"]}
-                                        onChange={(date) => dateHandler("receivedDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("receivedDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Received Date From</Form.Label>
                                 </Col>
@@ -500,7 +497,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["receivedDateTo"]}
                                         minDate={new Date(dates["receivedDateFrom"])}
-                                        onChange={(date) => dateHandler("receivedDateTo", date)}
+                                        onChange={(date: any) => dateHandler("receivedDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Received Date To</Form.Label>
                                 </Col>
@@ -514,7 +511,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["dueDateFrom"]}
-                                        onChange={(date) => dateHandler("dueDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("dueDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Due Date From</Form.Label>
                                 </Col>
@@ -529,7 +526,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["dueDateTo"]}
                                         minDate={new Date(dates["dueDateFrom"])}
-                                        onChange={(date) => dateHandler("dueDateTo", date)}
+                                        onChange={(date: any) => dateHandler("dueDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Due Date To</Form.Label>
                                 </Col>
@@ -543,7 +540,7 @@ const AdvanceSearch = ({ parentComponent,
                                         monthPlaceholder={'mm'}
                                         dayPlaceholder={'dd'}
                                         value={dates["fulfillmentDateFrom"]}
-                                        onChange={(date) => dateHandler("fulfillmentDateFrom", date)}
+                                        onChange={(date: any) => dateHandler("fulfillmentDateFrom", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Fulfillment Date From</Form.Label>
                                 </Col>
@@ -558,7 +555,7 @@ const AdvanceSearch = ({ parentComponent,
                                         dayPlaceholder={'dd'}
                                         value={dates["fulfillmentDateTo"]}
                                         minDate={new Date(dates["fulfillmentDateFrom"])}
-                                        onChange={(date) => dateHandler("fulfillmentDateTo", date)}
+                                        onChange={(date: any) => dateHandler("fulfillmentDateTo", date)}
                                         yearPlaceholder={'yyyy'} />
                                     <Form.Label className="label_custom white">Fulfillment Date To</Form.Label>
                                 </Col>

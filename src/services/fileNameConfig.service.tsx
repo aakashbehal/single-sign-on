@@ -3,7 +3,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const getConfig = async (requestParams: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response.docMgrConfigs
@@ -14,7 +14,7 @@ const getConfig = async (requestParams: any) => {
 
 const getUserConfig = async (requestParams: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response
@@ -82,7 +82,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
 
 const saveUserConfiguration = async (requestBody: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
             requestBody)
         const data = handleResponse(response)
         return data.response

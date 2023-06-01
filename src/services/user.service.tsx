@@ -1,10 +1,11 @@
 
 import { history } from "../helpers";
+import { deleteFBToken } from "../helpers/firebase";
 import { handleResponse, axiosCustom } from "../helpers/util"
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_USER_SERVICE}/login`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/login`, {
             loginKey: username.trim(),
             loginSecret: password.trim()
         })
@@ -31,14 +32,22 @@ const login = async (username: string, password: string) => {
     }
 }
 
-async function logout() {
-    // const user = getUser()
+function logout() {
+    const FBToken = sessionStorage.getItem('FBToken')
+    const user = getUser()
     try {
-        // console.log(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_USER_SERVICE}/logout`)
-        // await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_DOCUMENT_MANAGER}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
-        //     principleId: user.principleId,
-        //     loginKey: user.loginKey
-        // })
+        axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
+            principleId: user.principleId,
+            loginKey: user.loginKey
+        })
+
+        axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/token/delete`, {}, {
+            params: {
+                userId: user.principleId,
+                token: FBToken
+            }
+        })
+        deleteFBToken()
         localStorage.removeItem('user');
         history.push('/login')
     } catch (error: any) {
@@ -97,13 +106,45 @@ const getAccessToken = () => {
 
 const getConnectedUsers = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_AUTH_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/connected`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/connected`)
         const data = handleResponse(response)
         const modifiedResponse = data.response.map((res: any) => {
             res.modifiedFirstName = `${res.orgCode} - ${res.firstName} ${res.lastName}`
             return res
         })
         return modifiedResponse
+    } catch (error: any) {
+        throw error
+    }
+}
+
+
+const setImage = async (profilePicture: string) => {
+    const user = JSON.parse(localStorage.getItem('user')!)
+    if (!user) {
+        localStorage.clear()
+        history.push('/login')
+        return null
+    }
+    user.profilePicture = profilePicture
+    localStorage.setItem('user', JSON.stringify(user))
+}
+
+const registerFireBaseToken = async (token: string) => {
+    sessionStorage.setItem('FBToken', token)
+    try {
+        const user = getUser()
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/token`,
+            {
+                "userId": user.principleId,
+                token,
+                "orgCode": user.userOrgCode,
+                "orgTypeCode": user.orgType,
+                "tokenType": "WEB"
+            }
+        )
+        const data = handleResponse(response)
+        return data.response
     } catch (error: any) {
         throw error
     }
@@ -119,5 +160,7 @@ export const userService = {
     logoutAuthExpired,
     isPasswordResetRequired,
     getUserType,
-    getConnectedUsers
+    getConnectedUsers,
+    setImage,
+    registerFireBaseToken
 }
