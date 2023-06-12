@@ -16,8 +16,8 @@ interface INotification {
 const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) => {
     const dispatch = useDispatch()
     const observerTarget = useRef(null);
-    const [currentPage, setCurrentPage] = useState<any>(0)
-    const [pageSize, setPageSize] = useState<any>(2)
+    const [currentPage, setCurrentPage] = useState<any>(1)
+    const [pageSize, setPageSize] = useState<any>(5)
     const [notificationList, setNotificationList] = useState<any>([])
     const {
         notifications,
@@ -64,7 +64,7 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
                             return <NotificationCard key={`notification_${index}`} setCurrentPage={setCurrentPage} setPageSize={setPageSize} notification={notification} observerTarget={observerTarget} />
                         })
                     }
-                    <div ref={observerTarget}></div>
+                    <div style={{background:'red', height: '1rem'}} ref={observerTarget}></div>
                 </div>
                 {
                     loadingNotifications && <CgSpinnerAlt size={20} style={{ width: '100%' }} className={`spinner ${Styles.details_warning}`} />
@@ -75,26 +75,26 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
 }
 
 const NotificationCard = ({ rootElement, setCurrentPage, setPageSize, notification, observerTarget }: any) => {
-
-
     useEffect(() => {
         const observer = new IntersectionObserver(
             entries => {
                 if (entries[0].isIntersecting) {
                     observer.unobserve(observerTarget.current);
-                    setCurrentPage((state: any) => { return state + 1 })
+                    console.log(`2---------------`)
                 }
             },
-            { threshold: 1 }
+            { threshold: .5, rootMargin: "10px", }
         );
 
         if (observerTarget.current) {
             observer.observe(observerTarget.current);
+            console.log(`1---------------`)
         }
 
         return () => {
             if (observerTarget.current) {
                 observer.unobserve(observerTarget.current);
+                console.log(`3---------------`)
             }
         };
     }, [observerTarget])
@@ -111,7 +111,6 @@ const NotificationCard = ({ rootElement, setCurrentPage, setPageSize, notificati
                 <p>Document Type: <b>Bill of sales</b></p>
             </div>
         </div>
-
     )
 }
 

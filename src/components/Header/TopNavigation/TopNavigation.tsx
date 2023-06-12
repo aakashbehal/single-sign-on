@@ -32,7 +32,7 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
     useEffect(() => {
         const user: any = userService.getUser();
         setCurrentUser(user)
-        getNotifications(1, 0)
+        getNotifications(5, 0)
     }, [])
 
     onMessageListener()

@@ -30,7 +30,7 @@
     "json-as-xlsx": "^2.5.3",
     "jszip": "^3.10.1",
     "lodash": "^4.17.21",
-    "node-sass": "^6.0.0",
+    "node-sass": "^6.0.1",
     "prop-types": "^15.7.2",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
@@ -59,8 +59,8 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "start": "set PORT=3006 && react-scripts --openssl-legacy-provider --max_old_space_size=8128 start ",
-    "build": "set \"GENERATE_SOURCEMAP=false\" && react-scripts build",
+    "start": "set PORT=3006 && react-scripts --max_old_space_size=8128 start",
+    "build": "react-scripts build",
     "build:dev": "env-cmd -f .env npm run-script build",
     "build:qa": "env-cmd -f .env.qa npm run-script build",
     "build:uat": "env-cmd -f .env.uat npm run-script build",
@@ -68,7 +68,8 @@
     "build:prod": "env-cmd -f .env.prod npm run-script build",
     "deploy": "aws s3 sync --profile equabli build/ s3://eqb-dev-ui-dm/build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "devDoc": "docker-compose -f docker-compose.dev.yml up"
   },
   "eslintConfig": {
     "extends": [

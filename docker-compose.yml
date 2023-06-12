@@ -1,0 +1,10 @@
+version: '3'
+services:          
+    frontend:
+        build: .     
+        container_name: document-manager
+        ports:
+            - "80:80"
+        volumes: 
+            - ./:/document-manager
+            - /document-manager/node_modules
