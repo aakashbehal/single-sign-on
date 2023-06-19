@@ -22,6 +22,7 @@ import { useHistory } from 'react-router-dom';
 import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
 import NoRecord from '../Common/NoResult';
+import { MyDocumentsActionCreator } from '../../store/actions/myDocuments.actions';
 
 interface ITempObj {
     folderName: string;
@@ -62,7 +63,7 @@ const TableComponent = ({
     const [show, setShow] = useState(false)
     const pageSizes = [10, 50, 100];
     const [showHideColumns, setShowHideColumns] = useState<any>(hideShareArray)
-    const [exportDocumentLinks, setExportDocumentLink] = useState<any>({})
+    // const [exportDocumentLinks, setExportDocumentLink] = useState<any>({})
 
     useEffect(() => {
         if (isPagination) {
@@ -123,47 +124,54 @@ const TableComponent = ({
     };
 
     const exportHandler = async () => {
-        let fileLinks: any = []
-        let formatted: ITempObj[] = []
-        for (let key in exportDocumentLinks) {
-            let filePath = null;
-            if (parentComponent === 'documents') {
-                filePath = exportDocumentLinks[key].filePath
-                if (filePath) {
-                    fileLinks = [...fileLinks, filePath]
-                }
-                console.log(fileLinks)
-                for (let key of fileLinks) {
-                    let obj: any = {
-                        filePath: key,
-                        fileSizeOriginal: 111111111
-                    }
-                    formatted.push(obj)
-                }
-            } else {
-                filePath = exportDocumentLinks[key].documentPaths
-                if (filePath) {
-                    if (fileLinks[exportDocumentLinks[key].folderName]) {
-                        fileLinks[exportDocumentLinks[key].folderName] = [...fileLinks, filePath]
-                    } else {
-                        fileLinks[exportDocumentLinks[key].folderName] = [filePath]
-                    }
-                }
-                for (let key in fileLinks) {
-                    for (let fileLink of fileLinks[key][0]) {
-                        let obj: ITempObj = {
-                            folderName: key,
-                            filePath: fileLink,
-                            fileSizeOriginal: 111111111
-                        }
-                        formatted.push(obj)
-                    }
-                }
-            }
+        if (parentComponent === 'documents') {
+            dispatch(MyDocumentsActionCreator.downloadDocument(isCheck))
+        } else {
+            dispatch(MyDocumentsActionCreator.downloadFolder(isCheck))
         }
-        console.log(formatted)
-        await createZipForFolderDownload(formatted, "Export")
     }
+
+    // const exportHandler = async () => {
+    //     let fileLinks: any = []
+    //     let formatted: ITempObj[] = []
+    //     for (let key in exportDocumentLinks) {
+    //         let filePath = null;
+    //         if (parentComponent === 'documents') {
+    //             filePath = exportDocumentLinks[key].filePath
+    //             if (filePath) {
+    //                 fileLinks = [...fileLinks, filePath]
+    //             }
+    //             console.log(fileLinks)
+    //             for (let key of fileLinks) {
+    //                 let obj: any = {
+    //                     filePath: key,
+    //                     fileSizeOriginal: 111111111
+    //                 }
+    //                 formatted.push(obj)
+    //             }
+    //         } else {
+    //             filePath = exportDocumentLinks[key].documentPaths
+    //             if (filePath) {
+    //                 if (fileLinks[exportDocumentLinks[key].folderName]) {
+    //                     fileLinks[exportDocumentLinks[key].folderName] = [...fileLinks, filePath]
+    //                 } else {
+    //                     fileLinks[exportDocumentLinks[key].folderName] = [filePath]
+    //                 }
+    //             }
+    //             for (let key in fileLinks) {
+    //                 for (let fileLink of fileLinks[key][0]) {
+    //                     let obj: ITempObj = {
+    //                         folderName: key,
+    //                         filePath: fileLink,
+    //                         fileSizeOriginal: 111111111
+    //                     }
+    //                     formatted.push(obj)
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     await createZipForFolderDownload(formatted, "Export")
+    // }
 
     const sizeHandler = () => (
         <Row className='table_top_section'>
@@ -481,7 +489,7 @@ const TableComponent = ({
 
     const handleAllSelect = () => {
         setIsCheckAll(!isCheckAll);
-        const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
+        // const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
         setIsCheck(data.map((li: any) => {
             let id: any = null
             if (parentComponent === 'documents') {
@@ -489,12 +497,13 @@ const TableComponent = ({
             } else {
                 id = li.folderName
             }
-            exportDocumentLinksTemp[id] = li
-            setExportDocumentLink(exportDocumentLinksTemp)
+            // exportDocumentLinksTemp[id] = li
+            // setExportDocumentLink(exportDocumentLinksTemp)
             return id
         }));
         if (isCheckAll) {
-            setExportDocumentLink({})
+            // setExportDocumentLink({})
+            // setExportList([])
             setIsCheck([]);
         }
     }
@@ -502,18 +511,18 @@ const TableComponent = ({
     const handleClick = (e: any) => {
         let { id, checked } = e.target;
         const data = JSON.parse(id)
-        const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
+        // const exportDocumentLinksTemp: any = Object.assign({}, exportDocumentLinks)
         if (parentComponent === 'documents') {
             id = Number(data.id)
         } else {
             id = data.folderName
         }
-        exportDocumentLinksTemp[id] = data
-        setExportDocumentLink(exportDocumentLinksTemp)
+        // exportDocumentLinksTemp[id] = data
+        // setExportDocumentLink(exportDocumentLinksTemp)
         setIsCheck([...isCheck, id]);
         if (!checked) {
-            delete exportDocumentLinksTemp[id]
-            setExportDocumentLink(exportDocumentLinksTemp)
+            // delete exportDocumentLinksTemp[id]
+            // setExportDocumentLink(exportDocumentLinksTemp)
             setIsCheck(isCheck.filter((item: any) => item !== id));
         }
     };

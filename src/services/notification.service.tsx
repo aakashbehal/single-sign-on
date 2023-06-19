@@ -18,7 +18,8 @@ const getNotifications = async ({
         let notifications = data.response.notifications
         const responseModified: any = {}
         responseModified.notifications = notifications
-        responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.totalCount = data.response.metadata.totalCount
+        responseModified.pageNumber = data.response.metadata.pageNumber
         responseModified.unread = data.response.metadata.unread
         responseModified.columns = data.response.metadata.columns
         return responseModified

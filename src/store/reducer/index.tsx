@@ -20,6 +20,7 @@ import invoiceReducer from "./invoice.reducer";
 import clientSetupReducer from "./clientSetup.reducer";
 import partnerSetupReducer from "./partnerSetup.reducer";
 import notificationReducer from "./notification.reducer";
+import documentTypeIdentifierReducer from "./documentTypeIdentifer.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -41,7 +42,8 @@ const appReducer = combineReducers({
     invoice: invoiceReducer,
     clients: clientSetupReducer,
     partners: partnerSetupReducer,
-    notification: notificationReducer
+    notification: notificationReducer,
+    ocr: documentTypeIdentifierReducer
 })
 
 const rootReducer = (state: any, action: any) => {

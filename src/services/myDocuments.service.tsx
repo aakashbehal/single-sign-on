@@ -1,4 +1,5 @@
 
+import { AxiosResponse } from "axios"
 import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 
 const getMyDocumentFolders = async ({
@@ -131,9 +132,37 @@ const deleteFolder = async (clientAccountNo: any) => {
     }
 }
 
+const downloadFolder = async (accountNumbers: string[]) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download/folder`, {
+            accountNumbers
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        console.log(error)
+        throw error
+    }
+}
+
+const downloadDocument = async (documentIds: string[]) => {
+    try {
+        const response: AxiosResponse = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download/file`, {
+            documentIds
+        })
+        const data = handleResponse(response)
+        if (typeof data.response === 'object') return data.response[0]
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
+
 export const myDocumentsService = {
     getMyDocumentFolders,
     getMyDocumentList,
     deleteDocument,
-    deleteFolder
+    deleteFolder,
+    downloadDocument,
+    downloadFolder
 }

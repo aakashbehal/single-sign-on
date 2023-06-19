@@ -32,11 +32,12 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
     useEffect(() => {
         const user: any = userService.getUser();
         setCurrentUser(user)
-        getNotifications(5, 0)
+        getNotifications(10, 0)
     }, [])
 
     onMessageListener()
         .then((payload: any) => {
+            getNotifications(10, 0)
             addToast(payload.notification.body, { appearance: 'info', autoDismiss: true });
         })
         .catch((err: any) => console.log('failed: ', err));
@@ -55,8 +56,8 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
         })
     }
 
-    const setNotification = () => {
-        if (true) {
+    const setNotification = (count: number) => {
+        if (count) {
             return <RiNotification4Fill size={25} fill="#ff7765" />
         } else {
             return <RiNotification4Line size={25} />
@@ -81,10 +82,13 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
                 </div>
                 <div className={Styles.headerActions}>
                     <div className={Styles.notification} onClick={() => setShowNotification((state) => !state)}>
-                        <span className={`${Styles.notification_count} ${true ? Styles.has_notification : Styles.no_notification}`} >
-                            <p>{unread >= 10 ? '9+' : unread}</p>
-                        </span>
-                        {setNotification()}
+                        {
+                            !!unread &&
+                            <span className={`${Styles.notification_count} ${true ? Styles.has_notification : Styles.no_notification}`} >
+                                <p>{unread >= 10 ? '9+' : unread}</p>
+                            </span>
+                        }
+                        {setNotification(unread)}
                     </div>
                     <div className={Styles.user_container}>
                         <Dropdown>

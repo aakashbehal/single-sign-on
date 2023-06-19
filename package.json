@@ -66,7 +66,7 @@
     "build:uat": "env-cmd -f .env.uat npm run-script build",
     "build:stage": "env-cmd -f .env.stage npm run-script build",
     "build:prod": "env-cmd -f .env.prod npm run-script build",
-    "deploy": "aws s3 sync --profile equabli build/ s3://eqb-dev-ui-dm/build",
+    "deploy:s3": "aws s3 sync --profile equabli build/ s3://eqb-dev-ui-dm/build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "devDoc": "docker-compose -f docker-compose.dev.yml up"
@@ -104,6 +104,7 @@
     "env-cmd": "^10.1.0",
     "mkcert": "^1.4.0",
     "react-date-picker": "^8.1.1",
-    "react-datetime-picker": "^3.5.0"
+    "react-datetime-picker": "^3.5.0",
+    "react-error-overlay": "6.0.9"
   }
 }

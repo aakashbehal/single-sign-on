@@ -377,7 +377,9 @@ const DocumentGeneralConfiguration = () => {
         let index: number = 0
         let documentNameGenerated = ''
         for (let key in fieldsSelected) {
-            documentNameGenerated += `${index === 0 ? '' : json.conj}${json[fieldsSelected[key]]}`
+            if (json[fieldsSelected[key]]) {
+                documentNameGenerated += `${index === 0 ? '' : json.conj}${json[fieldsSelected[key]]}`
+            }
             index++
         }
         return documentNameGenerated

@@ -35,6 +35,7 @@ const SummaryDrillDownHave = lazy(() => import("./containers/DocumentManager/Sum
 const SummaryDrillDownNotHave = lazy(() => import("./containers/DocumentManager/SummaryDrillDownNotHave"));
 const ClientSetup = lazy(() => import("./containers/Setup/ClientSetup"));
 const PartnerSetup = lazy(() => import("./containers/Setup/PartnerSetup"));
+const DocumentTypeIdentifier = lazy(() => import("./containers/DocumentManager/DocumentTypeIdentifier"));
 /**
  * Applications starting point
  * @returns 
@@ -83,6 +84,9 @@ const App = () => {
               {/* Setup */}
               <PrivateRoute exact path="/setup/client" component={ClientSetup} />
               <PrivateRoute exact path="/setup/partner" component={PartnerSetup} />
+
+              {/* OCR */}
+              <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />
 
             </Switch>
           </ErrorBoundary>

@@ -8,7 +8,7 @@ import Styles from "./DocumentManager.module.sass";
 import TableComponent from "../../components/Table/Table";
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
-import { createZipForFolderDownload } from "../../helpers/util";
+import { createZipForFolderDownload, downloadFromLink } from "../../helpers/util";
 import { createMessage } from "../../helpers/messages";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import Share from "../../components/modal/Share";
@@ -39,7 +39,11 @@ const MyDocuments = () => {
         defaultColumns,
         deleteRequest,
         deleteSuccess,
-        deleteError
+        deleteError,
+        downloadRequest,
+        downloadError,
+        downloadSuccess,
+        downloadLinks
     } = useSelector((state: any) => ({
         folders: state.myDocuments.folders.data,
         columns: state.myDocuments.folders.columns,
@@ -49,7 +53,11 @@ const MyDocuments = () => {
         defaultColumns: state.misc.allTableColumns.data,
         deleteRequest: state.myDocuments.folders.deleteRequest,
         deleteSuccess: state.myDocuments.folders.deleteSuccess,
-        deleteError: state.myDocuments.folders.deleteError
+        deleteError: state.myDocuments.folders.deleteError,
+        downloadRequest: state.myDocuments.folderDownload.loading,
+        downloadError: state.myDocuments.folderDownload.error,
+        downloadSuccess: state.myDocuments.folderDownload.success,
+        downloadLinks: state.myDocuments.folderDownload.downloadLinks
     }))
 
     useEffect(() => {
@@ -92,6 +100,15 @@ const MyDocuments = () => {
         deleteSuccess,
         deleteError])
 
+    useEffect(() => {
+        if (!downloadRequest && downloadSuccess && downloadLinks) {
+            downloadLinks.map((dL: string) => {
+                downloadFromLink(dL)
+            })
+            dispatch(MyDocumentsActionCreator.restDownloadFolder())
+        }
+    }, [downloadRequest, downloadError, downloadSuccess, downloadLinks])
+
     const showDocumentListPage = (data: any) => {
         history.push({
             pathname: '/documents/document_list',
@@ -119,9 +136,7 @@ const MyDocuments = () => {
     }
 
     const downloadDocument = async (document: any) => {
-        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
-        await createZipForFolderDownload(document.documentPaths, document.folderName)
-        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        dispatch(MyDocumentsActionCreator.downloadFolder([document.folderName]))
     }
 
     const handleDetails = (document: any) => {

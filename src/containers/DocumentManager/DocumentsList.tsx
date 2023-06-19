@@ -9,7 +9,7 @@ import TableComponent from "../../components/Table/Table";
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
-import { checkIfAdvanceSearchIsActive, downloadSignedFile } from "../../helpers/util";
+import { checkIfAdvanceSearchIsActive, downloadFromLink, downloadSignedFile } from "../../helpers/util";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
@@ -47,7 +47,11 @@ const DocumentsList = ({ location }: { location: any }) => {
         defaultColumns,
         deleteRequest,
         deleteSuccess,
-        deleteError
+        deleteError,
+        downloadRequest,
+        downloadError,
+        downloadSuccess,
+        downloadLink
     } = useSelector((state: any) => ({
         documents: state.myDocuments.documents.data,
         totalCount: state.myDocuments.documents.totalCount,
@@ -57,7 +61,11 @@ const DocumentsList = ({ location }: { location: any }) => {
         defaultColumns: state.misc.allTableColumns.data,
         deleteRequest: state.myDocuments.documents.deleteRequest,
         deleteSuccess: state.myDocuments.documents.deleteSuccess,
-        deleteError: state.myDocuments.documents.deleteError
+        deleteError: state.myDocuments.documents.deleteError,
+        downloadRequest: state.myDocuments.documentDownload.loading,
+        downloadError: state.myDocuments.documentDownload.error,
+        downloadSuccess: state.myDocuments.documentDownload.success,
+        downloadLink: state.myDocuments.documentDownload.downloadLink
     }))
 
     useEffect(() => {
@@ -130,6 +138,13 @@ const DocumentsList = ({ location }: { location: any }) => {
         dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
+
+    useEffect(() => {
+        if (!downloadRequest && downloadSuccess && downloadLink) {
+            downloadFromLink(downloadLink)
+            dispatch(MyDocumentsActionCreator.restDownloadDocument())
+        }
+    }, [downloadRequest, downloadError, downloadSuccess, downloadLink])
 
     const handleDetails = (document: any) => {
         setDetails(document)

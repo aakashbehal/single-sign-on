@@ -1,4 +1,11 @@
-import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder } from "../types.d"
+import {
+    MyDocumentsFolder,
+    MyDocumentsList,
+    DeleteDocument,
+    DeleteFolder,
+    DownloadFolder,
+    DownloadDocument
+} from "../types.d"
 
 const initialState = {
     folders: {
@@ -20,6 +27,18 @@ const initialState = {
         deleteRequest: false,
         deleteSuccess: false,
         deleteError: false
+    },
+    folderDownload: {
+        loading: false,
+        error: false,
+        success: false,
+        downloadLinks: []
+    },
+    documentDownload: {
+        loading: false,
+        error: false,
+        success: false,
+        downloadLink: null
     }
 }
 
@@ -183,6 +202,86 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     deleteRequest: false,
                     deleteSuccess: false,
                     deleteError: false,
+                }
+            }
+        case DownloadFolder.DOWNLOAD_FOLDER_REQUEST:
+            return {
+                ...state,
+                folderDownload: {
+                    ...state.folderDownload,
+                    loading: true,
+                    error: false,
+                }
+            }
+        case DownloadFolder.DOWNLOAD_FOLDER_SUCCESS:
+            return {
+                ...state,
+                folderDownload: {
+                    ...state.folderDownload,
+                    loading: false,
+                    success: true,
+                    downloadLinks: action.payload
+                }
+            }
+        case DownloadFolder.DOWNLOAD_FOLDER_FAILURE:
+            return {
+                ...state,
+                folderDownload: {
+                    ...state.folderDownload,
+                    loading: false,
+                    error: true
+                }
+            }
+        case DownloadFolder.DOWNLOAD_FOLDER_RESET:
+            return {
+                ...state,
+                folderDownload: {
+                    ...state.folderDownload,
+                    loading: false,
+                    error: false,
+                    success: false,
+                    downloadLinks: []
+                }
+            }
+        case DownloadDocument.DOWNLOAD_DOCUMENT_REQUEST:
+            return {
+                ...state,
+                documentDownload: {
+                    ...state.documentDownload,
+                    loading: true,
+                    error: false,
+                    downloadLinks: []
+                }
+            }
+        case DownloadDocument.DOWNLOAD_DOCUMENT_SUCCESS:
+            return {
+                ...state,
+                documentDownload: {
+                    ...state.documentDownload,
+                    loading: false,
+                    success: true,
+                    downloadLink: action.payload
+                }
+            }
+        case DownloadDocument.DOWNLOAD_DOCUMENT_FAILURE:
+            return {
+                ...state,
+                documentDownload: {
+                    ...state.documentDownload,
+                    loading: false,
+                    error: true,
+                    downloadLink: null
+                }
+            }
+        case DownloadDocument.DOWNLOAD_DOCUMENT_RESET:
+            return {
+                ...state,
+                documentDownload: {
+                    ...state.documentDownload,
+                    loading: false,
+                    error: false,
+                    success: false,
+                    downloadLink: null
                 }
             }
         default:

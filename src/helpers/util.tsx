@@ -541,3 +541,7 @@ export const checkIfAdvanceSearchIsActive = (formObj: any) => {
     return formIsValid
 }
 
+
+export const downloadFromLink = (link: string) => {
+    saveAs(link)
+}

@@ -1,4 +1,4 @@
-import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder } from "../types.d"
+import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder, DownloadFolder, DownloadDocument } from "../types.d"
 import { myDocumentsService } from "../../services"
 
 export const MyDocumentsActionCreator = {
@@ -77,4 +77,46 @@ export const MyDocumentsActionCreator = {
                 dispatch({ type: DeleteFolder.DELETE_FOLDER_RESET })
             )
     },
+    downloadFolder: (accountNumbers: string[]) => (dispatch: any) => {
+        const request = () => ({ type: DownloadFolder.DOWNLOAD_FOLDER_REQUEST })
+        const success = (document: any) => ({ type: DownloadFolder.DOWNLOAD_FOLDER_SUCCESS, payload: document })
+        const failure = (error: any) => ({ type: DownloadFolder.DOWNLOAD_FOLDER_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.downloadFolder(accountNumbers)
+            .then(
+                document => {
+                    dispatch(success(document))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    restDownloadFolder: () => (dispatch: any) => {
+        dispatch({ type: DownloadFolder.DOWNLOAD_FOLDER_RESET })
+    },
+    restDownloadDocument: () => (dispatch: any) => {
+        dispatch({ type: DownloadDocument.DOWNLOAD_DOCUMENT_RESET })
+    },
+    downloadDocument: (documentIds: string[]) => (dispatch: any) => {
+        const request = () => ({ type: DownloadDocument.DOWNLOAD_DOCUMENT_REQUEST })
+        const success = (document: any) => ({ type: DownloadDocument.DOWNLOAD_DOCUMENT_SUCCESS, payload: document })
+        const failure = (error: any) => ({ type: DownloadDocument.DOWNLOAD_DOCUMENT_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.downloadDocument(documentIds)
+            .then(
+                document => {
+                    dispatch(success(document))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(
+                dispatch({ type: DownloadDocument.DOWNLOAD_DOCUMENT_RESET })
+            )
+    }
 }

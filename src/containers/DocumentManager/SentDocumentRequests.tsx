@@ -332,7 +332,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
                     <Form ref={sendRequestRef} onSubmit={(e) => handleRequest(e)}>
                         <br />
                         <Row>
-                            <Col lg={12} md={6} className="no_padding">
+                            <Col lg={12} md={12} className="no_padding">
                                 <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Typeahead
@@ -371,7 +371,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
                             </Col>
                         </Row> */}
                         <Row>
-                            <Col lg={12} md={6} className="no_padding">
+                            <Col lg={12} md={12} className="no_padding">
                                 <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="originalAccountNumber"></Form.Control>
@@ -382,7 +382,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
                             </Col>
                         </Row>
                         <Row>
-                            <Col lg={12} md={6} className="no_padding">
+                            <Col lg={12} md={12} className="no_padding">
                                 <Form.Group as={Col} className="mb-4 ">
                                     <Col md={12} sm={12}>
                                         <Form.Control
@@ -405,7 +405,7 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
                             </Col>
                         </Row>
                         <Row>
-                            <Col lg={12} md={6} >
+                            <Col lg={12} md={12} >
                                 <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12} className="no_padding">
                                         <DocumentTypes />
