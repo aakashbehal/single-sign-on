@@ -16,6 +16,7 @@ import { axiosCustom, formatBytes, handleResponse } from '../../helpers/util';
 import { SummaryActionCreator } from '../../store/actions/summary.actions';
 import FileUploadHook from '../CustomHooks/FileUploadHook';
 import DocumentTypes from '../Common/DocumentType';
+import { userService } from '../../services';
 
 const SAMPLE_UPLOAD = [
     {
@@ -27,6 +28,7 @@ const SAMPLE_UPLOAD = [
             { label: "Client Account Number" },
             { label: "Document Generation Date" },
             { label: "Equabli Account Number" },
+            { label: "Client Short Code" },
             { label: "File Name" }
         ],
         content: [],
@@ -46,6 +48,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         fileLengthSingle: false,
         fileSize: false
     })
+    const [userType, setUserType] = useState<string>('')
     const [profileImageTemp, setProfileImageTemp] = useState<any>()
     const [noMatrixFile, SetNoMatrixFile] = useState(false);
     const [jsonForRequest, setJsonForRequest] = useState([])
@@ -58,6 +61,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }))
 
     useEffect(() => {
+        const type = userService.getUserType()
+        setUserType(type)
         if (parentComponent === 'documentNotSummary_request') {
             getNotList()
         }
@@ -98,6 +103,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         { label: "Original Account Number", value: "originalAccountNumber" },
                         { label: "Client Account Number", value: "clientAccountNumber" },
                         { label: "Equabli Account Number", value: "equabliAccountNumber" },
+                        { label: "Client Short Code", value: "clientShortCode" }
                     ],
                     content: [],
                 }
@@ -108,7 +114,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     "requestedFrom": "",
                     "originalAccountNumber": "",
                     "clientAccountNumber": data,
-                    "equabliAccountNumber": ""
+                    "equabliAccountNumber": "",
+                    "clientShortCode": ""
                 }
                 return obj
             })
@@ -205,6 +212,8 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/fullfill`
                     formData.append("file", file);
                     formData.append("id", JSON.stringify(details.id))
+                    // ===================================================
+                    // formData.append("clientShortCode", JSON.stringify())
                 } else if (parentComponent === "sentDocumentRequest" || parentComponent === 'documentNotSummary_request') {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
                     formData.append("files", file);
@@ -212,11 +221,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 } else if (parentComponent === 'documentNotSummary') {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/specific/accounts`;
                     const requestObj = {
-                        docTypeCode: details.docTypeCode,
-                        // tenure: details.tenure === 'null' ? null : details.tenure,
-                        // portfolio: details.portfolio === 'null' ? null : details.portfolio,
-                        // productCode: details.productCode === 'null' ? null : details.productCode,
-                        // userId: details.userId === 'null' ? null : details.userId
+                        docTypeCode: details.docTypeCode
                     }
                     formData.append("file", file);
                     formData.append("data", JSON.stringify(requestObj));
@@ -251,7 +256,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     };
 
     const handleFiles = (file: any) => {
-        console.log(file)
         let tempFiles = Object.assign([], files)
         if (parentComponent === 'profile') {
             var reader = new FileReader();
@@ -418,7 +422,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                                 }
                             </div>
                         }
-
                         <Col md={12} sm={12}>
                             <form id="form-file-upload" onDragEnter={handleDrag} onSubmit={(e) => e.preventDefault()}>
                                 {
@@ -428,7 +431,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                                         type="file"
                                         id="input-file-upload"
                                         accept="image/png, image/jpeg, application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, .zip"
-                                        multiple={parentComponent === 'documents' || parentComponent === 'profile' ? false : true}
+                                        multiple={parentComponent === 'documents' || parentComponent === 'documentNotSummary_request' ? false : true}
                                         onChange={handleChange}
                                     />
                                 }

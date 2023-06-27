@@ -8,9 +8,12 @@ const getAllClients = async ({
     sortParam
 }: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client`)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client/all`, {
+            pageSize,
+            pageNumber
+        })
         const data = handleResponse(response)
-        let clients = data.response
+        let clients = data.response.datas
         const responseModified: any = {}
         // responseModified.totalCount = data.response.metadata.recordCount
         responseModified.totalCount = 10

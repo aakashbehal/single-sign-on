@@ -848,15 +848,17 @@ select option
 			transition: 0.3s ease
 			transition-delay: 0.1s
 	.nav-links
-		height: 100%
+		height: calc( 100% - 145px )
 		padding: 30px 0 150px 0
 		overflow: auto
 		li
 			position: relative
 			list-style: none
 			transition: all 0.4s ease
+			padding: 0 5px
 			&:hover
-				background: #1d1b31
+				.icon-link
+					background: #1d1b31
 				.sub-menu.blank
 					// top: 50%
 					// transform: translateY(-50%)
@@ -868,6 +870,7 @@ select option
 				display: flex
 				align-items: center
 				justify-content: space-between
+				border-radius: 5px
 				a
 					height: 62px
 				&.active
@@ -883,7 +886,7 @@ select option
 					transition: all 0.2s ease
 					transition-delay: 0.2s
 			i
-				min-width: 78px
+				min-width: 70px
 				text-align: center
 				line-height: 50px
 				color: #fff
@@ -891,7 +894,7 @@ select option
 				cursor: pointer
 				transition: all 0.3s ease
 			svg
-				min-width: 78px
+				min-width: 70px
 				text-align: center
 				line-height: 50px
 				color: #fff
@@ -899,8 +902,7 @@ select option
 				cursor: pointer
 				transition: all 0.3s ease
 			.sub-menu
-				padding: 6px 6px 14px 80px
-				margin-top: -10px
+				padding: 6px 6px 14px 50px
 				background: #1d1b31
 				display: none
 				li
@@ -998,3 +1000,6 @@ select option
 	border-bottom-right-radius: 50%
 	svg
 		fill: black
+.console
+	height: 68px !important
+	padding: 0 !important

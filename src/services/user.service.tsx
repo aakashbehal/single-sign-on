@@ -47,9 +47,10 @@ function logout() {
                 token: FBToken
             }
         })
-        deleteFBToken()
         localStorage.removeItem('user');
+        sessionStorage.clear()
         history.push('/login')
+        deleteFBToken()
     } catch (error: any) {
         throw error
     }

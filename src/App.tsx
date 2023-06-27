@@ -23,6 +23,8 @@ import Registration from "./containers/Registration/Registration";
 import { sessions } from "./helpers/sessions"
 import { MyCustomToast } from "./helpers/customToaster";
 import WithSidebar from "./components/PrivateRoute/SideBarRoute";
+import Approval from "./containers/Setup/Approval";
+
 
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
@@ -36,6 +38,7 @@ const SummaryDrillDownNotHave = lazy(() => import("./containers/DocumentManager/
 const ClientSetup = lazy(() => import("./containers/Setup/ClientSetup"));
 const PartnerSetup = lazy(() => import("./containers/Setup/PartnerSetup"));
 const DocumentTypeIdentifier = lazy(() => import("./containers/DocumentManager/DocumentTypeIdentifier"));
+const ConsoleSettings = lazy(() => import("./containers/DocumentManager/ConsoleSettings"));
 /**
  * Applications starting point
  * @returns 
@@ -84,9 +87,12 @@ const App = () => {
               {/* Setup */}
               <PrivateRoute exact path="/setup/client" component={ClientSetup} />
               <PrivateRoute exact path="/setup/partner" component={PartnerSetup} />
+              <PrivateRoute exact path="/setup/user_approval" component={Approval} />
 
               {/* OCR */}
               <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />
+              {/* Console */}
+              <PrivateRoute exact path="/setup/console" component={ConsoleSettings} />
 
             </Switch>
           </ErrorBoundary>

@@ -11,6 +11,7 @@ import Logo from '../../assets/img/logo.png'
 import { BsSearch, BsUiChecks } from "react-icons/bs";
 import { HiOutlinePresentationChartLine } from "react-icons/hi";
 import { GrHelp } from "react-icons/gr";
+import { FiSettings } from "react-icons/fi";
 
 const rolesMapping = {
     "Equabli": [
@@ -68,13 +69,8 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
             setActiveRoute('documents')
             setRole('null')
             setMenuDrop({
-                action: false,
-                search: false,
-                inventory: false,
-                compliance: false,
-                report: false,
-                admin: false,
-                help: false,
+                setup: false,
+                console: false,
                 documents: false
             })
         }
@@ -121,12 +117,12 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/download_history">Download History</NavLink></li>
                     </ul>
                 </li>
-                <li className={`${menuDrop.documents ? 'showMenu' : ''}`} onClick={() => {
+                <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
                     setMenuDrop((state: any) => {
-                        return { ...state, documents: !state.documents }
+                        return { ...state, setup: !state.setup }
                     })
                 }}>
-                    <div className={`icon-link ${(activeRoute === 'client' || activeRoute === 'partner') ? 'active' : ''}`}>
+                    <div className={`icon-link ${(activeRoute === 'client' || activeRoute === 'partner' || activeRoute === 'user_approval' || activeRoute === 'document_type_identifier') ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
                             <MdOutlinePhonelinkSetup size={30} />
                             <span className="link_name">Setup</span>
@@ -137,8 +133,28 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
                     </ul>
+                </li>
+            </ul>
+            <ul className="nav-links console">
+                <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
+                    setMenuDrop((state: any) => {
+                        return { ...state, console: !state.console }
+                    })
+                }}>
+                    <div className={`icon-link ${(activeRoute === 'console') ? 'active' : ''}`}>
+                        <NavLink to="/setup/console">
+                            <FiSettings size={30} />
+                            <span className="link_name">Console</span>
+                        </NavLink>
+                    </div>
+                    {!isClosed &&
+                        <ul className="sub-menu">
+                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/console">Console</NavLink></li>
+                        </ul>
+                    }
                 </li>
             </ul>
         </div >

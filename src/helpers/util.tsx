@@ -205,6 +205,9 @@ export const httpInterceptor = () => {
                     //     }
                     // }
                     request.headers['Authorization'] = `Bearer ${token}`;
+                    if (user?.apiKey) {
+                        request.headers['X-API-KEY'] = user.apiKey
+                    }
                 }
                 request.headers['rqsOrigin'] = 'web';
                 // request.headers['Content-Type'] = 'application/json';
