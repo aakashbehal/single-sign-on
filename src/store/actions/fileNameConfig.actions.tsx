@@ -7,9 +7,10 @@ import {
     UserDocumentPolicy,
     SaveUserConfiguration,
     RetentionPolicy,
-    DocumentPolicy
+    DocumentPolicy,
+    UserListOfUserConfig
 } from "../types.d";
-import { fileNameConfigService } from "../../services"
+import { commonServices, fileNameConfigService } from "../../services"
 
 export const FileNameConfigActionCreator = {
     getConjunction: () => (dispatch: any) => {
@@ -19,7 +20,7 @@ export const FileNameConfigActionCreator = {
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ fileNameConfig: 'SEPARATOR' })
+        commonServices.getLookupValues({ lookupGroupKeyValue: 'CONJUNCTION_TYPE' })
             .then(
                 user => {
                     dispatch(success(user))
@@ -36,7 +37,7 @@ export const FileNameConfigActionCreator = {
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ fileNameConfig: 'FIELD' })
+        fileNameConfigService.getConfig()
             .then(
                 user => {
                     dispatch(success(user))
@@ -53,7 +54,7 @@ export const FileNameConfigActionCreator = {
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ fileNameConfig: 'RETENTION_POLICY' })
+        fileNameConfigService.getConfig()
             .then(
                 user => {
                     dispatch(success(user))
@@ -70,7 +71,7 @@ export const FileNameConfigActionCreator = {
 
         dispatch(request())
 
-        fileNameConfigService.getConfig({ fileNameConfig: 'DOCUMENT_POLICY' })
+        fileNameConfigService.getConfig()
             .then(
                 user => {
                     dispatch(success(user))
@@ -91,6 +92,23 @@ export const FileNameConfigActionCreator = {
             .then(
                 userNameConfig => {
                     dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    getListOfUserConfig: () => (dispatch: any) => {
+        const request = () => ({ type: UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_REQUEST })
+        const success = (list: any) => ({ type: UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_SUCCESS, payload: list })
+        const failure = (error: any) => ({ type: UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.getListOfUserConfig()
+            .then(
+                list => {
+                    dispatch(success(list))
                 },
                 error => {
                     dispatch(failure(error))

@@ -44,7 +44,16 @@ const getMyDocumentFolders = async ({
             return folder
         })
         responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columns
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.displayName
+        })
         return responseModified
     } catch (error: any) {
         throw error

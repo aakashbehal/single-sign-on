@@ -83,7 +83,7 @@ const MyDocuments = () => {
                     return dC
                 }
             })
-            setColumnsSaved(columns[0].columnNames)
+            setColumnsSaved(columns[0].attributeNodeKey)
         } else {
             setColumnsSaved(columns)
         }

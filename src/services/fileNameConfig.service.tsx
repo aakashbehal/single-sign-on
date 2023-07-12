@@ -1,12 +1,13 @@
 
+import { IConfiguration, IDocConfig } from "../containers/User/DocumentGeneralConfiguration"
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getConfig = async (requestParams: any) => {
+
+const getConfig = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`,
-            { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`)
         const data = handleResponse(response)
-        return data.response.docMgrConfigs
+        return data.response
     } catch (error: any) {
         throw error
     }
@@ -23,14 +24,21 @@ const getUserConfig = async (requestParams: any) => {
     }
 }
 
-const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any) => {
+const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration) => {
+    let fromServer = fromList ? fromList.userDocConfig : []
+    let treadedList = fromServer.map((config: IDocConfig) => {
+        return {
+            configSelectedCode: config.docMgrConfigSelectedCode,
+            configValSelectedCode: config.domainAttributeMappingSelectedCode
+        }
+    })
     let allFields = [];
     if (dataFieldOptions && dataFieldOptions.length > 0) {
-        allFields = dataFieldOptions[0].configVals
+        allFields = dataFieldOptions
     }
     let selectedFields: any = []
     let notAvailableFields: any = []
-    if (serverOptions && serverOptions.length === 0) {
+    if (treadedList && treadedList.length === 0) {
         /**
          * Default available and selection
          */
@@ -41,23 +49,23 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
             selectedFields = ['CAN', "DT", "PC"]
             notAvailableFields = ['CIDSC', 'DT', 'CAN']
         }
-    } else if (serverOptions && serverOptions.length > 0) {
+    } else if (treadedList && treadedList.length > 0) {
         /**
          * Saved selections
          */
-        serverOptions.forEach((field: any, index: any) => {
+        treadedList.forEach((field: any, index: any) => {
             fieldsSelected[index + 1] = field.configValSelectedCode
             selectedFields.push(field.configValSelectedCode)
             notAvailableFields.push(field.configValSelectedCode)
         })
     }
     const dataFieldOptionsFiltered = allFields.map((fO: any) => {
-        if (selectedFields.indexOf(fO.shortCode) !== -1) {
+        if (selectedFields.indexOf(fO.attributeCode) !== -1) {
             fO.selected = true
         } else {
             fO.selected = false
         }
-        if (notAvailableFields.indexOf(fO.shortCode) === -1) {
+        if (notAvailableFields.indexOf(fO.attributeCode) === -1) {
             fO.available = true
         } else {
             fO.available = false
@@ -91,9 +99,19 @@ const saveUserConfiguration = async (requestBody: any) => {
     }
 }
 
+const getListOfUserConfig = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error
+    }
+}
 export const fileNameConfigService = {
     getConfig,
     getUserConfig,
     handleDefaultAndSavedSelection,
-    saveUserConfiguration
+    saveUserConfiguration,
+    getListOfUserConfig
 }

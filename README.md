@@ -10,11 +10,11 @@ e.g. `docker build -t document-manager:0.0.1 .`
 
 ## Step 2 `docker images` get image tag 
 
-e.g. `421639237669`
+e.g. `7493f581d591`
 
 ## Step 3 `docker tag <tag> <ECR>`
 
-e.g.  `docker tag 9c0e16b7b11a 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.0`
+e.g.  `docker tag 7243210cc9c1 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.0`
 
 ## Step 4 `docker push <ECR>`
 

@@ -7,14 +7,15 @@ import {
     UserDocumentPolicy,
     SaveUserConfiguration,
     RetentionPolicy,
-    DocumentPolicy
+    DocumentPolicy,
+    UserListOfUserConfig
 } from "../types.d"
 
 const initialState = {
     conjunction: {
         loading: false,
         error: false,
-        data: {}
+        data: []
     },
     fieldOptions: {
         loading: false,
@@ -25,6 +26,11 @@ const initialState = {
         loading: false,
         error: false,
         data: {}
+    },
+    fileNamingConfigList: {
+        loading: false,
+        error: false,
+        data: []
     },
     userConjunction: {
         loading: false,
@@ -75,7 +81,7 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                 conjunction: {
                     ...state.conjunction,
                     loading: false,
-                    data: action.payload[0]
+                    data: action.payload
                 }
             }
         case Conjunction.CONJUNCTION_FAILURE:
@@ -141,6 +147,33 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                     error: true
                 }
             }
+        case UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_REQUEST:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    loading: true,
+                    error: false
+                }
+            }
+        case UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_SUCCESS:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case UserListOfUserConfig.USER_LIST_OF_FILE_NAMING_CONFIG_FAILURE:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    loading: false,
+                    error: true
+                }
+            }
         case UserSeparator.USER_SEPARATOR_REQUEST:
             return {
                 ...state,
@@ -156,7 +189,7 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                 userConjunction: {
                     ...state.userConjunction,
                     loading: false,
-                    data: action.payload[0]
+                    data: action.payload
                 }
             }
         case UserSeparator.USER_SEPARATOR_FAILURE:

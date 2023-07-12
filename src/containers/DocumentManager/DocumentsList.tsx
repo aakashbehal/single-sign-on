@@ -88,7 +88,7 @@ const DocumentsList = ({ location }: { location: any }) => {
     }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
-        if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
+        if (!loading && columns?.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
             const columns = defaultColumns.filter((dC: any) => {
                 if (dC.tableName === 'documentFolder') {
                     return dC

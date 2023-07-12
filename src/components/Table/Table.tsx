@@ -1247,7 +1247,7 @@ const TableComponent = ({
             {isPagination && totalCount > 0 ? sizeHandler() : null}
             {
                 !isLoading &&
-                <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                <Table striped hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
                     {totalCount > 0 ? tableHandler() : emptyTable()}
                 </Table>
             }
