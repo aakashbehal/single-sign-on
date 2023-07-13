@@ -340,7 +340,7 @@ const Step4Content = React.forwardRef((
                         if (result.validation) {
                             isValidOrg = true
                         }
-                    } catch (err) {
+                    } catch (err: any) {
                         isValidOrg = false
                         showNotCheck(false)
                         addToast(err, { appearance: 'error', autoDismiss: false })

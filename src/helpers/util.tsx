@@ -1,15 +1,11 @@
 import { userService, commonServices } from "../services";
-import axios from "axios";
+import axios, { AxiosInstance } from "axios";
 import React, { useEffect, useMemo, useState } from "react";
 import { saveAs } from 'file-saver';
-import { HttpRequest } from "@aws-sdk/protocol-http";
-import { S3RequestPresigner } from "@aws-sdk/s3-request-presigner";
-import { parseUrl } from "@aws-sdk/url-parser";
-import { Sha256 } from "@aws-crypto/sha256-browser";
-import { formatUrl } from "@aws-sdk/util-format-url";
 import { history } from "./history";
 
-export const axiosCustom = axios.create(); // export this and use it in all your components
+export const axiosCustom: any = axios.create(); // export this and use it in all your components
+axiosCustom.isCancel = axios.isCancel
 
 /**
  * Method is used to format date
@@ -216,7 +212,10 @@ export const httpInterceptor = () => {
                 return Promise.reject(err)
             }
         },
-        error => {
+        (error: any) => {
+            if (axiosCustom.isCancel(error)) {
+                return console.log(error);
+            }
             return Promise.reject(error)
         }
     )

@@ -323,7 +323,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download`
         }
         axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
-            .then((response) => {
+            .then((response: any) => {
                 var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                 saveAs(blob, 'SendRequestDocumentSample.xlsx');
             });

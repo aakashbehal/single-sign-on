@@ -36,7 +36,7 @@ const Invoice = ({ collapse }: any) => {
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         let sampleFile: string = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost/invoice/download`
         axiosCustom.get(sampleFile, { responseType: 'arraybuffer', params: { tenure: 'month' } })
-            .then((response) => {
+            .then((response: any) => {
                 var blob = new Blob([response.data], { type: 'application/pdf' });
                 saveAs(blob, 'invoice.pdf');
             }).finally(() => {
