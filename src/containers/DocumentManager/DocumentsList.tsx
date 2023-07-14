@@ -16,6 +16,7 @@ import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import Share from "../../components/modal/Share";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 
 const DocumentsList = ({ location }: { location: any }) => {
@@ -76,6 +77,7 @@ const DocumentsList = ({ location }: { location: any }) => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        dispatch(MiscActionCreator.getColumnForAllTables('documentFolder'))
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
@@ -89,12 +91,7 @@ const DocumentsList = ({ location }: { location: any }) => {
 
     useEffect(() => {
         if (!loading && columns?.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC: any) => {
-                if (dC.tableName === 'documentFolder') {
-                    return dC
-                }
-            })
-            setColumnsSaved(columns[0].columnNames)
+            setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)
         }

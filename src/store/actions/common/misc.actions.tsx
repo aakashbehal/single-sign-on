@@ -188,14 +188,14 @@ export const MiscActionCreator = {
             )
     },
 
-    getColumnForAllTables: () => (dispatch: any) => {
+    getColumnForAllTables: (table: string) => (dispatch: any) => {
         const request = () => ({ type: AllTableColumns.ALL_TABLE_COLUMN_REQUEST })
         const success = (data: any) => ({ type: AllTableColumns.ALL_TABLE_COLUMN_SUCCESS, payload: data })
         const failure = (error: any) => ({ type: AllTableColumns.ALL_TABLE_COLUMN_FAILURE, payload: error })
 
         dispatch(request())
 
-        commonServices.getColumnForAllTables()
+        commonServices.getColumnForAllTables(table)
             .then(
                 data => {
                     dispatch(success(data))

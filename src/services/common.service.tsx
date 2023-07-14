@@ -223,9 +223,13 @@ const saveColumn = async ({ parentComponent, showHideColumns }: any) => {
     }
 }
 
-const getColumnForAllTables = async () => {
+const getColumnForAllTables = async (table: string) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column/all`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column`, {
+            params: {
+                table
+            }
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

@@ -1,9 +1,13 @@
+@import "../../colors"
 .movement_group
     position: absolute
-    right: 30px
-    top: -25px
+    left: 5px
+    padding: 15px 12px 9px
+    transition: all ease
     svg
         cursor: pointer
+        &:hover
+            fill: $bittersweet
 .button_center
     text-align: center
 .search_input
@@ -55,3 +59,6 @@
     color: white
     border-radius: 10px
     margin-left: 0.5rem
+.identifier_group
+    display: inline-flex
+    justify-content: space-around

@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import App from './App';
 import { configureFakeBackend } from './helpers';
@@ -7,11 +7,6 @@ import { httpInterceptor } from './helpers/util';
 
 httpInterceptor()
 // configureFakeBackend()
-
-ReactDOM.render(
-  // <React.StrictMode>
-  <App />
-  // </React.StrictMode>
-  ,
-  document.getElementById('root')
-);
+const container: HTMLElement = document.getElementById('root')!
+const root = createRoot(container)
+root.render(<App />)

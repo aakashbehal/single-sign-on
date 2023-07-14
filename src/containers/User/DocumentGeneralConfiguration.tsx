@@ -203,7 +203,8 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
     const partnerDefault = ["CIDSC", "DT", "CAN", "PC"]
     const configRef = useRef<any>();
     const configNameSaveRef = useRef<any>();
-
+    const [uniqueIdentifier, setUniqueIdentifier] = useState<any>(null)
+    const [groupIdentifier, setGroupIdentifier] = useState<any>(null)
     const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [fieldsSelected, setFieldSelected] = useState<any>({});
 
@@ -486,6 +487,14 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
         return documentNameGenerated
     }
 
+    const handleIdentifiers = (type: string, field: string) => {
+        if (type === 'group') {
+            setGroupIdentifier(field)
+        } else {
+            setUniqueIdentifier(field)
+        }
+    }
+
     return (
         <Modal
             show={show}
@@ -533,7 +542,7 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                 {
                                     <Row>
                                         <Col lg={12} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-5">
+                                            <Form.Group as={Col}>
                                                 <Col md={12} sm={12}>
                                                     <Form.Control
                                                         as="select"
@@ -553,6 +562,14 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                         </Col>
                                     </Row>
                                 }
+                                <Row>
+                                    <Col sm={7}></Col>
+                                    <Col sm={5} className={Styles.identifier_group}>
+                                        <p>Arrange</p>
+                                        <p>Group Identifier</p>
+                                        <p>Unique Identifier</p>
+                                    </Col>
+                                </Row>
                                 {
                                     fieldsSelected
                                     && Object.keys(fieldsSelected).map((keyName, keyIndex) => {
@@ -561,28 +578,71 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                                 <Col lg={12} md={12} className="no_padding">
                                                     <Form.Group as={Col} className="mb-5">
                                                         <Col md={12} sm={12}>
-                                                            <Form.Control
-                                                                as="select"
-                                                                name={`field_${keyIndex + 1}`}
-                                                                className="select_custom"
-                                                                disabled={
-                                                                    disableHandler(fieldsSelected[keyName])
-                                                                }
-                                                                onChange={(e) => handleSelection(keyIndex + 1, e.target.value)}
-                                                                value={fieldsSelected[keyName] || ''}>
-                                                                {
-                                                                    !fieldsSelected[Number(keyName) + 1]
-                                                                    && <option></option>
-                                                                }
-                                                                {
-                                                                    (filteredOptions && filteredOptions.length > 0) &&
-                                                                    filteredOptions.map((cR: any, index: number) => {
-                                                                        return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
-                                                                            {cR.attributeName}
-                                                                        </option>
-                                                                    })
-                                                                }
-                                                            </Form.Control>
+                                                            <div style={{ display: 'inline-flex', width: '100%' }}>
+                                                                <div style={{ width: '60%' }}>
+                                                                    <Form.Control
+                                                                        as="select"
+                                                                        name={`field_${keyIndex + 1}`}
+                                                                        className="select_custom"
+                                                                        disabled={
+                                                                            disableHandler(fieldsSelected[keyName])
+                                                                        }
+                                                                        onChange={(e) => handleSelection(keyIndex + 1, e.target.value)}
+                                                                        value={fieldsSelected[keyName] || ''}>
+                                                                        {
+                                                                            !fieldsSelected[Number(keyName) + 1]
+                                                                            && <option></option>
+                                                                        }
+                                                                        {
+                                                                            (filteredOptions && filteredOptions.length > 0) &&
+                                                                            filteredOptions.map((cR: any, index: number) => {
+                                                                                return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
+                                                                                    {cR.attributeName}
+                                                                                </option>
+                                                                            })
+                                                                        }
+                                                                    </Form.Control>
+                                                                </div>
+                                                                <div style={{ width: '40%', position: 'relative' }}>
+                                                                    <div className={Styles.movement_group}>
+                                                                        {
+                                                                            keyIndex !== 0
+                                                                            && fieldsSelected[keyName]
+                                                                            && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
+                                                                        }
+                                                                        {
+                                                                            keyIndex !== (Object.keys(fieldsSelected).length - 1)
+                                                                            && fieldsSelected[keyName]
+                                                                            && fieldsSelected[Number(keyName) + 1]
+                                                                            && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
+                                                                        }
+                                                                    </div>
+                                                                    <div style={{ marginLeft: '80px' }}>
+                                                                        <Row sm={12}>
+                                                                            <Col md={6} sm={12} className="switch_box">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    className="switch small"
+                                                                                    onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
+                                                                                    name="consent"
+                                                                                    checked={groupIdentifier === `field_${keyIndex + 1}`}
+                                                                                    defaultChecked={groupIdentifier === `field_${keyIndex + 1}`}
+                                                                                />
+                                                                            </Col>
+                                                                            <Col md={6} sm={12} className="switch_box">
+                                                                                <input
+                                                                                    type="checkbox"
+                                                                                    className="switch small"
+                                                                                    onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
+                                                                                    name="consent"
+                                                                                    checked={uniqueIdentifier === `field_${keyIndex + 1}`}
+                                                                                    defaultChecked={uniqueIdentifier === `field_${keyIndex + 1}`}
+                                                                                />
+                                                                            </Col>
+                                                                        </Row>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </Col>
                                                         <Form.Label className="label_custom white">Field {keyIndex + 1}
                                                             {
@@ -594,19 +654,7 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                                                 (fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>
                                                             }
                                                         </Form.Label>
-                                                        <div className={Styles.movement_group}>
-                                                            {
-                                                                keyIndex !== 0
-                                                                && fieldsSelected[keyName]
-                                                                && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
-                                                            }
-                                                            {
-                                                                keyIndex !== (Object.keys(fieldsSelected).length - 1)
-                                                                && fieldsSelected[keyName]
-                                                                && fieldsSelected[Number(keyName) + 1]
-                                                                && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
-                                                            }
-                                                        </div>
+
                                                     </Form.Group>
                                                 </Col>
                                             </Row>)

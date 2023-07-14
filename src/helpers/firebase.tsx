@@ -31,13 +31,13 @@ export const requestForToken = () => {
     });
 };
 
-export const onMessageListener = () =>
-    new Promise((resolve) => {
+export const onMessageListener = () => {
+    return new Promise((resolve) => {
         onMessage(messaging, (payload) => {
             resolve(payload);
         });
     });
-
+}
 export const deleteFBToken = async () => {
     try {
         await deleteToken(messaging)

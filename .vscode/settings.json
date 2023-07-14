@@ -4,5 +4,8 @@
         "COMPLIANCEFILTER",
         "eamp",
         "onboarded"
-    ]
+    ],
+    "search.exclude": {
+        "**/node_modules": false
+    }
 }

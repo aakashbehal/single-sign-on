@@ -52,7 +52,7 @@ const getMyDocumentFolders = async ({
                 attributeCode: string
             }
         ) => {
-            return column.displayName
+            return column.attributeNodeKey
         })
         return responseModified
     } catch (error: any) {
@@ -113,7 +113,16 @@ const getMyDocumentList = async ({
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columns
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
         return responseModified
     } catch (error: any) {
         console.log(error)

@@ -54,6 +54,7 @@ const TableComponent = ({
     searchCriteria,
     handleDocumentManagerSummary
 }: any) => {
+    console.log(`hideShareArray`, hideShareArray)
     const dispatch = useDispatch()
     const history = useHistory();
     const [isCheckAll, setIsCheckAll] = useState(false);
@@ -83,6 +84,7 @@ const TableComponent = ({
     useEffect(() => {
         if (data && data.length > 0) {
             let headers = Object.keys(map).filter(item => {
+                console.log(item, showHideColumns)
                 return showHideColumns.includes(item)
             })
             setHeaders(headers);

@@ -17,7 +17,7 @@ export const LoginActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: AuthTypes.LOGIN_RESET }))
+            )
     },
 
     logout: () => (dispatch: any) => {

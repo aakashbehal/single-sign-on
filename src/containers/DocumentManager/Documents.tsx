@@ -22,10 +22,6 @@ const Documents = ({ location }: { location: any }) => {
     const [selectedTab, setSelectedTab] = useState('');
 
     useEffect(() => {
-        dispatch(MiscActionCreator.getColumnForAllTables())
-    }, [])
-
-    useEffect(() => {
         const tab = location.pathname.split('/')
         setSelectedTab(tab[tab.length - 1])
     }, [location])
