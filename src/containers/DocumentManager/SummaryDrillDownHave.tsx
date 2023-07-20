@@ -9,6 +9,7 @@ import ViewDocument from "../../components/modal/ViewDocument";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 const SummaryDrillDownHave = ({ location }: { location: any }) => {
     const dispatch = useDispatch();
@@ -48,6 +49,7 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        dispatch(MiscActionCreator.getColumnForAllTables('accounts'))
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
@@ -60,13 +62,8 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
     }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
-        if (!loading && columns?.length === 0 && (defaultColumns?.length > 0)) {
-            const columns = defaultColumns.filter((dC: any) => {
-                if (dC.tableName === 'accounts') {
-                    return dC
-                }
-            })
-            setColumnsSaved(columns[0].columnNames)
+        if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
+            setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)
         }
@@ -117,14 +114,14 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
                     clientAccountNumber: "Client Account Number",
                     originalAccountNumber: "Original Account Number",
                     equabliAccountNumber: "Equabli Account Number",
-                    fileName: "File Name",
+                    documentName: "File Name",
                     generateDate: "Generation Date",
                     uploadDate: "Upload Date",
                     fileSize: "File Size",
                     sharedBy: "Shared By",
                 }}
                 totalCount={totalCount}
-                actionArray={['fileName']}
+                actionArray={['documentName']}
                 handleNavigate={(data: any) => {
                     setShowDocument(true)
                     setDocumentToShow(data)

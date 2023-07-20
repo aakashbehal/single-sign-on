@@ -82,7 +82,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }
 
     const getNotList = async () => {
-        console.log(details)
         try {
             const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
                 pageSize: details.pageSize,
@@ -179,21 +178,11 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 return
             }
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
-                formData.append("files", file);
-                formData.append("files", matrixFile)
-                formData.append("fileUploadVan", JSON.stringify({ "bulkType": "upload" }))
+                formData.append("doc", file);
+                formData.append("doc", matrixFile)
                 API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
                 const response = await axiosCustom.post(API_URL, formData, config)
-                const urls = handleResponse(response)
-                const responseFilePath = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk/read`,
-                    {
-                        "orgType": "CT",
-                        "excelUrl": urls.response.fileUrl[1],
-                        "zipUrl": urls.response.fileUrl[0],
-                        "bulkType": "upload"
-                    }
-                )
-                handleResponse(responseFilePath)
+                handleResponse(response)
                 addToast(createMessage('success', `uploaded`, 'File'), { appearance: 'success', autoDismiss: true })
                 setFormSubmitted(false)
                 onHide()
@@ -206,27 +195,24 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                         document_type
                     } = documentTypeRef.current
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/account`
-                    formData.append("data", JSON.stringify({ "accountNumber": details.accountId, "docType": document_type.value }));
-                    formData.append("file", file);
+                    formData.append("accountNumber", details.accountId);
+                    formData.append("docType", document_type.value);
+                    formData.append("doc", file);
                 } else if (parentComponent === "receiveDocumentRequest" && details !== null) {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/fullfill`
-                    formData.append("file", file);
-                    formData.append("id", JSON.stringify(details.id))
+                    formData.append("doc", file);
+                    formData.append("id", details.id)
                     // ===================================================
                     // formData.append("clientShortCode", JSON.stringify())
                 } else if (parentComponent === "sentDocumentRequest" || parentComponent === 'documentNotSummary_request') {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
-                    formData.append("files", file);
-                    formData.append("fileUploadVan", JSON.stringify({ "bulkType": "SendRequestDocument" }))
+                    formData.append("doc", file);
                 } else if (parentComponent === 'documentNotSummary') {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/specific/accounts`;
-                    const requestObj = {
-                        docTypeCode: details.docTypeCode
-                    }
-                    formData.append("file", file);
-                    formData.append("data", JSON.stringify(requestObj));
+                    formData.append("doc", file);
+                    formData.append("docTypeCode", details.docTypeCode);
                 } else {
-                    formData.append("file", file);
+                    formData.append("doc", file);
                 }
                 const response = await axiosCustom.post(API_URL, formData, config)
                 handleResponse(response)
@@ -240,7 +226,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         } catch (error: any) {
             setFormSubmitted(false)
             addToast(createMessage('error', `uploading`, 'file'), { appearance: 'error', autoDismiss: false })
-            throw error
+            // throw error.message.message
         }
     }
 

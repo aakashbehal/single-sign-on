@@ -8,7 +8,8 @@ import {
     SaveUserConfiguration,
     RetentionPolicy,
     DocumentPolicy,
-    UserListOfUserConfig
+    UserListOfUserConfig,
+    DeleteUserConfiguration
 } from "../types.d"
 
 const initialState = {
@@ -30,7 +31,10 @@ const initialState = {
     fileNamingConfigList: {
         loading: false,
         error: false,
-        data: []
+        data: [],
+        deleteRequest: false,
+        deleteSuccess: false,
+        deleteError: false
     },
     userConjunction: {
         loading: false,
@@ -172,6 +176,36 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                     ...state.fileNamingConfigList,
                     loading: false,
                     error: true
+                }
+            }
+        case DeleteUserConfiguration.DELETE_USER_CONFIG_REQUEST:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    deleteRequest: true,
+                    deleteSuccess: false,
+                    deleteError: false,
+                }
+            }
+        case DeleteUserConfiguration.DELETE_USER_CONFIG_SUCCESS:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    deleteRequest: false,
+                    deleteSuccess: true,
+                    deleteError: false,
+                }
+            }
+        case DeleteUserConfiguration.DELETE_USER_CONFIG_FAILURE:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    deleteRequest: false,
+                    deleteSuccess: false,
+                    deleteError: true,
                 }
             }
         case UserSeparator.USER_SEPARATOR_REQUEST:

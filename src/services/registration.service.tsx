@@ -6,7 +6,7 @@ const registration = async (requestData: any) => {
         const data = handleResponse(response)
         return data
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -24,7 +24,7 @@ const validateOrgName = async (orgName: any, orgType: any) => {
         const data = handleResponse(response)
         return data
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

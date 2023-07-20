@@ -7,7 +7,7 @@ const GetSubscriptions = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -17,7 +17,7 @@ const GetUserSubscriptions = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -27,7 +27,7 @@ const AddSubscription = async (subscriptionCode: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

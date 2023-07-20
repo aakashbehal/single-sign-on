@@ -34,7 +34,7 @@ export const RequiredDocumentActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: SaveRequiredDocuments.SAVE_REQUIRED_DOCUMENTS_RESET }))
+            )
     },
     deleteRequiredDocuments: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_REQUEST })
@@ -51,6 +51,6 @@ export const RequiredDocumentActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_RESET }))
+            )
     }
 }

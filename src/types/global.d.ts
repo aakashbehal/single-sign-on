@@ -2,6 +2,7 @@
 export { }
 
 declare module '*';
+
 declare global {
 
     interface Window {

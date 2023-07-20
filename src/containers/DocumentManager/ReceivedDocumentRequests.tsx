@@ -15,6 +15,7 @@ import ViewDocument from "../../components/modal/ViewDocument";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 
 const ReceivedDocumentRequests = () => {
@@ -69,6 +70,7 @@ const ReceivedDocumentRequests = () => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        dispatch(MiscActionCreator.getColumnForAllTables('receiveDocumentRequest'))
     }, [])
 
     useEffect(() => {
@@ -79,12 +81,7 @@ const ReceivedDocumentRequests = () => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC: any) => {
-                if (dC.tableName === 'documentFolder') {
-                    return dC
-                }
-            })
-            setColumnsSaved(columns[0].columnNames)
+            setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)
         }

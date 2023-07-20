@@ -98,7 +98,7 @@ const ChangePassword = () => {
             history.push('/login')
         } catch (error: any) {
             addToast(error?.data?.message || error || 'Issue while resetting user password', { appearance: 'error', autoDismiss: false })
-            throw error
+            throw error.message
         }
     }
 

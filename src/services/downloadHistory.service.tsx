@@ -23,7 +23,7 @@ const getDownloadHistory = async ({
         responseModified.totalCount = data.response.metadata.recordCount
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -37,7 +37,7 @@ const saveDownloadHistory = async (
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -47,7 +47,7 @@ const deleteDownloadHistory = async (id: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

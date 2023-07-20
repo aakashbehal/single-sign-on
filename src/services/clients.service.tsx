@@ -20,7 +20,7 @@ const getAllClients = async ({
         responseModified.clients = clients
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -63,7 +63,7 @@ const addClient = async ({
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -107,7 +107,7 @@ const editClient = async ({
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -117,7 +117,7 @@ const deactivateClient = async (clientId: string | number) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

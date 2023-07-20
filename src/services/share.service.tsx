@@ -7,7 +7,7 @@ const shareFolder = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -17,7 +17,7 @@ const revokeShareFolder = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -27,7 +27,7 @@ const shareDocument = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -37,7 +37,7 @@ const revokeShareDocument = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

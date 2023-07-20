@@ -16,6 +16,7 @@ import xlsx from "json-as-xlsx"
 import { FiEdit2 } from "react-icons/fi"
 import { AiOutlineDelete } from "react-icons/ai"
 import NoRecord from "../../components/Common/NoResult"
+import DeleteConfirm from "../../components/modal/DeleteConfirm"
 
 export interface IDocConfig {
     docMgrConfigSelectedCode: string,
@@ -66,7 +67,7 @@ const DocumentGeneralConfiguration = () => {
 
     return <>
         {<ListOfUserFileNamingConfiguration ref={ref} dispatch={dispatch} setConfigurationDetails={setConfigurationDetails} setShowConfig={setShowConfig} />}
-        {showConfig && <FileNamingModal userType={userType} dispatch={dispatch} show={showConfig} onHide={() => {
+        {showConfig && <FileNamingModal userType={userType} setConfigurationDetails={setConfigurationDetails} dispatch={dispatch} show={showConfig} onHide={() => {
             setShowConfig(false)
         }} details={configurationDetails} />}
         <br />
@@ -76,26 +77,51 @@ const DocumentGeneralConfiguration = () => {
                 <Col sm={6}>
                     <RetentionPolicy dispatch={dispatch} />
                 </Col>
-                <Col sm={6}><DocumentPolicy dispatch={dispatch} /></Col>
+                <Col sm={6}>
+                    <DocumentPolicy dispatch={dispatch} />
+                </Col>
             </Row>
         }
     </>
 }
 
 const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurationDetails, setShowConfig }: any, ref) => {
+    const { addToast } = useToasts();
+    const [showConfirmDelete, setShowConfirmDelete] = useState<Boolean>(false)
+    const [toDelete, setToDelete] = useState<string>('')
     const {
         confListLoading,
         confListError,
         confList,
+        deleteRequest,
+        deleteSuccess,
+        deleteError
     } = useSelector((state: any) => ({
         confListLoading: state.fileNameConfig.fileNamingConfigList.loading,
         confListError: state.fileNameConfig.fileNamingConfigList.error,
         confList: state.fileNameConfig.fileNamingConfigList.data,
+        deleteRequest: state.fileNameConfig.fileNamingConfigList.deleteRequest,
+        deleteSuccess: state.fileNameConfig.fileNamingConfigList.deleteSuccess,
+        deleteError: state.fileNameConfig.fileNamingConfigList.deleteError,
     }))
 
     useEffect(() => {
         getListOfUserConfig()
     }, [])
+
+    useEffect(() => {
+        if (deleteSuccess) {
+            addToast(createMessage('success', 'user configuration', 'delete'), { appearance: 'success', autoDismiss: true });
+            getListOfUserConfig()
+            setConfigurationDetails(null)
+            setShowConfig(false)
+        }
+        if (deleteError) {
+            addToast(createMessage('error', `User Configuration`, 'Delete'), { appearance: 'error', autoDismiss: false });
+        }
+    }, [deleteRequest,
+        deleteSuccess,
+        deleteError])
 
     useImperativeHandle(ref, () => ({
         refreshData() {
@@ -110,7 +136,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
     const formatConfiguration = (confArr: IDocConfig[], separatorCode: string, type: string): string => {
         let confString = ``
         for (let index = 0; index < confArr.length; index++) {
-            let text = type === 'short' ? (confArr[index].domainAttributeMappingSelectedCode) : `"${confArr[index].attributeName}"`
+            let text = type === 'short' ? (confArr[index].domainAttributeMappingSelectedCode) : `<${confArr[index].attributeName}>`
             confString += (text).trim() + ((index < confArr.length - 1) ? separatorCode : '')
         }
         return confString
@@ -123,6 +149,15 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
 
     const addNewHandler = () => {
         setShowConfig(true)
+    }
+
+    const deleteConfiguration = (conf: IConfiguration) => {
+        setToDelete(conf.namingConfigGroupCode)
+        setShowConfirmDelete(true)
+    }
+
+    const approveHandler = () => {
+        dispatch(FileNameConfigActionCreator.deleteUserConfiguration(toDelete))
     }
 
     return (
@@ -182,7 +217,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                                                 }
                                             >
                                                 {/* onClick={() => handleDetails(cT)} */}
-                                                <AiOutlineDelete size={20} style={{ cursor: 'pointer' }} />
+                                                <AiOutlineDelete onClick={() => deleteConfiguration(conf)} size={20} style={{ cursor: 'pointer' }} />
                                             </OverlayTrigger>
                                         </span>
                                     </td>
@@ -192,13 +227,24 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                     </tbody>
                 </Table>
             }
-
+            {
+                showConfirmDelete
+                &&
+                <DeleteConfirm
+                    show={showConfirmDelete}
+                    onHide={() => setShowConfirmDelete(false)}
+                    confirmDelete={approveHandler}
+                    details={toDelete}
+                    type="configuration"
+                />
+            }
         </Row>
 
     )
 })
 
-const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => {
+const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userType, dispatch }: any) => {
+    const { addToast } = useToasts();
     const clientDefault = ["CAN", "DT", "PC"]
     const partnerDefault = ["CIDSC", "DT", "CAN", "PC"]
     const configRef = useRef<any>();
@@ -255,6 +301,19 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
         // dispatch(FileNameConfigActionCreator.getUserSeparator())
         dispatch(TypesActionCreator.getProductTypes())
         dispatch(TypesActionCreator.getDocumentTypes())
+        if (details?.userDocConfig) {
+            for (let i = 0; i < details.userDocConfig.length; i++) {
+                if (details.userDocConfig[i].isDocumentGroupIdentifier) {
+                    setGroupIdentifier(details.userDocConfig[i].docMgrConfigSelectedCode.replace('field', 'field_'))
+                }
+                if (details.userDocConfig[i].isDocumentUniqueIdentifier) {
+                    setUniqueIdentifier(details.userDocConfig[i].docMgrConfigSelectedCode.replace('field', 'field_'))
+                }
+            }
+        }
+        return () => {
+            setConfigurationDetails(null)
+        }
     }, [])
 
     useEffect(() => {
@@ -293,49 +352,63 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field1",
                 "domainAttributeMappingSelectedCode": field_1.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_1',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_1'
             })
         }
         if (field_2.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field2",
                 "domainAttributeMappingSelectedCode": field_2.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_2',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_2'
             })
         }
         if (field_3.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field3",
                 "domainAttributeMappingSelectedCode": field_3.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_3',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_3'
             })
         }
         if (field_4.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field4",
                 "domainAttributeMappingSelectedCode": field_4.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_4',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_4'
             })
         }
         if (field_5.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field5",
                 "domainAttributeMappingSelectedCode": field_5.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_5',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_5'
             })
         }
         if (field_6.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field6",
                 "domainAttributeMappingSelectedCode": field_6.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_6',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_6'
             })
         }
         if (field_7 && field_7.value) {
             configRequest.userDocConfig.push({
                 "docMgrConfigSelectedCode": "field7",
                 "domainAttributeMappingSelectedCode": field_7.value,
-                isMandatory: true
+                isMandatory: true,
+                "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_7',
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_7'
             })
         }
         dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
@@ -489,9 +562,17 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
 
     const handleIdentifiers = (type: string, field: string) => {
         if (type === 'group') {
-            setGroupIdentifier(field)
+            if (uniqueIdentifier === field) {
+                addToast(`Group Identifier and Unique Identifier cannot be the same field`, { appearance: 'info', autoDismiss: true });
+            } else {
+                setGroupIdentifier(field)
+            }
         } else {
-            setUniqueIdentifier(field)
+            if (groupIdentifier === field) {
+                addToast(`Unique Identifier and Group Identifier cannot be the same field`, { appearance: 'info', autoDismiss: true });
+            } else {
+                setUniqueIdentifier(field)
+            }
         }
     }
 
@@ -563,11 +644,17 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                     </Row>
                                 }
                                 <Row>
-                                    <Col sm={7}></Col>
-                                    <Col sm={5} className={Styles.identifier_group}>
-                                        <p>Arrange</p>
-                                        <p>Group Identifier</p>
-                                        <p>Unique Identifier</p>
+                                    <Col sm={6}></Col>
+                                    <Col sm={6} className={Styles.identifier_group}>
+                                        <Col sm={2} className="no_padding">
+                                            <p>Arrange</p>
+                                        </Col>
+                                        <Col sm={5}>
+                                            <p>Group Identifier</p>
+                                        </Col>
+                                        <Col sm={5}>
+                                            <p>Unique Identifier</p>
+                                        </Col>
                                     </Col>
                                 </Row>
                                 {
@@ -577,9 +664,9 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                             <Row key={`options_${keyIndex}`}>
                                                 <Col lg={12} md={12} className="no_padding">
                                                     <Form.Group as={Col} className="mb-5">
-                                                        <Col md={12} sm={12}>
-                                                            <div style={{ display: 'inline-flex', width: '100%' }}>
-                                                                <div style={{ width: '60%' }}>
+                                                        <Col sm={12}>
+                                                            <Row style={{ margin: 0 }}>
+                                                                <Col sm={6} className="no_padding">
                                                                     <Form.Control
                                                                         as="select"
                                                                         name={`field_${keyIndex + 1}`}
@@ -602,47 +689,53 @@ const FileNamingModal = ({ show, onHide, details, userType, dispatch }: any) => 
                                                                             })
                                                                         }
                                                                     </Form.Control>
-                                                                </div>
-                                                                <div style={{ width: '40%', position: 'relative' }}>
-                                                                    <div className={Styles.movement_group}>
-                                                                        {
-                                                                            keyIndex !== 0
-                                                                            && fieldsSelected[keyName]
-                                                                            && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
-                                                                        }
-                                                                        {
-                                                                            keyIndex !== (Object.keys(fieldsSelected).length - 1)
-                                                                            && fieldsSelected[keyName]
-                                                                            && fieldsSelected[Number(keyName) + 1]
-                                                                            && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
-                                                                        }
-                                                                    </div>
-                                                                    <div style={{ marginLeft: '80px' }}>
-                                                                        <Row sm={12}>
-                                                                            <Col md={6} sm={12} className="switch_box">
-                                                                                <input
-                                                                                    type="checkbox"
-                                                                                    className="switch small"
-                                                                                    onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
-                                                                                    name="consent"
-                                                                                    checked={groupIdentifier === `field_${keyIndex + 1}`}
-                                                                                    defaultChecked={groupIdentifier === `field_${keyIndex + 1}`}
-                                                                                />
-                                                                            </Col>
-                                                                            <Col md={6} sm={12} className="switch_box">
-                                                                                <input
-                                                                                    type="checkbox"
-                                                                                    className="switch small"
-                                                                                    onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
-                                                                                    name="consent"
-                                                                                    checked={uniqueIdentifier === `field_${keyIndex + 1}`}
-                                                                                    defaultChecked={uniqueIdentifier === `field_${keyIndex + 1}`}
-                                                                                />
-                                                                            </Col>
-                                                                        </Row>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                                </Col>
+                                                                <Col sm={6} style={{ position: 'relative' }}>
+                                                                    <Row style={{ margin: 0, height: '45px' }}>
+                                                                        <Col sm={2} className="no_padding" style={{
+                                                                            display: 'flex',
+                                                                            justifyContent: 'center',
+                                                                            alignItems: 'center'
+                                                                        }}>
+                                                                            {
+                                                                                keyIndex !== 0
+                                                                                && fieldsSelected[keyName]
+                                                                                && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
+                                                                            }
+                                                                            {
+                                                                                keyIndex !== (Object.keys(fieldsSelected).length - 1)
+                                                                                && fieldsSelected[keyName]
+                                                                                && fieldsSelected[Number(keyName) + 1]
+                                                                                && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
+                                                                            }
+                                                                        </Col>
+                                                                        <Col sm={10} >
+                                                                            <Row sm={12} style={{ height: '45px' }}>
+                                                                                <Col md={6} sm={12} className="switch_box" style={{ justifyContent: 'center' }}>
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        className="switch small"
+                                                                                        onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
+                                                                                        name="consent"
+                                                                                        checked={groupIdentifier === `field_${keyIndex + 1}`}
+                                                                                        defaultChecked={groupIdentifier === `field_${keyIndex + 1}`}
+                                                                                    />
+                                                                                </Col>
+                                                                                <Col md={6} sm={12} className="switch_box" style={{ justifyContent: 'center' }}>
+                                                                                    <input
+                                                                                        type="checkbox"
+                                                                                        className="switch small"
+                                                                                        onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
+                                                                                        name="consent"
+                                                                                        checked={uniqueIdentifier === `field_${keyIndex + 1}`}
+                                                                                        defaultChecked={uniqueIdentifier === `field_${keyIndex + 1}`}
+                                                                                    />
+                                                                                </Col>
+                                                                            </Row>
+                                                                        </Col>
+                                                                    </Row>
+                                                                </Col>
+                                                            </Row>
                                                         </Col>
                                                         <Form.Label className="label_custom white">Field {keyIndex + 1}
                                                             {

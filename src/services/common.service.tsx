@@ -8,7 +8,7 @@ const getFilterTypes = async (filterType: string) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -22,7 +22,7 @@ const getLookupValues = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: s
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -45,7 +45,7 @@ const getClients = async () => {
             return clientArray
         }
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -55,7 +55,7 @@ const getStates = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -78,7 +78,7 @@ const getAgencies = async () => {
             return partnerArray
         }
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -88,7 +88,7 @@ const getAppId = async (type: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -98,7 +98,7 @@ const getRecordStatus = async (type: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -108,7 +108,7 @@ const getStatus = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -118,7 +118,7 @@ const getRecordSource = async (type: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -128,7 +128,7 @@ const getAccountConfig = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -143,7 +143,7 @@ const getRegulatory = async () => {
         })
         return regulators
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -166,7 +166,7 @@ const fetchAllTypes = () => {
             return data.response
         })
         .catch((error) => {
-            throw error
+            throw error.message
         })
 }
 
@@ -182,7 +182,7 @@ const getDocumentTypes = async () => {
         const data = handleResponse(response)
         return data.response.datas
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -197,7 +197,7 @@ const getProductTypes = async () => {
         // })
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -212,14 +212,15 @@ const componentMap: any = {
 
 const saveColumn = async ({ parentComponent, showHideColumns }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/column`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/attribute/preference/user`, {
             tableName: componentMap[parentComponent],
-            columnNames: showHideColumns
+            columnNames: showHideColumns,
+            domainCode: 'DEBT'
         })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -233,7 +234,7 @@ const getColumnForAllTables = async (table: string) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -243,7 +244,7 @@ const getClientAccountNumbers = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -253,7 +254,7 @@ const getUsage = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -270,7 +271,7 @@ const getSignedURL = async (objectKey: any, fileSize: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

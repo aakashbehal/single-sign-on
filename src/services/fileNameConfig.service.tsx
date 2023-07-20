@@ -9,7 +9,7 @@ const getConfig = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -20,7 +20,7 @@ const getUserConfig = async (requestParams: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -95,7 +95,7 @@ const saveUserConfiguration = async (requestBody: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -105,13 +105,29 @@ const getListOfUserConfig = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
+
+const deleteUserConfiguration = async (namingConfigGroupCode: string) => {
+    try {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`, {}, {
+            params: {
+                namingConfigGroupCode
+            }
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const fileNameConfigService = {
     getConfig,
     getUserConfig,
     handleDefaultAndSavedSelection,
     saveUserConfiguration,
-    getListOfUserConfig
+    getListOfUserConfig,
+    deleteUserConfiguration
 }

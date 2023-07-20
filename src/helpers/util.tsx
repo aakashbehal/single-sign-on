@@ -216,7 +216,7 @@ export const httpInterceptor = () => {
             if (axiosCustom.isCancel(error)) {
                 return console.log(error);
             }
-            return Promise.reject(error)
+            return Promise.reject(error.response)
         }
     )
 }

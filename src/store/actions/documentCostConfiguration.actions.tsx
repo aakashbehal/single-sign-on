@@ -35,7 +35,7 @@ export const DocumentCostConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: SaveDocumentsCost.SAVE_DOCUMENTS_COST_RESET }))
+            )
     },
 
     editDocumentCost: (payload: any) => (dispatch: any) => {
@@ -71,6 +71,6 @@ export const DocumentCostConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DeleteDocumentsCost.DELETE_DOCUMENTS_COST_RESET }))
+            )
     },
 }

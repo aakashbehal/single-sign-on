@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, Container } from "react-bootstrap"
 import { CgSpinnerAlt } from 'react-icons/cg';
+import { Document, Page } from 'react-pdf';
 
 import Styles from "./Modal.module.sass";
 import { commonServices } from '../../services';
@@ -10,6 +11,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
     const [documentType, setDocumentType] = useState('')
     const [imageUrl, setImageUrl] = useState<any>("")
     const [loadingImage, setLoadingImage] = useState(false)
+
     useEffect(() => {
         const splitDocumentName = documentData.fileName ? documentData.fileName.split('.') : documentData.documentName.split('.')
         setDocumentType(splitDocumentName[splitDocumentName.length - 1])
@@ -20,7 +22,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
     }, [documentType])
 
     const viewImage = async () => {
-        if (documentType === 'pdf' || documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg') {
+        if (documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg') {
             setLoadingImage(true)
         }
         let fileUrl = await commonServices.getSignedURL(documentData.objectKey || documentData.filePath, documentData.fileSizeOriginal)
@@ -54,20 +56,13 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
                         && <img onLoad={() => setLoadingImage(false)} src={imageUrl} alt={documentData.fileName} width="100%" />
                     }
                     {
-                        documentType === 'pdf'
-                        && <object data={imageUrl}
-                            onLoad={() => setLoadingImage(false)}
-                            width="800"
-                            height="500">
-                        </object>
-                    }
-                    {
                         (
                             documentType === 'txt'
                             || documentType === 'xlsx'
                             || documentType === ""
                             || documentType === null
                             || documentType === undefined
+                            || documentType === 'pdf'
                         )
                         && handleNoPreview()
                     }

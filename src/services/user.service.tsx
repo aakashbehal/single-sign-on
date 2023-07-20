@@ -28,11 +28,11 @@ const login = async (username: string, password: string) => {
         if (error.message) {
             throw error.message
         }
-        throw error
+        throw error.message
     }
 }
 
-function logout() {
+async function logout() {
     const FBToken = sessionStorage.getItem('FBToken')
     const user = getUser()
     try {
@@ -50,9 +50,9 @@ function logout() {
         localStorage.removeItem('user');
         sessionStorage.clear()
         history.push('/login')
-        deleteFBToken()
+        await deleteFBToken()
     } catch (error: any) {
-        throw error
+        console.log(error.message)
     }
     // remove user from local storage to log user out
 }
@@ -115,7 +115,7 @@ const getConnectedUsers = async () => {
         })
         return modifiedResponse
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -147,7 +147,7 @@ const registerFireBaseToken = async (token: string) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

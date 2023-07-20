@@ -56,7 +56,7 @@ const getMyDocumentFolders = async ({
         })
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -107,6 +107,7 @@ const getMyDocumentList = async ({
             document.selected = false
             document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)
+            document.name = document.documentName
             // if (doc) {
             //     document.documentName = doc[doc.length - 1]
             // }
@@ -126,7 +127,7 @@ const getMyDocumentList = async ({
         return responseModified
     } catch (error: any) {
         console.log(error)
-        throw error
+        throw error.message
     }
 }
 
@@ -136,7 +137,7 @@ const deleteDocument = async (documentId: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -146,7 +147,7 @@ const deleteFolder = async (clientAccountNo: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -159,7 +160,7 @@ const downloadFolder = async (accountNumbers: string[]) => {
         return data.response
     } catch (error: any) {
         console.log(error)
-        throw error
+        throw error.message
     }
 }
 
@@ -172,7 +173,7 @@ const downloadDocument = async (documentIds: string[]) => {
         if (typeof data.response === 'object') return data.response[0]
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

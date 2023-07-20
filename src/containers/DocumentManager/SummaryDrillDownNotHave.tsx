@@ -10,6 +10,7 @@ import ViewDocument from "../../components/modal/ViewDocument";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 const SummaryDrillDownNotHave = ({ location }: { location: any }) => {
     const dispatch = useDispatch();
@@ -51,6 +52,7 @@ const SummaryDrillDownNotHave = ({ location }: { location: any }) => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        dispatch(MiscActionCreator.getColumnForAllTables('accounts'))
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
@@ -64,12 +66,7 @@ const SummaryDrillDownNotHave = ({ location }: { location: any }) => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC: any) => {
-                if (dC.tableName === 'accounts') {
-                    return dC
-                }
-            })
-            setColumnsSaved(columns[0].columnNames)
+            setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)
         }

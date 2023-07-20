@@ -77,7 +77,7 @@ const DocumentsList = ({ location }: { location: any }) => {
             sortOrder: sortType,
             sortParam: sortElement
         })
-        dispatch(MiscActionCreator.getColumnForAllTables('documentFolder'))
+        dispatch(MiscActionCreator.getColumnForAllTables('document'))
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
@@ -177,7 +177,7 @@ const DocumentsList = ({ location }: { location: any }) => {
                 data={documents}
                 isLoading={loading}
                 map={{
-                    documentName: "Name",
+                    name: "Name",
                     documentType: "Document Type",
                     originalAccountNo: "Original Account Number",
                     equabliAccountNo: "Equabli Account Number",
@@ -191,7 +191,7 @@ const DocumentsList = ({ location }: { location: any }) => {
                     sharedWith: "Shared With",
                 }}
                 totalCount={totalCount}
-                actionArray={['documentName']}
+                actionArray={['name']}
                 handleNavigate={(data: any) => {
                     setShowDocument(true)
                     setDocumentToShow(data)

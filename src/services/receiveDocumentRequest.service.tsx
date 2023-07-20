@@ -46,10 +46,19 @@ const getReceiveDocumentRequest = async ({
             return sR
         })
         responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columns
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -63,7 +72,7 @@ const downloadDocumentRequest = async (
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -73,7 +82,7 @@ const deleteReceiveDocumentRequest = async (id: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

@@ -23,9 +23,6 @@ export const ShareActionCreator = {
                     dispatch(failure())
                 }
             )
-            .finally(() => {
-                dispatch({ type: ShareFolder.SHARE_FOLDER_RESET })
-            })
     },
     shareDocument: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: ShareFile.SHARE_FILE_REQUEST, payload: [] })
@@ -63,9 +60,7 @@ export const ShareActionCreator = {
                     dispatch(failure())
                 }
             )
-            .finally(() => {
-                dispatch({ type: RevokeFolder.REVOKE_FOLDER_RESET })
-            })
+
     },
     revokeShareDocument: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: RevokeFile.REVOKE_FILE_REQUEST, payload: [] })
@@ -83,8 +78,5 @@ export const ShareActionCreator = {
                     dispatch(failure())
                 }
             )
-            .finally(() => {
-                dispatch({ type: RevokeFile.REVOKE_FILE_RESET })
-            })
     }
 }

@@ -8,7 +8,8 @@ import {
     SaveUserConfiguration,
     RetentionPolicy,
     DocumentPolicy,
-    UserListOfUserConfig
+    UserListOfUserConfig,
+    DeleteUserConfiguration
 } from "../types.d";
 import { commonServices, fileNameConfigService } from "../../services"
 
@@ -181,6 +182,23 @@ export const FileNameConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: SaveUserConfiguration.SAVE_USER_CONFIG_RESET }))
+            )
+    },
+    deleteUserConfiguration: (namingConfigGroupCode: string) => (dispatch: any) => {
+        const request = () => ({ type: DeleteUserConfiguration.DELETE_USER_CONFIG_REQUEST })
+        const success = (userNameConfig: any) => ({ type: DeleteUserConfiguration.DELETE_USER_CONFIG_SUCCESS, payload: userNameConfig })
+        const failure = (error: any) => ({ type: DeleteUserConfiguration.DELETE_USER_CONFIG_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.deleteUserConfiguration(namingConfigGroupCode)
+            .then(
+                userNameConfig => {
+                    dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
     }
 }

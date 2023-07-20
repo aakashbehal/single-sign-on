@@ -6,7 +6,7 @@ const getRequiredDocuments = async () => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -16,7 +16,7 @@ const saveRequiredDocuments = async (requestData: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -26,7 +26,7 @@ const deleteRequiredDocuments = async (id: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

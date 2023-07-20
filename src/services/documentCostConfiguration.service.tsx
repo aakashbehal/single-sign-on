@@ -7,7 +7,7 @@ const getDocumentCost = async (userType: any) => {
         const data = handleResponse(response)
         return data.response.datas
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -17,7 +17,7 @@ const saveDocumentCost = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -27,7 +27,7 @@ const editDocumentCost = async (payload: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -37,7 +37,7 @@ const deleteDocumentCost = async (docTypeCode: any) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

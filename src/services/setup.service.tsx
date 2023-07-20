@@ -14,7 +14,7 @@ const getServiceTypes = async () => {
             { shortName: "UN", fullName: "Unknown" }
         ]
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -111,7 +111,7 @@ const GetClients = async () => {
         ]
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -226,7 +226,7 @@ const GetPartners = async () => {
         ]
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

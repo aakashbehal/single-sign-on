@@ -7,7 +7,7 @@ import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
 //         const data = handleResponse(response)
 //         return data.response
 //     } catch (error: any) {
-//         throw error
+//         throw error.message
 //     }
 // }
 
@@ -39,7 +39,7 @@ const getSentSummary = async ({
         }
         return modifiedData
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -59,7 +59,7 @@ const getDocumentCoverage = async ({
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -115,10 +115,19 @@ const getSummaryDrillDown = async ({
             return document
         })
         responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columns
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -180,10 +189,19 @@ const getSummaryDrillDownNot = async ({
             return obj
         })
         responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columns
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

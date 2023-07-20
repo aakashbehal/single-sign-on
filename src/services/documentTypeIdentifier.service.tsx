@@ -17,7 +17,7 @@ const getAllIdentifiers = async ({
         responseModified.totalCount = data.response.metadata.recordCount
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -27,7 +27,7 @@ const addDocumentCostIdentifier = async (requestBody: IIdentifier) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -37,7 +37,7 @@ const deleteDocumentCostIdentifier = async (docTypeCode: string) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

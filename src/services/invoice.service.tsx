@@ -12,7 +12,7 @@ const GetInvoices = async (tenure: any) => {
         data.response.tenure = tenure
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 

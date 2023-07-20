@@ -18,6 +18,7 @@ import DocumentTypes from "../../components/Common/DocumentType";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
 
 const SentDocumentRequests = () => {
@@ -75,6 +76,7 @@ const SentDocumentRequests = () => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        dispatch(MiscActionCreator.getColumnForAllTables('sentDocumentRequest'))
     }, [])
 
     useEffect(() => {
@@ -85,12 +87,7 @@ const SentDocumentRequests = () => {
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
-            const columns = defaultColumns.filter((dC: any) => {
-                if (dC.tableName === 'documentFolder') {
-                    return dC
-                }
-            })
-            setColumnsSaved(columns[0].columnNames)
+            setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)
         }
@@ -301,13 +298,16 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
             clientAccountNumber,
             document_type
         } = sendRequestRef.current
-        console.log(document_type.value)
         const requestObj = {
             "sendRequests": usersSelected,
-            "originalAccountNumber": originalAccountNumber.value,
-            "clientAccountNumber": clientAccountNumber.value,
-            "docTypeCode": document_type.value
+            attributes: {
+                "originalAccountNumber": originalAccountNumber.value,
+                "clientAccountNumber": clientAccountNumber.value,
+            },
+            "docTypeCode": document_type.value,
+            // "externalSystemId": null
         }
+        console.log(requestObj)
         if (validate(requestObj)) {
             dispatch(SentDocumentRequestActionCreator.sentDocumentRequest(requestObj))
         }

@@ -19,7 +19,7 @@ const getAllPartners = async ({
         responseModified.partners = partners
         return responseModified
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -74,7 +74,7 @@ const addPartner = async ({
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -130,7 +130,7 @@ const editPartner = async ({
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
@@ -140,7 +140,7 @@ const deactivatePartner = async (partnerId: string | number) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        throw error
+        throw error.message
     }
 }
 
