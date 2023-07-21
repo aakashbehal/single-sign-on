@@ -3,7 +3,7 @@ WORKDIR /document-manager
 COPY package*.json /document-manager/
 RUN npm install
 COPY . /document-manager/
-RUN npm run build
+RUN npm run build:dev
 
 
 FROM nginx:1.19

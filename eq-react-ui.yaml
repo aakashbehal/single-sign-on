@@ -37,7 +37,7 @@ spec:
     spec:
       containers:
       - name: eq-docs-ui
-        image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.5
+        image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.6
         imagePullPolicy: Always
         ports:
         - containerPort: 80
@@ -47,9 +47,9 @@ spec:
         # resources are not available
         # To check, Run the command kubectl describe pods pod-name
           limits:
-            cpu: 512m
+            cpu: 1024m
             memory: 500Mi
           requests:
-            cpu: 256m
-            memory: 225Mi
+            cpu: 512m
+            memory: 450Mi
 
