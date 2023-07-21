@@ -45,6 +45,7 @@ jobs:
          IMAGE_TAG: 0.1.6
         run: |
          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       # Runs a single command using the runners shell
       - name: Run a one-line script
