@@ -2,7 +2,7 @@ FROM node:14 as build
 WORKDIR /document-manager
 COPY package*.json .
 RUN npm install
-COPY . .
+COPY . ./
 RUN npm run build
 
 
