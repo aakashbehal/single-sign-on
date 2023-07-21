@@ -1,8 +1,8 @@
 FROM node:14 as build 
 WORKDIR /document-manager
-COPY package*.json /document-manager
+COPY package*.json /document-manager/
 RUN npm install
-COPY . /document-manager
+COPY . /document-manager/
 RUN npm run build
 
 
