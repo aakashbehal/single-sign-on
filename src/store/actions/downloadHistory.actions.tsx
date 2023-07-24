@@ -39,7 +39,11 @@ export const DownloadHistoryActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveDownloadHistory.SAVE_DOWNLOAD_HISTORY_RESET })
+                }, 0)
+            })
     },
     deleteDownloadHistory: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_REQUEST })
@@ -56,6 +60,10 @@ export const DownloadHistoryActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteDownloadHistory.DELETE_DOWNLOAD_HISTORY_RESET })
+                }, 0)
+            })
     },
 }

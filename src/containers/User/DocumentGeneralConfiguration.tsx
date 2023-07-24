@@ -167,11 +167,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
             </Col>
             {
                 !confListLoading && confList.length === 0
-                && <thead>
-                    <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                        <NoRecord />
-                    </tr>
-                </thead>
+                && <NoRecord />
             }
             {
                 !confListLoading && <Table striped hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
@@ -187,7 +183,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                     <tbody>
                         {
                             confList && confList.map((conf: IConfiguration, index: number) => {
-                                return <tr>
+                                return <tr key={`confList_${index}`}>
                                     <td>{index + 1}</td>
                                     <td>{conf.namingConfigGroupName}</td>
                                     <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'short')}</td>
@@ -253,6 +249,9 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
     const [groupIdentifier, setGroupIdentifier] = useState<any>(null)
     const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [fieldsSelected, setFieldSelected] = useState<any>({});
+    const [formError, setFormError] = useState<any>({
+        configName: false
+    })
 
     const {
         isLoading,
@@ -273,28 +272,6 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
     }))
 
     useEffect(() => {
-        let selectedTemp = {}
-        if (userType === 'Client' || userType === 'Equabli') {
-            selectedTemp = {
-                1: 'CAN',
-                2: 'DT',
-                3: 'PC',
-                4: null,
-                5: null,
-                6: null,
-            }
-        } else {
-            selectedTemp = {
-                1: 'CIDSC',
-                2: 'DT',
-                3: 'CAN',
-                4: 'PC',
-                5: null,
-                6: null,
-                7: null
-            }
-        }
-        setFieldSelected(selectedTemp)
         dispatch(FileNameConfigActionCreator.getUserConfig())
         dispatch(FileNameConfigActionCreator.getFieldOptions())
         dispatch(FileNameConfigActionCreator.getConjunction())
@@ -320,12 +297,35 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
         if (
             dataFieldOptions?.length > 0
         ) {
+            console.log(`this ran`)
             handleDefaultAndSavedSelection()
         }
     }, [dataFieldOptions, dataFileNamingConfig])
 
     const handleDefaultAndSavedSelection = async () => {
-        const { fieldFinal, selectionFinal }: { fieldFinal: any, selectionFinal: any } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, dataFileNamingConfig, userType, fieldsSelected, details)
+        let selectedTemp = {}
+        if (userType === 'Client' || userType === 'Equabli') {
+            selectedTemp = {
+                1: 'CAN',
+                2: 'DT',
+                3: 'PC',
+                4: null,
+                5: null,
+                6: null,
+            }
+        } else {
+            selectedTemp = {
+                1: 'CIDSC',
+                2: 'DT',
+                3: 'CAN',
+                4: 'PC',
+                5: null,
+                6: null,
+                7: null
+            }
+        }
+        setFieldSelected(selectedTemp)
+        const { fieldFinal, selectionFinal }: { fieldFinal: any, selectionFinal: any } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, dataFileNamingConfig, userType, selectedTemp, details)
         setFilteredOptions(fieldFinal)
         setFieldSelected(selectionFinal)
     }
@@ -343,6 +343,19 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
             field_6,
             field_7
         } = configRef.current
+
+        if (!config_name.value) {
+            setFormError({ configName: true })
+            return
+        } else {
+            setFormError({ configName: false })
+        }
+
+        if (!uniqueIdentifier) {
+            addToast('A Unique identifier is required', { appearance: 'info', autoDismiss: false })
+            return
+        }
+
         const configRequest: any = {
             "namingConfigGroupName": config_name.value,
             "separatorCode": conjunction.value,
@@ -614,6 +627,7 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
                                                         defaultValue={details ? details.namingConfigGroupName : ''}
                                                         className="select_custom">
                                                     </Form.Control>
+                                                    <span style={{ color: 'red' }}><small>{formError["configName"] ? 'Configuration Name is Required' : ''}</small></span>
                                                 </Col>
                                                 <Form.Label className="label_custom white">Name</Form.Label>
                                             </Form.Group>
@@ -700,13 +714,13 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
                                                                             {
                                                                                 keyIndex !== 0
                                                                                 && fieldsSelected[keyName]
-                                                                                && <HiArrowNarrowUp onClick={() => handleMove(keyIndex + 1, 'up')} />
+                                                                                && <HiArrowNarrowUp className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'up')} />
                                                                             }
                                                                             {
                                                                                 keyIndex !== (Object.keys(fieldsSelected).length - 1)
                                                                                 && fieldsSelected[keyName]
                                                                                 && fieldsSelected[Number(keyName) + 1]
-                                                                                && <HiArrowNarrowDown onClick={() => handleMove(keyIndex + 1, 'down')} />
+                                                                                && <HiArrowNarrowDown className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'down')} />
                                                                             }
                                                                         </Col>
                                                                         <Col sm={10} >
@@ -718,7 +732,6 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
                                                                                         onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
                                                                                         name="consent"
                                                                                         checked={groupIdentifier === `field_${keyIndex + 1}`}
-                                                                                        defaultChecked={groupIdentifier === `field_${keyIndex + 1}`}
                                                                                     />
                                                                                 </Col>
                                                                                 <Col md={6} sm={12} className="switch_box" style={{ justifyContent: 'center' }}>
@@ -728,7 +741,6 @@ const FileNamingModal = ({ show, onHide, details, setConfigurationDetails, userT
                                                                                         onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
                                                                                         name="consent"
                                                                                         checked={uniqueIdentifier === `field_${keyIndex + 1}`}
-                                                                                        defaultChecked={uniqueIdentifier === `field_${keyIndex + 1}`}
                                                                                     />
                                                                                 </Col>
                                                                             </Row>

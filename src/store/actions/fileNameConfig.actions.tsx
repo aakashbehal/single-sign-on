@@ -182,7 +182,11 @@ export const FileNameConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveUserConfiguration.SAVE_USER_CONFIG_RESET })
+                }, 0)
+            })
     },
     deleteUserConfiguration: (namingConfigGroupCode: string) => (dispatch: any) => {
         const request = () => ({ type: DeleteUserConfiguration.DELETE_USER_CONFIG_REQUEST })

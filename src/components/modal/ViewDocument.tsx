@@ -14,7 +14,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
 
     useEffect(() => {
         const splitDocumentName = documentData.fileName ? documentData.fileName.split('.') : documentData.documentName.split('.')
-        setDocumentType(splitDocumentName[splitDocumentName.length - 1])
+        setDocumentType((splitDocumentName[splitDocumentName.length - 1]).toLowerCase())
     }, [documentData])
 
     useEffect(() => {
@@ -53,7 +53,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
                     }
                     {
                         (documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg')
-                        && <img onLoad={() => setLoadingImage(false)} src={imageUrl} alt={documentData.fileName} width="100%" />
+                        && <img onLoad={() => setLoadingImage(false)} src={imageUrl} width="100%" />
                     }
                     {
                         (

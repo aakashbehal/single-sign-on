@@ -25,6 +25,7 @@ const getUserConfig = async (requestParams: any) => {
 }
 
 const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration) => {
+    console.log(fieldsSelected)
     let fromServer = fromList ? fromList.userDocConfig : []
     let treadedList = fromServer.map((config: IDocConfig) => {
         return {
@@ -84,6 +85,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
     if (userType === 'Partner' && !fieldsSelected[7]) {
         fieldsSelected[7] = null
     }
+    console.log(dataFieldOptionsFiltered, fieldsSelected)
     let Obj = { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
     return Obj
 }

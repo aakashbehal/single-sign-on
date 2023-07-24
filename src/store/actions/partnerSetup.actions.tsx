@@ -34,7 +34,11 @@ export const PartnerSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: AddPartner.ADD_PARTNER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: AddPartner.ADD_PARTNER_RESET })
+                }, 0)
+            })
     },
     editPartner: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: EditPartner.EDIT_PARTNER_REQUEST })
@@ -51,7 +55,11 @@ export const PartnerSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: EditPartner.EDIT_PARTNER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: EditPartner.EDIT_PARTNER_RESET })
+                }, 0)
+            })
     },
     deactivatePartner: (clientId: any) => (dispatch: any) => {
         const request = () => ({ type: DeactivatePartner.DEACTIVATE_PARTNER_REQUEST })
@@ -68,6 +76,10 @@ export const PartnerSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: DeactivatePartner.DEACTIVATE_PARTNER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeactivatePartner.DEACTIVATE_PARTNER_RESET })
+                }, 0)
+            })
     }
 }

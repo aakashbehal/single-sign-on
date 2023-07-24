@@ -178,11 +178,9 @@ const DocumentCostConfiguration = () => {
             <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
                 {
                     !loading && cost.length === 0
-                    && <thead>
-                        <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                            <NoRecord />
-                        </tr>
-                    </thead>
+                    &&
+                    <NoRecord />
+
                 }
                 {
                     !loading && cost.length > 0

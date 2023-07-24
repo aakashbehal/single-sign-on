@@ -35,7 +35,11 @@ export const SentDocumentRequestActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SentDocumentRequest.SENT_DOCUMENT_REQUEST_RESET })
+                }, 0)
+            })
     },
     deleteDocumentRequest: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_REQUEST })
@@ -52,6 +56,10 @@ export const SentDocumentRequestActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteDocumentRequest.DELETE_DOCUMENT_REQUEST_RESET })
+                }, 0)
+            })
     },
 }

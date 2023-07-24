@@ -34,7 +34,11 @@ export const DocumentTypeIdentifierActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: AddDocumentCostIdentifier.ADD_DOCUMENT_TYPE_IDENTIFIER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: AddDocumentCostIdentifier.ADD_DOCUMENT_TYPE_IDENTIFIER_RESET })
+                }, 0)
+            })
     },
     editDocumentCostIdentifier: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: EditDocumentCostIdentifier.EDIT_DOCUMENT_TYPE_IDENTIFIER_REQUEST, payload: [] })
@@ -51,7 +55,11 @@ export const DocumentTypeIdentifierActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: EditDocumentCostIdentifier.EDIT_DOCUMENT_TYPE_IDENTIFIER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: EditDocumentCostIdentifier.EDIT_DOCUMENT_TYPE_IDENTIFIER_RESET })
+                }, 0)
+            })
     },
     deleteDocumentCostIdentifier: (docTypeCode: string) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocumentCostIdentifier.DELETE_DOCUMENT_TYPE_IDENTIFIER_REQUEST, payload: [] })
@@ -68,6 +76,10 @@ export const DocumentTypeIdentifierActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: DeleteDocumentCostIdentifier.DELETE_DOCUMENT_TYPE_IDENTIFIER_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteDocumentCostIdentifier.DELETE_DOCUMENT_TYPE_IDENTIFIER_RESET })
+                }, 0)
+            })
     }
 }

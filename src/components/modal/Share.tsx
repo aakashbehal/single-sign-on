@@ -151,7 +151,7 @@ const Share = ({ show, onHide, parentComponent, searchHandler }: any) => {
                 formObj["documentId"] = details.id
                 dispatch(ShareActionCreator.shareDocument(formObj))
             } else {
-                formObj["clientAccountNo"] = details.folderName
+                formObj["documentUniqueIdentifier"] = details.folderName
                 dispatch(ShareActionCreator.shareFolder(formObj))
             }
         }

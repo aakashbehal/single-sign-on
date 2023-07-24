@@ -39,7 +39,11 @@ export const ReceiveDocumentRequestActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DownloadDocumentRequest.DOWNLOAD_DOCUMENT_REQUEST_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DownloadDocumentRequest.DOWNLOAD_DOCUMENT_REQUEST_RESET })
+                }, 0)
+            })
     },
     deleteDocumentRequest: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteReceiveDocumentRequest.DELETE_RECEIVE_DOCUMENT_REQUEST_REQUEST })
@@ -56,6 +60,10 @@ export const ReceiveDocumentRequestActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => dispatch({ type: DeleteReceiveDocumentRequest.DELETE_RECEIVE_DOCUMENT_REQUEST_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteReceiveDocumentRequest.DELETE_RECEIVE_DOCUMENT_REQUEST_RESET })
+                }, 0)
+            })
     },
 }

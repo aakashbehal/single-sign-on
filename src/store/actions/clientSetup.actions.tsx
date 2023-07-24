@@ -34,7 +34,11 @@ export const ClientSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: AddClient.ADD_CLIENTS_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: AddClient.ADD_CLIENTS_RESET })
+                }, 0)
+            })
     },
     editClient: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: EditClient.EDIT_CLIENTS_REQUEST })
@@ -51,7 +55,11 @@ export const ClientSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: EditClient.EDIT_CLIENTS_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: EditClient.EDIT_CLIENTS_RESET })
+                }, 0)
+            })
     },
     deactivateClient: (clientId: any) => (dispatch: any) => {
         const request = () => ({ type: DeactivateClient.DEACTIVATE_CLIENTS_REQUEST })
@@ -68,6 +76,10 @@ export const ClientSetupActionCreator = {
                 error => {
                     dispatch(failure())
                 }
-            ).finally(() => dispatch({ type: EditClient.DEACTIVATE_CLIENTS_RESET }))
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: EditClient.DEACTIVATE_CLIENTS_RESET })
+                }, 0)
+            })
     }
 }
