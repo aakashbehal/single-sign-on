@@ -313,7 +313,7 @@ const AddEditIdentifier = ({ show, onHide, identifierData, documentTypes, dispat
                                     <MultipleInputs multipleValues={identifiers} setMultipleValues={setIdentifiers} />
                                     <span style={{ color: 'red' }}><small>{formError["docTypeFields"] ? 'At least 1 field is required' : ''}</small></span>
                                 </Col>
-                                <Form.Label className="label_custom white">Document Cost</Form.Label>
+                                <Form.Label className="label_custom white">Fields</Form.Label>
                             </Form.Group>
                         </Col>
                     </Container>

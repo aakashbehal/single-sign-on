@@ -8,7 +8,7 @@ import Styles from "./Common.module.sass"
 import { userService } from "../../services";
 import LogoSmall from '../../assets/img/logo_small.png'
 import Logo from '../../assets/img/logo.png'
-import { BsSearch, BsUiChecks } from "react-icons/bs";
+import { BsRobot, BsSearch, BsUiChecks } from "react-icons/bs";
 import { HiOutlinePresentationChartLine } from "react-icons/hi";
 import { GrHelp } from "react-icons/gr";
 import { FiSettings } from "react-icons/fi";
@@ -122,7 +122,14 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         return { ...state, setup: !state.setup }
                     })
                 }}>
-                    <div className={`icon-link ${(activeRoute === 'client' || activeRoute === 'partner' || activeRoute === 'user_approval' || activeRoute === 'document_type_identifier') ? 'active' : ''}`}>
+                    <div className={`icon-link ${(activeRoute === 'client'
+                        || activeRoute === 'partner'
+                        || activeRoute === 'user_approval'
+                        || activeRoute === 'document_type_identifier'
+                        || activeRoute === 'document_general_configuration'
+                        || activeRoute === 'document_cost_configuration'
+                        || activeRoute === 'required_documents'
+                    ) ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
                             <MdOutlinePhonelinkSetup size={30} />
                             <span className="link_name">Setup</span>
@@ -131,11 +138,31 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                     </div>
                     <ul className="sub-menu">
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/document_general_configuration">Document General Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/document_cost_configuration">Document Cost Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/required_documents">Required Documents</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
                     </ul>
+                </li>
+                <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
+                    setMenuDrop((state: any) => {
+                        return { ...state, console: !state.console }
+                    })
+                }}>
+                    <div className={`icon-link ${(activeRoute === 'automation') ? 'active' : ''}`}>
+                        <NavLink to="/automation">
+                            <BsRobot size={30} />
+                            <span className="link_name">Automation</span>
+                        </NavLink>
+                    </div>
+                    {!isClosed &&
+                        <ul className="sub-menu">
+                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/automation">Automation</NavLink></li>
+                        </ul>
+                    }
                 </li>
             </ul>
             <ul className="nav-links console">

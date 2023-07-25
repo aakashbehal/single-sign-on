@@ -140,7 +140,7 @@ const ReceivedDocumentRequests = () => {
         //download file
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
-        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.documentId]))
+        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.fullFilledDocument]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 

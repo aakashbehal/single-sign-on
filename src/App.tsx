@@ -39,6 +39,8 @@ const ClientSetup = lazy(() => import("./containers/Setup/ClientSetup"));
 const PartnerSetup = lazy(() => import("./containers/Setup/PartnerSetup"));
 const DocumentTypeIdentifier = lazy(() => import("./containers/DocumentManager/DocumentTypeIdentifier"));
 const ConsoleSettings = lazy(() => import("./containers/DocumentManager/ConsoleSettings"));
+const Automation = lazy(() => import("./containers/DocumentManager/Automation"));
+
 /**
  * Applications starting point
  * @returns 
@@ -93,6 +95,7 @@ const App = () => {
               <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />
               {/* Console */}
               <PrivateRoute exact path="/setup/console" component={ConsoleSettings} />
+              <PrivateRoute exact path="/automation" component={Automation} />
 
             </Switch>
           </ErrorBoundary>

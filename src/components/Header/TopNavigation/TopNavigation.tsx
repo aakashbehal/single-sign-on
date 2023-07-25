@@ -99,9 +99,9 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
                             </Dropdown.Toggle>
                             <Dropdown.Menu>
                                 <Dropdown.Item as={Link} to="/profile/user_account">User Details</Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/profile/document_general_configuration">Document General Configuration</Dropdown.Item>
+                                {/* <Dropdown.Item as={Link} to="/profile/document_general_configuration">Document General Configuration</Dropdown.Item>
                                 <Dropdown.Item as={Link} to="/profile/document_cost_configuration">Document Cost Configuration</Dropdown.Item>
-                                <Dropdown.Item as={Link} to="/profile/required_documents">Required Documents</Dropdown.Item>
+                                <Dropdown.Item as={Link} to="/profile/required_documents">Required Documents</Dropdown.Item> */}
                             </Dropdown.Menu>
                         </Dropdown>
                     </div>
