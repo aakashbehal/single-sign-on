@@ -208,6 +208,16 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                     deleteError: true,
                 }
             }
+        case DeleteUserConfiguration.DELETE_USER_CONFIG_RESET:
+            return {
+                ...state,
+                fileNamingConfigList: {
+                    ...state.fileNamingConfigList,
+                    deleteRequest: false,
+                    deleteSuccess: false,
+                    deleteError: false,
+                }
+            }
         case UserSeparator.USER_SEPARATOR_REQUEST:
             return {
                 ...state,

@@ -203,6 +203,10 @@ export const FileNameConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteUserConfiguration.DELETE_USER_CONFIG_RESET })
+                }, 0)
+            })
     }
 }

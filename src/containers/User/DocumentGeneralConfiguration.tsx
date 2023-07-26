@@ -158,6 +158,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
 
     const approveHandler = () => {
         dispatch(FileNameConfigActionCreator.deleteUserConfiguration(toDelete))
+        setShowConfirmDelete(false)
     }
 
     return (
