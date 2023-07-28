@@ -167,7 +167,11 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                 <Button variant="dark" className="pull-right" onClick={() => addNewHandler()}>+ Add New</Button>
             </Col>
             {
-                !confListLoading && confList.length === 0
+                confListLoading
+                && <CgSpinnerAlt style={{ textAlign: 'center', width: '100%' }} className="spinner" size={50} />
+            }
+            {
+                confListLoading && confList.length === 0
                 && <NoRecord />
             }
             {
