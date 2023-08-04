@@ -21,18 +21,20 @@ const getNotifications = async ({
         responseModified.totalCount = data.response.metadata.totalCount
         responseModified.pageNumber = data.response.metadata.pageNumber
         responseModified.unread = data.response.metadata.unread
-        responseModified.columns = data.response.metadata.columnPreferences.map((column:
-            {
-                sequence: number,
-                displayName: string,
-                attributeNodeKey: string,
-                attributeCode: string
-            }
-        ) => {
-            return column.attributeNodeKey
-        })
+        responseModified.columns = data.response.metadata.columnPreferences
+        // .map((column:
+        //     {
+        //         sequence: number,
+        //         displayName: string,
+        //         attributeNodeKey: string,
+        //         attributeCode: string
+        //     }
+        // ) => {
+        //     return column.attributeNodeKey
+        // })
         return responseModified
     } catch (error: any) {
+        console.log(error)
         throw error.message
     }
 }

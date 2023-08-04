@@ -13,7 +13,7 @@ const ConsoleSettings = () => {
 
     useEffect(() => {
         const user = userService.getUser()
-        let key = user.apiKey || 'No access'
+        let key = user.apiKey || '-'
         setApiKey(key)
     }, [])
 
@@ -43,7 +43,10 @@ const ConsoleSettings = () => {
                                         disabled={true}
                                         color='black'
                                         defaultValue={apiKey} />
-                                    <MdContentCopy className={`${Styles.copyToClip} ${copied ? Styles.copied : ''}`} onClick={(e) => copyToClipboard(e)} size={25} />
+                                    {
+                                        apiKey !== '-' &&
+                                        <MdContentCopy className={`${Styles.copyToClip} ${copied ? Styles.copied : ''}`} onClick={(e) => copyToClipboard(e)} size={25} />
+                                    }
                                 </Col>
                             </Row>
                             <Form.Label className="label_custom" style={{ left: '10px' }}>API Key</Form.Label>

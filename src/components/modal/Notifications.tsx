@@ -20,11 +20,11 @@ const pageSize = 10
 
 const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) => {
     const dispatch = useDispatch()
-    const [currentPage, setCurrentPage] = useState<any>(0)
+    const [currentPage, setCurrentPage] = useState<any>(1)
     const {
         notifications,
         loadingNotifications,
-        unreadNotifications, 
+        unreadNotifications,
         totalCount,
         pageNumberDb,
         errorNotification,
@@ -34,7 +34,7 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
     } = useSelector((state: any) => ({
         notifications: state.notification.data,
         loadingNotifications: state.notification.loading,
-        unreadNotifications: state.notification.unread, 
+        unreadNotifications: state.notification.unread,
         totalCount: state.notification.totalCount,
         pageNumberDb: state.notification.pageNumber,
         errorNotification: state.notification.error,
@@ -44,14 +44,14 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
     }))
 
     const [containerRef, isVisible]: any = useElementOnScreen({
-        root: null, 
+        root: null,
         rootMargin: "0px",
         threshold: 1.0
     })
 
     useEffect(() => {
         const pages = Math.floor(totalCount / pageSize)
-        if(isVisible && (pages > currentPage)) {
+        if (isVisible && (pages > currentPage)) {
             let tempCurrentPage = currentPage + 1
             setCurrentPage(tempCurrentPage)
             getNotifications(pageSize, tempCurrentPage)
@@ -66,7 +66,7 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
             pageNumber
         }))
     }
-    
+
     return (
         <>
             <div className={`${Styles.side_notification} ${showNotifications ? Styles.show_notification : ''}`}>
@@ -76,7 +76,7 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
                 <div className={Styles.notification_body}>
                     {
                         notifications && notifications.map((notification: INotification, index: number) => {
-                            if(JSON.stringify(notification) !== "{}") {
+                            if (JSON.stringify(notification) !== "{}") {
                                 return <NotificationCard key={`notification_${index}`} notification={notification} />
                             }
                         })
@@ -95,11 +95,11 @@ const NotificationCard = ({ notification }: any) => {
     return (
         <div className={Styles.notificationCard}>
             <div className={Styles.notification_image}>
-                {(notification.type  === 'fullfillment' || notification.type  === 'fulfillment') &&<VscNewFile size={25}/>}
-                {(notification.type  === 'share' ) &&<FiShare2/>}
-                {(notification.type  === 'request' ) &&<HiOutlineDocumentDuplicate size={25}/>}
-                {(notification.type  === 'download' ) &&<HiOutlineDownload size={25}/>}
-                
+                {(notification.type === 'fullfillment' || notification.type === 'fulfillment') && <VscNewFile size={25} />}
+                {(notification.type === 'share') && <FiShare2 />}
+                {(notification.type === 'request') && <HiOutlineDocumentDuplicate size={25} />}
+                {(notification.type === 'download') && <HiOutlineDownload size={25} />}
+
             </div>
             <div className={Styles.notification_text}>
                 <p><b>{notification.body}</b></p>
@@ -110,7 +110,7 @@ const NotificationCard = ({ notification }: any) => {
     )
 }
 
-const useElementOnScreen = (options: {root: HTMLElement | null, rootMargin: string, threshold: number}) => {
+const useElementOnScreen = (options: { root: HTMLElement | null, rootMargin: string, threshold: number }) => {
     const containerRef = useRef<any>(null);
     const [isVisible, SetIsVisible] = useState(false)
 
@@ -120,9 +120,9 @@ const useElementOnScreen = (options: {root: HTMLElement | null, rootMargin: stri
     }
     useEffect(() => {
         const observer = new IntersectionObserver(callBackFunction, options);
-        if(containerRef.current) observer.observe(containerRef.current)
-        return(() => {
-            if(containerRef.current) observer.unobserve(containerRef.current)
+        if (containerRef.current) observer.observe(containerRef.current)
+        return (() => {
+            if (containerRef.current) observer.unobserve(containerRef.current)
         })
     }, [containerRef, options])
 

@@ -24,8 +24,7 @@ const getUserConfig = async (requestParams: any) => {
     }
 }
 
-const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration) => {
-    console.log(fieldsSelected)
+const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration | null) => {
     let fromServer = fromList ? fromList.userDocConfig : []
     let treadedList = fromServer.map((config: IDocConfig) => {
         return {
@@ -44,10 +43,10 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
          * Default available and selection
          */
         if (userType !== 'Client' || userType === "Equabli") {
-            selectedFields = ['CIDSC', "DT", "CAN", "PC"]
+            selectedFields = ['CIDSC', "DT", "CAN"]
             notAvailableFields = ['CIDSC', "DT", "CAN"]
         } else {
-            selectedFields = ['CAN', "DT", "PC"]
+            selectedFields = ['CAN', "DT"]
             notAvailableFields = ['CIDSC', 'DT', 'CAN']
         }
     } else if (treadedList && treadedList.length > 0) {

@@ -15,7 +15,7 @@ const Breadcrumbs = () => <Route path="*" render={props => {
     return <Breadcrumb className={Styles.bread_crumbs}>{
         parts.map((part, index) => {
             part = part.split("?")[0]
-            let partFormatted = part.replace(/_/g, " ").replace(/\b(\w)/g, (char: string) => char.toUpperCase())
+            let partFormatted = decodeURIComponent(part.replace(/_/g, " ").replace(/\b(\w)/g, (char: string) => char.toUpperCase()))
             if (partFormatted === 'Sol Management') {
                 partFormatted = 'SOL Management '
             }
@@ -55,7 +55,7 @@ const Breadcrumbs = () => <Route path="*" render={props => {
 
             const gotoPage = (part: any) => {
                 if (!isActive) {
-                    if (part === 'account_details' || part === 'details' || part === 'compliance_all_requests' || part === 'compliance_my_requests') {
+                    if (part === 'account_details' || part === 'details' || part === 'compliance_all_requests' || part === 'compliance_my_requests' || part === 'document_general_configuration') {
                         history.goBack()
                     } else if (part === 'report') {
                         // do nothing

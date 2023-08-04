@@ -3,7 +3,9 @@ WORKDIR /document-manager
 COPY package*.json /document-manager/
 RUN npm install
 COPY . /document-manager/
-RUN npm run build:dev
+ARG ENVIRONMENT=local
+RUN echo "Creating a build for $ENVIRONMENT environment"
+RUN npm run build:$ENVIRONMENT
 
 
 FROM nginx:1.19
