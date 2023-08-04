@@ -45,7 +45,7 @@ jobs:
         env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
          ECR_REPOSITORY: equabli-eks-ecr-qa/eq-docs-ui
-         IMAGE_TAG: 0.1.12
+         IMAGE_TAG: 0.1.13
         run: |
          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ENVIRONMENT=dev .
          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
