@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eq-react-ui-deploy-dev
+  namespace: equabli-dev-nm
+  labels:
+    app: eq-react-ui-app-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eq-react-ui-app-dev
+  template:
+    metadata:
+      labels:
+        app: eq-react-ui-app-dev
+        version: "1.0.0"
+    spec:
+      containers:
+      - name: eq-docs-ui-dev
+        image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.10
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+        resources:
+        # QoS : Burstable
+        # Pod will not be launched if the Hardware 
+        # resources are not available
+        # To check, Run the command kubectl describe pods pod-name
+          limits:
+            cpu: 1024m
+            memory: 500Mi
+          requests:
+            cpu: 512m
+            memory: 450Mi
+

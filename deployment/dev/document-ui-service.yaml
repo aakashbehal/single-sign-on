@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: eq-react-ui-dev
+  namespace: equabli-dev-nm
+  labels:
+    app: eq-react-ui-app-dev
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8011
+    targetPort: 80
+  selector:
+    app: eq-react-ui-app-dev
+

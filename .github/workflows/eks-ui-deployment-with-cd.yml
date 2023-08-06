@@ -1,0 +1,98 @@
+# This is a basic workflow to help you get started with Actions
+
+name: EKS UI deployment With CD
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read  # This is required for actions/checkout
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "dev" branch
+  workflow_call:
+    inputs:
+      ecr-repository-path:
+        required: true
+        type: string
+      check-out-branch:
+        required: true
+        type: string
+      enviornment:
+        required: true
+        type: string
+      deployment-file-name:
+         required: true
+         type: string
+      service-name:
+        required: true
+        type: string
+      major-version:
+        required: false
+        type: string
+        default: 1
+      yaml-update-branch:
+         required: true
+         type: string
+    secrets:
+      env-config-file:
+        required: true
+env:
+  VERSION_TAG:  ${{inputs.major-version}}.${{ github.run_number }}.${{ github.run_attempt }}
+  ECR_REPOSITORY: ${{inputs.ecr-repository-path }}/${{inputs.service-name}}
+  UPDATE_YAML_PATH: deployment/${{inputs.enviornment}}/${{inputs.deployment-file-name}}
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      - name: Get Unique Version Number
+        run: echo  ${{env.VERSION_TAG}}
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - name: Check out code
+        uses: actions/checkout@v3
+        with: 
+          ref: ${{inputs.check-out-branch}}
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::400779737080:role/Assume-Role-Github-Actions
+          aws-region: us-east-1
+          role-session-name: GithubSession
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+      - name: Create Env file
+        run: |
+          echo "${{ secrets.env-config-file }}" > .env.${{inputs.enviornment}} 
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+         ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        run: |
+         docker build -t $ECR_REGISTRY/${{env.ECR_REPOSITORY}}:${{env.VERSION_TAG}} --build-arg ENVIRONMENT=${{inputs.enviornment}} .
+         echo "::set-output name=image::$ECR_REGISTRY/${{env.ECR_REPOSITORY}}:${{env.VERSION_TAG}}"
+         docker push  $ECR_REGISTRY/${{env.ECR_REPOSITORY}}:${{env.VERSION_TAG}}
+      - name: Update Yaml File
+        uses: fjogeleit/yaml-update-action@main
+        with:
+          valueFile: ${{env.UPDATE_YAML_PATH}}
+          branch: ${{inputs.yaml-update-branch}}
+          targetBranch: main
+          createPR: 'false'
+          description: Updating yaml file for CD Actions
+          message: 'Updating image version for deployment' 
+          title: 'Version Updates '
+          token: ${{ secrets.GITHUB_TOKEN }}
+          changes: |
+           {
+              "spec.template.spec.containers[0].image": "${{ steps.login-ecr.outputs.registry }}/${{env.ECR_REPOSITORY}}:${{env.VERSION_TAG}}"
+            }
+      # Runs a set of commands using the runners shell
+      - name: Build Complete
+        run: |
+          echo Build Complete,
