@@ -1,9 +1,9 @@
 # This is a workflow for execute EQ-Docs UI Dev Deployment
 
-name:EQ-Docs UI Dev Deployment
+name: EQ-Docs UI Dev Deployment
 on:
   push:
-   branches: dev
+    branches: dev
   workflow_dispatch:
 jobs:
    # This workflow contains a single job called "build"
