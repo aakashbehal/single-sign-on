@@ -17,3 +17,5 @@ jobs:
      major-version: 1
      deployment-file-name: document-ui-deployment.yaml
      yaml-update-branch: deployment
+  secrets:
+     env-config-file: ${{ secrets.DEV_ENV }}
