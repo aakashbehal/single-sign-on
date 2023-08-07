@@ -9,9 +9,9 @@ permissions:
 on:
   # Triggers the workflow on push or pull request events but only for the "dev" branch
   push:
-    branches: [ "dev" ]
+    branches: [ "qa" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "qa" ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -40,14 +40,14 @@ jobs:
         uses: aws-actions/amazon-ecr-login@v1
       - name: Create Env file
         run: |
-          echo "${{ secrets.DEV_ENV }}" > .env.dev 
+          echo "${{ secrets.DEV_ENV }}" > .env.qa
       - name: Build, tag, and push image to Amazon ECR
         env:
          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
          ECR_REPOSITORY: equabli-eks-ecr-qa/eq-docs-ui
          IMAGE_TAG: 0.1.13
         run: |
-         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ENVIRONMENT=dev .
+         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg ENVIRONMENT=qa .
          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       # Runs a single command using the runners shell

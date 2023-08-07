@@ -126,7 +126,6 @@ const getMyDocumentList = async ({
         })
         return responseModified
     } catch (error: any) {
-        console.log(error)
         throw error.message
     }
 }
@@ -159,7 +158,6 @@ const downloadFolder = async (accountNumbers: string[]) => {
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
-        console.log(error)
         throw error.message
     }
 }

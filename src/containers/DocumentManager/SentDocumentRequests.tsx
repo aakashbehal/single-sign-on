@@ -307,7 +307,6 @@ const RequestNewDocument = ({ show, onHide, dispatch }: { show: any, onHide: any
             "docTypeCode": document_type.value,
             // "externalSystemId": null
         }
-        console.log(requestObj)
         if (validate(requestObj)) {
             dispatch(SentDocumentRequestActionCreator.sentDocumentRequest(requestObj))
         }

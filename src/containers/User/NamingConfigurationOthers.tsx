@@ -310,13 +310,11 @@ const NamingConfigurationOthers = () => {
             }
             return fO
         })
-        console.log(fieldsSelectedTemp, dataFieldOptionsFiltered)
         setFilteredOptions(dataFieldOptionsFiltered)
         setFieldSelected(fieldsSelectedTemp)
     }
 
     const disableHandler = (fieldName: any) => {
-        console.log(fieldName)
         let flag = false
         if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
             flag = true

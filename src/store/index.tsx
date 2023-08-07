@@ -10,8 +10,10 @@ const store = createStore(
         applyMiddleware(...middleware),
         ((window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ &&
             (window as any).__REDUX_DEVTOOLS_EXTENSION_COMPOSE__()) ||
-            compose
+        compose
     )
 )
+export type RootState = ReturnType<typeof store.getState>
+export type AppDispatch = typeof store.dispatch
 
 export default store

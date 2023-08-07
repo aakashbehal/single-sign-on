@@ -129,6 +129,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         || activeRoute === 'document_general_configuration'
                         || activeRoute === 'document_cost_configuration'
                         || activeRoute === 'required_documents'
+                        || activeRoute === 'domain'
                     ) ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
                             <MdOutlinePhonelinkSetup size={30} />
@@ -143,6 +144,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/required_documents">Required Documents</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
                     </ul>

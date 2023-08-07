@@ -8,7 +8,7 @@ import reportWebVitals from './reportWebVitals';
 import { Metric } from 'web-vitals';
 
 function reportHandler(metric: Metric) {
-    console.log(metric);
+    // console.log(metric);
 }
 
 httpInterceptor()
