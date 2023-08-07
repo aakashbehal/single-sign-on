@@ -1,19 +1,21 @@
 # This is a workflow for execute EQ-Docs UI QA Deployment
 
-name:EQ-Docs UI QA Deployment
+name: EQ-Docs UI QA Deployment
 on:
   push:
-   branches: qa
+    branches: qa
   workflow_dispatch:
 jobs:
    # This workflow contains a single job called "build"
  call-eks-deployment-ui-lib-with-cd:
-   uses: Equabli/eq-devops-iaac/.github/workflows/eks-ui-deployment-with-cd.yml@main
-   with:
-     ecr-repository-path: eks-eq-docs-ui-qa
-     check-out-branch: qa
-     enviornment: qa
-     service-name: document_manager
-     major-version: 1
-     deployment-file-name: document-ui-deployment.yaml
-     yaml-update-branch: deployment
+  uses: Equabli/eq-devops-iaac/.github/workflows/eks-ui-deployment-with-cd.yml@main
+  with:
+   ecr-repository-path: eks-eq-docs-ui-qa
+   check-out-branch: qa
+   enviornment: qa
+   service-name: document_manager
+   major-version: 1
+   deployment-file-name: document-ui-deployment.yaml
+   yaml-update-branch: deployment
+  secrets:
+    env-config-file: ${{ secrets.DEV_ENV }}
