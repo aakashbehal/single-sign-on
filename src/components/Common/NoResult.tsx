@@ -1,3 +1,4 @@
+import React from 'react'
 import { BsFolder2Open } from "react-icons/bs";
 
 const NoRecord = ({ size = 30 }: any) => {

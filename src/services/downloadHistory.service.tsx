@@ -6,7 +6,7 @@ const getDownloadHistory = async ({
     pageNumber
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/download/all`, {
             pageSize,
             pageNumber: pageNumber - 1
         })
@@ -31,7 +31,7 @@ const saveDownloadHistory = async (
     documentId: any
 ) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/download`, {
             documentId
         })
         const data = handleResponse(response)
@@ -43,7 +43,7 @@ const saveDownloadHistory = async (
 
 const deleteDownloadHistory = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/download/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/download/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

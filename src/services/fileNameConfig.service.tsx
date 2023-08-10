@@ -5,7 +5,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const getConfig = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/config`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -15,7 +15,7 @@ const getConfig = async () => {
 
 const getUserConfig = async (requestParams: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration`,
             { params: { orgType: requestParams.orgType, fieldName: requestParams.fileNameConfig } })
         const data = handleResponse(response)
         return data.response
@@ -28,8 +28,8 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
     let fromServer = fromList ? fromList.userDocConfig : []
     let treadedList = fromServer.map((config: IDocConfig) => {
         return {
-            configSelectedCode: config.docMgrConfigSelectedCode,
-            configValSelectedCode: config.domainAttributeMappingSelectedCode
+            configSelectedCode: config.fileFieldCode,
+            configValSelectedCode: config.attributeCode
         }
     })
     let allFields = [];
@@ -91,7 +91,7 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
 
 const saveUserConfiguration = async (requestBody: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration`,
             requestBody)
         const data = handleResponse(response)
         return data.response
@@ -102,7 +102,7 @@ const saveUserConfiguration = async (requestBody: any) => {
 
 const getListOfUserConfig = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/configuration`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -112,7 +112,7 @@ const getListOfUserConfig = async () => {
 
 const deleteUserConfiguration = async (namingConfigGroupCode: string) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/file/${namingConfigGroupCode}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/${namingConfigGroupCode}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

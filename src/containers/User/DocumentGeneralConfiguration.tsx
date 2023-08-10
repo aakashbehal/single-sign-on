@@ -20,8 +20,8 @@ import DeleteConfirm from "../../components/modal/DeleteConfirm"
 import { history } from "../../helpers"
 
 export interface IDocConfig {
-    docMgrConfigSelectedCode: string,
-    domainAttributeMappingSelectedCode: string,
+    fileFieldCode: string,
+    attributeCode: string,
     isDocumentGroupIdentifier: boolean,
     isDocumentUniqueIdentifier: boolean
     attributeName: string,
@@ -116,7 +116,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
     const formatConfiguration = (confArr: IDocConfig[], separatorCode: string, type: string): string => {
         let confString = ``
         for (let index = 0; index < confArr.length; index++) {
-            let text = type === 'short' ? (confArr[index].domainAttributeMappingSelectedCode) : `<${confArr[index].attributeName}>`
+            let text = type === 'short' ? (confArr[index].attributeCode) : `<${confArr[index].attributeName}>`
             confString += (text).trim() + ((index < confArr.length - 1) ? separatorCode : '')
         }
         return confString

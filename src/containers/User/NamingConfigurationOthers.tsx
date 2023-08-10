@@ -96,10 +96,10 @@ const NamingConfigurationOthers = () => {
         if (details?.userDocConfig) {
             for (let i = 0; i < details.userDocConfig.length; i++) {
                 if (details.userDocConfig[i].isDocumentGroupIdentifier) {
-                    setGroupIdentifier(details.userDocConfig[i].docMgrConfigSelectedCode.replace('field', 'field_'))
+                    setGroupIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
                 }
                 if (details.userDocConfig[i].isDocumentUniqueIdentifier) {
-                    setUniqueIdentifier(details.userDocConfig[i].docMgrConfigSelectedCode.replace('field', 'field_'))
+                    setUniqueIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
                 }
             }
         }
@@ -483,7 +483,6 @@ const NamingConfigurationOthers = () => {
                                                     <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
                                                         {(fieldsSelected[keyName] === 'PC' || fieldsSelected[keyName] === 'DT') &&
                                                             <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Codes')} />}
-
                                                         {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
                                                     </Form.Label>
                                                 </Form.Group>

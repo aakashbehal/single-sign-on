@@ -1,4 +1,4 @@
-import { useRef } from "react"
+import React, { useRef } from "react"
 import { Button, Col, Form, Modal, Row } from "react-bootstrap"
 
 const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }) => {

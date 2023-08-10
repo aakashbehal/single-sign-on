@@ -19,7 +19,7 @@ const getReceiveDocumentRequest = async ({
     requestStatus
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/fullfill/search`, {
             pageSize,
             pageNumber: pageNumber - 1,
             documentType: docTypeCode,
@@ -66,7 +66,7 @@ const downloadDocumentRequest = async (
     documentId: any
 ) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/fullfill`, {
             documentId
         })
         const data = handleResponse(response)
@@ -78,7 +78,7 @@ const downloadDocumentRequest = async (
 
 const deleteReceiveDocumentRequest = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/receiveDocumentRequest/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/fullfill/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

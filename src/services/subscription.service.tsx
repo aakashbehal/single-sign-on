@@ -3,9 +3,13 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const GetSubscriptions = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/subscription/all`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/config/lookup`, {
+            params: {
+                lookupGroupKeyValue: 'subscription_type'
+            }
+        })
         const data = handleResponse(response)
-        return data.response
+        return data.response[0].lookUps
     } catch (error: any) {
         throw error.message
     }
@@ -13,7 +17,7 @@ const GetSubscriptions = async () => {
 
 const GetUserSubscriptions = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/subscription`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/subscription`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -23,7 +27,7 @@ const GetUserSubscriptions = async () => {
 
 const AddSubscription = async (subscriptionCode: any) => {
     try {
-        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/subscription/${subscriptionCode}`, {})
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/subscription/${subscriptionCode}`, {})
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
