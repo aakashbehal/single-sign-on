@@ -1,0 +1,20 @@
+# This is a workflow for execute EQ-Docs UI Dev Deployment
+
+name: EQ-Docs UI Dev Deployment
+on:
+  push:
+    branches: dev
+  workflow_dispatch:
+jobs:
+ call-eks-deployment-ui-lib-with-cd:
+  uses: Equabli/eq-devops-iaac/.github/workflows/eks-ui-deployment-with-cd.yml@main
+  with:
+    ecr-repository-path: eks-eq-docs-ui-dev
+    check-out-branch: dev
+    enviornment: dev
+    service-name: document_manager
+    major-version: 1
+    deployment-file-name: document-ui-deployment.yaml
+    yaml-update-branch: deployment
+  secrets:
+    env-config-file: ${{ secrets.DEV_ENV }}

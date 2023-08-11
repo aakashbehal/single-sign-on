@@ -20,8 +20,8 @@ const ExampleNaming = ({ onHide, show, details }: { onHide: any, show: boolean, 
         let index: number = 0
         let documentNameGenerated = ''
         for (let config of details?.userDocConfig!) {
-            if (json[config.domainAttributeMappingSelectedCode]) {
-                documentNameGenerated += `${index === 0 ? '' : json.conj}${json[config.domainAttributeMappingSelectedCode]}`
+            if (json[config.attributeCode]) {
+                documentNameGenerated += `${index === 0 ? '' : json.conj}${json[config.attributeCode]}`
             }
             index++
         }

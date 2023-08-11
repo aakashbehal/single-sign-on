@@ -72,7 +72,7 @@ export const TypesActionCreator = {
 
         dispatch(request())
 
-        commonServices.getDocumentTypes()
+        commonServices.getLookupValues({ lookupGroupKeyValue: 'doc_type' })
             .then(
                 compliance => {
                     dispatch(success(compliance))

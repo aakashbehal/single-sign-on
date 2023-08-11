@@ -18,7 +18,7 @@ const getSentSummary = async ({
     userId
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/request/summary`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/send/analytics`, {
             duration,
             product,
             portfolio,
@@ -50,7 +50,7 @@ const getDocumentCoverage = async ({
     userId
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/coverage`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/coverage`, {
             duration,
             product,
             portfolio,
@@ -85,7 +85,7 @@ const getSummaryDrillDown = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/accounts`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
@@ -153,7 +153,7 @@ const getSummaryDrillDownNot = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/accounts/not`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,

@@ -7,7 +7,11 @@ const getAllDomains = async ({ pageSize,
     sortParam
 }: any) => {
     try {
+<<<<<<< HEAD
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain/all`, {
+=======
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/all`, {
+>>>>>>> origin/dev
             pageSize,
             pageNumber,
             sortOrder,
@@ -31,7 +35,11 @@ const addDomain = async ({
     description
 }: any) => {
     try {
+<<<<<<< HEAD
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain`, {
+=======
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
+>>>>>>> origin/dev
             domainName,
             domainShortCode,
             description
@@ -45,7 +53,7 @@ const addDomain = async ({
 
 const deleteDomain = async (id: number) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/${id}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -55,7 +63,7 @@ const deleteDomain = async (id: number) => {
 
 const getDomainByCode = async (shortCode: string) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain/byShortCode`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/byShortCode`, {
             params: {
                 shortCode
             }

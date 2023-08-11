@@ -340,7 +340,7 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
                                         {
                                             (documentTypes && documentTypes.length > 0) &&
                                             documentTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} disabled={costAlreadyAdded.indexOf(dT.shortCode) !== -1} value={dT.shortCode}>{dT.documentType}</option>
+                                                return <option key={`cr_${index}`} disabled={costAlreadyAdded.indexOf(dT.keyCode) !== -1} value={dT.keyCode}>{dT.keyValue}</option>
                                             })
                                         }
                                     </Form.Control>

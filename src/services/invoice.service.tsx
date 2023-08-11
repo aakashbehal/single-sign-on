@@ -3,7 +3,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const GetInvoices = async (tenure: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost/invoice`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/invoice`, {
             params: {
                 tenure
             }

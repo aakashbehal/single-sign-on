@@ -70,9 +70,9 @@ const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false }: { 
                         return (
                             <option
                                 key={`agency_${index}`}
-                                value={agency.shortCode}
+                                value={agency.keyCode}
                             >
-                                {agency.documentType}
+                                {agency.keyValue}
                             </option>
                         )
                     })

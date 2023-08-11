@@ -18,7 +18,7 @@ const getMyDocumentFolders = async ({
     textSearch
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folders`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folders/search`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -79,7 +79,7 @@ const getMyDocumentList = async ({
     textSearch
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/all`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folders/search`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,
@@ -132,7 +132,7 @@ const getMyDocumentList = async ({
 
 const deleteDocument = async (documentId: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/${documentId}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/${documentId}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -142,7 +142,7 @@ const deleteDocument = async (documentId: any) => {
 
 const deleteFolder = async (clientAccountNo: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/folder/${clientAccountNo}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder/${clientAccountNo}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

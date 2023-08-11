@@ -6,7 +6,7 @@ const getAllIdentifiers = async ({
     pageNumber
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/identification/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/identification/all`, {
             pageSize,
             pageNumber: pageNumber
         })
@@ -23,7 +23,7 @@ const getAllIdentifiers = async ({
 
 const addDocumentCostIdentifier = async (requestBody: IIdentifier) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/identification`, requestBody)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/identification`, requestBody)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -33,7 +33,7 @@ const addDocumentCostIdentifier = async (requestBody: IIdentifier) => {
 
 const deleteDocumentCostIdentifier = async (docTypeCode: string) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/identification/${docTypeCode}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/identification/${docTypeCode}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
