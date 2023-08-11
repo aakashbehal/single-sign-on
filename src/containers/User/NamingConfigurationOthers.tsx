@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useToasts } from 'react-toast-notifications';
-import { Button, Col, Form, Row } from 'react-bootstrap';
+import { Button, Col, Form, Modal, Row } from 'react-bootstrap';
 import xlsx from 'json-as-xlsx';
 import { CgSpinnerAlt } from 'react-icons/cg';
 import { RiSettings3Fill, RiSettings3Line } from 'react-icons/ri';
@@ -18,11 +18,13 @@ import Styles from "./User.module.sass"
 import { createMessage } from '../../helpers/messages';
 import ExampleNaming from '../../components/modal/ExampleNaming';
 import NamingAdditionalFields from '../../components/modal/NamingAdditionalFields';
+import TextSelection from '../../components/TextSelection/TextSelection';
 
 const NamingConfigurationOthers = () => {
     const { id }: { id: string } = useParams()
     const dispatch = useDispatch()
     const { addToast } = useToasts();
+
     const clientDefault = ["CAN", "DT"]
     const partnerDefault = ["CIDSC", "DT", "CAN"]
     const configRef = useRef<any>();
@@ -31,6 +33,7 @@ const NamingConfigurationOthers = () => {
     const [groupIdentifier, setGroupIdentifier] = useState<any>(null)
     const [filteredOptions, setFilteredOptions] = useState<any>([]);
     const [fieldsSelected, setFieldSelected] = useState<any>({});
+    const [nameTransform, setNameTransform] = useState<any>({});
     const [formError, setFormError] = useState<any>({
         configName: false
     })
@@ -64,6 +67,7 @@ const NamingConfigurationOthers = () => {
         documentTypes: state.types.documentType.data,
     }))
 
+
     useEffect(() => {
         if (saveSuccess) {
             addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
@@ -91,6 +95,8 @@ const NamingConfigurationOthers = () => {
             localStorage.removeItem('naming_config')
         }
     }, [])
+
+
 
     useEffect(() => {
         if (details?.userDocConfig) {
@@ -310,13 +316,11 @@ const NamingConfigurationOthers = () => {
             }
             return fO
         })
-        console.log(fieldsSelectedTemp, dataFieldOptionsFiltered)
         setFilteredOptions(dataFieldOptionsFiltered)
         setFieldSelected(fieldsSelectedTemp)
     }
 
     const disableHandler = (fieldName: any) => {
-        console.log(fieldName)
         let flag = false
         if ((userType === 'Client' || userType === 'Equabli') && clientDefault.indexOf(fieldName) !== -1) {
             flag = true
@@ -394,6 +398,8 @@ const NamingConfigurationOthers = () => {
         }
     }
 
+
+
     return (
         <Col className='form_container'>
             {
@@ -407,6 +413,7 @@ const NamingConfigurationOthers = () => {
                     <Col sm={2}>
                     </Col>
                     <Col lg={8} sm={12}>
+
                         <br />
                         <Form ref={configRef} onSubmit={(e) => handleSave(e, 'config')}>
                             {
@@ -456,7 +463,7 @@ const NamingConfigurationOthers = () => {
                                     <div>Arrange</div>
                                     <div>Group Identifier</div>
                                     <div>Unique Identifier</div>
-                                    <div>Additional Settings</div>
+                                    <div>Validation</div>
                                 </div>
                                 {
                                     fieldsSelected
@@ -519,8 +526,10 @@ const NamingConfigurationOthers = () => {
                                     ))
                                 }
                             </Row>
+
                             <Col sm={12}>
                                 <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
+                                {/* <Button variant="dark" onClick={() => setNameTransform(true)}>Name Transformation</Button>{" "} */}
                                 {
                                     id !== '_NEW_CONFIGURATION'
                                     && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
@@ -532,12 +541,44 @@ const NamingConfigurationOthers = () => {
                 </Row >
             }
             {
+                nameTransform && <NameTransformation onHide={() => setNameTransform(false)} show={nameTransform} />
+            }
+            {
                 show && <ExampleNaming show={show} onHide={() => setShow(false)} details={details} />
             }
             {
                 showAdditional && <NamingAdditionalFields show={showAdditional} onHide={() => setShowAdditional(false)} />
             }
         </Col>
+    )
+}
+
+const NameTransformation = ({ onHide, show }: { onHide: any, show: boolean }) => {
+    return (
+        <Modal
+            show={show}
+            onHide={onHide}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered
+            size="lg"
+            animation={true}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Name Transformation
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="show-grid">
+                <Col lg={12} sm={12} >
+                    <Row style={{ padding: '1rem 2rem' }} className="form_container">
+                        <TextSelection />
+                    </Row>
+                </Col>
+            </Modal.Body>
+            <Modal.Footer>
+                <Button variant="dark" onClick={onHide}>Close</Button>
+            </Modal.Footer>
+        </Modal >
     )
 }
 

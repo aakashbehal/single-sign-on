@@ -84,7 +84,6 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptio
     if (userType === 'Partner' && !fieldsSelected[7]) {
         fieldsSelected[7] = null
     }
-    console.log(dataFieldOptionsFiltered, fieldsSelected)
     let Obj = { fieldFinal: dataFieldOptionsFiltered, selectionFinal: fieldsSelected }
     return Obj
 }
