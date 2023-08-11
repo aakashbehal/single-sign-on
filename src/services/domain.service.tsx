@@ -7,11 +7,7 @@ const getAllDomains = async ({ pageSize,
     sortParam
 }: any) => {
     try {
-<<<<<<< HEAD
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain/all`, {
-=======
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/all`, {
->>>>>>> origin/dev
             pageSize,
             pageNumber,
             sortOrder,
@@ -35,11 +31,7 @@ const addDomain = async ({
     description
 }: any) => {
     try {
-<<<<<<< HEAD
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/domain`, {
-=======
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
->>>>>>> origin/dev
             domainName,
             domainShortCode,
             description
