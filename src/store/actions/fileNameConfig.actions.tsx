@@ -21,7 +21,7 @@ export const FileNameConfigActionCreator = {
 
         dispatch(request())
 
-        commonServices.getLookupValues({ lookupGroupKeyValue: 'CONJUNCTION_TYPE' })
+        commonServices.getLookupValuesEQDocs({ lookupGroupKeyValue: 'CONJUNCTION_TYPE' })
             .then(
                 user => {
                     dispatch(success(user))

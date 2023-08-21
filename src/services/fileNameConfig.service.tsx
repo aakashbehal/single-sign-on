@@ -24,7 +24,7 @@ const getUserConfig = async (requestParams: any) => {
     }
 }
 
-const handleDefaultAndSavedSelection = async (dataFieldOptions: any, serverOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration | null) => {
+const handleDefaultAndSavedSelection = async (dataFieldOptions: any, userType: any, fieldsSelected: any, fromList: IConfiguration | null) => {
     let fromServer = fromList ? fromList.userDocConfig : []
     let treadedList = fromServer.map((config: IDocConfig) => {
         return {

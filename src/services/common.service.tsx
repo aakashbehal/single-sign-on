@@ -26,6 +26,20 @@ const getLookupValues = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: s
     }
 }
 
+const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: string }) => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/config/lookup`, {
+            params: {
+                lookupGroupKeyValue
+            }
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 const getClients = async () => {
     try {
         const user = userService.getUser()
@@ -294,5 +308,6 @@ export const commonServices = {
     getClientAccountNumbers,
     getUsage,
     getSignedURL,
-    getLookupValues
+    getLookupValues,
+    getLookupValuesEQDocs
 }

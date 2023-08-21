@@ -189,14 +189,13 @@ input[type="checkbox"].switch
 	outline: none
 	-webkit-transition: all .2s ease-in-out
 	transition: all .2s ease-in-out
-	& > .small
-		width: 1rem
 
 input[type="checkbox"].switch:checked
 	background: $bittersweet
 
 input[type="checkbox"][disabled]
 	cursor: not-allowed
+	background-color: #a3a3a3 !important
 
 input[type="checkbox"].switch:after
 	position: absolute
@@ -1023,15 +1022,21 @@ option:disabled
 		text-align: center
 		> svg
 			height: 48px
+.naming_config_inputs_not_required
+	grid-template-columns: 1fr 3fr 1fr 1fr 1fr 1fr !important
 
 // =========================================
 // Text selection
 // =========================================
 
 .text_selection_container
-	font-size: 30
+	font-size: 18px
 	font-weight: bold
-	letter-spacing: .2rem
+	letter-spacing: 0.2rem
+	text-align: center
+	background: white
+	border-radius: 5px
+	padding: 1rem
 	span
 		padding: 0.2rem 1rem
 		border-radius: 3px
@@ -1048,3 +1053,9 @@ option:disabled
 				background: rgb(85 136 255 / 60%)
 			&:nth-child(4)
 				background: rgb(255 225 0 / 60%)
+
+.text_selection_main
+	position: absolute
+	cursor: pointer
+	right: 25px
+	top: 42px

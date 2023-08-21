@@ -14,7 +14,6 @@ import DocumentRequirement from "./DocumentRequirement";
 import DocumentCoverage from "./DocumentCoverage";
 import Usage from "./Usage";
 import Invoice from "./Invoice";
-import TextSelection from "../../components/TextSelection/TextSelection";
 
 const Documents = ({ location }: { location: any }) => {
     const history = useHistory();
