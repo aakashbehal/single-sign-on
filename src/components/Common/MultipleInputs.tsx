@@ -5,7 +5,6 @@ import Styles from "./Common.module.sass"
 const MultipleInputs = ({ multipleValues, setMultipleValues }: any) => {
     const [value, setValue] = useState('')
     const [error, setError] = useState(null)
-    console.log(multipleValues)
     const isInList = (text: any) => {
         return multipleValues?.includes(text)
     }

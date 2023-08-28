@@ -41,7 +41,6 @@ export const onMessageListener = () => {
 
 export const deleteFBToken = async () => {
     try {
-        console.log(messaging)
         return deleteToken(messaging)
     } catch (err: any) {
         throw err.message
