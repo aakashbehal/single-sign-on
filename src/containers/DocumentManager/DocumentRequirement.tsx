@@ -38,7 +38,6 @@ const options: any = {
     },
 }
 
-
 export const DATA_REQUESTED = {
     labels: ['Fulfilled', 'Open', 'Overdue'],
     datasets: [
@@ -179,7 +178,6 @@ const DocumentRequirement = ({ collapse, clientAccountNumbers }: any) => {
         if (searchObj.duration) {
             dispatch(InvoiceActionCreator.getInvoice(searchObj.duration))
         }
-
     }, [searchObj])
 
     useEffect(() => {

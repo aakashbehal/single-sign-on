@@ -136,7 +136,10 @@ const editPartner = async ({
 
 const deactivatePartner = async (partnerId: string | number) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/${partnerId}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/${partnerId}`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

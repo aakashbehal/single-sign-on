@@ -43,7 +43,10 @@ const saveDownloadHistory = async (
 
 const deleteDownloadHistory = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/download/${id}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/download/${id}`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

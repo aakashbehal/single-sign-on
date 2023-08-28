@@ -73,14 +73,6 @@ const NamingConfigurationOthers = () => {
     }))
 
     useEffect(() => {
-        console.log(nameTransformationState)
-    }, [nameTransformationState])
-
-    useEffect(() => {
-        console.log(fieldsSelected)
-    }, [fieldsSelected])
-
-    useEffect(() => {
         if (saveSuccess) {
             addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
             history.push(`/profile/document_general_configuration`)
@@ -408,12 +400,15 @@ const NamingConfigurationOthers = () => {
         }
     }
 
-    const NameSelectionChange = () => {
+    const handleNameTransformationSelection = (selection: boolean) => {
         if (documentName) {
             setConfirmChange(true)
+        } else {
+            handleConfirmSelection(selection)
         }
     }
-    const handleNameTransformationSelection = (selection: boolean) => {
+
+    const handleConfirmSelection = (selection: boolean) => {
         reset()
         setNameTransform(selection)
         setFieldSelected((prevSelection: any) => selection ? {} : prevSelection)
@@ -428,6 +423,7 @@ const NamingConfigurationOthers = () => {
                 })
             })
         }
+        setConfirmChange(false)
     }
 
     return (
@@ -675,7 +671,7 @@ const NamingConfigurationOthers = () => {
             }
             {
                 confirmChange &&
-                <TransformationNameModel onHide={() => setConfirmChange(false)} show={confirmChange} confirmChange={() => setConfirmChange(false)} />
+                <TransformationNameModel onHide={() => setConfirmChange(false)} show={confirmChange} confirmChange={() => handleConfirmSelection(false)} />
             }
         </Col>
     )
@@ -705,63 +701,3 @@ const TransformationNameModel = ({ onHide, show, confirmChange }: { onHide: any,
 }
 
 export default NamingConfigurationOthers
-
-// "1234P993344_CC_MP_22/12/2023_abc.pdf"
-
-var a = {
-    "namingConfigGroupName": "MYC",
-    "separatorCode": "_",
-    "sample": '1234P993344_CC_MP_22/12/2023_abc.pdf',
-    "fields": [
-        { 'fileFieldCode': 'field1', start: 0, end: 3 },
-        { 'fileFieldCode': 'field2', start: 4, end: 11 },
-        { 'fileFieldCode': 'field3', start: 13, end: 14 },
-        { 'fileFieldCode': 'field4', start: 16, end: 17 }
-    ],
-    "userDocConfig": [
-        {
-            "fileFieldCode": "field1",
-            "attributeCode": "CAN",
-            "isMandatory": true,
-            "isDocumentUniqueIdentifier": true,
-            "regex": null,
-            "isTransformation": false,
-            "validations": {
-                "dataType": "STRING",
-                "minLength": 1,
-                "maxLength": 14,
-                "possibleValType": "POSSIBLE_VALUES",
-                "possibleValSubType": "DOC_TYPE",
-                "possibleVal": "Military affidavit, application, bill of sale"  //"929,921,923"  
-            },
-        },
-        {
-            "fileFieldCode": "field2",
-            "attributeCode": "OAN",
-            "isMandatory": true,
-            "isDocumentUniqueIdentifier": true,
-            "regex": null,
-            "isTransformation": false,
-            "validations": {
-                "dataType": "DATE",
-                "possibleValType": "DATE",
-                "possibleValSubType": "dd/MM/yyyy,MM/dd/yy",
-            }
-        },
-        {
-            "fileFieldCode": "field3",
-            "attributeCode": "EI",
-            "isMandatory": true,
-            "isDocumentUniqueIdentifier": true,
-            "regex": null,
-            "isTransformation": true,
-            "validations": {
-                "dataType": "string"
-            },
-            "transformation": {
-
-                "transformationValue": "abc"
-            }
-        }
-    ]
-}

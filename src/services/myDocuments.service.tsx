@@ -132,7 +132,10 @@ const getMyDocumentList = async ({
 
 const deleteDocument = async (documentId: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/${documentId}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/${documentId}`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -142,7 +145,10 @@ const deleteDocument = async (documentId: any) => {
 
 const deleteFolder = async (clientAccountNo: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder/${clientAccountNo}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder/${clientAccountNo}`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

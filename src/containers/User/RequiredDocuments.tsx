@@ -73,8 +73,8 @@ const RequiredDocuments = () => {
             let tempRequiredDocuments = Object.assign([], requiredDocuments)
             tempRequiredDocuments = tempRequiredDocuments.map((tRD: any) => {
                 tRD.documents = tRD.documents.map((d: any) => {
-                    d.shortCode = d.documentCode
-                    d.documentType = d.documentName
+                    d.keyCode = d.documentCode
+                    d.keyValue = d.documentName
                     d.description = d.documentName
                     delete d.documentCode
                     delete d.documentName
@@ -223,7 +223,7 @@ const RequiredDocuments = () => {
                                         <td>{cT.productName}</td>
                                         <td>
                                             {cT.documents && cT.documents.map((dL: any, index: any) => {
-                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.documentType}</span>
+                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.keyValue}</span>
                                             })}
                                         </td>
                                         <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
@@ -324,10 +324,10 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
         const {
             productType
         } = formRef.current;
-
+        console.log(documentTypesSelected)
         const payload = {
             "productCode": productType.value,
-            "docTypeCode": documentTypesSelected.map((dT: any) => dT.shortCode)
+            "docTypeCode": documentTypesSelected.map((dT: any) => dT.keyCode)
         }
 
         if (validateUpload(payload)) {
@@ -409,13 +409,14 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
 }
 
 const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSelected }: any) => {
+    console.log(editRequired, documentTypes)
     const ref = useRef<any>();
     return (
         <>
             <Typeahead
                 defaultSelected={editRequired ? editRequired.documents : []}
                 id="public-methods-example"
-                labelKey="documentType"
+                labelKey={"keyValue"}
                 multiple
                 options={documentTypes}
                 onChange={(selected) => {

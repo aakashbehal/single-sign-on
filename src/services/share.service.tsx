@@ -13,7 +13,10 @@ const shareFolder = async (payload: any) => {
 
 const revokeShareFolder = async (payload: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/folder`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/folder`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -33,7 +36,10 @@ const shareDocument = async (payload: any) => {
 
 const revokeShareDocument = async (payload: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/file/${payload.email}`)
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/file/${payload.email}`, {
+            "action": "ACTIVE",
+            "property": "string"
+        })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

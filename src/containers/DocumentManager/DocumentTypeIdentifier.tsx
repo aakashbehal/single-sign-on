@@ -117,17 +117,21 @@ const DocumentTypeIdentifier = () => {
                 </div>
             </div>
             <br />
-            {
-                !error && loading
-                && <thead>
-                    <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
-                </thead>
-            }
-            {
-                !loading && identifiers.length === 0
-                && <NoRecord />
-            }
             <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                {
+                    !error && loading
+                    && <thead>
+                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
+                    </thead>
+                }
+                {
+                    !loading && identifiers.length === 0
+                    && <thead>
+                        <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
+                            <NoRecord />
+                        </tr>
+                    </thead>
+                }
                 {
                     !loading && identifiers.length > 0
                     && <>
@@ -297,7 +301,7 @@ const AddEditIdentifier = ({ show, onHide, identifierData, documentTypes, dispat
                                         {
                                             (documentTypes && documentTypes.length > 0) &&
                                             documentTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} disabled={documentTypeAlreadyAdded.indexOf(dT.shortCode) !== -1} value={dT.shortCode}>{dT.documentType}</option>
+                                                return <option key={`cr_${index}`} disabled={documentTypeAlreadyAdded.indexOf(dT.keyCode) !== -1} value={dT.keyCode}>{dT.keyValue}</option>
                                             })
                                         }
                                     </Form.Control>

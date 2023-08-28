@@ -278,6 +278,18 @@ input[type="checkbox"].switch:checked:after
 canvas
 	@media ( min-width: 1980px )
 		height: 100% !important
+.btn-light
+	background: $bittersweet
+	color: white
+	&:not(:disabled):not(.disabled):active, &:hover
+		background: lighten($bittersweet,2% )
+		color: white
+.button_align
+	align-items: center
+	display: flex
+	justify-content: center
+	svg
+		margin-right: 1rem
 
 //============================================================================
 

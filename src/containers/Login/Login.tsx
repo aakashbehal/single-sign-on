@@ -4,8 +4,6 @@ import { Form, Button } from "react-bootstrap"
 import { CgSpinnerAlt } from "react-icons/cg"
 import { useToasts } from 'react-toast-notifications';
 import ReCAPTCHA from "react-google-recaptcha";
-import { initializeApp } from "firebase/app";
-import { getToken, getMessaging, onMessage } from 'firebase/messaging';
 
 import { history } from "../../helpers";
 import Styles from './Login.module.sass';

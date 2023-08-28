@@ -1,23 +1,19 @@
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react"
 import { Col, Row, Form, Button, OverlayTrigger, Tooltip, Table, Modal } from "react-bootstrap"
 import { useDispatch, useSelector } from "react-redux"
-import { HiArrowNarrowDown, HiArrowNarrowUp } from "react-icons/hi"
 
-import Styles from "./User.module.sass"
 import { FileNameConfigActionCreator } from "../../store/actions/fileNameConfig.actions";
-import { fileNameConfigService, userService } from "../../services";
+import { userService } from "../../services";
 import UseDocumentTitle from "../../helpers/useDocumentTitle"
 import { useToasts } from "react-toast-notifications"
 import { createMessage } from "../../helpers/messages"
 import { CgSpinnerAlt } from "react-icons/cg"
-import { BsFillQuestionCircleFill } from "react-icons/bs"
-import { TypesActionCreator } from "../../store/actions/common/types.actions"
-import xlsx from "json-as-xlsx"
 import { FiEdit2 } from "react-icons/fi"
 import { AiOutlineDelete } from "react-icons/ai"
 import NoRecord from "../../components/Common/NoResult"
 import DeleteConfirm from "../../components/modal/DeleteConfirm"
 import { history } from "../../helpers"
+import React from "react"
 
 export interface IDocConfig {
     fileFieldCode: string,
@@ -26,19 +22,38 @@ export interface IDocConfig {
     isDocumentUniqueIdentifier: boolean
     attributeName: string,
     isMandatory: boolean,
-    regex: string | null
+    regex: string | null,
+    validationRule: {
+        dataType: "STRING" | "NUMBER" | "NUMERIC" | "DATE"
+        minRange?: number
+        maxRange?: number
+        minLength?: number
+        maxLength?: number
+        possibleValType: "INLINE" | "LOOKUP" | "REF_TYPE"
+        possibleValSubType: "DOC_TYPE"
+        possibleVal: string
+    }
+    isTransformation: boolean
+    transformationValue: string
+}
+
+export interface fieldsSelected {
+    fileFieldCode: string
+    start: number
+    end: number
 }
 export interface IConfiguration {
     namingConfigGroupCode: string
     namingConfigGroupName: string
     separatorCode: string
+    sample?: string
+    fields?: fieldsSelected[]
     userDocConfig: IDocConfig[]
 }
 
 const DocumentGeneralConfiguration = () => {
     UseDocumentTitle('Document General Configuration')
     const ref = useRef<any>();
-    const { addToast } = useToasts();
     const dispatch = useDispatch();
     const [userType, setUserType] = useState(null)
     const [showConfig, setShowConfig] = useState(false)
@@ -145,88 +160,88 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
     }
 
     return (
-        <Row className="form_container" style={{ margin: 0 }}>
+        <React.Fragment>
             <Col sm={12} className="no_padding" style={{ textAlign: 'right', marginBottom: '1rem' }}>
                 <Button variant="dark" className="pull-right" onClick={() => addNewHandler()}>+ Add New</Button>
             </Col>
-            {
-                confListLoading
-                && <CgSpinnerAlt style={{ textAlign: 'center', width: '100%' }} className="spinner" size={50} />
-            }
-            {
-                !confListLoading && confList.length === 0
-                && <NoRecord />
-            }
-            {
-                !confListLoading && <Table striped hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
-                    <thead>
-                        <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                            <th>#</th>
-                            <th style={{ width: "15%" }}>Name</th>
-                            <th style={{ width: "25%" }}>File Name</th>
-                            <th style={{ width: "60%" }}>File Name Description</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {
-                            confList && confList.map((conf: IConfiguration, index: number) => {
-                                return <tr key={`confList_${index}`}>
-                                    <td>{index + 1}</td>
-                                    <td>{conf.namingConfigGroupName}</td>
-                                    <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'short')}</td>
-                                    <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'long')}</td>
-                                    <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                        <span>
-                                            <OverlayTrigger
-                                                placement="bottom"
-                                                delay={{ show: 250, hide: 400 }}
-                                                overlay={
-                                                    <Tooltip id={`tooltip-error`}>
-                                                        Edit
-                                                    </Tooltip>
-                                                }
-                                            >
-                                                <FiEdit2 onClick={() => handleEdit(conf)} size={20} style={{ cursor: 'pointer' }} />
-                                            </OverlayTrigger>
-                                        </span> &nbsp;
-                                        <span>
-                                            <OverlayTrigger
-                                                placement="bottom"
-                                                delay={{ show: 250, hide: 400 }}
-                                                overlay={
-                                                    <Tooltip id={`tooltip-error`}>
-                                                        Delete
-                                                    </Tooltip>
-                                                }
-                                            >
-                                                {/* onClick={() => handleDetails(cT)} */}
-                                                <AiOutlineDelete onClick={() => deleteConfiguration(conf)} size={20} style={{ cursor: 'pointer' }} />
-                                            </OverlayTrigger>
-                                        </span>
-                                    </td>
-                                </tr>
-                            })
-                        }
-                    </tbody>
-                </Table>
-            }
-            {
-                showConfirmDelete
-                &&
-                <DeleteConfirm
-                    show={showConfirmDelete}
-                    onHide={() => setShowConfirmDelete(false)}
-                    confirmDelete={approveHandler}
-                    details={toDelete}
-                    type="configuration"
-                />
-            }
-        </Row>
-
+            <Row className="form_container" style={{ margin: 0 }}>
+                {
+                    confListLoading
+                    && <CgSpinnerAlt style={{ textAlign: 'center', width: '100%' }} className="spinner" size={50} />
+                }
+                {
+                    !confListLoading && confList.length === 0
+                    && <NoRecord />
+                }
+                {
+                    !confListLoading && confList.length > 0 && <Table striped hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                        <thead>
+                            <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                                <th>#</th>
+                                <th style={{ width: "15%" }}>Name</th>
+                                <th style={{ width: "25%" }}>File Name</th>
+                                <th style={{ width: "60%" }}>File Name Description</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                confList && confList.map((conf: IConfiguration, index: number) => {
+                                    return <tr key={`confList_${index}`}>
+                                        <td>{index + 1}</td>
+                                        <td>{conf.namingConfigGroupName}</td>
+                                        <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'short')}</td>
+                                        <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'long')}</td>
+                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Edit
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <FiEdit2 onClick={() => handleEdit(conf)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span> &nbsp;
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Delete
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    {/* onClick={() => handleDetails(cT)} */}
+                                                    <AiOutlineDelete onClick={() => deleteConfiguration(conf)} size={20} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                })
+                            }
+                        </tbody>
+                    </Table>
+                }
+                {
+                    showConfirmDelete
+                    &&
+                    <DeleteConfirm
+                        show={showConfirmDelete}
+                        onHide={() => setShowConfirmDelete(false)}
+                        confirmDelete={approveHandler}
+                        details={toDelete}
+                        type="configuration"
+                    />
+                }
+            </Row>
+        </React.Fragment>
     )
 })
-
 
 const RetentionPolicy = ({ dispatch }: any) => {
     const retentionSaveRef = useRef<any>();
@@ -245,7 +260,7 @@ const RetentionPolicy = ({ dispatch }: any) => {
     }))
 
     useEffect(() => {
-        dispatch(FileNameConfigActionCreator.getRetentionPolicy())
+        // dispatch(FileNameConfigActionCreator.getRetentionPolicy())
         dispatch(FileNameConfigActionCreator.getUserRetentionPolicy())
     }, [])
 
@@ -294,7 +309,7 @@ const RetentionPolicy = ({ dispatch }: any) => {
                                         <Row>
                                             <Col md={11} sm={11}>
                                                 <Form.Control
-                                                    className="select_custom"
+                                                    className="select_custom white"
                                                     type="number"
                                                     name="retention_policy"
                                                     onChange={(e) => {
