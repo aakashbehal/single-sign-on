@@ -2,6 +2,7 @@ import {
     GetAllDomains,
     AddDomain,
     DeleteDomain,
+    UpdateDomain,
     GetDomainByCode
 } from "../types.d"
 
@@ -10,6 +11,9 @@ const initialState = {
     totalCount: 0,
     error: false,
     loading: false,
+    updating: false,
+    updateSuccess: false,
+    updateError: false,
     adding: false,
     addSuccess: false,
     addError: false,
@@ -106,6 +110,34 @@ const domainReducer = (state = initialState, action: { type: any; payload: any; 
                 deleting: false,
                 deleteSuccess: false,
                 deleteError: false
+            }
+        case UpdateDomain.UPDATE_DOMAIN_REQUEST:
+            return {
+                ...state,
+                updating: true,
+                updateSuccess: false,
+                updateError: false
+            }
+        case UpdateDomain.UPDATE_DOMAIN_SUCCESS:
+            return {
+                ...state,
+                updating: false,
+                updateSuccess: true,
+                updateError: false
+            }
+        case UpdateDomain.UPDATE_DOMAIN_FAILURE:
+            return {
+                ...state,
+                updating: false,
+                updateSuccess: false,
+                updateError: true
+            }
+        case UpdateDomain.UPDATE_DOMAIN_RESET:
+            return {
+                ...state,
+                updating: false,
+                updateSuccess: false,
+                updateError: false
             }
         default:
             return state
