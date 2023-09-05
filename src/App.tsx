@@ -72,10 +72,7 @@ const App = () => {
 
               {/* User settings ---------------*/}
               <PrivateRoute exact path="/profile/user_account" component={sessions(UserAccount)} />
-              <PrivateRoute exact path="/profile/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
-              <PrivateRoute exact path="/profile/document_general_configuration/:id" component={sessions(NamingConfigurationOthers)} />
-              <PrivateRoute exact path="/profile/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
-              <PrivateRoute exact path="/profile/required_documents" component={sessions(RequiredDocuments)} />
+
 
 
               {/* Document Manager */}
@@ -88,6 +85,7 @@ const App = () => {
               <PrivateRoute exact path="/documents/accounts_documents" component={SummaryDrillDownHave} />
               <PrivateRoute exact path="/documents/accounts_missing_documents" component={SummaryDrillDownNotHave} />
 
+
               <WithSidebar exact path="/my_documents_side" component={Documents} />
 
               {/* Setup */}
@@ -95,6 +93,10 @@ const App = () => {
               <PrivateRoute exact path="/setup/partner" component={PartnerSetup} />
               <PrivateRoute exact path="/setup/user_approval" component={Approval} />
               <PrivateRoute exact path="/setup/Domain" component={Domain} />
+              <PrivateRoute exact path="/setup/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
+              <PrivateRoute exact path="/setup/document_general_configuration/:id" component={sessions(NamingConfigurationOthers)} />
+              <PrivateRoute exact path="/setup/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
+              <PrivateRoute exact path="/setup/required_documents" component={sessions(RequiredDocuments)} />
 
               {/* OCR */}
               <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />

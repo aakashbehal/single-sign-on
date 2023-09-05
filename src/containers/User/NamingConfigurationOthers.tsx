@@ -75,7 +75,7 @@ const NamingConfigurationOthers = () => {
     useEffect(() => {
         if (saveSuccess) {
             addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
-            history.push(`/profile/document_general_configuration`)
+            history.push(`/setup/document_general_configuration`)
         }
         if (saveError) {
             addToast(createMessage('error', `User Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });

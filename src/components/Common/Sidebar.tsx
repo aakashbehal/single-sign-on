@@ -139,9 +139,9 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                     </div>
                     <ul className="sub-menu">
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/document_general_configuration">Document General Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/document_cost_configuration">Document Cost Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/profile/required_documents">Required Documents</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_general_configuration">Document General Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_cost_configuration">Document Cost Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/required_documents">Required Documents</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>
