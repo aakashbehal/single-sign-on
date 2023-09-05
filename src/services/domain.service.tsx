@@ -9,7 +9,7 @@ const getAllDomains = async ({ pageSize,
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/all`, {
             pageSize,
-            pageNumber,
+            pageNumber: pageNumber - 1,
             sortOrder,
             sortParam
         })

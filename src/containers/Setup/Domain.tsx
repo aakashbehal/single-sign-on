@@ -17,7 +17,7 @@ const Domain = () => {
     const [sortElement, setSortElement] = useState('modifiedDate')
     const [sortType, setSortType] = useState('desc');
     const [pageSize, setPageSize] = useState(10)
-    const [pageNumber, setPageNumber] = useState(0);
+    const [pageNumber, setPageNumber] = useState(1);
     const [showAddEdit, setShowAddEdit] = useState<boolean>(false)
     const [editData, setEditData] = useState<any>(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);

@@ -41,7 +41,7 @@ const PartnerSetup = lazy(() => import("./containers/Setup/PartnerSetup"));
 const DocumentTypeIdentifier = lazy(() => import("./containers/DocumentManager/DocumentTypeIdentifier"));
 const ConsoleSettings = lazy(() => import("./containers/DocumentManager/ConsoleSettings"));
 const Automation = lazy(() => import("./containers/DocumentManager/Automation"));
-const NamingConfigurationOthers = lazy(() => import("./containers/User/NamingConfigurationOthers"));
+const NamingConfiguration = lazy(() => import("./containers/User/NamingConfiguration"));
 const Domain = lazy(() => import("./containers/Setup/Domain"));
 
 /**
@@ -73,7 +73,7 @@ const App = () => {
               {/* User settings ---------------*/}
               <PrivateRoute exact path="/profile/user_account" component={sessions(UserAccount)} />
               <PrivateRoute exact path="/profile/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
-              <PrivateRoute exact path="/profile/document_general_configuration/:id" component={sessions(NamingConfigurationOthers)} />
+              <PrivateRoute exact path="/profile/document_general_configuration/:id" component={sessions(NamingConfiguration)} />
               <PrivateRoute exact path="/profile/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
               <PrivateRoute exact path="/profile/required_documents" component={sessions(RequiredDocuments)} />
 

@@ -17,15 +17,15 @@ import { fileNameConfigService, userService } from '../../services';
 import Styles from "./User.module.sass"
 import { createMessage } from '../../helpers/messages';
 import ExampleNaming from '../../components/modal/ExampleNaming';
-import NamingAdditionalFields from '../../components/modal/NamingAdditionalFields';
+import NamingAdditionalFields, { IAdditionSettingsJson } from '../../components/modal/NamingAdditionalFields';
 import { DocumentHighlighter, ISelection, TextSelectionHook } from '../../components/TextSelection/TextSelection';
 import { AiOutlineDelete } from 'react-icons/ai';
+import TransformationNameModel from '../../components/modal/TransformationNameModel';
 
-const NamingConfigurationOthers = () => {
+const NamingConfiguration = () => {
     const { id }: { id: string } = useParams()
     const dispatch = useDispatch()
     const { addToast } = useToasts();
-
     const clientDefault = ["CAN", "DT"]
     const partnerDefault = ["CIDSC", "DT", "CAN"]
     const configRef = useRef<any>();
@@ -42,9 +42,9 @@ const NamingConfigurationOthers = () => {
     const [userType, setUserType] = useState(null)
     const [details, setDetails] = useState<IConfiguration | null>(null)
     const [show, setShow] = useState<boolean>(false)
-    const [showAdditional, setShowAdditional] = useState<boolean>(false)
-
-    const [nameTransformationState, documentName, { selectionEventListener, deleteSelection, reset, setDocumentName }] = TextSelectionHook()
+    const [showAdditional, setShowAdditional] = useState<string>('')
+    const [additionSettingsJson, setAdditionalSettingsJson] = useState<any>(null)
+    const [nameTransformationState, documentName, { selectionEventListener, deleteSelection, reset, handleSetDocumentName, handleSetState }] = TextSelectionHook()
 
     const {
         saveSuccess,
@@ -64,7 +64,7 @@ const NamingConfigurationOthers = () => {
         documentTypes
     } = useSelector((state: any) => ({
         isLoading: state.fileNameConfig.conjunction.loading,
-        dataConjunction: state.fileNameConfig.conjunction.data,
+        dataConjunction: state.fileNameConfig.conjunction.data.CONJUNCTION_TYPE,
         dataFieldOptions: state.fileNameConfig.fieldOptions.data,
         dataFileNamingConfig: state.fileNameConfig.fileNamingConfig.data,
         dataUserConjunction: state.fileNameConfig.userConjunction.data,
@@ -83,11 +83,39 @@ const NamingConfigurationOthers = () => {
     }, [saveSuccess, saveError])
 
     useEffect(() => {
-        const config = localStorage.getItem('naming_config')!
         const user = userService.getUser();
-        setDetails(() => {
-            return JSON.parse(config)
-        })
+        if (id !== '_NEW_CONFIGURATION') {
+            const config: any = localStorage.getItem('naming_config')!
+            const configParsed = JSON.parse(config)
+            if (configParsed?.fields !== 'null' && configParsed?.fields?.length > 0) {
+                setNameTransform(true)
+                handleSetDocumentName(configParsed?.sample)
+                handleSetState(JSON.parse(configParsed?.fields))
+                let tempFieldSelected: any = {}
+                for (let [index, conf] of configParsed.userDocConfig.entries()) {
+                    tempFieldSelected[index] = conf.attributeCode
+                }
+                setFieldSelected(tempFieldSelected)
+                setFilteredOptions(() => {
+                    return dataFieldOptions.map((options: any) => {
+                        options.selected = false
+                        options.available = true
+                        return options
+                    })
+                })
+            } else {
+                setNameTransform(false)
+                handleDefaultAndSavedSelection()
+            }
+            let updatedConfig: any = {}
+            for (let [index, conf] of configParsed.userDocConfig[0].validationRules.entries()) {
+                if (Object.keys(conf).length !== 0) {
+                    updatedConfig[`field_${index + 1}`] = conf
+                }
+            }
+            setAdditionalSettingsJson(updatedConfig)
+            setDetails(configParsed)
+        }
         setUserType(user.recordSource);
         dispatch(FileNameConfigActionCreator.getUserConfig())
         dispatch(FileNameConfigActionCreator.getFieldOptions())
@@ -95,9 +123,9 @@ const NamingConfigurationOthers = () => {
         // dispatch(FileNameConfigActionCreator.getUserSeparator())
         dispatch(TypesActionCreator.getProductTypes())
         dispatch(TypesActionCreator.getDocumentTypes())
-        return () => {
-            localStorage.removeItem('naming_config')
-        }
+        // return () => {
+        //     localStorage.removeItem('naming_config')
+        // }
     }, [])
 
     useEffect(() => {
@@ -112,14 +140,6 @@ const NamingConfigurationOthers = () => {
             }
         }
     }, [details])
-
-    // useEffect(() => {
-    //     if (
-    //         dataFieldOptions?.length > 0
-    //     ) {
-    //         handleDefaultAndSavedSelection()
-    //     }
-    // }, [dataFieldOptions, dataFileNamingConfig])
 
     const handleDefaultAndSavedSelection = async () => {
         let selectedTemp = {}
@@ -147,6 +167,18 @@ const NamingConfigurationOthers = () => {
         const { fieldFinal, selectionFinal }: { fieldFinal: any, selectionFinal: any } = await fileNameConfigService.handleDefaultAndSavedSelection(dataFieldOptions, userType, selectedTemp, details)
         setFilteredOptions(fieldFinal)
         setFieldSelected(selectionFinal)
+    }
+
+    const addFileWithValidation = (field: string) => {
+        if (additionSettingsJson && additionSettingsJson[field]) {
+            let setting = additionSettingsJson[field]
+            if (!setting.dataType) {
+                delete setting.dataType
+            }
+            return setting
+        } else {
+            return {}
+        }
     }
 
     const handleSave = (e: any, type: any) => {
@@ -180,67 +212,79 @@ const NamingConfigurationOthers = () => {
             "separatorCode": conjunction.value,
             userDocConfig: []
         }
-        if (field_1.value) {
+        if (nameTransform) {
+            configRequest.sample = documentName
+            configRequest.fields = nameTransformationState
+        }
+
+        if (field_1?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field1",
-                "domainAttributeMappingSelectedCode": field_1.value,
+                "fileFieldCode": "field1",
+                "attributeCode": field_1.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_1',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_1'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_1',
+                validationRule: addFileWithValidation("field_1")
             })
         }
-        if (field_2.value) {
+        if (field_2?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field2",
-                "domainAttributeMappingSelectedCode": field_2.value,
+                "fileFieldCode": "field2",
+                "attributeCode": field_2.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_2',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_2'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_2',
+                validationRule: addFileWithValidation("field_2")
             })
         }
-        if (field_3.value) {
+        if (field_3?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field3",
-                "domainAttributeMappingSelectedCode": field_3.value,
+                "fileFieldCode": "field3",
+                "attributeCode": field_3.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_3',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_3'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_3',
+                validationRule: addFileWithValidation("field_3")
             })
         }
-        if (field_4.value) {
+        if (field_4?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field4",
-                "domainAttributeMappingSelectedCode": field_4.value,
+                "fileFieldCode": "field4",
+                "attributeCode": field_4.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_4',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_4'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_4',
+                validationRule: addFileWithValidation("field_4")
             })
         }
-        if (field_5.value) {
+        if (field_5?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field5",
-                "domainAttributeMappingSelectedCode": field_5.value,
+                "fileFieldCode": "field5",
+                "attributeCode": field_5.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_5',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_5'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_5',
+                validationRule: addFileWithValidation("field_5")
             })
         }
-        if (field_6.value) {
+        if (field_6?.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field6",
-                "domainAttributeMappingSelectedCode": field_6.value,
+                "fileFieldCode": "field6",
+                "attributeCode": field_6.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_6',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_6'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_6',
+                validationRule: addFileWithValidation("field_6")
             })
         }
         if (field_7 && field_7.value) {
             configRequest.userDocConfig.push({
-                "docMgrConfigSelectedCode": "field7",
-                "domainAttributeMappingSelectedCode": field_7.value,
+                "fileFieldCode": "field7",
+                "attributeCode": field_7.value,
                 isMandatory: true,
                 "isDocumentUniqueIdentifier": uniqueIdentifier === 'field_7',
-                "isDocumentGroupIdentifier": groupIdentifier === 'field_7'
+                "isDocumentGroupIdentifier": groupIdentifier === 'field_7',
+                validationRule: addFileWithValidation("field_7")
             })
         }
         dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
@@ -410,6 +454,7 @@ const NamingConfigurationOthers = () => {
 
     const handleConfirmSelection = (selection: boolean) => {
         reset()
+        setAdditionalSettingsJson(null)
         setNameTransform(selection)
         setFieldSelected((prevSelection: any) => selection ? {} : prevSelection)
         if (!selection) {
@@ -424,6 +469,18 @@ const NamingConfigurationOthers = () => {
             })
         }
         setConfirmChange(false)
+    }
+
+    const handleAddition = (setting: IAdditionSettingsJson, field: string) => {
+        let isEmpty = (Object.values(setting)).every(v => !v);
+        let temp = Object.assign({}, additionSettingsJson)
+        if (isEmpty) {
+            delete temp[field]
+        } else {
+            temp[field] = setting
+        }
+        setAdditionalSettingsJson(temp)
+        setShowAdditional('')
     }
 
     return (
@@ -465,7 +522,7 @@ const NamingConfigurationOthers = () => {
                                                     className="select_custom white">
                                                     {
                                                         dataConjunction &&
-                                                        dataConjunction[0]?.lookUps.map((cR: any, index: number) => {
+                                                        dataConjunction?.lookUps.map((cR: any, index: number) => {
                                                             return <option key={`cr_${index}`} value={cR.keyCode}>{cR.description}</option>
                                                         })
                                                     }
@@ -493,170 +550,47 @@ const NamingConfigurationOthers = () => {
                             {
                                 nameTransform && <DocumentHighlighter
                                     documentName={documentName}
-                                    setDocumentName={setDocumentName}
+                                    handleSetDocumentName={handleSetDocumentName}
                                     selectEventListenerHook={selectionEventListener}
                                     selections={nameTransformationState} />
                             }
                             {
                                 nameTransform === false
-                                &&
-                                <React.Fragment>
-                                    <Row>
-                                        <div className="naming_config_inputs">
-                                            <div></div>
-                                            <div>Arrange</div>
-                                            <div>Group Identifier</div>
-                                            <div>Unique Identifier</div>
-                                            <div>Validation</div>
-                                        </div>
-                                        {
-                                            fieldsSelected
-                                            && Object.keys(fieldsSelected).map((keyName, keyIndex) => (
-                                                <div className="naming_config_inputs">
-                                                    <div>
-                                                        <Form.Group as={Col} className="mb-5 no_padding">
-                                                            <Form.Control
-                                                                as="select"
-                                                                name={`field_${keyIndex + 1}`}
-                                                                className="select_custom white"
-                                                                disabled={disableHandler(fieldsSelected[keyName])}
-                                                                onChange={(e) => handleSelection(keyIndex + 1, e.target.value)}
-                                                                value={fieldsSelected[keyName] || ''}>
-                                                                {!fieldsSelected[Number(keyName) + 1]
-                                                                    && <option></option>}
-                                                                {(filteredOptions && filteredOptions.length > 0) &&
-                                                                    filteredOptions.map((cR: any, index: number) => {
-                                                                        return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
-                                                                            {cR.attributeName}
-                                                                        </option>;
-                                                                    })}
-                                                            </Form.Control>
-                                                            <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
-                                                                {(fieldsSelected[keyName] === 'PC' || fieldsSelected[keyName] === 'DT') &&
-                                                                    <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Codes')} />}
-                                                                {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
-                                                            </Form.Label>
-                                                        </Form.Group>
-                                                    </div>
-                                                    <div>
-                                                        {keyIndex !== 0
-                                                            && fieldsSelected[keyName]
-                                                            && <HiArrowNarrowUp className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'up')} />}
-                                                        {keyIndex !== (Object.keys(fieldsSelected).length - 1)
-                                                            && fieldsSelected[keyName]
-                                                            && fieldsSelected[Number(keyName) + 1]
-                                                            && <HiArrowNarrowDown className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'down')} />}
-                                                    </div>
-                                                    <div style={{ paddingTop: '1rem' }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="switch small"
-                                                            onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
-                                                            name="consent"
-                                                            checked={groupIdentifier === `field_${keyIndex + 1}`} />
-                                                    </div>
-                                                    <div style={{ paddingTop: '1rem' }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="switch small"
-                                                            onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
-                                                            name="consent"
-                                                            checked={uniqueIdentifier === `field_${keyIndex + 1}`} />
-                                                    </div>
-                                                    <div>
-                                                        <RiSettings3Line className={Styles.arrange_arrow} size={30} onClick={() => setShowAdditional(true)} />
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-                                    </Row>
-                                    <Col sm={12}>
-                                        <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
-                                        {
-                                            id !== '_NEW_CONFIGURATION'
-                                            && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
-                                        }
-                                    </Col>
-                                </React.Fragment>
+                                && <NameTransformationNotRequired
+                                    fieldsSelected={fieldsSelected}
+                                    filteredOptions={filteredOptions}
+                                    handleIdentifiers={handleIdentifiers}
+                                    groupIdentifier={groupIdentifier}
+                                    uniqueIdentifier={uniqueIdentifier}
+                                    additionSettingsJson={additionSettingsJson}
+                                    configNameSaveRef={configNameSaveRef}
+                                    disableHandler={disableHandler}
+                                    id={id}
+                                    setShow={setShow}
+                                    handleSelection={handleSelection}
+                                    downloadProductCodes={downloadProductCodes}
+                                    handleMove={handleMove}
+                                    setShowAdditional={setShowAdditional}
+                                />
                             }
                             {
                                 nameTransform === true
                                 && documentName
-                                &&
-                                <React.Fragment>
-                                    <Row>
-                                        <div className="naming_config_inputs naming_config_inputs_not_required">
-                                            <div>Text</div>
-                                            <div>Type</div>
-                                            <div>Group Identifier</div>
-                                            <div>Unique Identifier</div>
-                                            <div>Validation</div>
-                                            <div>Delete</div>
-                                        </div>
-
-                                        {
-                                            nameTransformationState
-                                            && nameTransformationState.map((nameObj: ISelection, keyIndex: number) => (
-                                                <div key={`nameTransformation_${keyIndex}`} className="naming_config_inputs naming_config_inputs_not_required">
-                                                    <div>
-                                                        <p className='mt-3' style={{ fontWeight: 'bold' }}>{nameObj.text}</p>
-                                                    </div>
-                                                    <div>
-                                                        <Form.Group as={Col} className="mb-5 no_padding">
-                                                            <Form.Control
-                                                                as="select"
-                                                                name={`field_${keyIndex + 1}`}
-                                                                className="select_custom white"
-                                                                onChange={(e) => handleSelection(keyIndex, e.target.value)}
-                                                                value={fieldsSelected[keyIndex]}>
-                                                                <option></option>
-                                                                {(filteredOptions && filteredOptions.length > 0) &&
-                                                                    filteredOptions.map((cR: any, index: number) => {
-                                                                        return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
-                                                                            {cR.attributeName}
-                                                                        </option>;
-                                                                    })}
-                                                            </Form.Control>
-                                                        </Form.Group>
-                                                    </div>
-                                                    <div style={{ paddingTop: '1rem' }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="switch small"
-                                                            onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
-                                                            name="consent"
-                                                            checked={groupIdentifier === `field_${keyIndex + 1}`} />
-                                                    </div>
-                                                    <div style={{ paddingTop: '1rem' }}>
-                                                        <input
-                                                            type="checkbox"
-                                                            className="switch small"
-                                                            onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
-                                                            name="consent"
-                                                            checked={uniqueIdentifier === `field_${keyIndex + 1}`} />
-                                                    </div>
-                                                    <div>
-                                                        <RiSettings3Line className={Styles.arrange_arrow} size={30} onClick={() => setShowAdditional(true)} />
-                                                    </div>
-                                                    <div>
-                                                        {
-                                                            (nameTransformationState.length - 1 === keyIndex) &&
-                                                            <AiOutlineDelete className={Styles.arrange_arrow} size={30} onClick={() => deleteSelection(keyIndex)} />
-                                                        }
-                                                    </div>
-                                                </div>
-                                            ))
-                                        }
-                                    </Row>
-                                    <Col sm={12} style={{ textAlign: 'center' }}>
-                                        <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
-                                        {/* <Button variant="dark" onClick={() => setNameTransform(true)}>Name Transformation</Button>{" "} */}
-                                        {
-                                            id !== '_NEW_CONFIGURATION'
-                                            && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
-                                        }
-                                    </Col>
-                                </React.Fragment>
+                                && <NameTransformationRequired
+                                    nameTransformationState={nameTransformationState}
+                                    fieldsSelected={fieldsSelected}
+                                    filteredOptions={filteredOptions}
+                                    handleSelection={handleSelection}
+                                    handleIdentifiers={handleIdentifiers}
+                                    groupIdentifier={groupIdentifier}
+                                    uniqueIdentifier={uniqueIdentifier}
+                                    additionSettingsJson={additionSettingsJson}
+                                    configNameSaveRef={configNameSaveRef}
+                                    deleteSelection={deleteSelection}
+                                    setShowAdditional={setShowAdditional}
+                                    id={id}
+                                    setShow={setShow}
+                                />
                             }
                         </Form>
                     </Col >
@@ -667,7 +601,13 @@ const NamingConfigurationOthers = () => {
                 show && <ExampleNaming show={show} onHide={() => setShow(false)} details={details} />
             }
             {
-                showAdditional && <NamingAdditionalFields show={showAdditional} onHide={() => setShowAdditional(false)} />
+                !!showAdditional && <NamingAdditionalFields
+                    show={!!showAdditional}
+                    onHide={() => setShowAdditional('')}
+                    additionSettingsJson={additionSettingsJson}
+                    setAdditionalSettingsJson={(setting: IAdditionSettingsJson, field: string) => handleAddition(setting, field)}
+                    field={showAdditional}
+                />
             }
             {
                 confirmChange &&
@@ -677,27 +617,198 @@ const NamingConfigurationOthers = () => {
     )
 }
 
-const TransformationNameModel = ({ onHide, show, confirmChange }: { onHide: any, show: boolean, confirmChange: any }) => {
-    return (
-        <Modal
-            show={show}
-            onHide={onHide}
-            aria-labelledby="contained-modal-title-vcenter"
-            centered
-            size="lg"
-            animation={true}
-        >
-            <Modal.Header closeButton>
-                <Modal.Title id="contained-modal-title-vcenter">
-                    You have unsaved changes, Please confirm you action?
-                </Modal.Title>
-            </Modal.Header>
-            <Modal.Footer>
-                <Button variant="dark" onClick={() => confirmChange()}>Confirm</Button>
-                <Button variant="dark" onClick={onHide}>Cancel</Button>
-            </Modal.Footer>
-        </Modal >
-    )
+const NameTransformationRequired = ({
+    nameTransformationState,
+    fieldsSelected,
+    filteredOptions,
+    handleSelection,
+    handleIdentifiers,
+    groupIdentifier,
+    uniqueIdentifier,
+    additionSettingsJson,
+    configNameSaveRef,
+    deleteSelection,
+    setShowAdditional,
+    id,
+    setShow
+}: any) => {
+    return <React.Fragment>
+        <Row>
+            <div className="naming_config_inputs naming_config_inputs_not_required">
+                <div>Text</div>
+                <div>Type</div>
+                <div>Group Identifier</div>
+                <div>Unique Identifier</div>
+                <div>Validation</div>
+                <div>Delete</div>
+            </div>
+            {
+                nameTransformationState
+                && nameTransformationState.map((nameObj: ISelection, keyIndex: number) => (
+                    <div key={`nameTransformation_${keyIndex}`} className="naming_config_inputs naming_config_inputs_not_required">
+                        <div>
+                            <p className='mt-3' style={{ fontWeight: 'bold' }}>{nameObj.text}</p>
+                        </div>
+                        <div>
+                            <Form.Group as={Col} className="mb-5 no_padding">
+                                <Form.Control
+                                    as="select"
+                                    name={`field_${keyIndex + 1}`}
+                                    className="select_custom white"
+                                    onChange={(e) => handleSelection(keyIndex, e.target.value)}
+                                    value={fieldsSelected[keyIndex]}>
+                                    <option></option>
+                                    {(filteredOptions && filteredOptions.length > 0) &&
+                                        filteredOptions.map((cR: any, index: number) => {
+                                            return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
+                                                {cR.attributeName}
+                                            </option>;
+                                        })}
+                                </Form.Control>
+                            </Form.Group>
+                        </div>
+                        <div style={{ paddingTop: '1rem' }}>
+                            <input
+                                type="checkbox"
+                                className="switch small"
+                                onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
+                                name="consent"
+                                checked={groupIdentifier === `field_${keyIndex + 1}`} />
+                        </div>
+                        <div style={{ paddingTop: '1rem' }}>
+                            <input
+                                type="checkbox"
+                                className="switch small"
+                                onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
+                                name="consent"
+                                checked={uniqueIdentifier === `field_${keyIndex + 1}`} />
+                        </div>
+                        <div>
+                            <RiSettings3Line className={`${Styles.arrange_arrow} ${(additionSettingsJson && additionSettingsJson[`field_${keyIndex + 1}`]) ? Styles.is_additional : ''}`} size={30} onClick={() => setShowAdditional(`field_${keyIndex + 1}`)} />
+                        </div>
+                        <div>
+                            {
+                                (nameTransformationState.length - 1 === keyIndex) &&
+                                <AiOutlineDelete className={Styles.arrange_arrow} size={30} onClick={() => deleteSelection(keyIndex)} />
+                            }
+                        </div>
+                    </div>
+                ))
+            }
+        </Row>
+        <Col sm={12} style={{ textAlign: 'center' }}>
+            <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
+            {/* <Button variant="dark" onClick={() => setNameTransform(true)}>Name Transformation</Button>{" "} */}
+            {
+                id !== '_NEW_CONFIGURATION'
+                && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
+            }
+        </Col>
+    </React.Fragment>
 }
 
-export default NamingConfigurationOthers
+const NameTransformationNotRequired = ({
+    fieldsSelected,
+    filteredOptions,
+    handleIdentifiers,
+    groupIdentifier,
+    uniqueIdentifier,
+    additionSettingsJson,
+    configNameSaveRef,
+    disableHandler,
+    id,
+    setShow,
+    handleSelection,
+    downloadProductCodes,
+    handleMove,
+    setShowAdditional
+}: any) => {
+    return <React.Fragment>
+        <Row>
+            <div className="naming_config_inputs">
+                <div></div>
+                <div>Arrange</div>
+                <div>Group Identifier</div>
+                <div>Unique Identifier</div>
+                <div>Validation</div>
+            </div>
+            {
+                fieldsSelected
+                && Object.keys(fieldsSelected).map((keyName, keyIndex) => (
+                    <div className="naming_config_inputs">
+                        <div>
+                            <Form.Group as={Col} className="mb-5 no_padding">
+                                <Form.Control
+                                    as="select"
+                                    name={`field_${keyIndex + 1}`}
+                                    className="select_custom white"
+                                    disabled={disableHandler(fieldsSelected[keyName])}
+                                    onChange={(e) => handleSelection(keyIndex + 1, e.target.value)}
+                                    value={fieldsSelected[keyName] || ''}>
+                                    {!fieldsSelected[Number(keyName) + 1]
+                                        && <option></option>}
+                                    {(filteredOptions && filteredOptions.length > 0) &&
+                                        filteredOptions.map((cR: any, index: number) => {
+                                            return <option disabled={!cR.available} key={`cr_${index}`} value={cR.attributeCode}>
+                                                {cR.attributeName}
+                                            </option>;
+                                        })}
+                                </Form.Control>
+                                <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
+                                    {(fieldsSelected[keyName] === 'PC' || fieldsSelected[keyName] === 'DT') &&
+                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Codes')} />}
+                                    {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
+                                </Form.Label>
+                            </Form.Group>
+                        </div>
+                        <div>
+                            {keyIndex !== 0
+                                && fieldsSelected[keyName]
+                                && <HiArrowNarrowUp className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'up')} />}
+                            {keyIndex !== (Object.keys(fieldsSelected).length - 1)
+                                && fieldsSelected[keyName]
+                                && fieldsSelected[Number(keyName) + 1]
+                                && <HiArrowNarrowDown className={Styles.arrange_arrow} onClick={() => handleMove(keyIndex + 1, 'down')} />}
+                        </div>
+                        <div style={{ paddingTop: '1rem' }}>
+                            {
+                                fieldsSelected[keyName] && <input
+                                    type="checkbox"
+                                    className="switch small"
+                                    onChange={() => handleIdentifiers('group', `field_${keyIndex + 1}`)}
+                                    name="consent"
+                                    checked={groupIdentifier === `field_${keyIndex + 1}`} />
+                            }
+                        </div>
+                        <div style={{ paddingTop: '1rem' }}>
+                            {
+                                fieldsSelected[keyName]
+                                && <input
+                                    type="checkbox"
+                                    className="switch small"
+                                    onChange={() => handleIdentifiers('unique', `field_${keyIndex + 1}`)}
+                                    name="consent"
+                                    checked={uniqueIdentifier === `field_${keyIndex + 1}`} />
+                            }
+                        </div>
+                        <div>
+                            {
+                                fieldsSelected[keyName] &&
+                                <RiSettings3Line className={`${Styles.arrange_arrow} ${(additionSettingsJson && additionSettingsJson[`field_${keyIndex + 1}`]) ? Styles.is_additional : ''}`} size={30} onClick={() => setShowAdditional(`field_${keyIndex + 1}`)} />
+                            }
+                        </div>
+                    </div>
+                ))
+            }
+        </Row>
+        <Col sm={12}>
+            <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
+            {
+                id !== '_NEW_CONFIGURATION'
+                && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
+            }
+        </Col>
+    </React.Fragment>
+}
+
+export default NamingConfiguration

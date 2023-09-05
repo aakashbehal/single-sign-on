@@ -5,7 +5,7 @@ const GetSubscriptions = async () => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/config/lookup`, {
             params: {
-                lookupGroupKeyValue: 'subscription_type'
+                lookupGroupKeyValue: 'SUBSCRIPTION_TYPE'
             }
         })
         const data = handleResponse(response)

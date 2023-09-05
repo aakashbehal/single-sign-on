@@ -26,7 +26,7 @@ const getLookupValues = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: s
     }
 }
 
-const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: string }) => {
+const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: string | null }) => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/config/lookup`, {
             params: {
@@ -34,7 +34,11 @@ const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyVa
             }
         })
         const data = handleResponse(response)
-        return data.response
+        let lookupObj: any = {}
+        data.response.map((data: any) => {
+            lookupObj[data.keyValue] = data
+        })
+        return lookupObj
     } catch (error: any) {
         throw error.message
     }

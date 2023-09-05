@@ -1,7 +1,10 @@
-import React, { useRef, useState } from "react"
+import React, { useRef, useState, useEffect } from "react"
 import { Button, Col, Form, Modal, Row } from "react-bootstrap"
 import { BsPlusCircleFill } from "react-icons/bs"
 import MultipleInputs from "../Common/MultipleInputs"
+import { useDispatch, useSelector } from 'react-redux';
+import { TypesActionCreator } from "../../store/actions/common/types.actions"
+import { RootState } from "../../store";
 
 const DATA_TYPES = ["STRING", "NUMBER", "NUMERIC", "DATE"]
 const DATE_FORMAT = [
@@ -32,7 +35,7 @@ const DATE_FORMAT = [
     "MMMM dd yyyy"
 ]
 const POSSIBLE_VALUE_TYPES = ["INLINE", "LOOKUP", "REF_TYPE"]
-const LOOKUP_VALUES = ["subscription_type", "CONJUNCTION_TYPE", "DOCUMENT_DUPLICATION_TYPE"]
+const LOOKUP_VALUES = ["SUBSCRIPTION_TYPE", "CONJUNCTION_TYPE", "DOCUMENT_DUPLICATION_TYPE"]
 const LOOKUP_COLUMNS = ["CODE", "VALUE", "DESC", "EXTERNAL_CODE", "EXTERNAL_NAME"]
 const REF_TYPE_VALUES = ["DOC_TYPE", "PRODUCT_CODE"]
 
@@ -42,25 +45,121 @@ type IAdditionSettings = {
     transformation: boolean
 }
 
-const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }) => {
+export interface IAdditionSettingsJson {
+    dataType?: string | null
+    minRange?: number
+    maxRange?: number
+    minLength?: number
+    maxLength?: number
+    isFixLength?: boolean
+    possibleValType?: string
+    possibleValSubType?: string
+    possibleVal?: string
+}
+
+interface IMinMax {
+    min: number
+    max: number
+}
+
+const NamingAdditionalFields = (
+    { show, onHide, additionSettingsJson, setAdditionalSettingsJson, field }:
+        { show: boolean, onHide: any, additionSettingsJson: { [key: string]: IAdditionSettingsJson }, setAdditionalSettingsJson: any, field: string }
+) => {
     const configRef = useRef<HTMLFormElement>(null)
-    const [dataType, setDataType] = useState('')
+    const dispatch = useDispatch();
+    const [addition, setAdditional] = useState<any>({})
+    const { lookUp, error, loading } = useSelector((state: any) => ({
+        lookUp: state.types.lookUp.data,
+        error: state.types.lookUp.error,
+        loading: state.types.lookUp.loading
+    }))
+
+    const [dataType, setDataType] = useState<string>('')
     const [additionSettings, setAdditionalSettings] = useState<IAdditionSettings>({
         validation: false,
         possibleValues: false,
         transformation: false
     })
     const [dateFormat, setDateFormat] = useState('')
-    const [possibleValues, setPossibleValues] = useState('')
+    const [possibleValueType, setPossibleValueType] = useState('')
+    const [possibleValuesSubType, setPossibleValuesSubType] = useState('')
+    const [possibleValue, setPossibleValue] = useState('')
     const [multipleValues, setMultipleValues] = useState([])
+    const [stringLength, setStringLength] = useState<IMinMax>({
+        min: 0,
+        max: 0
+    })
+    const [numberRange, setNumberRange] = useState<IMinMax>({
+        min: 0,
+        max: 0
+    })
+    useEffect(() => {
+        dispatch(TypesActionCreator.getAllLookupValues(null))
+        if (additionSettingsJson && additionSettingsJson[field]) {
+            setAdditional(additionSettingsJson[field])
+        }
+    }, [])
 
-    const handleSave = (event: Event) => {
-        console.log(event)
+    // check if already have additional settings
+    useEffect(() => {
+        let tempSetting = Object.assign(additionSettings)
+        if (addition.dataType) {
+            setDataType(addition.dataType)
+            setStringLength({
+                min: addition.minLength,
+                max: addition.maxLength
+            })
+            setNumberRange({
+                min: addition.minRange,
+                max: addition.maxRange
+            })
+            tempSetting.validation = true
+        }
+        if (addition.possibleVal) {
+            setPossibleValueType(addition.possibleValType)
+            setPossibleValuesSubType(addition.possibleValSubType)
+            setPossibleValue(addition.possibleVal)
+            tempSetting.possibleValues = true
+        }
+        setAdditionalSettings(tempSetting)
+    }, [addition])
+
+    const handleSave = () => {
+        let settings: IAdditionSettingsJson = {
+            dataType: dataType || null,
+            minRange: numberRange.min,
+            maxRange: numberRange.max,
+            minLength: stringLength.min,
+            maxLength: stringLength.max,
+            isFixLength: false,
+            possibleValType: possibleValueType,
+            possibleValSubType: possibleValuesSubType,
+            possibleVal: possibleValue,
+        }
+        setAdditionalSettingsJson(settings, field)
     }
 
     const handleSelection = (type: string) => {
+        console.log(type)
         let temp: any = Object.assign({}, additionSettings)
         temp[type] = !temp[type]
+        if (!temp['possibleValues']) {
+            setPossibleValueType("")
+            setPossibleValuesSubType("")
+            setPossibleValue("")
+        }
+        if (!temp['validation']) {
+            setDataType("")
+            setStringLength({
+                min: 0,
+                max: 0
+            })
+            setNumberRange({
+                min: 0,
+                max: 0
+            })
+        }
         setAdditionalSettings(temp)
     }
 
@@ -71,21 +170,22 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                     as="select"
                     name="data_type white"
                     className="select_custom white"
+                    value={addition.dataType}
                     onChange={(e) => {
                         setDataType(e.target.value)
                     }}>
                     <option></option>
                     {
-                        (DATA_TYPES && DATA_TYPES.length > 0) &&
-                        DATA_TYPES.map((dt: any, index: number) => {
-                            return <option key={`cr_${index}`} value={dt}>{dt}</option>
+                        (lookUp?.DATA_TYPE && lookUp?.DATA_TYPE?.lookUps.length > 0) &&
+                        lookUp?.DATA_TYPE?.lookUps.map((dt: any, index: number) => {
+                            return <option key={`cr_${index}`} value={dt.keyCode}>{dt.keyValue}</option>
                         })
                     }
                 </Form.Control>
                 <Form.Label className="label_custom" style={{ left: 0 }}>Data Type</Form.Label>
             </Form.Group>
             {
-                dataType === 'STRING'
+                dataType === 'ST'
                 &&
                 <React.Fragment>
                     <Form.Group as={Col} className="mb-5 mt-3 no_padding">
@@ -93,6 +193,10 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="input"
                             name="regex"
                             className="select_custom white"
+                            value={stringLength.min}
+                            onChange={(e) => setStringLength((prev: { min: number, max: number }) => {
+                                return { ...prev, min: +e.target.value }
+                            })}
                         >
                         </Form.Control>
                         <Form.Label className="label_custom" style={{ left: 0 }}>Minimum Length</Form.Label>
@@ -102,6 +206,10 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="input"
                             name="regex"
                             className="select_custom white"
+                            value={stringLength.max}
+                            onChange={(e) => setStringLength((prev: { min: number, max: number }) => {
+                                return { ...prev, max: +e.target.value }
+                            })}
                         >
                         </Form.Control>
                         <Form.Label className="label_custom" style={{ left: 0 }}>Maximum Length</Form.Label>
@@ -109,7 +217,7 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                 </React.Fragment>
             }
             {
-                (dataType === 'NUMBER' || dataType === 'NUMERIC')
+                (dataType === 'NB' || dataType === 'NR')
                 &&
                 <React.Fragment>
                     <Form.Group as={Col} className="mb-5 mt-3 no_padding">
@@ -117,6 +225,10 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="input"
                             name="regex"
                             className="select_custom white"
+                            value={numberRange.min}
+                            onChange={(e) => setNumberRange((prev: { min: number, max: number }) => {
+                                return { ...prev, min: +e.target.value }
+                            })}
                         >
                         </Form.Control>
                         <Form.Label className="label_custom" style={{ left: 0 }}>Minimum</Form.Label>
@@ -126,6 +238,10 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="input"
                             name="regex"
                             className="select_custom white"
+                            value={numberRange.max}
+                            onChange={(e) => setNumberRange((prev: { min: number, max: number }) => {
+                                return { ...prev, max: +e.target.value }
+                            })}
                         >
                         </Form.Control>
                         <Form.Label className="label_custom" style={{ left: 0 }}>Maximum</Form.Label>
@@ -133,7 +249,7 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                 </React.Fragment>
             }
             {
-                dataType === 'DATE'
+                dataType === 'DT'
                 &&
                 <Form.Group as={Col} className="mb-5 mt-3 no_padding">
                     <Form.Control
@@ -164,25 +280,23 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                     as="select"
                     name="data_type"
                     className="select_custom white"
+                    value={addition.possibleValType}
                     onChange={(e) => {
-                        setPossibleValues(e.target.value)
+                        setPossibleValueType(e.target.value)
                     }}>
                     <option></option>
                     {
-                        (POSSIBLE_VALUE_TYPES && POSSIBLE_VALUE_TYPES.length > 0) &&
-                        POSSIBLE_VALUE_TYPES.map((pvt: any, index: number) => {
-                            return <option key={`cr_${index}`} value={pvt}>{pvt}</option>
+                        (lookUp?.POSSIBLE_VALUE_TYPE && lookUp?.POSSIBLE_VALUE_TYPE?.lookUps.length > 0) &&
+                        lookUp?.POSSIBLE_VALUE_TYPE?.lookUps.map((pvt: any, index: number) => {
+                            return <option key={`cr_${index}`} value={pvt.keyCode}>{pvt.keyValue}</option>
                         })
                     }
                 </Form.Control>
                 <Form.Label className="label_custom" style={{ left: 0 }}>Possible Value Type</Form.Label>
             </Form.Group>
+
             {
-                possibleValues === 'INLINE'
-                && <MultipleInputs multipleValues={multipleValues} setMultipleValues={setMultipleValues} />
-            }
-            {
-                possibleValues === 'LOOKUP'
+                (possibleValueType === 'IL')
                 &&
                 <React.Fragment>
                     <Form.Group as={Col} className="mb-3 mt-5 no_padding">
@@ -190,13 +304,50 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="select"
                             name="data_type white"
                             className="select_custom white"
+                            value={possibleValuesSubType}
                             onChange={(e) => {
-                                setDataType(e.target.value)
+                                setPossibleValuesSubType(e.target.value)
                             }}>
                             <option></option>
                             {
-                                (LOOKUP_VALUES && LOOKUP_VALUES.length > 0) &&
-                                LOOKUP_VALUES.map((lV: any, index: number) => {
+                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE && lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookUps.length > 0) &&
+                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookUps.map((lV: any, index: number) => {
+                                    return <option key={`cr_${index}`} value={lV.keyCode}>{lV.keyValue}</option>
+                                })
+                            }
+                        </Form.Control>
+                        <Form.Label className="label_custom" style={{ left: 0 }}>Data Type</Form.Label>
+                    </Form.Group>
+                    <Form.Group as={Col} className="mb-3 mt-5 no_padding">
+                        <Form.Control
+                            as="input"
+                            name="inline_value"
+                            className="select_custom white"
+                            value={possibleValue}
+                            onChange={(e) => setPossibleValue(e.target.value)}
+                        >
+                        </Form.Control>
+                        <Form.Label className="label_custom" style={{ left: 0 }}>Value</Form.Label>
+                    </Form.Group>
+                </React.Fragment>
+            }
+            {
+                possibleValueType === 'LK'
+                &&
+                <React.Fragment>
+                    <Form.Group as={Col} className="mb-3 mt-5 no_padding">
+                        <Form.Control
+                            as="select"
+                            name="data_type white"
+                            className="select_custom white"
+                            value={possibleValuesSubType}
+                            onChange={(e) => {
+                                setPossibleValuesSubType(e.target.value)
+                            }}>
+                            <option></option>
+                            {
+                                lookUp &&
+                                Object.keys(lookUp).map((lV: any, index: number) => {
                                     return <option key={`cr_${index}`} value={lV}>{lV}</option>
                                 })
                             }
@@ -208,9 +359,8 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="select"
                             name="data_type white"
                             className="select_custom white"
-                            onChange={(e) => {
-                                setDataType(e.target.value)
-                            }}>
+                            value={possibleValue}
+                            onChange={(e) => setPossibleValue(e.target.value)}>
                             <option></option>
                             {
                                 (LOOKUP_COLUMNS && LOOKUP_COLUMNS.length > 0) &&
@@ -224,7 +374,7 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                 </React.Fragment>
             }
             {
-                possibleValues === 'REF_TYPE'
+                possibleValueType === 'RT'
                 &&
                 <React.Fragment>
                     <Form.Group as={Col} className="mb-3 mt-5 no_padding">
@@ -232,14 +382,15 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="select"
                             name="data_type white"
                             className="select_custom white"
+                            value={possibleValuesSubType}
                             onChange={(e) => {
-                                setDataType(e.target.value)
+                                setPossibleValuesSubType(e.target.value)
                             }}>
                             <option></option>
                             {
-                                (REF_TYPE_VALUES && REF_TYPE_VALUES.length > 0) &&
-                                REF_TYPE_VALUES.map((rt: any, index: number) => {
-                                    return <option key={`cr_${index}`} value={rt}>{rt}</option>
+                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF && lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookUps.length > 0) &&
+                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookUps.map((rt: any, index: number) => {
+                                    return <option key={`cr_${index}`} value={rt.keyCode}>{rt.keyValue}</option>
                                 })
                             }
                         </Form.Control>
@@ -250,14 +401,13 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                             as="select"
                             name="data_type white"
                             className="select_custom white"
-                            onChange={(e) => {
-                                setDataType(e.target.value)
-                            }}>
+                            value={possibleValue}
+                            onChange={(e) => setPossibleValue(e.target.value)}>
                             <option></option>
                             {
-                                (LOOKUP_COLUMNS && LOOKUP_COLUMNS.length > 0) &&
-                                LOOKUP_COLUMNS.map((lV: any, index: number) => {
-                                    return <option key={`cr_${index}`} value={lV}>{lV}</option>
+                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookUps.length > 0) &&
+                                lookUp?.REFERENCE_VALUE_TYPE?.lookUps.map((lV: any, index: number) => {
+                                    return <option key={`cr_${index}`} value={lV.keyCode}>{lV.keyValue}</option>
                                 })
                             }
                         </Form.Control>
@@ -299,7 +449,7 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
             <Modal.Body className="show-grid">
                 <Col lg={12} sm={12}>
                     <Row style={{ padding: '1rem 2rem' }} className="form_container">
-                        <Form ref={configRef} onSubmit={(e: any) => handleSave(e)} style={{ width: "100%" }}>
+                        <Form ref={configRef} style={{ width: "100%" }}>
                             <Row className="mb-3 mt-3 no_padding" style={{ justifyContent: 'space-between', margin: 0 }}>
                                 <Button className="button_align" onClick={() => handleSelection('validation')} variant={additionSettings.validation ? 'light' : 'dark'}><BsPlusCircleFill /> Add Validation</Button>
                             </Row>
@@ -328,7 +478,7 @@ const NamingAdditionalFields = ({ show, onHide }: { show: boolean, onHide: any }
                 </Col>
             </Modal.Body>
             <Modal.Footer>
-                <Button variant="dark" onClick={onHide}>Submit</Button>
+                <Button variant="dark" onClick={() => handleSave()}>Submit</Button>
                 <Button variant="dark" onClick={onHide}>Close</Button>
             </Modal.Footer>
         </Modal >

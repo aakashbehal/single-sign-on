@@ -3,7 +3,8 @@ import {
     CommunicationType,
     BankruptcyType,
     DocumentsType,
-    ProductTypes
+    ProductTypes,
+    LookUpAll
 } from "../../types.d";
 
 const initialState = {
@@ -29,6 +30,11 @@ const initialState = {
     },
     productType: {
         data: [],
+        loading: false,
+        error: false
+    },
+    lookUp: {
+        data: {},
         loading: false,
         error: false
     }
@@ -161,6 +167,32 @@ const typesReducer = (state = initialState, action: { type: any; payload: any; }
             return {
                 ...state,
                 productType: {
+                    loading: false,
+                    error: true,
+                    data: []
+                }
+            }
+        case LookUpAll.LOOKUP_ALL_REQUEST:
+            return {
+                ...state,
+                lookUp: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case LookUpAll.LOOKUP_ALL_SUCCESS:
+            return {
+                ...state,
+                lookUp: {
+                    loading: false,
+                    error: false,
+                    data: action.payload
+                }
+            }
+        case LookUpAll.LOOKUP_ALL_FAILURE:
+            return {
+                ...state,
+                lookUp: {
                     loading: false,
                     error: true,
                     data: []

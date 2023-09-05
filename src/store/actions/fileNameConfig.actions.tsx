@@ -9,7 +9,8 @@ import {
     RetentionPolicy,
     DocumentPolicy,
     UserListOfUserConfig,
-    DeleteUserConfiguration
+    DeleteUserConfiguration,
+    UpdateUserConfiguration
 } from "../types.d";
 import { commonServices, fileNameConfigService } from "../../services"
 
@@ -185,6 +186,27 @@ export const FileNameConfigActionCreator = {
             ).finally(() => {
                 setTimeout(() => {
                     dispatch({ type: SaveUserConfiguration.SAVE_USER_CONFIG_RESET })
+                }, 0)
+            })
+    },
+    updateUserConfiguration: (requestBody: any) => (dispatch: any) => {
+        const request = () => ({ type: UpdateUserConfiguration.UPDATE_USER_CONFIG_REQUEST })
+        const success = (userNameConfig: any) => ({ type: UpdateUserConfiguration.UPDATE_USER_CONFIG_SUCCESS, payload: userNameConfig })
+        const failure = (error: any) => ({ type: UpdateUserConfiguration.UPDATE_USER_CONFIG_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.updateUserConfiguration(requestBody)
+            .then(
+                userNameConfig => {
+                    dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: UpdateUserConfiguration.UPDATE_USER_CONFIG_RESET })
                 }, 0)
             })
     },

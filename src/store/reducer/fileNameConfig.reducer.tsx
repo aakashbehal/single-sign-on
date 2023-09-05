@@ -9,7 +9,8 @@ import {
     RetentionPolicy,
     DocumentPolicy,
     UserListOfUserConfig,
-    DeleteUserConfiguration
+    DeleteUserConfiguration,
+    UpdateUserConfiguration
 } from "../types.d"
 
 const initialState = {
@@ -62,6 +63,11 @@ const initialState = {
         data: {}
     },
     saveConfig: {
+        loading: false,
+        error: false,
+        success: false
+    },
+    updateConfig: {
         loading: false,
         error: false,
         success: false
@@ -384,6 +390,42 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                 ...state,
                 saveConfig: {
                     ...state.saveConfig,
+                    loading: false,
+                    error: false,
+                    success: false
+                }
+            }
+        case UpdateUserConfiguration.UPDATE_USER_CONFIG_REQUEST:
+            return {
+                ...state,
+                updateConfig: {
+                    ...state.updateConfig,
+                    loading: true
+                }
+            }
+        case UpdateUserConfiguration.UPDATE_USER_CONFIG_SUCCESS:
+            return {
+                ...state,
+                updateConfig: {
+                    ...state.updateConfig,
+                    loading: false,
+                    success: true
+                }
+            }
+        case UpdateUserConfiguration.UPDATE_USER_CONFIG_FAILURE:
+            return {
+                ...state,
+                updateConfig: {
+                    ...state.updateConfig,
+                    loading: false,
+                    error: true
+                }
+            }
+        case UpdateUserConfiguration.UPDATE_USER_CONFIG_RESET:
+            return {
+                ...state,
+                updateConfig: {
+                    ...state.updateConfig,
                     loading: false,
                     error: false,
                     success: false

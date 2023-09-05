@@ -12,15 +12,25 @@ const TextSelectionHook = () => {
     const [state, setState] = useState<any>([])
     const [documentName, setDocumentName] = useState<string>('')
 
+    const handleSetState = (fields: any) => {
+        setState(fields)
+    }
+
+    const handleSetDocumentName = (name: string) => {
+        setDocumentName(name)
+    }
+
     const selectionEventListener: any = () => {
         const selection = window.getSelection()!;
         if (selection?.toString() !== '') {
             const range = selection.getRangeAt(0);
-            console.log(selection)
-            setState((prevSelections: any) => [
-                ...prevSelections,
-                { text: selection.toString(), start: range.startOffset, end: range.endOffset },
-            ]);
+            setState((prevSelections: any) => {
+                let index = prevSelections.length
+                return [
+                    ...prevSelections,
+                    { text: selection.toString(), start: range.startOffset, end: range.endOffset, fileFieldCode: `field_${index + 1}` },
+                ]
+            });
         }
     };
 
@@ -42,19 +52,20 @@ const TextSelectionHook = () => {
             selectionEventListener,
             deleteSelection,
             reset,
-            setDocumentName
+            handleSetDocumentName,
+            handleSetState
         }
     ]
 }
 
-const TransformationNameModel = ({ onHide, show, setDocumentName, documentName }: { onHide: any, show: boolean, setDocumentName: any, documentName: string }) => {
+const TransformationNameModel = ({ onHide, show, handleSetDocumentName, documentName }: { onHide: any, show: boolean, handleSetDocumentName: any, documentName: string }) => {
 
     const [nameError, setNameError] = useState<boolean>(false);
     const [name, setName] = useState<string>('')
 
     const handleName = () => {
         if (name) {
-            setDocumentName(name)
+            handleSetDocumentName(name)
             onHide()
         } else {
             setNameError(true)
@@ -106,15 +117,15 @@ const TransformationNameModel = ({ onHide, show, setDocumentName, documentName }
 
 const DocumentHighlighter = (
     {
-        selections,
-        selectEventListenerHook,
         documentName,
-        setDocumentName
+        selectEventListenerHook,
+        selections,
+        handleSetDocumentName
     }: {
         selectEventListenerHook: any,
         selections: ISelection[],
         documentName: string,
-        setDocumentName: any
+        handleSetDocumentName: any
     }
 ) => {
     const [selectionHappening, setSelectionHappening] = useState<boolean>(false)
@@ -122,28 +133,27 @@ const DocumentHighlighter = (
     const [showNameModal, setShowNameModal] = useState(false)
 
     useEffect(() => {
-        processName();
-    }, [selections]);
-
-    useEffect(() => {
         setProcessedName([documentName])
     }, [documentName])
+
+    useEffect(() => {
+        processName();
+    }, [selections]);
 
     const processName = () => {
         let processedDivs: any = [];
         let remainingText = documentName;
-
         selections.forEach((selection) => {
             const selectedText = remainingText.substring(selection.start, selection.end);
             const beforeSelected = remainingText.substring(0, selection.start);
             const afterSelected = remainingText.substring(selection.end);
 
-            processedDivs.push(<>{beforeSelected}</>, <span className="selected">{selectedText}</span>);
+            processedDivs.push(<>{beforeSelected}</>, <span className="selected" key={Math.random()}>{selectedText}</span>);
             remainingText = afterSelected;
         });
 
         processedDivs.push(<>{remainingText}</>);
-        setProcessedName(processedDivs);
+        setProcessedName((prev: any) => processedDivs);
     };
 
     return (
@@ -173,7 +183,7 @@ const DocumentHighlighter = (
 
             {
                 showNameModal &&
-                <TransformationNameModel onHide={() => setShowNameModal(false)} show={showNameModal} setDocumentName={setDocumentName} documentName={documentName} />
+                <TransformationNameModel onHide={() => setShowNameModal(false)} show={showNameModal} handleSetDocumentName={handleSetDocumentName} documentName={documentName} />
             }
         </div>
     );

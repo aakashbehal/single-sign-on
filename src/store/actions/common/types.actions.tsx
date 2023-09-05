@@ -3,7 +3,8 @@ import {
     CommunicationType,
     BankruptcyType,
     DocumentsType,
-    ProductTypes
+    ProductTypes,
+    LookUpAll
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -90,6 +91,23 @@ export const TypesActionCreator = {
         dispatch(request())
 
         commonServices.getProductTypes()
+            .then(
+                products => {
+                    dispatch(success(products))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    getAllLookupValues: (type: any) => (dispatch: any) => {
+        const request = () => ({ type: LookUpAll.LOOKUP_ALL_REQUEST })
+        const success = (products: any) => ({ type: LookUpAll.LOOKUP_ALL_SUCCESS, payload: products })
+        const failure = (error: any) => ({ type: LookUpAll.LOOKUP_ALL_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getLookupValuesEQDocs({ lookupGroupKeyValue: type })
             .then(
                 products => {
                     dispatch(success(products))

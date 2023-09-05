@@ -90,7 +90,18 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, userType: a
 
 const saveUserConfiguration = async (requestBody: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration/add`,
+            requestBody)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const updateUserConfiguration = async (requestBody: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/file/configuration/update`,
             requestBody)
         const data = handleResponse(response)
         return data.response
@@ -128,5 +139,6 @@ export const fileNameConfigService = {
     handleDefaultAndSavedSelection,
     saveUserConfiguration,
     getListOfUserConfig,
-    deleteUserConfiguration
+    deleteUserConfiguration,
+    updateUserConfiguration
 }
