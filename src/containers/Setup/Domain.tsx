@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react"
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from "react-redux"
-import { Button, Col, Container, Form, Modal, Row } from 'react-bootstrap'
+import { Button, Col, Container, Form, Modal, OverlayTrigger, Row, Table, Tooltip } from 'react-bootstrap'
 
 import Styles from "./Setup.module.sass";
 import { RootState } from "../../store"
@@ -10,6 +10,10 @@ import TableComponent from '../../components/Table/Table'
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import { useToasts } from "react-toast-notifications";
 import { createMessage } from "../../helpers/messages";
+import NoRecord from "../../components/Common/NoResult";
+import { FiEdit2 } from "react-icons/fi";
+import { AiOutlineDelete } from "react-icons/ai";
+import { CgSpinnerAlt } from "react-icons/cg";
 
 const Domain = () => {
     const dispatch = useDispatch();
@@ -22,14 +26,28 @@ const Domain = () => {
     const [editData, setEditData] = useState<any>(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
-    const { domain, loading, totalCount, addDomainSuccess, deleteDomainSuccess, addClientError, deleteDomainError } = useSelector((state: RootState) => ({
+    const {
+        domain,
+        loading,
+        totalCount,
+        addDomainSuccess,
+        deleteDomainSuccess,
+        addClientError,
+        deleteDomainError,
+        updating,
+        updateSuccess,
+        updateError
+    } = useSelector((state: RootState) => ({
         domain: state.domain.data,
         loading: state.domain.loading,
         totalCount: state.domain.totalCount,
         addDomainSuccess: state.domain.addSuccess,
         deleteDomainSuccess: state.domain.deleteSuccess,
         addClientError: state.domain.addError,
-        deleteDomainError: state.domain.deleteError
+        deleteDomainError: state.domain.deleteError,
+        updating: state.domain.updating,
+        updateSuccess: state.domain.updateSuccess,
+        updateError: state.domain.updateError,
     }))
 
     useEffect(() => {
@@ -41,10 +59,15 @@ const Domain = () => {
             addToast(createMessage('success', `deleting`, 'Domain'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
+        if (updateSuccess) {
+            addToast(createMessage('success', `updating`, 'Domain'), { appearance: 'success', autoDismiss: true })
+            search(pageSize, pageNumber)
+        }
         setShowAddEdit(false)
         setEditData(null)
         setShowDeleteConfirm(false)
     }, [addDomainSuccess,
+        updateSuccess,
         deleteDomainSuccess])
 
     useEffect(() => {
@@ -52,10 +75,13 @@ const Domain = () => {
             addToast(createMessage('error', `adding`, 'Client'), { appearance: 'error', autoDismiss: false })
         }
         if (deleteDomainError) {
+            addToast(createMessage('error', `deleting`, 'Client'), { appearance: 'error', autoDismiss: false })
+        }
+        if (updateError) {
             addToast(createMessage('error', `uploading`, 'Client'), { appearance: 'error', autoDismiss: false })
-
         }
     }, [addClientError,
+        updateError,
         deleteDomainError])
 
     useEffect(() => {
@@ -86,6 +112,10 @@ const Domain = () => {
         dispatch(DomainActionCreator.deleteDomains(details.domainId))
     }
 
+    useEffect(() => {
+        console.log(editData)
+    }, [editData])
+
     return (
         <>
             <Col sm={12}>
@@ -104,46 +134,84 @@ const Domain = () => {
                 <br />
             </Col>
             <Col>
-                <TableComponent
-                    data={domain}
-                    isLoading={loading}
-                    map={{
-                        domainId: "Domain ID",
-                        name: "Name",
-                        shortCode: "Short Code",
-                        description: "Description",
-                        createdBy: "Created By",
-                    }}
-                    totalCount={totalCount}
-                    actionArray={[]}
-                    handleNavigate={() => { }}
-                    currencyColumns={[]}
-                    sortElement={(header: any) => setSortElement(header)}
-                    sortType={(type: any) => setSortType(type)}
-                    currentPage={pageNumber}
-                    setCurrentPage={setPageNumber}
-                    parentComponent={'clientSetup'}
-                    searchCriteria={{}}
-                    hideShareArray={[
-                        "domainId",
-                        "name",
-                        "shortCode",
-                        "description",
-                        "createdBy",
-                    ]}
-                    addEditArray={{
-                        editClient: (data: any) => {
-                            setShowAddEdit(true)
-                            setEditData(data)
-                        },
-                        delete: (data: any) => {
-                            setShowDeleteConfirm(true)
-                            setDetails(data)
-                        }
-                    }}
-                    onPaginationChange={(
-                        pageSize: number, pageNumber: number
-                    ) => handlePagination(pageSize, pageNumber)}></TableComponent >
+                {
+                    loading &&
+                    <div className={`table_loading`} >
+                        <CgSpinnerAlt className="spinner" size={50} />
+                    </div >
+                }
+                <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                    {
+                        !loading && domain.length === 0
+                        && <thead>
+                            <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
+                                <NoRecord />
+                            </tr>
+                        </thead>
+                    }
+                    {
+                        !loading && domain.length > 0
+                        && <>
+                            <thead>
+                                <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                                    <th>Domain ID</th>
+                                    <th>Name</th>
+                                    <th>Short Code</th>
+                                    <th>Description</th>
+                                    <th>Created By</th>
+                                    <th style={{ width: '120px' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    domain && domain.map((cT: any, index: any) => {
+                                        return (<tr key={`rD_${index}`}>
+                                            <td>{cT.domainId}</td>
+                                            <td>{cT.name}</td>
+                                            <td>{cT.shortCode}</td>
+                                            <td>{cT.description}</td>
+                                            <td>{cT.createdBy}</td>
+                                            <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Edit
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <FiEdit2 onClick={() => {
+                                                            setShowAddEdit(true)
+                                                            setEditData(cT)
+                                                        }} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span> &nbsp;
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Delete
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <AiOutlineDelete onClick={() => {
+                                                            setShowDeleteConfirm(true)
+                                                            setDetails(cT)
+                                                        }} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span>
+                                            </td>
+                                        </tr>)
+                                    })
+                                }
+                            </tbody>
+                        </>
+                    }
+                </Table>
             </Col>
             {
                 showAddEdit
@@ -172,6 +240,7 @@ const Domain = () => {
 }
 
 const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
+    console.log(data)
     const clientFormRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
         domainShortCode: false,
@@ -220,7 +289,11 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             description: description?.value || null
         }
         if (validate(formObject)) {
-            dispatch(DomainActionCreator.addDomains(formObject))
+            if (!data) {
+                dispatch(DomainActionCreator.addDomains(formObject))
+            } else {
+                dispatch(DomainActionCreator.updateDomain(formObject))
+            }
         }
     }
 
@@ -245,7 +318,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
+                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortCode || null} maxLength={5}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Short Name</Form.Label>
@@ -254,7 +327,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="fullName" defaultValue={data?.fullName || null}></Form.Control>
+                                            <Form.Control type="text" name="fullName" defaultValue={data?.name || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Full Name</Form.Label>
@@ -263,7 +336,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="description" defaultValue={data?.clientType || null}></Form.Control>
+                                            <Form.Control type="text" name="description" defaultValue={data?.description || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["description"] ? 'Description is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Description</Form.Label>

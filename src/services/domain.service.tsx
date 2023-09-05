@@ -43,6 +43,26 @@ const addDomain = async ({
     }
 }
 
+const updateDomain = async ({
+    domainName,
+    domainShortCode,
+    description,
+    domainId
+}: any) => {
+    try {
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
+            domainName,
+            domainShortCode,
+            description,
+            domainId
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 const deleteDomain = async (id: number) => {
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/${id}`, {
@@ -74,5 +94,6 @@ export const domainService = {
     getAllDomains,
     addDomain,
     deleteDomain,
-    getDomainByCode
+    getDomainByCode,
+    updateDomain
 }

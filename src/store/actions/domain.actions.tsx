@@ -2,7 +2,8 @@ import {
     GetAllDomains,
     AddDomain,
     DeleteDomain,
-    GetDomainByCode
+    GetDomainByCode,
+    UpdateDomain
 } from "../types.d"
 import { domainService } from "../../services"
 
@@ -42,6 +43,27 @@ export const DomainActionCreator = {
             ).finally(() =>
                 setTimeout(() => {
                     dispatch({ type: AddDomain.ADD_DOMAIN_RESET })
+                }, 0)
+            )
+    },
+    updateDomain: (requestPayload: any) => (dispatch: any) => {
+        const request = () => ({ type: UpdateDomain.UPDATE_DOMAIN_REQUEST })
+        const success = (domains: any) => ({ type: UpdateDomain.UPDATE_DOMAIN_SUCCESS, payload: domains })
+        const failure = (error: any) => ({ type: UpdateDomain.UPDATE_DOMAIN_FAILURE, payload: error })
+
+        dispatch(request())
+
+        domainService.updateDomain(requestPayload)
+            .then(
+                domains => {
+                    dispatch(success(domains))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() =>
+                setTimeout(() => {
+                    dispatch({ type: UpdateDomain.UPDATE_DOMAIN_RESET })
                 }, 0)
             )
     },
