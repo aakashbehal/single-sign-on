@@ -35,6 +35,7 @@ export interface IConfiguration {
     sample?: string
     fields?: fieldsSelected[]
     userDocConfig: IDocConfig[]
+    namingConfigGroupId: number
 }
 
 const DocumentGeneralConfiguration = () => {

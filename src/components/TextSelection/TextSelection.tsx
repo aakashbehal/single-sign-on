@@ -24,13 +24,15 @@ const TextSelectionHook = () => {
         const selection = window.getSelection()!;
         if (selection?.toString() !== '') {
             const range = selection.getRangeAt(0);
-            setState((prevSelections: any) => {
-                let index = prevSelections.length
-                return [
-                    ...prevSelections,
-                    { text: selection.toString(), start: range.startOffset, end: range.endOffset, fileFieldCode: `field_${index + 1}` },
-                ]
-            });
+            if (selection.toString() !== '_' && selection.toString() !== '-') {
+                setState((prevSelections: any) => {
+                    let index = prevSelections.length
+                    return [
+                        ...prevSelections,
+                        { text: selection.toString(), start: range.startOffset, end: range.endOffset, fileFieldCode: `field_${index + 1}` },
+                    ]
+                });
+            }
         }
     };
 

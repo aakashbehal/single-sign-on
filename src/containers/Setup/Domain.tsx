@@ -240,7 +240,6 @@ const Domain = () => {
 }
 
 const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
-    console.log(data)
     const clientFormRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
         domainShortCode: false,

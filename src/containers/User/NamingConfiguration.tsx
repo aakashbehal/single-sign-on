@@ -49,9 +49,13 @@ const NamingConfiguration = () => {
     const {
         saveSuccess,
         saveError,
+        updateSuccess,
+        updateError
     } = useSelector((state: any) => ({
         saveSuccess: state.fileNameConfig.saveConfig.success,
         saveError: state.fileNameConfig.saveConfig.error,
+        updateSuccess: state.fileNameConfig.updateConfig.success,
+        updateError: state.fileNameConfig.updateConfig.error
     }))
 
     const {
@@ -75,24 +79,48 @@ const NamingConfiguration = () => {
     useEffect(() => {
         if (saveSuccess) {
             addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
-            history.push(`/profile/document_general_configuration`)
+            history.push(`/setup/document_general_configuration`)
         }
         if (saveError) {
-            addToast(createMessage('error', `User Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });
+            addToast(createMessage('error', `User Name Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });
         }
-    }, [saveSuccess, saveError])
+        if (saveSuccess) {
+            addToast(createMessage('success', `User Name Configuration`, 'Update'), { appearance: 'success', autoDismiss: true });
+            history.push(`/setup/document_general_configuration`)
+        }
+        if (saveError) {
+            addToast(createMessage('error', `User Name Configuration`, 'Update'), { appearance: 'error', autoDismiss: false });
+        }
+    }, [saveSuccess, saveError, updateSuccess, updateError])
 
     useEffect(() => {
         const user = userService.getUser();
+        setUserType(user.recordSource);
+        dispatch(FileNameConfigActionCreator.getUserConfig())
+        dispatch(FileNameConfigActionCreator.getFieldOptions())
+        dispatch(FileNameConfigActionCreator.getConjunction())
+        // dispatch(FileNameConfigActionCreator.getUserSeparator())
+        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(TypesActionCreator.getDocumentTypes())
+        // return () => {
+        //     localStorage.removeItem('naming_config')
+        // }
+    }, [])
+
+    useEffect(() => {
         if (id !== '_NEW_CONFIGURATION') {
             const config: any = localStorage.getItem('naming_config')!
             const configParsed = JSON.parse(config)
+            let updatedConfig: any = {}
             if (configParsed?.fields !== 'null' && configParsed?.fields?.length > 0) {
                 setNameTransform(true)
                 handleSetDocumentName(configParsed?.sample)
                 handleSetState(JSON.parse(configParsed?.fields))
                 let tempFieldSelected: any = {}
                 for (let [index, conf] of configParsed.userDocConfig.entries()) {
+                    if (conf.validationRule && JSON.stringify(conf.validationRule) !== "{}") {
+                        updatedConfig[conf.fileFieldCode.replace('field', 'field_')] = conf.validationRule
+                    }
                     tempFieldSelected[index] = conf.attributeCode
                 }
                 setFieldSelected(tempFieldSelected)
@@ -106,27 +134,16 @@ const NamingConfiguration = () => {
             } else {
                 setNameTransform(false)
                 handleDefaultAndSavedSelection()
-            }
-            let updatedConfig: any = {}
-            for (let [index, conf] of configParsed.userDocConfig[0].validationRules.entries()) {
-                if (Object.keys(conf).length !== 0) {
-                    updatedConfig[`field_${index + 1}`] = conf
+                for (let [index, conf] of configParsed.userDocConfig.entries()) {
+                    if (conf.validationRule && JSON.stringify(conf.validationRule) !== "{}") {
+                        updatedConfig[conf.fileFieldCode.replace('field', 'field_')] = conf.validationRule
+                    }
                 }
             }
             setAdditionalSettingsJson(updatedConfig)
             setDetails(configParsed)
         }
-        setUserType(user.recordSource);
-        dispatch(FileNameConfigActionCreator.getUserConfig())
-        dispatch(FileNameConfigActionCreator.getFieldOptions())
-        dispatch(FileNameConfigActionCreator.getConjunction())
-        // dispatch(FileNameConfigActionCreator.getUserSeparator())
-        dispatch(TypesActionCreator.getProductTypes())
-        dispatch(TypesActionCreator.getDocumentTypes())
-        // return () => {
-        //     localStorage.removeItem('naming_config')
-        // }
-    }, [])
+    }, [dataFieldOptions])
 
     useEffect(() => {
         if (details?.userDocConfig) {
@@ -172,12 +189,14 @@ const NamingConfiguration = () => {
     const addFileWithValidation = (field: string) => {
         if (additionSettingsJson && additionSettingsJson[field]) {
             let setting = additionSettingsJson[field]
-            if (!setting.dataType) {
-                delete setting.dataType
+            for (let s in setting) {
+                if (!setting[s]) {
+                    delete setting[s]
+                }
             }
             return setting
         } else {
-            return {}
+            return null
         }
     }
 
@@ -210,7 +229,8 @@ const NamingConfiguration = () => {
         const configRequest: any = {
             "namingConfigGroupName": config_name.value,
             "separatorCode": conjunction.value,
-            userDocConfig: []
+            userDocConfig: [],
+            namingConfigGroupId: details?.namingConfigGroupId || null
         }
         if (nameTransform) {
             configRequest.sample = documentName
@@ -287,7 +307,11 @@ const NamingConfiguration = () => {
                 validationRule: addFileWithValidation("field_7")
             })
         }
-        dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
+        if (details?.namingConfigGroupId) {
+            dispatch(FileNameConfigActionCreator.updateUserConfiguration(configRequest))
+        } else {
+            dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
+        }
     }
 
     const resetHandler = async (e: any, type: any) => {
@@ -735,7 +759,7 @@ const NameTransformationNotRequired = ({
             {
                 fieldsSelected
                 && Object.keys(fieldsSelected).map((keyName, keyIndex) => (
-                    <div className="naming_config_inputs">
+                    <div className="naming_config_inputs" key={`notRequired_${keyIndex}`}>
                         <div>
                             <Form.Group as={Col} className="mb-5 no_padding">
                                 <Form.Control

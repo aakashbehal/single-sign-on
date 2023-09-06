@@ -324,7 +324,6 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
         const {
             productType
         } = formRef.current;
-        console.log(documentTypesSelected)
         const payload = {
             "productCode": productType.value,
             "docTypeCode": documentTypesSelected.map((dT: any) => dT.keyCode)
@@ -409,7 +408,6 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
 }
 
 const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSelected }: any) => {
-    console.log(editRequired, documentTypes)
     const ref = useRef<any>();
     return (
         <>

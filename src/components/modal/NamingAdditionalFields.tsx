@@ -6,7 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TypesActionCreator } from "../../store/actions/common/types.actions"
 import { RootState } from "../../store";
 
-const DATA_TYPES = ["STRING", "NUMBER", "NUMERIC", "DATE"]
 const DATE_FORMAT = [
     "d/M/yy",
     "dd/MM/yyyy",
@@ -34,10 +33,7 @@ const DATE_FORMAT = [
     "MMMM d yyyy",
     "MMMM dd yyyy"
 ]
-const POSSIBLE_VALUE_TYPES = ["INLINE", "LOOKUP", "REF_TYPE"]
-const LOOKUP_VALUES = ["SUBSCRIPTION_TYPE", "CONJUNCTION_TYPE", "DOCUMENT_DUPLICATION_TYPE"]
 const LOOKUP_COLUMNS = ["CODE", "VALUE", "DESC", "EXTERNAL_CODE", "EXTERNAL_NAME"]
-const REF_TYPE_VALUES = ["DOC_TYPE", "PRODUCT_CODE"]
 
 type IAdditionSettings = {
     validation: boolean
@@ -141,7 +137,6 @@ const NamingAdditionalFields = (
     }
 
     const handleSelection = (type: string) => {
-        console.log(type)
         let temp: any = Object.assign({}, additionSettings)
         temp[type] = !temp[type]
         if (!temp['possibleValues']) {
