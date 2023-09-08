@@ -84,11 +84,11 @@ const NamingConfiguration = () => {
         if (saveError) {
             addToast(createMessage('error', `User Name Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });
         }
-        if (saveSuccess) {
+        if (updateSuccess) {
             addToast(createMessage('success', `User Name Configuration`, 'Update'), { appearance: 'success', autoDismiss: true });
             history.push(`/setup/document_general_configuration`)
         }
-        if (saveError) {
+        if (updateError) {
             addToast(createMessage('error', `User Name Configuration`, 'Update'), { appearance: 'error', autoDismiss: false });
         }
     }, [saveSuccess, saveError, updateSuccess, updateError])

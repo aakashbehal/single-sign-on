@@ -1,14 +1,13 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getAllDomains = async ({
-    pageSize,
+const getAllDocumentGroup = async ({ pageSize,
     pageNumber,
     sortOrder,
     sortParam
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/all`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
@@ -26,15 +25,15 @@ const getAllDomains = async ({
     }
 }
 
-const addDomain = async ({
-    domainName,
-    domainShortCode,
+const addDocumentGroup = async ({
+    name,
+    domainCode,
     description
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
-            domainName,
-            domainShortCode,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
+            name,
+            domainCode,
             description
         })
         const data = handleResponse(response)
@@ -44,14 +43,14 @@ const addDomain = async ({
     }
 }
 
-const updateDomain = async ({
+const updateDocumentGroup = async ({
     domainName,
     domainShortCode,
     description,
     domainId
 }: any) => {
     try {
-        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
             domainName,
             domainShortCode,
             description,
@@ -64,9 +63,9 @@ const updateDomain = async ({
     }
 }
 
-const deleteDomain = async (id: number) => {
+const deleteDocumentGroup = async (id: number) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/${id}`, {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/${id}`, {
             "action": "ACTIVE",
             "property": "string"
         })
@@ -77,9 +76,9 @@ const deleteDomain = async (id: number) => {
     }
 }
 
-const getDomainByCode = async (shortCode: string) => {
+const getDocumentGroupByCode = async (shortCode: string) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/byShortCode`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/byShortCode`, {
             params: {
                 shortCode
             }
@@ -91,10 +90,10 @@ const getDomainByCode = async (shortCode: string) => {
     }
 }
 
-export const domainService = {
-    getAllDomains,
-    addDomain,
-    deleteDomain,
-    getDomainByCode,
-    updateDomain
+export const documentGroupService = {
+    getAllDocumentGroup,
+    addDocumentGroup,
+    deleteDocumentGroup,
+    updateDocumentGroup,
+    getDocumentGroupByCode
 }

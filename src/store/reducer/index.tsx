@@ -22,6 +22,7 @@ import partnerSetupReducer from "./partnerSetup.reducer";
 import notificationReducer from "./notification.reducer";
 import documentTypeIdentifierReducer from "./documentTypeIdentifier.reducer";
 import domainReducer from "./domain.reducer";
+import documentGroupReducer from "./documentGroup.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -45,7 +46,8 @@ const appReducer = combineReducers({
     partners: partnerSetupReducer,
     notification: notificationReducer,
     ocr: documentTypeIdentifierReducer,
-    domain: domainReducer
+    domain: domainReducer,
+    documentGroup: documentGroupReducer
 })
 
 const rootReducer = (state: any, action: any) => {

@@ -204,7 +204,8 @@ export const FileNameConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(() => {
+            )
+            .finally(() => {
                 setTimeout(() => {
                     dispatch({ type: UpdateUserConfiguration.UPDATE_USER_CONFIG_RESET })
                 }, 0)

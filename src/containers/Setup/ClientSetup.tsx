@@ -106,18 +106,8 @@ const ClientSetup = () => {
 
     return (
         <>
-            <Col sm={12}>
-                <Row style={{ margin: 0 }} sm={12} className="form_container">
-                    <Col lg={3} sm={12}></Col>
-                    <Col lg={6} sm={12}>
-                        <div className={Styles.add_buttons}>
-                            <Button variant="dark" onClick={() => setShowAddEdit(true)}>Add Client</Button>{' '}
-                        </div>
-                    </Col>
-                    <Col lg={3} sm={12}></Col>
-                </Row>
-                <br />
-                <br />
+            <Col sm={12} style={{ textAlign: 'right', marginBottom: '1rem' }}>
+                <Button variant="dark" className="pull-right" onClick={() => setShowAddEdit(true)}>Add New Client</Button>
             </Col>
             <Col>
                 <TableComponent

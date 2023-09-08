@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef, useState } from 'react'
-import { Button, Col, Container, Modal, Form, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Button, Col, Container, Modal, Form, OverlayTrigger, Tooltip, Row } from 'react-bootstrap';
 import { BsFileEarmarkPdf, BsFillFileEarmarkImageFill } from 'react-icons/bs';
 import { CgSpinnerAlt, CgSoftwareUpload } from 'react-icons/cg';
 import { MdOutlineDelete } from 'react-icons/md';
@@ -17,6 +17,7 @@ import { SummaryActionCreator } from '../../store/actions/summary.actions';
 import FileUploadHook from '../CustomHooks/FileUploadHook';
 import DocumentTypes from '../Common/DocumentType';
 import { userService } from '../../services';
+import { FileNameConfigActionCreator } from '../../store/actions/fileNameConfig.actions';
 
 const SAMPLE_UPLOAD = [
     {
@@ -51,21 +52,25 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     const [userType, setUserType] = useState<string>('')
     const [profileImageTemp, setProfileImageTemp] = useState<any>()
     const [noMatrixFile, SetNoMatrixFile] = useState(false);
-    const [jsonForRequest, setJsonForRequest] = useState([])
+
     const [documentTypeFromName, setDocumentTypeFromName] = useState<any>(null)
 
     const {
-        documentTypes
+        documentTypes,
+        confListLoading,
+        confListError,
+        confList,
     } = useSelector((state: any) => ({
         documentTypes: state.types.documentType.data,
+        confListLoading: state.fileNameConfig.fileNamingConfigList.loading,
+        confListError: state.fileNameConfig.fileNamingConfigList.error,
+        confList: state.fileNameConfig.fileNamingConfigList.data,
     }))
 
     useEffect(() => {
+        dispatch(FileNameConfigActionCreator.getListOfUserConfig())
         const type = userService.getUserType()
         setUserType(type)
-        if (parentComponent === 'documentNotSummary_request') {
-            getNotList()
-        }
     }, [])
 
     useEffect(() => {
@@ -73,57 +78,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             uploadFile()
         }
     }, [fileToUpload])
-
-    const downloadExcel = (fileName: any, data: any) => {
-        let settings = {
-            fileName
-        }
-        xlsx(data, settings)
-    }
-
-    const getNotList = async () => {
-        try {
-            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
-                pageSize: details.pageSize,
-                pageNumber: details.pageNumber - 1,
-                docTypeCode: details.docTypeCode,
-                tenure: details.duration === 'null' ? null : details.duration,
-                portfolio: details.portfolio === 'null' ? null : details.portfolio,
-                productCode: details.productCode === 'null' ? null : details.productCode,
-                userId: details.userId === 'null' ? null : details.userId
-            })
-            const data = handleResponse(response)
-            const objToDownload: any = [
-                {
-                    sheet: "Matrix",
-                    columns: [
-                        { label: "Document Type", value: "documentType" },
-                        { label: "Requested From", value: "requestedFrom" },
-                        { label: "Original Account Number", value: "originalAccountNumber" },
-                        { label: "Client Account Number", value: "clientAccountNumber" },
-                        { label: "Equabli Account Number", value: "equabliAccountNumber" },
-                        { label: "Client Short Code", value: "clientShortCode" }
-                    ],
-                    content: [],
-                }
-            ]
-            const tempJson = data && data.response && data.response.datas.map((data: any) => {
-                let obj = {
-                    "documentType": details.docTypeCode,
-                    "requestedFrom": "",
-                    "originalAccountNumber": "",
-                    "clientAccountNumber": data,
-                    "equabliAccountNumber": "",
-                    "clientShortCode": ""
-                }
-                return obj
-            })
-            objToDownload[0].content = tempJson
-            setJsonForRequest(objToDownload)
-        } catch (err) {
-            console.log(err)
-        }
-    }
 
     const validateUpload = (formObj: any) => {
         let formIsValid = true;
@@ -301,20 +255,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         setFiles(tempFiles)
     }
 
-    const downloadSampleFile = () => {
-        let sampleFile = ''
-        if (parentComponent === 'myDocument') {
-            sampleFile = "./sample_file_upload.xlsx"
-        } else {
-            sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download`
-        }
-        axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
-            .then((response: any) => {
-                var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                saveAs(blob, 'SendRequestDocumentSample.xlsx');
-            });
-    }
-
     const ProfileRef = useRef<any>()
 
     return (
@@ -466,41 +406,156 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     <Button variant="dark" type="submit" disabled={formSubmitted} onClick={onSubmitHandler} style={{ width: '100%' }}>Upload</Button>
                 </Col>
                 {
-                    (parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest')
-                    && files.length > 1
-                    &&
-                    <Col sm={12} className='no_padding'>
-                        <br />
-                        <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
-                        <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={() => downloadExcel('matrix', SAMPLE_UPLOAD)} style={{ width: '100%' }}>Download Sample File</Button>
-                        </Col>
-                    </Col>
+                    ((parentComponent === 'sentDocumentRequest'))
+                    && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {
-                    parentComponent === 'documentNotSummary_request'
-                    &&
-                    <Col sm={12} className='no_padding'>
-                        <br />
-                        <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
-                        <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={() => downloadExcel('matrix', jsonForRequest)} style={{ width: '100%' }}>Download Sample File</Button>
-                        </Col>
-                    </Col>
+                    ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 0)
+                    && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {
-                    parentComponent === 'sentDocumentRequest'
-                    && <Col sm={12} className='no_padding'>
-                        <br />
-                        <p>Please download the sample file to get idea about the fields you need to pass to raise bulk document request</p>
-                        <Col sm={12} className='no_padding'>
-                            <Button variant="dark" type="submit" onClick={downloadSampleFile} style={{ width: '100%' }}>Download Sample File</Button>
-                        </Col>
-                    </Col>
+                    ((parentComponent === 'documentNotSummary_request'))
+                    && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
+
             </Modal.Footer>
         </Modal >
     )
+}
+
+const DownloadSample = ({ confList, parentComponent, details }: { confList: any, parentComponent: string, details: any }) => {
+    const formRefDownload = useRef<any>()
+    const [jsonForRequest, setJsonForRequest] = useState([])
+
+    useEffect(() => {
+        if (parentComponent === 'documentNotSummary_request') {
+            getNotList()
+        }
+    }, [])
+
+    const getNotList = async () => {
+        try {
+            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/summary/accounts/not`, {
+                pageSize: details.pageSize,
+                pageNumber: details.pageNumber - 1,
+                docTypeCode: details.docTypeCode,
+                tenure: details.duration === 'null' ? null : details.duration,
+                portfolio: details.portfolio === 'null' ? null : details.portfolio,
+                productCode: details.productCode === 'null' ? null : details.productCode,
+                userId: details.userId === 'null' ? null : details.userId
+            })
+            const data = handleResponse(response)
+            const objToDownload: any = [
+                {
+                    sheet: "Matrix",
+                    columns: [
+                        { label: "Document Type", value: "documentType" },
+                        { label: "Requested From", value: "requestedFrom" },
+                        { label: "Original Account Number", value: "originalAccountNumber" },
+                        { label: "Client Account Number", value: "clientAccountNumber" },
+                        { label: "Equabli Account Number", value: "equabliAccountNumber" },
+                        { label: "Client Short Code", value: "clientShortCode" }
+                    ],
+                    content: [],
+                }
+            ]
+            const tempJson = data && data.response && data.response.datas.map((data: any) => {
+                let obj = {
+                    "documentType": details.docTypeCode,
+                    "requestedFrom": "",
+                    "originalAccountNumber": "",
+                    "clientAccountNumber": data,
+                    "equabliAccountNumber": "",
+                    "clientShortCode": ""
+                }
+                return obj
+            })
+            objToDownload[0].content = tempJson
+            setJsonForRequest(objToDownload)
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const downloadExcel = (fileName: any, data: any) => {
+        let settings = {
+            fileName
+        }
+        xlsx(data, settings)
+    }
+
+    const downloadSampleFile = (event: any, type: string) => {
+        event.preventDefault()
+        const {
+            document_group
+        } = formRefDownload.current
+
+        if (type === 'documentNotSummary_request') {
+            downloadExcel('matrix', SAMPLE_UPLOAD)
+        } else if (type === 'myDocument') {
+            downloadExcel('matrix', jsonForRequest)
+        } else {
+            let sampleFile = ''
+            if (parentComponent === 'myDocument') {
+                sampleFile = "./sample_file_upload.xlsx"
+            } else {
+                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
+            }
+            axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
+                .then((response: any) => {
+                    var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+                    saveAs(blob, 'SendRequestDocumentSample.xlsx');
+                });
+        }
+    }
+
+    return <Col sm={12} className='no_padding'>
+        <hr />
+        <p>Please download the <b>Matrix file</b> and update the columns to help system establish connection between the files being uploaded and system.</p>
+        <Row>
+            <Col sm={12}>
+                <Form ref={formRefDownload}>
+                    <Row>
+                        <Col lg={6} md={12} className="no_padding">
+                            <Form.Group as={Col} className="mb-4">
+                                <Col md={12} sm={12} className="no_padding">
+                                    <Form.Control
+                                        as="select"
+                                        name="document_group"
+                                        className="select_custom white"
+                                    >
+                                        <option value="" disabled selected>Select Document Name Group</option>
+                                        {
+                                            (confList && confList.length > 0) &&
+                                            confList.map((conf: any, index: number) => {
+                                                return <option key={`cr_${index}`} value={conf.namingConfigGroupName}>{conf.namingConfigGroupName}</option>
+                                            })
+                                        }
+                                    </Form.Control>
+                                </Col>
+                            </Form.Group>
+                        </Col >
+                        <Col lg={6} md={12} className='no_padding'>
+                            <Form.Group as={Col} className="mb-4">
+                                {
+                                    parentComponent === 'sentDocumentRequest'
+                                    && <Button variant="dark" type="submit" onClick={(event: any) => downloadSampleFile(event, 'sentDocumentRequest')} style={{ width: '100%', padding: '10px' }}>Download Sample File</Button>
+                                }
+                                {
+                                    (parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest')
+                                    && <Button variant="dark" type="submit" onClick={(event: any) => downloadSampleFile(event, 'myDocument')} style={{ width: '100%', padding: '10px' }}>Download Sample File</Button>
+                                }
+                                {
+                                    parentComponent === 'documentNotSummary_request'
+                                    && <Button variant="dark" type="submit" onClick={(event: any) => downloadSampleFile(event, 'documentNotSummary_request')} style={{ width: '100%', padding: '10px' }}>Download Sample File</Button>
+                                }
+                            </Form.Group>
+                        </Col>
+                    </Row >
+                </Form >
+            </Col>
+        </Row>
+    </Col>
 }
 
 export default DocumentUpload

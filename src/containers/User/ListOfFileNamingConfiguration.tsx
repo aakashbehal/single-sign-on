@@ -96,9 +96,9 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
     return (
         <React.Fragment>
             <Col sm={12} className="no_padding" style={{ textAlign: 'right', marginBottom: '1rem' }}>
-                <Button variant="dark" className="pull-right" onClick={() => addNewHandler()}>+ Add New</Button>
+                <Button variant="dark" className="pull-right" onClick={() => addNewHandler()}>Add New Naming Configuration</Button>
             </Col>
-            <Row className="form_container" style={{ margin: 0 }}>
+            <Row style={{ margin: 0 }}>
                 {
                     confListLoading
                     && <CgSpinnerAlt style={{ textAlign: 'center', width: '100%' }} className="spinner" size={50} />
@@ -113,7 +113,8 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                             <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
                                 <th>#</th>
                                 <th style={{ width: "15%" }}>Name</th>
-                                <th style={{ width: "25%" }}>File Name</th>
+                                <th style={{ width: "10%" }}>Transformed</th>
+                                <th style={{ width: "15%" }}>File Name</th>
                                 <th style={{ width: "60%" }}>File Name Description</th>
                                 <th>Action</th>
                             </tr>
@@ -124,6 +125,7 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
                                     return <tr key={`confList_${index}`}>
                                         <td>{index + 1}</td>
                                         <td>{conf.namingConfigGroupName}</td>
+                                        <td>{conf.sample ? 'Yes' : 'No'}</td>
                                         <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'short')}</td>
                                         <td>{formatConfiguration(conf.userDocConfig, conf.separatorCode, 'long')}</td>
                                         <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>

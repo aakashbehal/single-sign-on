@@ -147,6 +147,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>
                     </ul>
                 </li>
                 <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {

@@ -110,85 +110,83 @@ const DocumentTypeIdentifier = () => {
 
     return (
         <>
-            <div className="row">
-                <div className="col-9"></div>
-                <div className="col-3">
-                    <Button variant="dark" onClick={() => createIdentifier()} style={{ width: "100%" }}>Create Identifier</Button>
-                </div>
-            </div>
-            <br />
-            <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+            <Col sm={12} style={{ textAlign: 'right', marginBottom: '1rem' }}>
+                <Button variant="dark" className="pull-right" onClick={() => createIdentifier()}>Add New Document Type Identifier</Button>
+            </Col>
+            <Col>
                 {
-                    !error && loading
-                    && <thead>
-                        <CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} />
-                    </thead>
+                    !error && loading &&
+                    <div className={`table_loading`} >
+                        <CgSpinnerAlt size={50} className={`spinner ${Styles.details_warning}`} />
+                    </div >
                 }
-                {
-                    !loading && identifiers.length === 0
-                    && <thead>
-                        <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
-                            <NoRecord />
-                        </tr>
-                    </thead>
-                }
-                {
-                    !loading && identifiers.length > 0
-                    && <>
-                        <thead>
-                            <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                                <th>Document Type</th>
-                                <th>Document Type Code</th>
-                                <th>Fields</th>
-                                <th style={{ width: '120px' }}>Actions</th>
+                <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
+                    {
+                        !loading && identifiers.length === 0
+                        && <thead>
+                            <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
+                                <NoRecord />
                             </tr>
                         </thead>
-                        <tbody>
-                            {
-                                identifiers && identifiers.length > 0 && identifiers.map((identifier: IIdentifier, index: any) => {
-                                    return (<tr key={`identifier_${index}`}>
-                                        <td>{identifier.documentType}</td>
-                                        <td>{identifier.docTypeCode || '-'}</td>
-                                        <td>
-                                            {identifier.docTypeFields && identifier.docTypeFields.map((fields: any, index: any) => {
-                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{fields}</span>
-                                            })}
-                                        </td>
-                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Edit
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <FiEdit2 onClick={() => handleEdit(identifier)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span> &nbsp;
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Delete
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <AiOutlineDelete onClick={() => handleDelete(identifier)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span>
-                                        </td>
-                                    </tr>)
-                                })
-                            }
-                        </tbody>
-                    </>
-                }
-            </Table>
+                    }
+                    {
+                        !loading && identifiers.length > 0
+                        && <>
+                            <thead>
+                                <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
+                                    <th>Document Type</th>
+                                    <th>Document Type Code</th>
+                                    <th>Fields</th>
+                                    <th style={{ width: '120px' }}>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {
+                                    identifiers && identifiers.length > 0 && identifiers.map((identifier: IIdentifier, index: any) => {
+                                        return (<tr key={`identifier_${index}`}>
+                                            <td>{identifier.documentType}</td>
+                                            <td>{identifier.docTypeCode || '-'}</td>
+                                            <td>
+                                                {identifier.docTypeFields && identifier.docTypeFields.map((fields: any, index: any) => {
+                                                    return <span key={`dL_${index}`} className={Styles.required_documents}>{fields}</span>
+                                                })}
+                                            </td>
+                                            <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Edit
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <FiEdit2 onClick={() => handleEdit(identifier)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span> &nbsp;
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Delete
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <AiOutlineDelete onClick={() => handleDelete(identifier)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span>
+                                            </td>
+                                        </tr>)
+                                    })
+                                }
+                            </tbody>
+                        </>
+                    }
+                </Table>
+            </Col>
             {
                 show
                 && <AddEditIdentifier
