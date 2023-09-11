@@ -15,8 +15,8 @@ const getAllClients = async ({
         const data = handleResponse(response)
         let clients = data.response.datas
         const responseModified: any = {}
-        // responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.totalCount = 10
+        responseModified.totalCount = data.response.metadata.recordCount
+        // responseModified.totalCount = 10
         responseModified.clients = clients
         return responseModified
     } catch (error: any) {

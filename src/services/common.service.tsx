@@ -69,7 +69,7 @@ const getClients = async () => {
 
 const getStates = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_2}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE_2}/getAllStates`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/stateCodes`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -133,6 +133,16 @@ const getStatus = async () => {
 const getRecordSource = async (type: any) => {
     try {
         const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getRecordSourceByShortName?shortName=${type}`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const getAllRecordSource = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/serviceType/all`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -313,5 +323,6 @@ export const commonServices = {
     getUsage,
     getSignedURL,
     getLookupValues,
-    getLookupValuesEQDocs
+    getLookupValuesEQDocs,
+    getAllRecordSource
 }

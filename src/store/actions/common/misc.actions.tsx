@@ -10,7 +10,8 @@ import {
     AccountConfig,
     SaveColumn,
     AllTableColumns,
-    ClientAccountNumbers
+    ClientAccountNumbers,
+    RecordSourceAll
 } from "../../types.d";
 import { commonServices } from "../../../services"
 
@@ -144,6 +145,24 @@ export const MiscActionCreator = {
         dispatch(request())
 
         commonServices.getRecordSource(type)
+            .then(
+                compliance => {
+                    dispatch(success(compliance))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+
+    getAllRecordSource: () => (dispatch: any) => {
+        const request = () => ({ type: RecordSourceAll.RECORD_SOURCE_ALL_REQUEST })
+        const success = (compliance: any) => ({ type: RecordSourceAll.RECORD_SOURCE_ALL_SUCCESS, payload: compliance })
+        const failure = (error: any) => ({ type: RecordSourceAll.RECORD_SOURCE_ALL_FAILURE, payload: error })
+
+        dispatch(request())
+
+        commonServices.getAllRecordSource()
             .then(
                 compliance => {
                     dispatch(success(compliance))

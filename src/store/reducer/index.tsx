@@ -23,6 +23,7 @@ import notificationReducer from "./notification.reducer";
 import documentTypeIdentifierReducer from "./documentTypeIdentifier.reducer";
 import domainReducer from "./domain.reducer";
 import documentGroupReducer from "./documentGroup.reducer";
+import documentTypePreferenceReducer from "./documentTypePreference.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -47,7 +48,8 @@ const appReducer = combineReducers({
     notification: notificationReducer,
     ocr: documentTypeIdentifierReducer,
     domain: domainReducer,
-    documentGroup: documentGroupReducer
+    documentGroup: documentGroupReducer,
+    docTypePreference: documentTypePreferenceReducer
 })
 
 const rootReducer = (state: any, action: any) => {

@@ -8,6 +8,8 @@ import { PartnerSetupActionCreator } from "../../store/actions/partnerSetup.acti
 import States from "../../components/Common/States";
 import { createMessage } from "../../helpers/messages";
 import { useToasts } from "react-toast-notifications";
+import { MiscActionCreator } from "../../store/actions/common/misc.actions";
+import { RootState } from "../../store";
 
 const PartnerSetup = () => {
     const dispatch = useDispatch();
@@ -177,17 +179,50 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
     const [formError, setFormError] = useState<any>({
         shortName: false,
         fullName: false,
+        quickSiteId: false,
+        serviceTypeId: false,
+        pocName: false,
+        address1: false,
+        phone1: false,
+        emailAddress: false,
     })
+
+    const {
+        recordSource,
+        loading,
+        error
+    } = useSelector((state: any) => ({
+        recordSource: state.misc.recordSourceAll.data,
+        loading: state.misc.recordSourceAll.loading,
+        error: state.misc.recordSourceAll.error
+    }))
+
+    useEffect(() => {
+        dispatch(MiscActionCreator.getAllRecordSource())
+    }, [])
+
 
     const validate = (formObj: any) => {
         let checkFormObj: any = {
             shortName: formObj.shortName,
             fullName: formObj.fullName,
+            quickSiteId: formObj.quickSiteId,
+            serviceTypeId: formObj.servicetypeId,
+            pocName: formObj.pocName,
+            address1: formObj.address1,
+            phone1: formObj.phone1,
+            emailAddress: formObj.emailAddress,
         }
         let formIsValid = true;
         const error: any = {
             shortName: false,
             fullName: false,
+            quickSiteId: false,
+            serviceTypeId: false,
+            pocName: false,
+            address1: false,
+            phone1: false,
+            emailAddress: false,
         }
         for (let key in checkFormObj) {
             if (!checkFormObj[key] || checkFormObj[key] === "") {
@@ -208,44 +243,42 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
             shortName,
             fullName,
             pocName,
-            quickSiteId,
-            isEqassociate,
             emailAddress,
             address1,
             address2,
             city,
             zip,
             phone1,
+            state,
             phone2,
             website,
-            amtMinCollLimit,
-            amtMaxCollLimit,
             namePronunciation,
             emailPronunciation,
             phonePronunciation,
             addressPronunciation,
+            serviceTypeId,
+            quickSiteId
         } = clientFormRef.current
         let formObject = {
             partnerId: data?.partnerId || null,
             shortName: shortName?.value || null,
             fullName: fullName?.value || null,
             pocName: pocName?.value || null,
-            quickSiteId: quickSiteId?.value || null,
-            isEqassociate: isEqassociate?.checked || false,
             emailAddress: emailAddress?.value || null,
             address1: address1?.value || null,
             address2: address2?.value || null,
             city: city?.value || null,
             zip: zip?.value || null,
+            stateCode: state?.value || null,
             phone1: phone1?.value || null,
             phone2: phone2?.value || null,
             website: website?.value || null,
-            amtMinCollLimit: amtMinCollLimit?.value || null,
-            amtMaxCollLimit: amtMaxCollLimit?.value || null,
             namePronunciation: namePronunciation?.value || null,
             emailPronunciation: emailPronunciation?.value || null,
             phonePronunciation: phonePronunciation?.value || null,
             addressPronunciation: addressPronunciation?.value || null,
+            servicetypeId: serviceTypeId?.value || null,
+            quickSiteId: quickSiteId?.value || null
         }
         if (validate(formObject)) {
             if (!data) {
@@ -272,187 +305,196 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
             </Modal.Header>
             <Modal.Body className="show-grid">
                 <Container>
+                    <br />
                     <Form ref={clientFormRef}>
                         <Row>
-                            <Col xs={12} md={6} className="mt-3">
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
-                                        </Col>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Short Name</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-4">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="fullName" defaultValue={data?.fullName || null}></Form.Control>
-                                        </Col>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Full Name</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="pocName" defaultValue={data?.pocName || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Point Of Contact</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="quickSiteId" defaultValue={data?.quickSiteId || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">QuickSight ID</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12} className="mt-1">
-                                            <input
-                                                type="checkbox"
-                                                className="switch mt-2"
-                                                name="isEqassociate"
-                                                defaultChecked={data?.isEqassociate}
-                                            />
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Equabli Associated</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="emailAddress" defaultValue={data?.emailAddress || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Email Address</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="number" name="amtMinCollLimit" defaultValue={data?.amtMinCollLimit || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Min Collection Limit</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="number" name="amtMaxCollLimit" defaultValue={data?.amtMaxCollLimit || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Max Collection Limit</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="addressPronunciation" defaultValue={data?.addressPronunciation || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Address Pronunciation</Form.Label>
-                                    </Form.Group>
-                                </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-4">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Short Name <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
                             </Col>
-                            <Col xs={12} md={6} className="mt-3" >
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="address1" defaultValue={data?.address1 || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white" >Address 1</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="address2" defaultValue={data?.address2 || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white" >Address 2</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="city" defaultValue={data?.city || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">City</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="zip" defaultValue={data?.zip || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">ZIP Code</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="phone1" defaultValue={data?.phone1 || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Primary Phone</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="phone2" defaultValue={data?.phone2 || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Secondary Phone</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="website" defaultValue={data?.website || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Website</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="namePronunciation" defaultValue={data?.namePronunciation || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Name Pronunciation</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="emailPronunciation" defaultValue={data?.emailPronunciation || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Email Pronunciation</Form.Label>
-                                    </Form.Group>
-                                </Col>
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
-                                        <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="phonePronunciation" defaultValue={data?.phonePronunciation || null}></Form.Control>
-                                        </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Phone Pronunciation</Form.Label>
-                                    </Form.Group>
-                                </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-4">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="fullName" defaultValue={data?.fullName || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Full Name <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="namePronunciation" defaultValue={data?.namePronunciation || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Full Name (IVR)</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="quickSiteId" defaultValue={data?.quickSiteId || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["quickSiteId"] ? 'Partner\'s VPN IP Address is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Partner's VPN IP Address <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control
+                                            as="select"
+                                            name="serviceTypeId"
+                                        >
+                                            <option></option>
+                                            {
+                                                recordSource && recordSource.map((rS: any, index: number) => {
+                                                    return (
+                                                        <option
+                                                            key={`rS_${index}`}
+                                                            value={rS.servicetypeId}
+                                                        >
+                                                            {rS.fullName}
+                                                        </option>
+                                                    )
+                                                })
+                                            }
+                                        </Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["serviceTypeId"] ? 'Service Type is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Service Type <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="pocName" defaultValue={data?.pocName || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["pocName"] ? 'Point Of Contact is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Point Of Contact <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="address1" defaultValue={data?.address1 || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["address1"] ? 'Address 1 is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white" >Address 1 <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="address2" defaultValue={data?.address2 || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white" >Address 2</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="city" defaultValue={data?.city || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">City</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <States />
+                                    </Col>
+                                    <Form.Label className="label_custom white">State</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="zip" defaultValue={data?.zip || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Zip</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="addressPronunciation" defaultValue={data?.addressPronunciation || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Full Address (IVR)</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="phone1" defaultValue={data?.phone1 || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["phone1"] ? 'Phone1 is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Phone1 <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="phonePronunciation" defaultValue={data?.phonePronunciation || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Phone1 (IVR)</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="phone2" defaultValue={data?.phone2 || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Phone2 </Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="phonePronunciation" defaultValue={data?.phonePronunciation || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Phone2 (IVR)</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="website" defaultValue={data?.website || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Website</Form.Label>
+                                </Form.Group>
+                            </Col>
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="emailAddress" defaultValue={data?.emailAddress || null}></Form.Control>
+                                    </Col>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["emailAddress"] ? 'Email Address is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">Email Address <span style={{ color: 'red' }}>*</span></Form.Label>
+                                </Form.Group>
+                            </Col>
+
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-5">
+                                    <Col md={12} sm={12}>
+                                        <Form.Control type="text" name="emailPronunciation" defaultValue={data?.emailPronunciation || null}></Form.Control>
+                                    </Col>
+                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                    <Form.Label className="label_custom white">Email Address (IVR)</Form.Label>
+                                </Form.Group>
                             </Col>
                         </Row>
                     </Form>

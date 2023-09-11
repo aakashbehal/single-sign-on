@@ -3,7 +3,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const shareFolder = async (payload: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/folder`, payload)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share`, payload)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -13,7 +13,7 @@ const shareFolder = async (payload: any) => {
 
 const revokeShareFolder = async (payload: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/folder`, {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/file/${payload.email}`, {
             "action": "ACTIVE",
             "property": "string"
         })
@@ -26,7 +26,7 @@ const revokeShareFolder = async (payload: any) => {
 
 const shareDocument = async (payload: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share/file`, payload)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/share`, payload)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

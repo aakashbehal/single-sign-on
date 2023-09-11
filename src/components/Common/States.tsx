@@ -56,7 +56,6 @@ const States = forwardRef(({ selectedValue = '' }: { selectedValue?: string }, r
             <Form.Control
                 as="select"
                 name="state"
-                className="select_custom"
                 value={value}
                 onChange={(e) => { setValue(e.target.value) }}>
                 <option></option>

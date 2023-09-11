@@ -55,7 +55,7 @@ const DownloadHistory = () => {
 
     useEffect(() => {
         if (deleteDownloadHistorySuccess) {
-            addToast(createMessage('success', `Sent`, 'Document Request'), { appearance: 'success', autoDismiss: true });
+            addToast(createMessage('success', `Deleted`, 'Document History record'), { appearance: 'success', autoDismiss: true });
             search(pageCount, currentPage)
         }
         if (deleteDownloadHistoryError) {

@@ -10,7 +10,8 @@ import {
     Status,
     SaveColumn,
     AllTableColumns,
-    ClientAccountNumbers
+    ClientAccountNumbers,
+    RecordSourceAll
 } from "../../types.d";
 
 const initialState = {
@@ -70,6 +71,11 @@ const initialState = {
         error: false
     },
     clientAccountNumbers: {
+        data: [],
+        loading: false,
+        error: false
+    },
+    recordSourceAll: {
         data: [],
         loading: false,
         error: false
@@ -416,6 +422,40 @@ const miscReducer = (state = initialState, action: { type: any; payload: any; })
                     error: false
                 }
             }
+        case RecordSourceAll.RECORD_SOURCE_ALL_REQUEST:
+            return {
+                ...state,
+                recordSourceAll: {
+                    loading: true,
+                    error: false
+                }
+            }
+        case RecordSourceAll.RECORD_SOURCE_ALL_SUCCESS:
+            return {
+                ...state,
+                recordSourceAll: {
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case RecordSourceAll.RECORD_SOURCE_ALL_FAILURE:
+            return {
+                ...state,
+                recordSourceAll: {
+                    loading: false,
+                    error: true
+                }
+            }
+        case RecordSourceAll.RECORD_SOURCE_ALL_RESET:
+            return {
+                ...state,
+                recordSourceAll: {
+                    loading: false,
+                    data: [],
+                    error: false
+                }
+            }
+
         default:
             return state
     }

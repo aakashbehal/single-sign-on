@@ -172,7 +172,10 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
     const [formError, setFormError] = useState<any>({
         shortName: false,
         fullName: false,
-        clientType: false
+        clientType: false,
+        pocName: false,
+        address1: false,
+        phone1: false,
     })
 
     const validate = (formObj: any) => {
@@ -180,12 +183,18 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             shortName: formObj.shortName,
             fullName: formObj.fullName,
             clientType: formObj.clientType,
+            pocName: formObj.pocName,
+            address1: formObj.address1,
+            phone1: formObj.phone1,
         }
         let formIsValid = true;
         const error: any = {
             shortName: false,
             fullName: false,
-            clientType: false
+            clientType: false,
+            pocName: false,
+            address1: false,
+            phone1: false,
         }
         for (let key in checkFormObj) {
             if (!checkFormObj[key] || checkFormObj[key] === "") {
@@ -213,6 +222,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             address1,
             address2,
             city,
+            state,
             zip,
             phone1,
             phone2,
@@ -230,6 +240,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             address1: address1?.value || null,
             address2: address2?.value || null,
             city: city?.value || null,
+            stateCode: state?.value || null,
             zip: zip?.value || null,
             phone1: phone1?.value || null,
             phone2: phone2?.value || null,
@@ -269,7 +280,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                             <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Short Name</Form.Label>
+                                        <Form.Label className="label_custom white">Short Name <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
@@ -278,7 +289,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                             <Form.Control type="text" name="fullName" defaultValue={data?.fullName || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Full Name</Form.Label>
+                                        <Form.Label className="label_custom white">Full Name <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
@@ -287,7 +298,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                             <Form.Control type="text" name="clientType" defaultValue={data?.clientType || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["clientType"] ? 'Client Type is required ' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Client Type</Form.Label>
+                                        <Form.Label className="label_custom white">Client Type <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
@@ -295,8 +306,8 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="pocName" defaultValue={data?.pocName || null}></Form.Control>
                                         </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Point Of Contact</Form.Label>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["pocName"] ? 'Point Of Contact is required ' : ''}</small></span>
+                                        <Form.Label className="label_custom white">Point Of Contact <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
@@ -338,8 +349,8 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="address1" defaultValue={data?.address1 || null}></Form.Control>
                                         </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white" >Address 1</Form.Label>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["address1"] ? 'Address 1 is required ' : ''}</small></span>
+                                        <Form.Label className="label_custom white" >Address 1 <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
@@ -360,14 +371,14 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         <Form.Label className="label_custom white">City</Form.Label>
                                     </Form.Group>
                                 </Col>
-                                {/* <Col lg={12} md={6} className="no_padding">
+                                <Col lg={12} md={6} className="no_padding">
                                     <Form.Group as={Col} className="mb-5">
                                         <Col md={12} sm={12}>
                                             <States />
                                         </Col>
-                                        <Form.Label className="label_custom white">City</Form.Label>
+                                        <Form.Label className="label_custom white">State</Form.Label>
                                     </Form.Group>
-                                </Col> */}
+                                </Col>
                                 <Col lg={12} md={6} className="no_padding">
                                     <Form.Group as={Col} className="mb-5">
                                         <Col md={12} sm={12}>
@@ -382,8 +393,8 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="phone1" defaultValue={data?.phone1 || null}></Form.Control>
                                         </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
-                                        <Form.Label className="label_custom white">Primary Phone</Form.Label>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["phone1"] ? 'Primary Phone is required ' : ''}</small></span>
+                                        <Form.Label className="label_custom white">Primary Phone <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
