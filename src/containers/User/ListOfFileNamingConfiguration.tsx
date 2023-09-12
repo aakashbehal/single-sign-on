@@ -12,6 +12,7 @@ import { history } from "../../helpers"
 import NoRecord from "../../components/Common/NoResult"
 import DeleteConfirm from "../../components/modal/DeleteConfirm"
 import { Button, Col, OverlayTrigger, Row, Table, Tooltip } from "react-bootstrap";
+import SkeletonLoading from "../../helpers/skeleton-loading";
 
 const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurationDetails, setShowConfig }: any, ref) => {
     const { addToast } = useToasts();
@@ -98,11 +99,11 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
             <Col sm={12} className="no_padding" style={{ textAlign: 'right', marginBottom: '1rem' }}>
                 <Button variant="dark" className="pull-right" onClick={() => addNewHandler()}>Add New Naming Configuration</Button>
             </Col>
-            <Row style={{ margin: 0 }}>
-                {
-                    confListLoading
-                    && <CgSpinnerAlt style={{ textAlign: 'center', width: '100%' }} className="spinner" size={50} />
-                }
+            {
+                confListLoading
+                && <SkeletonLoading isTable={true} repeats={5} />
+            }
+            <Row className="form_container" style={{ margin: 0 }}>
                 {
                     !confListLoading && confList.length === 0
                     && <NoRecord />

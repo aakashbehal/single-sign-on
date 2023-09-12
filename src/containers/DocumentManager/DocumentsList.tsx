@@ -179,9 +179,9 @@ const DocumentsList = ({ location }: { location: any }) => {
                 map={{
                     name: "Name",
                     documentType: "Document Type",
-                    originalAccountNo: "Original Account Number",
+                    originalAccountNumber: "Original Account Number",
                     equabliAccountNo: "Equabli Account Number",
-                    clientAccountNo: "Client Account Number",
+                    clientAccountNumber: "Client Account Number",
                     generateDate: "Generated Date",
                     uploadDate: "Upload Date",
                     shareDate: "Share Date",

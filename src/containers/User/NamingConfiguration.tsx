@@ -146,13 +146,17 @@ const NamingConfiguration = () => {
     }, [dataFieldOptions])
 
     useEffect(() => {
-        if (details?.userDocConfig) {
+        if (details && details?.userDocConfig) {
             for (let i = 0; i < details.userDocConfig.length; i++) {
                 if (details.userDocConfig[i].isDocumentGroupIdentifier) {
-                    setGroupIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
+                    if (details.userDocConfig[i].fileFieldCode) {
+                        setGroupIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
+                    }
                 }
                 if (details.userDocConfig[i].isDocumentUniqueIdentifier) {
-                    setUniqueIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
+                    if (details.userDocConfig[i].fileFieldCode) {
+                        setUniqueIdentifier(details.userDocConfig[i].fileFieldCode.replace('field', 'field_'))
+                    }
                 }
             }
         }

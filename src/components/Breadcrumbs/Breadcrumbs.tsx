@@ -51,6 +51,9 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                     break
                 case 'documents':
                     part = `documents/my_documents`
+                    break
+                case 'setup':
+                    part = `setup/document_general_configuration`
             }
 
             const gotoPage = (part: any) => {
