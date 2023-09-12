@@ -547,3 +547,55 @@ export const checkIfAdvanceSearchIsActive = (formObj: any) => {
 export const downloadFromLink = (link: string) => {
     saveAs(link)
 }
+
+export const adjustStartEnd = (data: any) => {
+    let new_data = [];
+    let end = -1; // Initialize the 'end' value for the first element
+
+    for (let i = 0; i < data.length; i++) {
+        const item = data[i];
+        const start = end + 1;
+        const textLength = item.text.length;
+        end = start + textLength - 1;
+
+        const new_item = {
+            text: item.text,
+            start: start,
+            end: end,
+            fileFieldCode: item.fileFieldCode,
+        };
+
+        new_data.push(new_item);
+    }
+
+    return new_data;
+}
+
+export const convertToOriginalFormat = (adjustedData: any) => {
+    console.log(`adjustedData===`, adjustedData)
+    let originalData = [];
+
+    for (let i = 0; i < adjustedData.length; i++) {
+        const adjustedItem = adjustedData[i];
+        const adjustedItemNext = adjustedData[i + 1];
+        console.log(adjustedItem, adjustedItemNext)
+        const text = adjustedItem.text;
+        const start = adjustedItemNext ? (adjustedItemNext.start - adjustedItem.end) - 1 : 0;
+
+        const end = adjustedItem.end + 1
+
+
+        const originalItem = {
+            end: end,
+            text: text,
+            start: start,
+            fileFieldCode: adjustedItem.fileFieldCode,
+        };
+        console.log(`originalItem===`, originalItem)
+        originalData.push(originalItem);
+    }
+
+    console.log(`originalData===`, originalData)
+    return originalData;
+
+}

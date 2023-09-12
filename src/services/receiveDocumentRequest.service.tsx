@@ -43,7 +43,8 @@ const getReceiveDocumentRequest = async ({
             sR.documentName = sR.documentName === 'pending' ? null : sR.documentName
             sR.requestStatus = !sR.documentName || sR.documentName === 'pending' ? 'Open' : 'Fulfilled'
             sR.fileSizeOriginal = sR.fileSize
-            return sR
+
+            return { ...sR, ...sR.attributes }
         })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columnPreferences.map((column:

@@ -100,6 +100,7 @@ const NamingAdditionalFields = (
     // check if already have additional settings
     useEffect(() => {
         let tempSetting = Object.assign(additionSettings)
+        console.log(tempSetting)
         if (addition.dataType) {
             setDataType(addition.dataType)
             setStringLength({
@@ -349,6 +350,7 @@ const NamingAdditionalFields = (
                         </Form.Control>
                         <Form.Label className="label_custom" style={{ left: 0 }}>Data Type</Form.Label>
                     </Form.Group>
+
                     <Form.Group as={Col} className="mb-3 mt-5 no_padding">
                         <Form.Control
                             as="select"
@@ -358,9 +360,9 @@ const NamingAdditionalFields = (
                             onChange={(e) => setPossibleValue(e.target.value)}>
                             <option></option>
                             {
-                                (LOOKUP_COLUMNS && LOOKUP_COLUMNS.length > 0) &&
-                                LOOKUP_COLUMNS.map((lV: any, index: number) => {
-                                    return <option key={`cr_${index}`} value={lV}>{lV}</option>
+                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookUps.length > 0) &&
+                                lookUp?.REFERENCE_VALUE_TYPE?.lookUps.map((rt: any, index: number) => {
+                                    return <option key={`cr_${index}`} value={rt.keyCode}>{rt.keyValue}</option>
                                 })
                             }
                         </Form.Control>
