@@ -159,7 +159,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     // ===================================================
                     // formData.append("clientShortCode", JSON.stringify())
                 } else if (parentComponent === "sentDocumentRequest" || parentComponent === 'documentNotSummary_request') {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk/sentRequest`
                     formData.append("doc", file);
                 } else if (parentComponent === 'documentNotSummary') {
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/specific/accounts`;
