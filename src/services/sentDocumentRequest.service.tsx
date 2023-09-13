@@ -31,7 +31,7 @@ const getSentDocumentRequest = async ({
         const responseModified: any = {}
         responseModified.sentRequests = sentRequests.map((sR: any) => {
             sR.fileSizeOriginal = sR.fileSize
-            return { ...sR, ...sR.attributes }
+            return { ...sR.attributes, ...sR }
         })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columnPreferences.map((column:

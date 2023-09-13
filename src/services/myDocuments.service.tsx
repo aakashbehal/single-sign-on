@@ -111,7 +111,7 @@ const getMyDocumentList = async ({
             // if (doc) {
             //     document.documentName = doc[doc.length - 1]
             // }
-            return { ...document, ...document.attributes }
+            return { ...document.attributes, ...document }
         })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columnPreferences.map((column:
