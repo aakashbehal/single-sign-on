@@ -9,8 +9,8 @@ const getAllPartners = async ({
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/all`, {
-            skip: pageNumber,
-            limit: pageSize
+            pageNumber,
+            pageSize
         })
         const data = handleResponse(response)
         let partners = data.response.datas

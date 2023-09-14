@@ -62,7 +62,7 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
     }, [searchObj, sortElement, sortType])
 
     useEffect(() => {
-        if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
+        if (!loading && columns?.length === 0 && (defaultColumns && defaultColumns?.length > 0)) {
             setColumnsSaved(defaultColumns)
         } else {
             setColumnsSaved(columns)

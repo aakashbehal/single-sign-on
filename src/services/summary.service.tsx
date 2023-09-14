@@ -112,7 +112,8 @@ const getSummaryDrillDown = async ({
         responseModified.documents = documents.map((document: any) => {
             document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)
-            return document
+
+            return { ...document.attributes, ...document }
         })
         responseModified.totalCount = data.response.metadata.recordCount
         responseModified.columns = data.response.metadata.columnPreferences.map((column:

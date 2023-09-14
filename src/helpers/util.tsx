@@ -163,19 +163,19 @@ export const httpInterceptor = () => {
         (request: any) => {
             try {
                 let user = userService.getUser();
-                let token = userService.getAccessToken()
                 if (request.url.includes('changePasswordByUserDetails')) {
                     user = userService.getTempUser()
                 }
                 const url = request.url.split('/')
                 const urlString = url[url.length - 1].split('?')
-                if (token === null && urlString[0] === 'logout') {
-                    localStorage.removeItem('user');
-                    history.push('/login')
-                }
                 if (
                     noAuthRequired.indexOf(urlString[0]) === -1
                 ) {
+                    let token = userService.getAccessToken()
+                    if (token === null) {
+                        localStorage.removeItem('user');
+                        history.push('/login')
+                    }
                     // if (user.orgType === 'PT') {
                     //     if (request.method === 'get') {
                     //         if ((request.url).indexOf("?") !== -1) {

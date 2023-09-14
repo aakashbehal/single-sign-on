@@ -175,17 +175,7 @@ const TableComponent = ({
 
     const sizeHandler = () => (
         <Row className='table_top_section'>
-            {
-                (parentComponent === 'documentSummary' || parentComponent === "documentNotSummary")
-                &&
-                <>
-                    <Button
-                        className='summary_history_button'
-                        onClick={() => showSummaryNotHaving()}
-                    >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
-                    </Button>
-                </>
-            }
+            {accountSummaryNavigationButton()}
             {
                 !isLoading
                 && (parentComponent === 'account'
@@ -421,6 +411,17 @@ const TableComponent = ({
             return <span id='index' key={`compliance_${index}`} onClick={() => goToCompliance(complianceId, data)} className="clickable_td_emp">{complianceId}{index < split.length - 1 ? ', ' : ''} </span>
         })
         return split
+    }
+
+    const accountSummaryNavigationButton = () => {
+        if (parentComponent === 'documentSummary' || parentComponent === "documentNotSummary")
+            return (<>
+                <Button
+                    className='summary_history_button'
+                    onClick={() => showSummaryNotHaving()}
+                >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
+                </Button>
+            </>)
     }
 
     /**======================================= */
@@ -1244,6 +1245,13 @@ const TableComponent = ({
 
     return (
         <div className="table_container">
+            {
+                (parentComponent === 'documentSummary' || parentComponent === "documentNotSummary") &&
+                (totalCount === 0) &&
+                <Row className='table_top_section' style={{ marginBottom: '1rem' }}>
+                    {accountSummaryNavigationButton()}
+                </Row >
+            }
             {isPagination && totalCount > 0 ? sizeHandler() : null}
             {
                 !isLoading &&

@@ -32,12 +32,12 @@ const TopNavigation = ({ isSidebar = false }: { isSidebar?: boolean }) => {
     useEffect(() => {
         const user: any = userService.getUser();
         setCurrentUser(user)
-        getNotifications(10, 0)
+        getNotifications(10, 1)
     }, [])
 
     onMessageListener()
         .then((payload: any) => {
-            getNotifications(10, 0)
+            getNotifications(10, 1)
             addToast(payload.notification.body, { appearance: 'info', autoDismiss: true });
         })
         .catch((err: any) => console.log('failed: ', err));

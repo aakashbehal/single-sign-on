@@ -34,7 +34,7 @@ const Invoice = ({ collapse }: any) => {
 
     const downloadSampleFile = () => {
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
-        let sampleFile: string = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/user/document/cost/invoice/download`
+        let sampleFile: string = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/invoice/download`
         axiosCustom.get(sampleFile, { responseType: 'arraybuffer', params: { tenure: 'month' } })
             .then((response: any) => {
                 var blob = new Blob([response.data], { type: 'application/pdf' });
@@ -47,47 +47,52 @@ const Invoice = ({ collapse }: any) => {
 
     return (
         <>
-            <Col className={Styles.inner_document_summary}
-                style={{
-                    borderWidth: collapse ? '0' : '1px',
-                    background: collapse ? '#e9ecef' : 'white'
-                }}>
-                <h5>Invoices</h5>
-                <br />
-                {
-                    !error && loading &&
-                    <SkeletonLoading repeats={1} />
-                }
-                {
-                    !error && !loading &&
-                    <Col sm={12} className="no_padding">
-                        <div className={Styles.progress_container} style={{
-                            background: '#ebeaea',
-                            padding: '1rem',
-                            borderRadius: '6px',
-                            margin: 0,
-                            marginBottom: '1rem'
-                        }}>
-                            {
-                                invoicing && invoicing.listOfPartner && invoicing.listOfPartner.map((invoice: invoice, index: number) => {
-                                    return <p key={`invoice_${index}`} style={{
-                                        borderBottom: '2px solid white',
-                                        justifyContent: 'space-between',
-                                        display: 'flex',
-                                        padding: '5px 0',
-                                        margin: 0
-                                    }}><span>{invoice.partnerName}</span> - <span><b>$ {(Number(invoice.amountPay)).toFixed(2)}</b></span></p>
-                                })
-                            }
-                            <h3 style={{
-                                textAlign: 'right',
-                                marginTop: '1rem'
-                            }}>${(Number(invoicing.costCollectByClient)).toFixed(2)}</h3>
-                        </div>
-                        <Button variant="dark" onClick={() => downloadSampleFile()}>Download Detailed Report</Button>
-                    </Col>
-                }
-            </Col>
+            {
+                Number(invoicing.costCollectByClient) !== 0
+                && <Col className={Styles.inner_document_summary}
+                    style={{
+                        borderWidth: collapse ? '0' : '1px',
+                        background: collapse ? '#e9ecef' : 'white'
+                    }}>
+                    <h5>Invoices</h5>
+                    <br />
+                    {
+                        !error && loading &&
+                        <SkeletonLoading repeats={1} />
+                    }
+                    {
+                        !error && !loading &&
+                        <Col sm={12} className="no_padding">
+                            <div className={Styles.progress_container} style={{
+                                background: '#ebeaea',
+                                padding: '1rem',
+                                borderRadius: '6px',
+                                margin: 0,
+                                marginBottom: '1rem'
+                            }}>
+                                {
+                                    invoicing && invoicing.listOfPartner && invoicing.listOfPartner.map((invoice: invoice, index: number) => {
+                                        return <p key={`invoice_${index}`} style={{
+                                            borderBottom: '2px solid white',
+                                            justifyContent: 'space-between',
+                                            display: 'flex',
+                                            padding: '5px 0',
+                                            margin: 0
+                                        }}><span>{invoice.partnerName}</span> - <span><b>$ {(Number(invoice.amountPay)).toFixed(2)}</b></span></p>
+                                    })
+                                }
+                                <p style={{
+                                    textAlign: 'right',
+                                    marginTop: '1rem',
+                                    fontWeight: 'bold'
+                                }}>${(Number(invoicing.costCollectByClient)).toFixed(2)}</p>
+                            </div>
+                            <Button variant="dark" onClick={() => downloadSampleFile()}>Download Detailed Report</Button>
+                        </Col>
+                    }
+                </Col>
+            }
+
         </>
     )
 }
