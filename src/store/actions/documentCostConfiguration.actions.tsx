@@ -35,7 +35,11 @@ export const DocumentCostConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveDocumentsCost.SAVE_DOCUMENTS_COST_RESET })
+                }, 0)
+            })
     },
 
     editDocumentCost: (payload: any) => (dispatch: any) => {
@@ -53,7 +57,11 @@ export const DocumentCostConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveDocumentsCost.SAVE_DOCUMENTS_COST_RESET })
+                }, 0)
+            })
     },
 
     deleteDocumentCost: (docTypeCode: any) => (dispatch: any) => {
@@ -71,6 +79,10 @@ export const DocumentCostConfigActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteDocumentsCost.DELETE_DOCUMENTS_COST_RESET })
+                }, 0)
+            })
     },
 }

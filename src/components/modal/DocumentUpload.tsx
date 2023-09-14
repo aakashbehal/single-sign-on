@@ -410,7 +410,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {
-                    ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 0)
+                    ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1)
                     && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {

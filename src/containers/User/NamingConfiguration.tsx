@@ -415,7 +415,7 @@ const NamingConfiguration = () => {
         }
         let objToDownload: any = []
         let tempJson: any = []
-        if (fileName === 'Product Codes') {
+        if (fileName === 'Document Group Code') {
             objToDownload = [
                 {
                     sheet: "Matrix",
@@ -446,8 +446,8 @@ const NamingConfiguration = () => {
             ]
             tempJson = documentTypes && documentTypes.map((data: any) => {
                 let obj: any = {
-                    "documentCode": data.shortCode,
-                    "documentName": data.documentType
+                    "documentCode": data.keyCode,
+                    "documentName": data.keyValue
                 }
                 return obj
             })
@@ -788,8 +788,8 @@ const NameTransformationNotRequired = ({
                                         })}
                                 </Form.Control>
                                 <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
-                                    {(fieldsSelected[keyName] === 'PC' || fieldsSelected[keyName] === 'DT') &&
-                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Codes')} />}
+                                    {(fieldsSelected[keyName] === 'DG' || fieldsSelected[keyName] === 'DT') &&
+                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Document Group Code')} />}
                                     {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
                                 </Form.Label>
                             </Form.Group>

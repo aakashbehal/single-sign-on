@@ -14,6 +14,7 @@ import Styles from "./User.module.sass";
 import { RequiredDocumentActionCreator } from "../../store/actions/requiredDocuments.actions";
 import { createMessage } from "../../helpers/messages"
 import NoRecord from "../../components/Common/NoResult";
+import { userService } from "../../services";
 
 const RequiredDocuments = () => {
     const dispatch = useDispatch()
@@ -24,6 +25,7 @@ const RequiredDocuments = () => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null)
     const [selectedProduct, setSelectedProduct] = useState<any>([])
+    const [role, setRole] = useState<any>(null)
     const [requiredDocumentsUpdated, setRequiredDocumentsUpdated] = useState<any>([])
     const { requiredDocuments,
         loading,
@@ -63,6 +65,8 @@ const RequiredDocuments = () => {
     }))
 
     useEffect(() => {
+        const user = userService.getUser()
+        setRole(user.recordSource)
         getRequiredDocuments()
         dispatch(TypesActionCreator.getProductTypes())
         dispatch(TypesActionCreator.getDocumentTypes())
@@ -138,7 +142,7 @@ const RequiredDocuments = () => {
     return (<>
         <Col sm={12}>
             <Row>
-                <Col md={10} sm={10} className={`${Styles.search_input} required_document_input`}>
+                <Col md={role === 'Partner' ? 12 : 10} sm={role === 'Partner' ? 12 : 10} className={`${Styles.search_input} required_document_input`}>
                     <CgSearch size={20} className={Styles.search} />
                     <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
@@ -181,12 +185,15 @@ const RequiredDocuments = () => {
                     </div>
                     }
                 </Col>
-                <Col md={2} sm={2} className="required_document_button">
-                    <Button variant="dark" style={{ width: "100%" }} onClick={() => {
-                        setEditRequired(null)
-                        setAddEditRequired(true)
-                    }}>Add New Document Configuration</Button>
-                </Col>
+                {
+                    role !== 'Partner'
+                    && <Col md={2} sm={2} className="required_document_button">
+                        <Button variant="dark" style={{ width: "100%" }} onClick={() => {
+                            setEditRequired(null)
+                            setAddEditRequired(true)
+                        }}>Add New Document Configuration</Button>
+                    </Col>
+                }
             </Row>
             <br />
         </Col>
@@ -213,7 +220,10 @@ const RequiredDocuments = () => {
                             <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
                                 <th>Product</th>
                                 <th>Required Documents</th>
-                                <th style={{ width: '120px' }}>Actions</th>
+                                {
+                                    role !== 'Partner' && <th style={{ width: '120px' }}>Actions</th>
+                                }
+
                             </tr>
                         </thead>
                         <tbody>
@@ -226,34 +236,37 @@ const RequiredDocuments = () => {
                                                 return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.keyValue}</span>
                                             })}
                                         </td>
-                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Edit
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span> &nbsp;
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Delete
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span>
-                                        </td>
+                                        {
+                                            role !== 'Partner' &&
+                                            <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Edit
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span> &nbsp;
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Delete
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span>
+                                            </td>
+                                        }
                                     </tr>)
                                 })
                             }
