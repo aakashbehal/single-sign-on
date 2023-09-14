@@ -410,7 +410,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {
-                    ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1)
+                    ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest'))
                     && <DownloadSample details={details} confList={confList} parentComponent={parentComponent} />
                 }
                 {
@@ -425,6 +425,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
 const DownloadSample = ({ confList, parentComponent, details }: { confList: any, parentComponent: string, details: any }) => {
     const formRefDownload = useRef<any>()
+    const { addToast } = useToasts();
     const [jsonForRequest, setJsonForRequest] = useState([])
 
     useEffect(() => {
@@ -481,7 +482,10 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
         let settings = {
             fileName
         }
-        xlsx(data, settings)
+        try {
+        } catch (err) {
+            xlsx(data, settings)
+        }
     }
 
     const downloadSampleFile = (event: any, type: string) => {
@@ -489,23 +493,17 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
         const {
             document_group
         } = formRefDownload.current
-
         if (type === 'documentNotSummary_request') {
             downloadExcel('matrix', SAMPLE_UPLOAD)
-        } else if (type === 'myDocument') {
-            downloadExcel('matrix', jsonForRequest)
         } else {
-            let sampleFile = ''
-            if (parentComponent === 'myDocument') {
-                sampleFile = "./sample_file_upload.xlsx"
-            } else {
-                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
-            }
+            let sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
+            addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
             axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
                 .then((response: any) => {
                     var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
                     saveAs(blob, 'SendRequestDocumentSample.xlsx');
                 });
+            addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
         }
     }
 
