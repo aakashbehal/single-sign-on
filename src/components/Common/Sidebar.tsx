@@ -102,7 +102,10 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         return { ...state, documents: !state.documents }
                     })
                 }}>
-                    <div className={`icon-link ${(activeRoute === 'my_documents' || activeRoute === 'sent_document_requests' || activeRoute === 'received_document_requests' || activeRoute === 'download_history') ? 'active' : ''}`}>
+                    <div className={`icon-link ${(activeRoute === 'my_documents'
+                        || activeRoute === 'sent_document_requests'
+                        || activeRoute === 'received_document_requests'
+                        || activeRoute === 'download_history') ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
                             <MdOutlinePendingActions size={30} />
                             <span className="link_name">Documents</span>
@@ -129,6 +132,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         || activeRoute === 'document_general_configuration'
                         || activeRoute === 'document_cost_configuration'
                         || activeRoute === 'required_documents'
+                        || activeRoute === 'document_group'
                         || activeRoute === 'domain'
                     ) ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
@@ -142,12 +146,12 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_general_configuration">Document General Configuration</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_cost_configuration">Document Cost Configuration</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/required_documents">Required Documents</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>
+                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
+                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
+                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>
+                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>}
                     </ul>
                 </li>
                 <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
