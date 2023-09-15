@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, Button, Container } from "react-bootstrap"
 import { CgSpinnerAlt } from 'react-icons/cg';
-import { Document, Page } from 'react-pdf';
 
 import Styles from "./Modal.module.sass";
 import { commonServices } from '../../services';
@@ -22,7 +21,7 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
     }, [documentType])
 
     const viewImage = async () => {
-        if (documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg') {
+        if (documentType === 'png' || documentType === 'jpg' || documentType === 'jpeg' || documentType === 'pdf') {
             setLoadingImage(true)
         }
         let fileUrl = await commonServices.getSignedURL(documentData.objectKey || documentData.filePath, documentData.fileSizeOriginal)
@@ -48,6 +47,9 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
             < Modal.Body className="show-grid">
                 <Container className={Styles.center_document} style={{ minHeight: '3rem' }}>
                     {
+                        documentType === 'pdf'
+                    }
+                    {
                         loadingImage
                         && <CgSpinnerAlt className="spinner" size={50} style={{ position: 'absolute' }} />
                     }
@@ -56,13 +58,18 @@ const ViewDocument = ({ onHide, show, documentData }: { onHide: any, show: any, 
                         && <img onLoad={() => setLoadingImage(false)} src={imageUrl} width="100%" />
                     }
                     {
+                        documentType === 'pdf'
+                        && <object data={imageUrl} type="application/pdf" width="100%" height="500px" onLoad={() => setLoadingImage(false)} >
+                            <p>Unable to display PDF file. <a href={imageUrl}>Download</a> instead.</p>
+                        </object>
+                    }
+                    {
                         (
                             documentType === 'txt'
                             || documentType === 'xlsx'
                             || documentType === ""
                             || documentType === null
                             || documentType === undefined
-                            || documentType === 'pdf'
                         )
                         && handleNoPreview()
                     }

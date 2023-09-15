@@ -75,6 +75,9 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
                 </div>
                 <div className={Styles.notification_body}>
                     {
+                        notifications && notifications.length === 0 && <p style={{ marginTop: '1rem', textAlign: 'center' }}>No Notifications</p>
+                    }
+                    {
                         notifications && notifications.map((notification: INotification, index: number) => {
                             if (JSON.stringify(notification) !== "{}") {
                                 return <NotificationCard key={`notification_${index}`} notification={notification} />
