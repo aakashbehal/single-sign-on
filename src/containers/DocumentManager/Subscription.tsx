@@ -7,8 +7,15 @@ import Styles from "./DocumentManager.module.sass";
 import { SubscriptionActionCreator } from '../../store/actions/subscription.actions'
 import { UsageActionCreator } from '../../store/actions/usage.actions';
 
+const IMAGES = [
+    "https://s22.postimg.cc/8mv5gn7w1/paper-plane.png",
+    "https://s28.postimg.cc/ju5bnc3x9/plane.png",
+    "https://s21.postimg.cc/tpm0cge4n/space-ship.png"
+]
+
 const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
     const dispatch = useDispatch()
+    const [imgLoaded, setImgLoaded] = useState(false)
 
     const {
         subscriptions,
@@ -33,6 +40,7 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
     }))
 
     useEffect(() => {
+        console.log(addSubscriptionSuccess)
         if (addSubscriptionSuccess) {
             getSubscriptionsAndUserSubscription()
             dispatch(UsageActionCreator.getUsage())
@@ -41,6 +49,23 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
 
     useEffect(() => {
         getSubscriptionsAndUserSubscription()
+        const loadImage = (image: string) => {
+            return new Promise((resolve, reject) => {
+                const loadImg = new Image()
+                loadImg.src = image
+                // wait 2 seconds to simulate loading time
+                loadImg.onload = () =>
+                    setTimeout(() => {
+                        resolve(image)
+                    }, 2000)
+
+                loadImg.onerror = err => reject(err)
+            })
+        }
+
+        Promise.all(IMAGES.map(image => loadImage(image)))
+            .then(() => setImgLoaded(true))
+            .catch(err => console.log("Failed to load images", err))
     }, [])
 
     const getSubscriptionsAndUserSubscription = () => {
@@ -71,9 +96,7 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
                                 subscriptions && subscriptions.length > 0 && subscriptions.map((subscription: any, index: number) => {
                                     return (
                                         <div className="pricing-plan" key={`sub_${index}`}>
-                                            {subscription.keyCode === 'BT' && <img src="https://s22.postimg.cc/8mv5gn7w1/paper-plane.png" alt="" className="pricing-img" />}
-                                            {subscription.keyCode === 'ST' && <img src="https://s28.postimg.cc/ju5bnc3x9/plane.png" alt="" className="pricing-img" />}
-                                            {subscription.keyCode === 'PT' && <img src="https://s21.postimg.cc/tpm0cge4n/space-ship.png" alt="" className="pricing-img" />}
+                                            <img src={IMAGES[index]} id={`sub_${index}`} alt="" className="pricing-img" />
                                             <h2 className="pricing-header">{subscription?.description.replace('Tier', '')}</h2>
                                             <ul className="pricing-features">
                                                 <li className="pricing-features-item">{subscription.keyValue}</li>
@@ -83,11 +106,11 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
                                                 <a className="pricing-button"><CgSpinnerAlt size={20} className={`spinner ${Styles.details_warning}`} /></a>
                                             }
                                             {
-                                                !addLoading && userSubscription.keyCode === subscription.keyCode
+                                                !addLoading && userSubscription.subscriptionCode === subscription.keyCode
                                                 && <a className="pricing-button is-featured">Subscribed</a>
                                             }
                                             {
-                                                !addLoading && userSubscription.keyCode !== subscription.keyCode
+                                                !addLoading && userSubscription.subscriptionCode !== subscription.keyCode
                                                 && <a className="pricing-button" onClick={() => selectSubscription(subscription.keyCode)}>Subscribe</a>
                                             }
                                         </div>

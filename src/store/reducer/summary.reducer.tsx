@@ -1,5 +1,4 @@
 import {
-    RequestedDocumentSummary,
     SentDocumentSummary,
     DocumentCoverage,
     ReRender,

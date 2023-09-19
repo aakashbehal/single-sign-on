@@ -2,8 +2,7 @@ import {
     GetAllDomains,
     AddDomain,
     DeleteDomain,
-    UpdateDomain,
-    GetDomainByCode
+    UpdateDomain
 } from "../types.d"
 
 const initialState = {

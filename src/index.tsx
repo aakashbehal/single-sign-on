@@ -2,14 +2,14 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 
 import App from './App';
-import { configureFakeBackend } from './helpers';
+// import { configureFakeBackend } from './helpers';
 import { httpInterceptor } from './helpers/util';
-import reportWebVitals from './reportWebVitals';
-import { Metric } from 'web-vitals';
+// import reportWebVitals from './reportWebVitals';
+// import { Metric } from 'web-vitals';
 
-function reportHandler(metric: Metric) {
-    // console.log(metric);
-}
+// function reportHandler(metric: Metric) {
+//      console.log(metric);
+// }
 
 httpInterceptor()
 // configureFakeBackend()

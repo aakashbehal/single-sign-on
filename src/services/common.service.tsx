@@ -35,9 +35,12 @@ const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyVa
         })
         const data = handleResponse(response)
         let lookupObj: any = {}
-        data.response.map((data: any) => {
+        data.response.forEach((data: any) => {
             lookupObj[data.keyValue] = data
         })
+        // data.response.map((data: any) => {
+        //     lookupObj[data.keyValue] = data
+        // })
         return lookupObj
     } catch (error: any) {
         throw error.message
@@ -168,6 +171,7 @@ const getRegulatory = async () => {
             if (d.daysFirstSla && d.daysLastSla) {
                 return d
             }
+            return false
         })
         return regulators
     } catch (error: any) {

@@ -57,7 +57,10 @@ const Usage = ({ collapse }: any) => {
                     </Col>
                 }
             </Col>
-            <Subscription onHide={setShowSubscription} show={showSubscription} />
+            {
+                setShowSubscription &&
+                <Subscription onHide={setShowSubscription} show={showSubscription} />
+            }
         </>
     )
 }

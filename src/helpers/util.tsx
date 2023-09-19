@@ -1,6 +1,6 @@
+// import { useEffect, useMemo, useState } from "react";
 import { userService, commonServices } from "../services";
-import axios, { AxiosInstance } from "axios";
-import React, { useEffect, useMemo, useState } from "react";
+import axios from "axios";
 import { saveAs } from 'file-saver';
 import { history } from "./history";
 
@@ -110,47 +110,6 @@ export const handleResponse = (response: any) => {
     }
     return response.data;
 }
-
-export const useAxiosLoader = () => {
-    const [counter, setCounter] = useState(0);
-
-    const interceptors = useMemo(() => {
-        const inc = () => setCounter(counter => counter + 1);
-        const dec = () => setCounter(counter => counter - 1);
-
-        return ({
-            request: (config: any) => (inc(), config),
-            response: (response: any) => (dec(), response),
-            error: (error: any) => (dec(), Promise.reject(error)),
-        });
-    }, []); // create the interceptors
-
-    useEffect(() => {
-        // add request interceptors
-        const reqInterceptor = axiosCustom.interceptors.request.use(interceptors.request, interceptors.error);
-        // add response interceptors
-        const resInterceptor = axiosCustom.interceptors.response.use(interceptors.response, interceptors.error);
-        return () => {
-            // remove all intercepts when done
-            axiosCustom.interceptors.request.eject(reqInterceptor);
-            axiosCustom.interceptors.response.eject(resInterceptor);
-        };
-    }, [interceptors]);
-
-    return [counter > 0];
-};
-
-
-// export const GlobalLoader = () => {
-//     const [loading] = useAxiosLoader();
-//     return (
-//         <div>
-//             {
-//                 loading ? <CgSpinnerAlt size={20} className={`spinner global_loader`} /> : ''
-//             }
-//         </div>
-//     );
-// }
 
 export const httpInterceptor = () => {
     const noAuthRequired = [
@@ -548,54 +507,42 @@ export const downloadFromLink = (link: string) => {
     saveAs(link)
 }
 
-export const adjustStartEnd = (data: any) => {
-    let new_data = [];
-    let end = -1; // Initialize the 'end' value for the first element
+export const adjustStartEnd = (original: any) => {
+    // return original
+    let adjusted: any = [];
+    let previousEnd = -1;
 
-    for (let i = 0; i < data.length; i++) {
-        const item = data[i];
-        const start = end + 1;
-        const textLength = item.text.length;
-        end = start + textLength - 1;
+    original.forEach((item: any) => {
+        const newItem = { ...item };
+        newItem.start = previousEnd + 1 + newItem.start;
+        newItem.end = newItem.start + item.text.length - 1;
+        adjusted.push(newItem);
+        previousEnd = newItem.end;
+    });
 
-        const new_item = {
-            text: item.text,
-            start: start,
-            end: end,
-            fileFieldCode: item.fileFieldCode,
-        };
-
-        new_data.push(new_item);
-    }
-
-    return new_data;
+    return adjusted;
 }
 
-export const convertToOriginalFormat = (adjustedData: any) => {
-    console.log(`adjustedData===`, adjustedData)
-    let originalData = [];
+export const convertToDesiredFormat = (input: any) => {
+    // return input
+    let converted = [];
 
-    for (let i = 0; i < adjustedData.length; i++) {
-        const adjustedItem = adjustedData[i];
-        const adjustedItemNext = adjustedData[i + 1];
-        console.log(adjustedItem, adjustedItemNext)
-        const text = adjustedItem.text;
-        const start = adjustedItemNext ? (adjustedItemNext.start - adjustedItem.end) - 1 : 0;
+    for (let i = 0; i < input.length; i++) {
+        const currentItem = input[i];
+        const newItem = { ...currentItem };
 
-        const end = adjustedItem.end + 1
+        if (i > 0) {
+            const previousItem = input[i - 1];
+            // console.log(`---previousItem`, previousItem)
+            const spaceCount = currentItem.start - previousItem.end - 1;
+            // console.log(spaceCount)
+            newItem.start = spaceCount
+        }
 
 
-        const originalItem = {
-            end: end,
-            text: text,
-            start: start,
-            fileFieldCode: adjustedItem.fileFieldCode,
-        };
-        console.log(`originalItem===`, originalItem)
-        originalData.push(originalItem);
+        newItem.end = newItem.start + newItem.text.length;
+        converted.push(newItem);
     }
 
-    console.log(`originalData===`, originalData)
-    return originalData;
-
+    return converted;
 }

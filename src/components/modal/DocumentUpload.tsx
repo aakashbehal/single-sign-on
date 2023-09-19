@@ -427,6 +427,7 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
     const formRefDownload = useRef<any>()
     const { addToast } = useToasts();
     const [jsonForRequest, setJsonForRequest] = useState([])
+    const [groupError, setGroupError] = useState<boolean>(false)
 
     useEffect(() => {
         if (parentComponent === 'documentNotSummary_request') {
@@ -483,25 +484,40 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
             fileName
         }
         try {
-        } catch (err) {
             xlsx(data, settings)
+        } catch (err) {
+            console.log(err)
         }
     }
 
+    // SendRequestDocument
     const downloadSampleFile = (event: any, type: string) => {
         event.preventDefault()
         const {
             document_group
         } = formRefDownload.current
+        let sampleFile = ''
         if (type === 'documentNotSummary_request') {
             downloadExcel('matrix', SAMPLE_UPLOAD)
         } else {
-            let sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
+            if (type === 'sentDocumentRequest') {
+                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=SendRequestDocument`
+            } else {
+                if (!document_group?.value) {
+                    setGroupError(true)
+                    return
+                }
+                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
+            }
             addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
             axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })
                 .then((response: any) => {
                     var blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
-                    saveAs(blob, 'SendRequestDocumentSample.xlsx');
+                    if (type !== 'sentDocumentRequest') {
+                        saveAs(blob, `matrix_${document_group.value}.xlsx`);
+                    } else {
+                        saveAs(blob, `SentDocumentRequest.xlsx`);
+                    }
                 });
             addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
         }
@@ -514,26 +530,32 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
             <Col sm={12}>
                 <Form ref={formRefDownload}>
                     <Row>
-                        <Col lg={6} md={12} className="no_padding">
-                            <Form.Group as={Col} className="mb-4">
-                                <Col md={12} sm={12} className="no_padding">
-                                    <Form.Control
-                                        as="select"
-                                        name="document_group"
-                                        className="select_custom white"
-                                    >
-                                        <option value="" disabled selected>Select Document Name Group</option>
-                                        {
-                                            (confList && confList.length > 0) &&
-                                            confList.map((conf: any, index: number) => {
-                                                return <option key={`cr_${index}`} value={conf.namingConfigGroupName}>{conf.namingConfigGroupName}</option>
-                                            })
-                                        }
-                                    </Form.Control>
-                                </Col>
-                            </Form.Group>
-                        </Col >
-                        <Col lg={6} md={12} className='no_padding'>
+                        {
+                            parentComponent !== 'sentDocumentRequest'
+                            && parentComponent !== 'documentNotSummary_request'
+                            &&
+                            <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-4">
+                                    <Col md={12} sm={12} className="no_padding">
+                                        <Form.Control
+                                            as="select"
+                                            name="document_group"
+                                            className="select_custom white"
+                                        >
+                                            <option value="" disabled selected>Select Document Name Group</option>
+                                            {
+                                                (confList && confList.length > 0) &&
+                                                confList.map((conf: any, index: number) => {
+                                                    return <option key={`cr_${index}`} value={conf.namingConfigGroupName}>{conf.namingConfigGroupName}</option>
+                                                })
+                                            }
+                                        </Form.Control>
+                                        <span style={{ color: 'red' }}><small>{groupError ? 'Document Name Group is Required' : ''}</small></span>
+                                    </Col>
+                                </Form.Group>
+                            </Col >
+                        }
+                        <Col lg={(parentComponent !== 'sentDocumentRequest' && parentComponent !== 'documentNotSummary_request') ? 6 : 12} md={12} className='no_padding'>
                             <Form.Group as={Col} className="mb-4">
                                 {
                                     parentComponent === 'sentDocumentRequest'

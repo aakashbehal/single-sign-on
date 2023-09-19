@@ -136,6 +136,7 @@ const UserAccount = () => {
             if (s.stateCode === selectedState) {
                 return s
             }
+            return false
         })
         const reqBody = {
             "principleId": userData.principleId,

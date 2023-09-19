@@ -75,9 +75,20 @@ const TableComponent = ({
     }, [currentPage, pageSize]);
 
     useEffect(() => {
-        if (hideShareArray.length > 0) {
-            setShowHideColumns(hideShareArray);
+        let tempHideShareArray = Object.assign([], hideShareArray)
+        if (!tempHideShareArray.includes('documentName')
+            || !tempHideShareArray.includes('folderName')
+            || !tempHideShareArray.includes('fileSize')
+            || !tempHideShareArray.includes('fileName')
+            || !tempHideShareArray.includes('dueDate')
+        ) {
+            tempHideShareArray.push('documentName')
+            tempHideShareArray.push('folderName')
+            tempHideShareArray.push('fileSize')
+            tempHideShareArray.push('dueDate')
+            tempHideShareArray.push('fileName')
         }
+        setShowHideColumns(tempHideShareArray);
     }, [hideShareArray])
 
     useEffect(() => {
@@ -211,6 +222,7 @@ const TableComponent = ({
                                 <Form.Control
                                     type='Checkbox'
                                     id={h}
+                                    disabled={h === 'documentName' || h === 'fileSize' || h === 'folderName' || h === 'fileName' || h === 'dueDate'}
                                     defaultChecked={showHideColumns.includes(h)}
                                     style={{ cursor: 'pointer', width: 'auto', marginRight: "1rem" }}
                                     onClick={handleClickHideShow}
@@ -414,14 +426,29 @@ const TableComponent = ({
     }
 
     const accountSummaryNavigationButton = () => {
-        if (parentComponent === 'documentSummary' || parentComponent === "documentNotSummary")
-            return (<>
-                <Button
-                    className='summary_history_button'
-                    onClick={() => showSummaryNotHaving()}
-                >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
-                </Button>
-            </>)
+        if (parentComponent === 'documentSummary') {
+            if (handleDocumentManagerSummary.inComplete !== '0') {
+                return (
+                    <>
+                        <Button
+                            className='summary_history_button'
+                            onClick={() => showSummaryNotHaving()}
+                        >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
+                        </Button>
+                    </>
+                )
+            }
+        } else if (parentComponent === "documentNotSummary") {
+            return (
+                <>
+                    <Button
+                        className='summary_history_button'
+                        onClick={() => showSummaryNotHaving()}
+                    >View {parentComponent === 'documentNotSummary' ? handleDocumentManagerSummary.complete : handleDocumentManagerSummary.inComplete} Accounts {parentComponent === 'documentNotSummary' ? "" : "not"} having {handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")}
+                    </Button>
+                </>
+            )
+        }
     }
 
     /**======================================= */

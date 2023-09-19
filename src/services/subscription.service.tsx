@@ -27,7 +27,7 @@ const GetUserSubscriptions = async () => {
 
 const AddSubscription = async (subscriptionCode: any) => {
     try {
-        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/subscription/${subscriptionCode}`, {})
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/subscription`, { subscriptionCode })
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

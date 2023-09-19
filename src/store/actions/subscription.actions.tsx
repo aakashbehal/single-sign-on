@@ -58,7 +58,9 @@ export const SubscriptionActionCreator = {
                 }
             )
             .finally(() => {
-                dispatch({ type: SelectSubscriptions.SELECT_SUBSCRIPTION_RESET })
+                setTimeout(() => {
+                    dispatch({ type: SelectSubscriptions.SELECT_SUBSCRIPTION_RESET })
+                }, 0)
             })
     }
 }

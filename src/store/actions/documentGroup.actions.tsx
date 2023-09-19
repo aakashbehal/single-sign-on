@@ -5,7 +5,7 @@ import {
     DeleteDocumentGroup,
     GetDocumentGroupByCode
 } from "../types.d"
-import { documentGroupService, domainService } from "../../services"
+import { documentGroupService } from "../../services"
 
 export const DocumentGroupActionCreator = {
     getAllDocumentGroup: (requestPayload: any) => (dispatch: any) => {

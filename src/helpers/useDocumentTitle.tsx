@@ -11,6 +11,7 @@ const UseDocumentTitle = (title: any, prevailOnUnmount = false) => {
         if (!prevailOnUnmount) {
             document.title = defaultTitle.current;
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 }
 

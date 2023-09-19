@@ -21,7 +21,7 @@ import NamingAdditionalFields, { IAdditionSettingsJson } from '../../components/
 import { DocumentHighlighter, ISelection, TextSelectionHook } from '../../components/TextSelection/TextSelection';
 import { AiOutlineDelete } from 'react-icons/ai';
 import TransformationNameModel from '../../components/modal/TransformationNameModel';
-import { adjustStartEnd, convertToOriginalFormat } from '../../helpers/util';
+import { adjustStartEnd, convertToDesiredFormat } from '../../helpers/util';
 
 const NamingConfiguration = () => {
     const { id }: { id: string } = useParams()
@@ -116,8 +116,8 @@ const NamingConfiguration = () => {
             if (configParsed?.fields !== 'null' && configParsed?.fields?.length > 0) {
                 setNameTransform(true)
                 handleSetDocumentName(configParsed?.sample)
-                // handleSetState(convertToOriginalFormat(JSON.parse(configParsed?.fields)))
-                handleSetState(JSON.parse(configParsed?.fields))
+                handleSetState(convertToDesiredFormat(JSON.parse(configParsed?.fields)))
+                // handleSetState(JSON.parse(configParsed?.fields))
                 let tempFieldSelected: any = {}
                 for (let [index, conf] of configParsed.userDocConfig.entries()) {
                     if (conf.validationRule && JSON.stringify(conf.validationRule) !== "{}") {
@@ -240,8 +240,8 @@ const NamingConfiguration = () => {
         }
         if (nameTransform) {
             configRequest.sample = documentName
-            configRequest.fields = nameTransformationState
-            // configRequest.fields = adjustStartEnd(nameTransformationState)
+            // configRequest.fields = nameTransformationState
+            configRequest.fields = adjustStartEnd(nameTransformationState)
         }
 
         if (field_1?.value) {
@@ -314,7 +314,6 @@ const NamingConfiguration = () => {
                 validationRule: addFileWithValidation("field_7")
             })
         }
-        console.log(`configRequest---`, configRequest)
         // return
         if (details?.namingConfigGroupId) {
             dispatch(FileNameConfigActionCreator.updateUserConfiguration(configRequest))

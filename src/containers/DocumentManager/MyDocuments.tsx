@@ -172,7 +172,7 @@ const MyDocuments = () => {
                     "folderName": "Name",
                     "fileSize": "Size",
                     "modifiedDate": "Modified Date",
-                    "shareDate": "Shared Date",
+                    "lastShareDate": "Last Shared Date",
                     "receiveDate": "Received Date",
                     "shareBy": "Shared By",
                     "sharedWith": "Shared With"

@@ -103,7 +103,7 @@ const getMyDocumentList = async ({
         let documents = data.response.datas
         const responseModified: any = {}
         responseModified.documents = documents.map((document: any) => {
-            let doc = document?.objectKey?.split("/")
+            // let doc = document?.objectKey?.split("/")
             document.selected = false
             document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)

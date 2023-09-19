@@ -2,8 +2,7 @@ import {
     GetAllDocumentGroup,
     AddDocumentGroup,
     UpdateDocumentGroup,
-    DeleteDocumentGroup,
-    GetDocumentGroupByCode
+    DeleteDocumentGroup
 } from "../types.d"
 
 const initialState = {
