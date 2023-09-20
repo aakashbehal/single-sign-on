@@ -176,6 +176,10 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
         pocName: false,
         address1: false,
         phone1: false,
+        phone1NumberAlphabets: false,
+        phone2NumberAlphabets: false,
+        phone1NumberMin: false,
+        phone2NumberMin: false
     })
 
     const validate = (formObj: any) => {
@@ -195,10 +199,26 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             pocName: false,
             address1: false,
             phone1: false,
+            phone1NumberAlphabets: false,
+            phone2NumberAlphabets: false,
+            phone1NumberMin: false,
+            phone2NumberMin: false
         }
         for (let key in checkFormObj) {
             if (!checkFormObj[key] || checkFormObj[key] === "") {
                 error[key] = true
+            }
+            if (formObj['phone1'] && /^\d+$/.test(formObj['phone1']) === false) {
+                error['phone1NumberAlphabets'] = true
+            }
+            if (formObj['phone2'] && /^\d+$/.test(formObj['phone2']) === false) {
+                error['phone2NumberAlphabets'] = true
+            }
+            if (formObj['phone1'] && formObj['phone1'].length <= 9) {
+                error['phone1NumberMin'] = true
+            }
+            if (formObj['phone2'] && formObj['phone2'].length <= 9) {
+                error['phone2NumberMin'] = true
             }
         }
         for (let k in error) {
@@ -391,18 +411,21 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={6} className="no_padding">
                                     <Form.Group as={Col} className="mb-5">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="phone1" defaultValue={data?.phone1 || null}></Form.Control>
+                                            <Form.Control type="text" name="phone1" maxLength={10} defaultValue={data?.phone1 || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["phone1"] ? 'Primary Phone is required ' : ''}</small></span>
+                                        <span style={{ color: 'red' }}><small>{formError["phone1NumberAlphabets"] ? 'Primary Phone should not contain Alphabets' : ''}</small></span>
+                                        <span style={{ color: 'red' }}><small>{formError["phone1NumberMin"] ? 'Primary Phone cannot be less than 10 digits' : ''}</small></span>
                                         <Form.Label className="label_custom white">Primary Phone <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
                                     <Form.Group as={Col} className="mb-5">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="phone2" defaultValue={data?.phone2 || null}></Form.Control>
+                                            <Form.Control type="text" name="phone2" maxLength={10} defaultValue={data?.phone2 || null}></Form.Control>
                                         </Col>
-                                        {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["phone2NumberAlphabets"] ? 'Secondary Phone should not contain Alphabets ' : ''}</small></span>
+                                        <span style={{ color: 'red' }}><small>{formError["phone2NumberMin"] ? 'Secondary Phone cannot be less than 10 digits ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Secondary Phone</Form.Label>
                                     </Form.Group>
                                 </Col>
