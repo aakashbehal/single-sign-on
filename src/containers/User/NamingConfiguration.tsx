@@ -227,8 +227,8 @@ const NamingConfiguration = () => {
             setFormError({ configName: false })
         }
 
-        if (!uniqueIdentifier) {
-            addToast('A Unique identifier is required', { appearance: 'info', autoDismiss: false })
+        if (!groupIdentifier && !uniqueIdentifier) {
+            addToast('A Group / Unique identifier is required', { appearance: 'info', autoDismiss: false })
             return
         }
 

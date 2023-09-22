@@ -100,7 +100,6 @@ const NamingAdditionalFields = (
     // check if already have additional settings
     useEffect(() => {
         let tempSetting = Object.assign(additionSettings)
-        console.log(tempSetting)
         if (addition.dataType) {
             setDataType(addition.dataType)
             setStringLength({
@@ -113,10 +112,10 @@ const NamingAdditionalFields = (
             })
             tempSetting.validation = true
         }
-        if (addition.possibleVal) {
+        setPossibleValue(addition.possibleVal)
+        if (addition.dataType !== 'DT' && addition.possibleVal) {
             setPossibleValueType(addition.possibleValType)
             setPossibleValuesSubType(addition.possibleValSubType)
-            setPossibleValue(addition.possibleVal)
             tempSetting.possibleValues = true
         }
         setAdditionalSettings(tempSetting)
@@ -132,7 +131,7 @@ const NamingAdditionalFields = (
             isFixLength: false,
             possibleValType: possibleValueType,
             possibleValSubType: possibleValuesSubType,
-            possibleVal: possibleValue,
+            possibleVal: dataType === 'DT' ? dateFormat : possibleValue,
         }
         setAdditionalSettingsJson(settings, field)
     }
@@ -250,8 +249,9 @@ const NamingAdditionalFields = (
                 <Form.Group as={Col} className="mb-5 mt-3 no_padding">
                     <Form.Control
                         as="select"
-                        name="data_type white"
+                        name="date_type"
                         className="select_custom white"
+                        value={possibleValue}
                         onChange={(e) => {
                             setDateFormat(e.target.value)
                         }}>
