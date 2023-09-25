@@ -116,7 +116,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         const config = {
             headers: { 'Content-Type': 'multipart/form-data' }
         }
-        let API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload`
+        let API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload`
         const { file, matrixFile } = fileToUpload
         if ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1 && !matrixFile) {
             setFormSubmitted(false)
