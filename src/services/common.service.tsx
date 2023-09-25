@@ -244,7 +244,7 @@ const componentMap: any = {
 
 const saveColumn = async ({ parentComponent, showHideColumns }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/preference/view`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/user/view`, {
             tableName: componentMap[parentComponent],
             columnNames: showHideColumns,
             domainCode: 'DEBT'
@@ -258,7 +258,7 @@ const saveColumn = async ({ parentComponent, showHideColumns }: any) => {
 
 const getColumnForAllTables = async (table: string) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/preference/view/prefernceName`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/user/view/name`, {
             params: {
                 prefernceName: table
             }
@@ -272,7 +272,7 @@ const getColumnForAllTables = async (table: string) => {
 
 const getClientAccountNumbers = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/clientAccount`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/recordUniqueIdentifier`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
