@@ -134,7 +134,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
                 formData.append("doc", file);
                 formData.append("doc", matrixFile)
-                API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk`
+                API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/bulk`
                 const response = await axiosCustom.post(API_URL, formData, config)
                 handleResponse(response)
                 addToast(createMessage('success', `uploaded`, 'File'), { appearance: 'success', autoDismiss: true })
@@ -148,21 +148,21 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     const {
                         document_type
                     } = documentTypeRef.current
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/account`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/account`
                     formData.append("accountNumber", details.accountId);
                     formData.append("docType", document_type.value);
                     formData.append("doc", file);
                 } else if (parentComponent === "receiveDocumentRequest" && details !== null) {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/fullfill`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/fullfill`
                     formData.append("doc", file);
                     formData.append("id", details.id)
                     // ===================================================
                     // formData.append("clientShortCode", JSON.stringify())
                 } else if (parentComponent === "sentDocumentRequest" || parentComponent === 'documentNotSummary_request') {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/bulk/sentRequest`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/bulk/sentRequest`
                     formData.append("doc", file);
                 } else if (parentComponent === 'documentNotSummary') {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/upload/specific/accounts`;
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/specific/accounts`;
                     formData.append("doc", file);
                     formData.append("docTypeCode", details.docTypeCode);
                 } else {
@@ -501,13 +501,13 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
             downloadExcel('matrix', SAMPLE_UPLOAD)
         } else {
             if (type === 'sentDocumentRequest') {
-                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=SendRequestDocument`
+                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/download?namingCofingGroupName=SendRequestDocument`
             } else {
                 if (!document_group?.value) {
                     setGroupError(true)
                     return
                 }
-                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download?namingCofingGroupName=${document_group.value}`
+                sampleFile = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/download?namingCofingGroupName=${document_group.value}`
             }
             addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
             axiosCustom.get(sampleFile, { responseType: 'arraybuffer' })

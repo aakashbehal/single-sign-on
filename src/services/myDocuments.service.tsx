@@ -158,7 +158,7 @@ const deleteFolder = async (clientAccountNo: any) => {
 
 const downloadFolder = async (accountNumbers: string[]) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download/folder`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/download/folder`, {
             accountNumbers
         })
         const data = handleResponse(response)
@@ -170,7 +170,7 @@ const downloadFolder = async (accountNumbers: string[]) => {
 
 const downloadDocument = async (documentIds: string[]) => {
     try {
-        const response: AxiosResponse = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download/file`, {
+        const response: AxiosResponse = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/download/file`, {
             documentIds
         })
         const data = handleResponse(response)

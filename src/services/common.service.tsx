@@ -292,7 +292,7 @@ const getUsage = async () => {
 
 const getSignedURL = async (objectKey: any, fileSize: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/file/download/presignUrl`,
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/download/presignUrl`,
             {
                 params: {
                     objectKey,

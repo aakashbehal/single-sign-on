@@ -85,7 +85,7 @@ const getSummaryDrillDown = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/accounts`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/recordUniqueIdentifiers`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
@@ -154,7 +154,7 @@ const getSummaryDrillDownNot = async ({
     uploadDateTo
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/accounts/not`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/summary/recordUniqueIdentifiers/not`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,

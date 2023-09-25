@@ -79,7 +79,7 @@ const deleteDomain = async (id: number) => {
 
 const getDomainByCode = async (shortCode: string) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/byShortCode`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/byDomainCode`, {
             params: {
                 shortCode
             }
