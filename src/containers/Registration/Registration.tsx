@@ -20,6 +20,7 @@ import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 import { RegistrationActionCreator } from "../../store/actions/registration.actions";
 import { registrationService } from "../../services";
 import { TiTick } from "react-icons/ti";
+import { BiPhone } from "react-icons/bi";
 
 let isValidOrg = false
 let orgId: any = null
@@ -198,7 +199,7 @@ const Registration = () => {
                 zip } = step2Ref.current
             if (
                 address1.value
-                && stateCode.value
+                // && stateCode.value
                 && city.value
                 && country.value
                 && zip.value
@@ -470,11 +471,12 @@ const Step1Content = React.forwardRef((props: any, ref: any) => {
             </Col>
             <Col sm={6}>
                 <Form.Group controlId="formBasicPassword" className={Styles.input_group}>
-                    <HiOutlineLockClosed className={Styles.input_icon} />
+                    <BiPhone className={Styles.input_icon} />
                     <Form.Control
                         type="tel"
                         name="phone"
                         placeholder="Phone Number"
+                        maxLength={10}
                         defaultValue={JSON.stringify(formDataStep1) !== "{}" ? formDataStep1.phone : null}
                     // className={errors['password'] ? Styles.error : ''}
                     />
@@ -498,7 +500,7 @@ const Step2Content = React.forwardRef((props: any, ref: any) => {
                 setValue(_formD.stateCode)
             }
         }, 0)
-        dispatch(MiscActionCreator.getStates())
+        // dispatch(MiscActionCreator.getStates())
     }, [])
 
     const [value, setValue] = useState<any>('')

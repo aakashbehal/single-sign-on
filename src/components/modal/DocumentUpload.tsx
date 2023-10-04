@@ -51,7 +51,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     })
     const [userType, setUserType] = useState<string>('')
     const [profileImageTemp, setProfileImageTemp] = useState<any>()
-    const [noMatrixFile, SetNoMatrixFile] = useState(false);
+    // const [noMatrixFile, SetNoMatrixFile] = useState(false);
 
     const [documentTypeFromName, setDocumentTypeFromName] = useState<any>(null)
 
@@ -112,17 +112,18 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }
 
     const uploadFile = async () => {
-        SetNoMatrixFile(false)
+        // SetNoMatrixFile(false)
         const config = {
             headers: { 'Content-Type': 'multipart/form-data' }
         }
         let API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload`
         const { file, matrixFile } = fileToUpload
-        if ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1 && !matrixFile) {
-            setFormSubmitted(false)
-            SetNoMatrixFile(true)
-            return
-        }
+        console.log(`file, matrixFile`, file, matrixFile)
+        // if ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1) {
+        //     setFormSubmitted(false)
+        //     // SetNoMatrixFile(true)
+        //     return
+        // }
         let formData: any = new FormData()
         try {
             // size of the file should not be more than 10
@@ -178,6 +179,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             dispatch(SummaryActionCreator.getSentSummary({}))
             search()
         } catch (error: any) {
+            console.log(error)
             setFormSubmitted(false)
             addToast(createMessage('error', `uploading`, 'file'), { appearance: 'error', autoDismiss: false })
             // throw error.message.message
@@ -392,7 +394,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
                             </form>
                             <span className={Styles.form_error}><small>{formError["fileLengthSingle"] ? 'File is required' : ''}</small></span>
-                            <span className={Styles.form_error}><small>{noMatrixFile ? 'Matrix File is required' : ''}</small></span>
+                            {/* <span className={Styles.form_error}><small>{noMatrixFile ? 'Matrix File is required' : ''}</small></span> */}
                         </Col>
                     </Col>
                 </Container>

@@ -44,17 +44,17 @@ const addDocumentGroup = async ({
 }
 
 const updateDocumentGroup = async ({
-    domainName,
-    domainShortCode,
+    name,
+    domainCode,
     description,
-    domainId
+    docGroupId
 }: any) => {
     try {
         const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
-            domainName,
-            domainShortCode,
+            name,
+            domainCode,
             description,
-            domainId
+            docGroupId
         })
         const data = handleResponse(response)
         return data.response

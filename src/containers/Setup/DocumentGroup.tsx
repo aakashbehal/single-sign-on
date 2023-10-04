@@ -109,7 +109,7 @@ const DocumentGroup = () => {
     }
 
     const deleteDocumentGroup = () => {
-        dispatch(DocumentGroupActionCreator.deleteDocumentGroup(details.domainId))
+        dispatch(DocumentGroupActionCreator.deleteDocumentGroup(details.docGroupId))
     }
 
     useEffect(() => {
@@ -228,6 +228,7 @@ const DocumentGroup = () => {
 }
 
 const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
+    console.log(`-data-`, data)
     const documentGroupFormRef = useRef<any>()
     const domainRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
@@ -276,6 +277,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
             name: fullName?.value || null,
             description: description?.value || null
         }
+        console.log(`-formObject-`, formObject)
         if (validate(formObject)) {
             if (!data) {
                 dispatch(DocumentGroupActionCreator.addDocumentGroup(formObject))

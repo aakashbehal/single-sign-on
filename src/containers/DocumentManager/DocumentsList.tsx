@@ -132,7 +132,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         //download file
         addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
         await downloadSignedFile(document)
-        dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
+        // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
         addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 

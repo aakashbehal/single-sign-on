@@ -31,7 +31,8 @@ const DATE_FORMAT = [
     "d MMMM yyyy",
     "dd MMMM yyyy",
     "MMMM d yyyy",
-    "MMMM dd yyyy"
+    "MMMM dd yyyy",
+    "MMddyyyy"
 ]
 const LOOKUP_COLUMNS = ["CODE", "VALUE", "DESC", "EXTERNAL_CODE", "EXTERNAL_NAME"]
 
@@ -251,7 +252,7 @@ const NamingAdditionalFields = (
                         as="select"
                         name="date_type"
                         className="select_custom white"
-                        value={possibleValue}
+                        value={possibleValue || dateFormat}
                         onChange={(e) => {
                             setDateFormat(e.target.value)
                         }}>
