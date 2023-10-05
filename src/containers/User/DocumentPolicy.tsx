@@ -3,12 +3,12 @@ import { useSelector } from 'react-redux';
 import { FileNameConfigActionCreator } from '../../store/actions/fileNameConfig.actions';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-const DocumentPolicy = ({ dispatch }: any) => {
+const DocumentPolicy = ({ dispatch, policy, loading, error }: any) => {
     const otherSaveRef = useRef<any>()
     const [modeSelected, setModeSelected] = useState('KBF');
     const [mode, setMode] = useState([
         {
-            keycode: 'KBF',
+            keycode: 'KF',
             keyvalue: 'Keep Both Files'
         },
         {
@@ -17,52 +17,36 @@ const DocumentPolicy = ({ dispatch }: any) => {
         }
     ])
 
-    const {
-        isLoadingDocumentPolicy,
-        dataDocumentPolicy,
-        dataUserDocumentPolicy,
-    } = useSelector((state: any) => ({
-        isLoadingDocumentPolicy: state.fileNameConfig.userDocumentPolicy.loading,
-        dataUserDocumentPolicy: state.fileNameConfig.userDocumentPolicy.data,
-        dataDocumentPolicy: state.fileNameConfig.documentPolicy.data,
-    }))
 
     useEffect(() => {
-        if (dataUserDocumentPolicy) {
-            setModeSelected((dataUserDocumentPolicy ? dataUserDocumentPolicy.configValSelectedCode : "KBF"))
-        }
-    }, [dataUserDocumentPolicy])
+        setModeSelected(policy.documentDuplication)
+    }, [policy])
 
-    useEffect(() => {
-        dispatch(FileNameConfigActionCreator.getDocumentPolicy())
-        dispatch(FileNameConfigActionCreator.getUserDocumentPolicy())
-    }, [])
 
     const resetHandler = () => {
-        setModeSelected('KBF')
+        setModeSelected('KF')
         setTimeout(() => {
             otherSaveRef.current.click()
         }, 0)
     }
-    const handleSave = () => {
-        let configRequest = [{
-            "configShortCode": "DP",
-            "configValShortCode": modeSelected,
-            "orgTypeCode": "CT"
-        }]
-        dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
+    const handleSave = (e: any) => {
+        e.preventDefault()
+        let configRequest = {
+            "documentDuplication": modeSelected,
+        }
+        dispatch(FileNameConfigActionCreator.saveDuplicatePolicy(configRequest))
     }
     return (
         <>
             {
-                !isLoadingDocumentPolicy && <Row style={{ margin: 0 }} className="form_container">
+                !loading && <Row style={{ margin: 0 }} className="form_container">
                     <Col lg={12} sm={12}>
                         <Row>
                             <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Other Configuration</h5></Col>
                         </Row>
                         <br />
                         <br />
-                        <Form onSubmit={(e) => handleSave()}>
+                        <Form onSubmit={(e) => handleSave(e)}>
                             <Row>
                                 <Col lg={12} md={6}>
                                     <Form.Group as={Col} className="mb-4">

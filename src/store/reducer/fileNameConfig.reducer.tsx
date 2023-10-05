@@ -10,7 +10,10 @@ import {
     DocumentPolicy,
     UserListOfUserConfig,
     DeleteUserConfiguration,
-    UpdateUserConfiguration
+    UpdateUserConfiguration,
+    Policy,
+    SaveDuplicatePolicy,
+    SaveRetentionPolicy
 } from "../types.d"
 
 const initialState = {
@@ -71,6 +74,21 @@ const initialState = {
         loading: false,
         error: false,
         success: false
+    },
+    policy: {
+        data: {},
+        loading: false,
+        error: false
+    },
+    saveDuplicatePolicy: {
+        success: false,
+        loading: false,
+        error: false
+    },
+    saveRetentionPolicy: {
+        success: false,
+        loading: false,
+        error: false
     }
 }
 
@@ -426,6 +444,105 @@ const fileNameConfigReducer = (state = initialState, action: { type: any, payloa
                 ...state,
                 updateConfig: {
                     ...state.updateConfig,
+                    loading: false,
+                    error: false,
+                    success: false
+                }
+            }
+        case Policy.POLICY_REQUEST:
+            return {
+                ...state,
+                policy: {
+                    ...state.policy,
+                    loading: true,
+                    error: false
+                }
+            }
+        case Policy.POLICY_SUCCESS:
+            return {
+                ...state,
+                policy: {
+                    ...state.policy,
+                    loading: false,
+                    data: action.payload
+                }
+            }
+        case Policy.POLICY_FAILURE:
+            return {
+                ...state,
+                policy: {
+                    ...state.policy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveDuplicatePolicy.SAVE_USER_CONFIG_REQUEST:
+            return {
+                ...state,
+                saveConfig: {
+                    ...state.saveDuplicatePolicy,
+                    loading: true
+                }
+            }
+        case SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_SUCCESS:
+            return {
+                ...state,
+                saveDuplicatePolicy: {
+                    ...state.saveDuplicatePolicy,
+                    loading: false,
+                    success: true
+                }
+            }
+        case SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_FAILURE:
+            return {
+                ...state,
+                saveDuplicatePolicy: {
+                    ...state.saveDuplicatePolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_RESET:
+            return {
+                ...state,
+                saveDuplicatePolicy: {
+                    ...state.saveDuplicatePolicy,
+                    loading: false,
+                    error: false,
+                    success: false
+                }
+            }
+        case SaveRetentionPolicy.SAVE_RETENTION_POLICY_REQUEST:
+            return {
+                ...state,
+                saveRetentionPolicy: {
+                    ...state.saveRetentionPolicy,
+                    loading: true
+                }
+            }
+        case SaveRetentionPolicy.SAVE_RETENTION_POLICY_SUCCESS:
+            return {
+                ...state,
+                saveRetentionPolicy: {
+                    ...state.saveRetentionPolicy,
+                    loading: false,
+                    success: true
+                }
+            }
+        case SaveRetentionPolicy.SAVE_RETENTION_POLICY_FAILURE:
+            return {
+                ...state,
+                saveRetentionPolicy: {
+                    ...state.saveRetentionPolicy,
+                    loading: false,
+                    error: true
+                }
+            }
+        case SaveRetentionPolicy.SAVE_RETENTION_POLICY_RESET:
+            return {
+                ...state,
+                saveRetentionPolicy: {
+                    ...state.saveRetentionPolicy,
                     loading: false,
                     error: false,
                     success: false

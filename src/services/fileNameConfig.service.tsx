@@ -133,6 +133,38 @@ const deleteUserConfiguration = async (namingConfigGroupCode: string) => {
     }
 }
 
+const getPolicy = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/policy`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const saveDuplicatePolicy = async (requestBody: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/policy/duplication`,
+            requestBody)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const SaveRetentionPolicy = async (requestBody: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/policy/retention`,
+            requestBody)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const fileNameConfigService = {
     getConfig,
     getUserConfig,
@@ -140,5 +172,8 @@ export const fileNameConfigService = {
     saveUserConfiguration,
     getListOfUserConfig,
     deleteUserConfiguration,
-    updateUserConfiguration
+    updateUserConfiguration,
+    getPolicy,
+    SaveRetentionPolicy,
+    saveDuplicatePolicy
 }

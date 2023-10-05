@@ -10,7 +10,10 @@ import {
     DocumentPolicy,
     UserListOfUserConfig,
     DeleteUserConfiguration,
-    UpdateUserConfiguration
+    UpdateUserConfiguration,
+    Policy,
+    SaveDuplicatePolicy,
+    SaveRetentionPolicy
 } from "../types.d";
 import { commonServices, fileNameConfigService } from "../../services"
 
@@ -167,6 +170,65 @@ export const FileNameConfigActionCreator = {
                     dispatch(failure(error))
                 }
             )
+    },
+    getPolicy: () => (dispatch: any) => {
+        const request = () => ({ type: Policy.POLICY_REQUEST })
+        const success = (userNameConfig: any) => ({ type: Policy.POLICY_SUCCESS, payload: userNameConfig })
+        const failure = (error: any) => ({ type: Policy.POLICY_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.getPolicy()
+            .then(
+                userNameConfig => {
+                    dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    saveDuplicatePolicy: (requestBody: any) => (dispatch: any) => {
+        const request = () => ({ type: SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_REQUEST })
+        const success = (userNameConfig: any) => ({ type: SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_SUCCESS, payload: userNameConfig })
+        const failure = (error: any) => ({ type: SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.saveDuplicatePolicy(requestBody)
+            .then(
+                userNameConfig => {
+                    dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveDuplicatePolicy.SAVE_DUPLICATE_POLICY_RESET })
+                }, 0)
+            })
+    },
+    saveRetentionPolicy: (requestBody: any) => (dispatch: any) => {
+        const request = () => ({ type: SaveRetentionPolicy.SAVE_RETENTION_POLICY_REQUEST })
+        const success = (userNameConfig: any) => ({ type: SaveRetentionPolicy.SAVE_RETENTION_POLICY_SUCCESS, payload: userNameConfig })
+        const failure = (error: any) => ({ type: SaveRetentionPolicy.SAVE_RETENTION_POLICY_FAILURE, payload: error })
+
+        dispatch(request())
+
+        fileNameConfigService.SaveRetentionPolicy(requestBody)
+            .then(
+                userNameConfig => {
+                    dispatch(success(userNameConfig))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: SaveRetentionPolicy.SAVE_RETENTION_POLICY_RESET })
+                }, 0)
+            })
     },
     saveUserConfiguration: (requestBody: any) => (dispatch: any) => {
         const request = () => ({ type: SaveUserConfiguration.SAVE_USER_CONFIG_REQUEST })

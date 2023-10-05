@@ -3,45 +3,27 @@ import { useSelector } from 'react-redux';
 import { FileNameConfigActionCreator } from '../../store/actions/fileNameConfig.actions';
 import { Button, Col, Form, Row } from 'react-bootstrap';
 
-const RetentionPolicy = ({ dispatch }: any) => {
+const RetentionPolicy = ({ dispatch, policy, loading, error }: any) => {
     const retentionSaveRef = useRef<any>();
     const retentionRef = useRef<any>();
     const [retention, setRetention] = useState<any>(60)
     const [minMaxError, setMinMaxError] = useState<any>(false)
 
-    const {
-        isLoadingRetention,
-        dataUserRetentionPolicy,
-        dataRetentionPolicy,
-    } = useSelector((state: any) => ({
-        isLoadingRetention: state.fileNameConfig.userRetentionPolicy.loading,
-        dataUserRetentionPolicy: state.fileNameConfig.userRetentionPolicy.data,
-        dataRetentionPolicy: state.fileNameConfig.retentionPolicy.data
-    }))
-
     useEffect(() => {
-        // dispatch(FileNameConfigActionCreator.getRetentionPolicy())
-        dispatch(FileNameConfigActionCreator.getUserRetentionPolicy())
-    }, [])
+        setRetention(policy.retentionPolicy)
+    }, [policy])
 
-    useEffect(() => {
-        if (dataUserRetentionPolicy) {
-            setRetention(dataUserRetentionPolicy ? dataUserRetentionPolicy.configValSelectedCode : dataRetentionPolicy.defaultValue)
-        }
-    }, [dataUserRetentionPolicy])
-
-    const handleSave = () => {
+    const handleSave = (e: any) => {
+        e.preventDefault()
         if (Number(retention) < 60 || Number(retention) > 365) {
             setMinMaxError(true)
             return
         } else {
             setMinMaxError(false)
-            let configRequest = [{
-                "configShortCode": "RP",
-                "configValShortCode": retention,
-                "orgTypeCode": "CT"
-            }]
-            dispatch(FileNameConfigActionCreator.saveUserConfiguration(configRequest))
+            let configRequest = {
+                "retentionPolicy": retention
+            }
+            dispatch(FileNameConfigActionCreator.saveRetentionPolicy(configRequest))
         }
     }
 
@@ -55,14 +37,14 @@ const RetentionPolicy = ({ dispatch }: any) => {
     return (
         <>
             {
-                !isLoadingRetention && <Row style={{ margin: 0 }} className="form_container">
+                !loading && <Row style={{ margin: 0 }} className="form_container">
                     <Col lg={12} sm={12}>
                         <Row>
                             <Col sm={12}><h5 style={{ marginLeft: '1rem' }}>Document Retention Policy</h5></Col>
                         </Row>
                         <br />
                         <br />
-                        <Form ref={retentionRef} onSubmit={(e) => handleSave()}>
+                        <Form ref={retentionRef} onSubmit={(e) => handleSave(e)}>
                             <Row>
                                 <Col lg={12} md={12}>
                                     <Form.Group as={Col} className="mb-4">

@@ -1,6 +1,7 @@
 
 import { AxiosResponse } from "axios"
 import { handleResponse, axiosCustom, formatBytes } from "../helpers/util"
+import _ from 'lodash'
 
 const getMyDocumentFolders = async ({
     pageSize,
@@ -107,7 +108,23 @@ const getMyDocumentList = async ({
             document.selected = false
             document.fileSizeOriginal = document.fileSize
             document.fileSize = formatBytes(document.fileSize)
-            document.name = document.documentName
+            let split = document.filePath.split('/')
+            let UniqueIdentifier = document.documentUniqueIdentifierValue
+            let orgCode = split[1]
+            let docType = document.documentType
+            let generationDate = document.generateDate
+            let name = document.documentName.replace(UniqueIdentifier, '').replace(orgCode, '').replace(docType, '').replace(generationDate, '').replace('-', '').replace('_', '').replace(/s/g, '')
+            let formattedName = `${orgCode}-${docType}-`
+            if (generationDate) {
+                let date = (new Date(generationDate)).getDate()
+                let month = (new Date(generationDate)).getMonth()
+                let year = (new Date(generationDate)).getFullYear()
+
+                formattedName += `${year}${date <= 9 ? `0${date}` : date}${month <= 9 ? `0${month}` : month}-`
+            }
+            formattedName += `${UniqueIdentifier}-${name.trim()}`
+            // document.name = document.documentName
+            document.name = formattedName
             // if (doc) {
             //     document.documentName = doc[doc.length - 1]
             // }
