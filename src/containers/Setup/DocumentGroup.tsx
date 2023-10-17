@@ -109,7 +109,7 @@ const DocumentGroup = () => {
     }
 
     const deleteDocumentGroup = () => {
-        dispatch(DocumentGroupActionCreator.deleteDocumentGroup(details.docGroupId))
+        dispatch(DocumentGroupActionCreator.deleteDocumentGroup(details.id))
     }
 
     useEffect(() => {
@@ -154,13 +154,13 @@ const DocumentGroup = () => {
                                 {
                                     documentGroup && documentGroup.map((cT: any, index: any) => {
                                         return (<tr key={`rD_${index}`}>
-                                            <td>{cT.docGroupId}</td>
-                                            <td>{cT.fullName}</td>
-                                            <td>{cT.shortName}</td>
+                                            <td>{cT.id}</td>
+                                            <td>{cT.name}</td>
+                                            <td>{cT.code}</td>
                                             <td>{cT.domainCode}</td>
                                             <td>{cT.description}</td>
                                             <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                                <span>
+                                                {/* <span>
                                                     <OverlayTrigger
                                                         placement="bottom"
                                                         delay={{ show: 250, hide: 400 }}
@@ -175,7 +175,7 @@ const DocumentGroup = () => {
                                                             setEditData(cT)
                                                         }} size={20} style={{ cursor: 'pointer' }} />
                                                     </OverlayTrigger>
-                                                </span> &nbsp;
+                                                </span> &nbsp; */}
                                                 <span>
                                                     <OverlayTrigger
                                                         placement="bottom"
@@ -267,17 +267,18 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
 
     const addEditSubmit = () => {
         const {
+            domain,
             shortName,
             fullName,
             description
         } = documentGroupFormRef.current
         let formObject = {
-            docGroupId: data?.docGroupId || null,
-            domainCode: shortName?.value || null,
+            docGroupId: data?.id || null,
+            domainCode: domain?.value || null,
             name: fullName?.value || null,
-            description: description?.value || null
+            description: description?.value || null,
+            code: shortName?.value || null
         }
-        console.log(`-formObject-`, formObject)
         if (validate(formObject)) {
             if (!data) {
                 dispatch(DocumentGroupActionCreator.addDocumentGroup(formObject))
@@ -315,7 +316,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12} className="no_padding">
-                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
+                                            <Form.Control type="text" name="shortName" defaultValue={data?.code || null} maxLength={5}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Short Name</Form.Label>
@@ -324,7 +325,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12} className="no_padding">
-                                            <Form.Control type="text" name="fullName" defaultValue={data?.fullName || null}></Form.Control>
+                                            <Form.Control type="text" name="fullName" defaultValue={data?.name || null}></Form.Control>
                                         </Col>
                                         <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Full Name</Form.Label>

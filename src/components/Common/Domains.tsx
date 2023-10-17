@@ -19,14 +19,17 @@ const Domains = ({ selectedValue = '' }: { selectedValue?: string }) => {
     const [value, setValue] = useState(selectedValue)
 
     useEffect(() => {
-        dispatch(DomainActionCreator.getAllDomains({
-            pageSize: 1000,
-            pageNumber: 1,
-            sortOrder: 'modifiedDate',
-            sortParam: 'desc'
-        }))
+        dispatch(DomainActionCreator.getAllDomains())
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    // useEffect(() => {
+    //     for (let domain of domains) {
+    //         if (domain.domainId === selectedValue) {
+    //             setValue(domain.code)
+    //         }
+    //     }
+    // }, [domains, selectedValue])
 
     useEffect(() => {
         setValue(selectedValue)
@@ -53,7 +56,7 @@ const Domains = ({ selectedValue = '' }: { selectedValue?: string }) => {
             }
             <Form.Control
                 as="select"
-                name="clientId"
+                name="domain"
                 value={value}
                 className="select_custom"
                 onChange={(e) => { setValue(e.target.value) }}
@@ -64,7 +67,7 @@ const Domains = ({ selectedValue = '' }: { selectedValue?: string }) => {
                         return (
                             <option
                                 key={`client${index}`}
-                                value={domain.shortCode}
+                                value={domain.code}
                             >
                                 {domain.name}
                             </option>

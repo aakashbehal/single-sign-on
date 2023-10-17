@@ -1,7 +1,8 @@
 import {
     GetAllDocumentTypePreference,
     AddDocumentTypePreference,
-    DeleteDocumentTypePreference
+    DeleteDocumentTypePreference,
+    UpdateDocumentTypePreference
 } from "../types.d"
 
 const initialState = {
@@ -12,6 +13,9 @@ const initialState = {
     adding: false,
     addSuccess: false,
     addError: false,
+    updating: false,
+    updatingSuccess: false,
+    updatingError: false,
     deleting: false,
     deleteSuccess: false,
     deleteError: false
@@ -31,7 +35,7 @@ const documentTypePreferenceReducer = (state = initialState, action: { type: any
             return {
                 ...state,
                 loading: false,
-                data: action.payload.domains,
+                data: action.payload.docTypePref,
                 totalCount: action.payload.totalCount
             }
         case GetAllDocumentTypePreference.GET_ALL_DOCUMENT_TYPE_PREFERENCE_FAILURE:
@@ -77,6 +81,34 @@ const documentTypePreferenceReducer = (state = initialState, action: { type: any
                 adding: false,
                 addSuccess: false,
                 addError: false
+            }
+        case UpdateDocumentTypePreference.UPDATE_DOCUMENT_TYPE_PREFERENCE_REQUEST:
+            return {
+                ...state,
+                updating: true,
+                updatingSuccess: false,
+                updatingError: false
+            }
+        case UpdateDocumentTypePreference.UPDATE_DOCUMENT_TYPE_PREFERENCE_SUCCESS:
+            return {
+                ...state,
+                updating: false,
+                updatingSuccess: true,
+                updatingError: false
+            }
+        case UpdateDocumentTypePreference.UPDATE_DOCUMENT_TYPE_PREFERENCE_FAILURE:
+            return {
+                ...state,
+                updating: false,
+                updatingSuccess: false,
+                updatingError: true
+            }
+        case UpdateDocumentTypePreference.UPDATE_DOCUMENT_TYPE_PREFERENCE_RESET:
+            return {
+                ...state,
+                updating: false,
+                updatingSuccess: false,
+                updatingError: false
             }
         case DeleteDocumentTypePreference.DELETE_DOCUMENT_TYPE_PREFERENCE_REQUEST:
             return {

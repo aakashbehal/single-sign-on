@@ -22,6 +22,20 @@ import { DocumentHighlighter, ISelection, TextSelectionHook } from '../../compon
 import { AiOutlineDelete } from 'react-icons/ai';
 import TransformationNameModel from '../../components/modal/TransformationNameModel';
 import { adjustStartEnd, convertToDesiredFormat } from '../../helpers/util';
+import DefaultMissingModal from '../../components/modal/DefaultMissingModal';
+import DocumentTypes from '../../components/Common/DocumentType';
+
+interface IFields {
+    config_name: { value: string }
+    conjunction: { value: string }
+    field_1: { value: string }
+    field_2: { value: string }
+    field_3: { value: string }
+    field_4: { value: string }
+    field_5: { value: string }
+    field_6: { value: string }
+    field_7: { value: string }
+}
 
 const NamingConfiguration = () => {
     const { id }: { id: string } = useParams()
@@ -37,6 +51,11 @@ const NamingConfiguration = () => {
     const [fieldsSelected, setFieldSelected] = useState<any>({});
     const [nameTransform, setNameTransform] = useState<any>(null);
     const [confirmChange, setConfirmChange] = useState<boolean>(false)
+    const [hasProductCode, setHasProductCode] = useState(false)
+    const [namingConfig, setNamingConfig] = useState(null)
+    const [missing, setMissing] = useState<{ product: boolean, documentType: boolean }>(
+        { product: true, documentType: true }
+    )
     const [formError, setFormError] = useState<any>({
         configName: false
     })
@@ -46,7 +65,8 @@ const NamingConfiguration = () => {
     const [showAdditional, setShowAdditional] = useState<string>('')
     const [additionSettingsJson, setAdditionalSettingsJson] = useState<any>(null)
     const [nameTransformationState, documentName, { selectionEventListener, deleteSelection, reset, handleSetDocumentName, handleSetState }] = TextSelectionHook()
-
+    const [defaultProductCode, setDefaultProductCode] = useState<any>(details?.defaultDocGroupConfigCode)
+    const [defaultDocumentType, setDefaultDocumentType] = useState<any>(details?.defaultDocTypeCode)
     const {
         saveSuccess,
         saveError,
@@ -148,6 +168,12 @@ const NamingConfiguration = () => {
     }, [dataFieldOptions])
 
     useEffect(() => {
+        if (details?.defaultDocGroupConfigCode) {
+            setDefaultProductCode(details.defaultDocGroupConfigCode)
+        }
+        if (details?.defaultDocTypeCode) {
+            setDefaultDocumentType(details?.defaultDocTypeCode)
+        }
         if (details && details?.userDocConfig) {
             for (let i = 0; i < details.userDocConfig.length; i++) {
                 if (details.userDocConfig[i].isDocumentGroupIdentifier) {
@@ -206,6 +232,34 @@ const NamingConfiguration = () => {
         }
     }
 
+    const missingChecked = (obj: any) => {
+        let missingTemp: any = { ...missing }
+        for (let o in obj.userDocConfig) {
+            if (details?.defaultDocGroupConfigCode || obj.userDocConfig[o].attributeCode === 'DG') {
+                missingTemp.product = false
+            }
+            if (obj.userDocConfig[o].attributeCode === 'DG') {
+                missingTemp.product = false
+                // setDefaultProductCode(null)
+                obj.defaultDocGroupConfigCode = null
+            }
+            if (details?.defaultDocTypeCode || obj.userDocConfig[o].attributeCode === 'DT') {
+                missingTemp.documentType = false
+            }
+            if (obj.userDocConfig[o].attributeCode === 'DT') {
+                missingTemp.documentType = false
+                // setDefaultDocumentType(null)
+                obj.defaultDocTypeCode = null
+
+            }
+        }
+        setNamingConfig(obj)
+        setMissing(missingTemp)
+        for (let m in missingTemp) {
+            if (missingTemp[m]) return true
+        }
+    }
+
     const handleSave = (e: any, type: any) => {
         e.preventDefault();
         const {
@@ -218,7 +272,7 @@ const NamingConfiguration = () => {
             field_5,
             field_6,
             field_7
-        } = configRef.current
+        }: IFields = configRef.current
 
         if (!config_name.value) {
             setFormError({ configName: true })
@@ -314,7 +368,16 @@ const NamingConfiguration = () => {
                 validationRule: addFileWithValidation("field_7")
             })
         }
-        // return
+
+        configRequest.defaultDocTypeCode = defaultDocumentType || null
+        configRequest.defaultDocGroupConfigCode = defaultProductCode || null
+
+        if (missingChecked(configRequest)) {
+
+            setHasProductCode(true)
+            return
+        }
+
         if (details?.namingConfigGroupId) {
             dispatch(FileNameConfigActionCreator.updateUserConfiguration(configRequest))
         } else {
@@ -533,8 +596,8 @@ const NamingConfiguration = () => {
                             {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Row>
-                                        <Form.Group as={Col} className="mb-2">
-                                            <Col md={12} sm={12}>
+                                        <Col sm={6}>
+                                            <Form.Group as={Col} className="mb-2">
                                                 <Form.Control
                                                     as="input"
                                                     name="config_name"
@@ -542,11 +605,11 @@ const NamingConfiguration = () => {
                                                     className="select_custom white">
                                                 </Form.Control>
                                                 <span style={{ color: 'red' }}><small>{formError["configName"] ? 'Configuration Name is Required' : ''}</small></span>
-                                            </Col>
-                                            <Form.Label className="label_custom">Name</Form.Label>
-                                        </Form.Group>
-                                        <Form.Group as={Col}>
-                                            <Col md={12} sm={12}>
+                                                <Form.Label className="label_custom">Name</Form.Label>
+                                            </Form.Group>
+                                        </Col>
+                                        <Col sm={6}>
+                                            <Form.Group as={Col}>
                                                 <Form.Control
                                                     as="select"
                                                     name="conjunction"
@@ -559,9 +622,55 @@ const NamingConfiguration = () => {
                                                         })
                                                     }
                                                 </Form.Control>
+                                                <Form.Label className="label_custom">Conjunction / Concatenation Parameter</Form.Label>
+                                            </Form.Group>
+                                        </Col>
+                                    </Row>
+                                    <Row className='mt-4'>
+                                        {
+                                            details?.defaultDocGroupConfigCode &&
+                                            <Col sm={6} >
+                                                <Form.Group as={Col} >
+                                                    <Form.Control
+                                                        as="select"
+                                                        name="productType"
+                                                        value={defaultProductCode}
+                                                        onChange={(e) => setDefaultProductCode(e.target.value)}
+                                                        className="select_custom white">
+                                                        <option disabled value="" selected>Select Product Type...</option>
+                                                        {
+                                                            (productTypes && productTypes.length > 0) &&
+                                                            productTypes.map((dT: any, index: number) => {
+                                                                return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
+                                                            })
+                                                        }
+                                                    </Form.Control>
+                                                    <Form.Label className="label_custom ">Document Group Code</Form.Label>
+                                                </Form.Group>
                                             </Col>
-                                            <Form.Label className="label_custom">Conjunction / Concatenation Parameter</Form.Label>
-                                        </Form.Group>
+                                        }
+                                        {
+                                            details?.defaultDocTypeCode &&
+                                            <Col sm={6} >
+                                                <Form.Group as={Col} className="mb-2">
+                                                    <Form.Control
+                                                        as="select"
+                                                        value={defaultDocumentType}
+                                                        onChange={(e) => setDefaultDocumentType(e.target.value)}
+                                                        name="documentType"
+                                                        className="select_custom white">
+                                                        <option></option>
+                                                        {
+                                                            (documentTypes && documentTypes.length > 0) &&
+                                                            documentTypes.map((dT: any, index: number) => {
+                                                                return <option key={`cr_${index}`} value={dT.keyCode}>{dT.keyValue}</option>
+                                                            })
+                                                        }
+                                                    </Form.Control>
+                                                    <Form.Label className="label_custom ">Document Type</Form.Label>
+                                                </Form.Group>
+                                            </Col>
+                                        }
                                     </Row>
                                     <hr />
                                 </Col>
@@ -645,7 +754,11 @@ const NamingConfiguration = () => {
                 confirmChange &&
                 <TransformationNameModel onHide={() => setConfirmChange(false)} show={confirmChange} confirmChange={() => handleConfirmSelection(false)} />
             }
-        </Col>
+            {
+                hasProductCode &&
+                <DefaultMissingModal onHide={() => setHasProductCode(false)} show={hasProductCode} namingConfig={namingConfig} missing={missing} />
+            }
+        </Col >
     )
 }
 
@@ -731,10 +844,7 @@ const NameTransformationRequired = ({
         <Col sm={12} style={{ textAlign: 'center' }}>
             <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
             {/* <Button variant="dark" onClick={() => setNameTransform(true)}>Name Transformation</Button>{" "} */}
-            {
-                id !== '_NEW_CONFIGURATION'
-                && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
-            }
+            <Button variant="dark" style={{ width: "140px" }} onClick={() => history.goBack()}>Cancel</Button>
         </Col>
     </React.Fragment>
 }
@@ -833,12 +943,9 @@ const NameTransformationNotRequired = ({
                 ))
             }
         </Row>
-        <Col sm={12}>
+        <Col sm={12} style={{ textAlign: 'center' }}>
             <Button variant="dark" style={{ width: "140px" }} ref={configNameSaveRef} type="submit">Save</Button>{" "}
-            {
-                id !== '_NEW_CONFIGURATION'
-                && <Button variant="dark" style={{ width: "140px" }} onClick={() => setShow(true)}>Example</Button>
-            }
+            <Button variant="dark" style={{ width: "140px" }} onClick={() => history.goBack()}>Cancel</Button>
         </Col>
     </React.Fragment>
 }

@@ -198,11 +198,24 @@ const downloadDocument = async (documentIds: string[]) => {
     }
 }
 
+const moveDocument = async (payload: any) => {
+    try {
+        const response: AxiosResponse = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/move`,
+            payload
+        )
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const myDocumentsService = {
     getMyDocumentFolders,
     getMyDocumentList,
     deleteDocument,
     deleteFolder,
     downloadDocument,
-    downloadFolder
+    downloadFolder,
+    moveDocument
 }

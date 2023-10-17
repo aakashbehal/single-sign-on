@@ -8,14 +8,14 @@ import {
 import { domainService } from "../../services"
 
 export const DomainActionCreator = {
-    getAllDomains: (requestPayload: any) => (dispatch: any) => {
+    getAllDomains: () => (dispatch: any) => {
         const request = () => ({ type: GetAllDomains.GET_ALL_DOMAIN_REQUEST })
         const success = (domains: any) => ({ type: GetAllDomains.GET_ALL_DOMAIN_SUCCESS, payload: domains })
         const failure = (error: any) => ({ type: GetAllDomains.GET_ALL_DOMAIN_FAILURE, payload: error })
 
         dispatch(request())
 
-        domainService.getAllDomains(requestPayload)
+        domainService.getAllDomains()
             .then(
                 domains => {
                     dispatch(success(domains))

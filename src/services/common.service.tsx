@@ -220,14 +220,14 @@ const getDocumentTypes = async () => {
 
 const getProductTypes = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/require/product/type`)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/search`, {})
         const data = handleResponse(response)
         // data.response = data.response.map((dr: any) => {
         //     dr.fullName = dr.name
         //     dr.shortName = dr.productCode
         //     return dr
         // })
-        return data.response
+        return data.response.datas
     } catch (error: any) {
         throw error.message
     }

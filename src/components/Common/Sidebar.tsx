@@ -149,9 +149,11 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
                         {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
                         {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
+                        {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_attribute">Document Attribute</NavLink></li>} */}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li>
-                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>}
+                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li> */}
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type">Document Type</NavLink></li>
                     </ul>
                 </li>
                 <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {

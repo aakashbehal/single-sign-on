@@ -29,7 +29,6 @@ const DomainSetup = () => {
     const {
         domain,
         loading,
-        totalCount,
         addDomainSuccess,
         deleteDomainSuccess,
         addClientError,
@@ -40,7 +39,6 @@ const DomainSetup = () => {
     } = useSelector((state: RootState) => ({
         domain: state.domain.data,
         loading: state.domain.loading,
-        totalCount: state.domain.totalCount,
         addDomainSuccess: state.domain.addSuccess,
         deleteDomainSuccess: state.domain.deleteSuccess,
         addClientError: state.domain.addError,
@@ -92,10 +90,7 @@ const DomainSetup = () => {
         pageSize: any,
         pageNumber: any
     ) => {
-        dispatch(DomainActionCreator.getAllDomains({
-            pageSize,
-            pageNumber
-        }))
+        dispatch(DomainActionCreator.getAllDomains())
     }
 
     /**

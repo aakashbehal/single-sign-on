@@ -26,7 +26,6 @@ import WithSidebar from "./components/PrivateRoute/SideBarRoute";
 import Approval from "./containers/Setup/Approval";
 
 
-
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
 const UserAccount = lazy(() => import("./containers/User/UserAccount"));
@@ -44,6 +43,8 @@ const Automation = lazy(() => import("./containers/DocumentManager/Automation"))
 const NamingConfiguration = lazy(() => import("./containers/User/NamingConfiguration"));
 const DomainSetup = lazy(() => import("./containers/Setup/DomainSetup"));
 const DocumentGroup = lazy(() => import("./containers/Setup/DocumentGroup"));
+const DocumentTypePreference = lazy(() => import("./containers/Setup/DocumentTypePreference"));
+const DocumentAttribute = lazy(() => import("./containers/DocumentManager/DocumentAttribute"));
 
 /**
  * Applications starting point
@@ -98,6 +99,8 @@ const App = () => {
               <PrivateRoute exact path="/setup/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
               <PrivateRoute exact path="/setup/required_documents" component={sessions(RequiredDocuments)} />
               <PrivateRoute exact path="/setup/document_group" component={sessions(DocumentGroup)} />
+              <PrivateRoute exact path="/setup/document_type" component={sessions(DocumentTypePreference)} />
+              <PrivateRoute exact path="/setup/document_attribute" component={sessions(DocumentAttribute)} />
 
               {/* OCR */}
               <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />

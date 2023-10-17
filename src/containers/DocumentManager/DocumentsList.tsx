@@ -17,6 +17,7 @@ import Share from "../../components/modal/Share";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
+import MoveDocumentModal from "../../components/modal/MoveDocumentModal";
 
 
 const DocumentsList = ({ location }: { location: any }) => {
@@ -37,6 +38,7 @@ const DocumentsList = ({ location }: { location: any }) => {
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
     const [showShare, setShowShare] = useState(null);
+    const [moveModalShow, setMoveModalShow] = useState(null)
     let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
@@ -152,6 +154,10 @@ const DocumentsList = ({ location }: { location: any }) => {
         dispatch(MyDocumentsActionCreator.deleteDocument(details.id))
     }
 
+    const handleDocumentMove = (data: any) => {
+        setMoveModalShow(data)
+    }
+
     return (<>
         <a href="" ref={aRef} target="_self"></a>
         <Col sm={12}>
@@ -167,7 +173,7 @@ const DocumentsList = ({ location }: { location: any }) => {
                     resetHandlerHook={resetHandler}
                 />
                 <Col md={2} sm={2}>
-                    <Button variant="dark" style={{ width: "100%" }} onClick={() => setUploadDocModal(true)}>Upload Document</Button>
+                    <Button variant="dark" style={{ width: "100%" }} disabled={AccountId === 'Other' ? true : false} onClick={() => setUploadDocModal(true)}>Upload Document</Button>
                 </Col>
             </Row>
             <br />
@@ -212,13 +218,14 @@ const DocumentsList = ({ location }: { location: any }) => {
                             setShowDocument(true)
                             setDocumentToShow(data)
                         },
-                        delete: (data: any) => handleDetails(data)
+                        delete: (data: any) => handleDetails(data),
+                        move: AccountId !== 'Other' ? undefined : (data: any) => handleDocumentMove(data)
                     }
                 }
                 onPaginationChange={(
                     pageSize: number, pageNumber: number
                 ) => handlePagination(pageSize, pageNumber)}></TableComponent >
-        </Col>
+        </Col >
         {
             uploadDocModal
             && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} details={{ accountId: AccountId }} />
@@ -244,6 +251,16 @@ const DocumentsList = ({ location }: { location: any }) => {
                 parentComponent="documents"
                 onHide={() => setShowShare(null)}
                 searchHandler={() => search(pageSize, pageNumber)}
+            />
+        }
+        {
+            moveModalShow
+            && <MoveDocumentModal
+                show={moveModalShow}
+                parentComponent="documents"
+                onHide={() => setMoveModalShow(null)}
+                search={() => search(pageSize, pageNumber)}
+                details={moveModalShow}
             />
         }
     </>)

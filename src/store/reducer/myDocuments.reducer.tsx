@@ -4,7 +4,8 @@ import {
     DeleteDocument,
     DeleteFolder,
     DownloadFolder,
-    DownloadDocument
+    DownloadDocument,
+    MoveDocument
 } from "../types.d"
 
 const initialState = {
@@ -39,6 +40,11 @@ const initialState = {
         error: false,
         success: false,
         downloadLink: null
+    },
+    moveDocument: {
+        loading: false,
+        error: false,
+        success: false
     }
 }
 
@@ -282,6 +288,46 @@ const myDocumentsReducer = (state = initialState, action: { type: any, payload: 
                     error: false,
                     success: false,
                     downloadLink: null
+                }
+            }
+        case MoveDocument.MOVE_DOCUMENTS_REQUEST:
+            return {
+                ...state,
+                moveDocument: {
+                    ...state.moveDocument,
+                    loading: true,
+                    error: false,
+                    success: false
+                }
+            }
+        case MoveDocument.MOVE_DOCUMENTS_SUCCESS:
+            return {
+                ...state,
+                moveDocument: {
+                    ...state.moveDocument,
+                    loading: false,
+                    error: false,
+                    success: true
+                }
+            }
+        case MoveDocument.MOVE_DOCUMENTS_FAILURE:
+            return {
+                ...state,
+                moveDocument: {
+                    ...state.moveDocument,
+                    loading: false,
+                    error: true,
+                    success: false
+                }
+            }
+        case MoveDocument.MOVE_DOCUMENTS_RESET:
+            return {
+                ...state,
+                moveDocument: {
+                    ...state.moveDocument,
+                    loading: false,
+                    error: false,
+                    success: false
                 }
             }
         default:

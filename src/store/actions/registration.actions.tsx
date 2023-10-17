@@ -19,7 +19,9 @@ export const RegistrationActionCreator = {
                 }
             )
             .finally(() => {
-                dispatch({ type: Registration.REGISTRATION_RESET })
+                setTimeout(() => {
+                    dispatch({ type: Registration.REGISTRATION_RESET })
+                }, 0);
             })
     },
     validateOrgName: (orgName: any, orgType: any) => (dispatch: any) => {

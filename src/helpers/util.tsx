@@ -511,15 +511,17 @@ export const adjustStartEnd = (original: any) => {
     // return original
     let adjusted: any = [];
     let previousEnd = -1;
-
+    let previousItem: any = -Infinity
+    // console.log(`----original`, original)
     original.forEach((item: any) => {
         const newItem = { ...item };
-        newItem.start = previousEnd + 1 + newItem.start;
+        newItem.start = newItem.flagForPreviousSelection ? previousItem.start : previousEnd + 1 + newItem.start;
         newItem.end = newItem.start + item.text.length - 1;
         adjusted.push(newItem);
         previousEnd = newItem.end;
+        previousItem = newItem
     });
-
+    // console.log(`adjusted====`, adjusted)
     return adjusted;
 }
 
@@ -530,19 +532,28 @@ export const convertToDesiredFormat = (input: any) => {
     for (let i = 0; i < input.length; i++) {
         const currentItem = input[i];
         const newItem = { ...currentItem };
-
+        let previousItem: any = -Infinity
         if (i > 0) {
-            const previousItem = input[i - 1];
+            previousItem = input[i - 1];
             // console.log(`---previousItem`, previousItem)
-            const spaceCount = currentItem.start - previousItem.end - 1;
+            // console.log(`---currentItem`, currentItem)
+            let spaceCount
+            if (currentItem.start === previousItem.start) {
+                spaceCount = 0
+            } else {
+                spaceCount = currentItem.start - previousItem.end - 1;
+            }
             // console.log(spaceCount)
             newItem.start = spaceCount
         }
-
-
         newItem.end = newItem.start + newItem.text.length;
+        if (currentItem.flagForPreviousSelection) {
+            // console.log(`000textOverlapped---`, previousItem)
+            newItem.end = currentItem.end - previousItem.end
+        }
+        // console.log(`---currentItem ---last---`, newItem)
         converted.push(newItem);
     }
-
+    // console.log(`--------converted`, converted)
     return converted;
 }

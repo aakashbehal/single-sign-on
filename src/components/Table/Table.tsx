@@ -23,6 +23,7 @@ import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
 import NoRecord from '../Common/NoResult';
 import { MyDocumentsActionCreator } from '../../store/actions/myDocuments.actions';
+import { MdOutlineDriveFileMove } from 'react-icons/md';
 
 interface ITempObj {
     folderName: string;
@@ -736,6 +737,7 @@ const TableComponent = ({
                         || parentComponent === 'downloadHistory'
                         || parentComponent === 'clientSetup'
                         || parentComponent === 'partnerSetup'
+                        || parentComponent === 'documentTypePref'
                     )
                     && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
                 }
@@ -892,6 +894,13 @@ const TableComponent = ({
                                     }
                                     if (header === 'download') {
                                         return <td key={`data_2${index2}`}><AiOutlineCloudDownload size={24} /></td>
+                                    }
+                                    if (parentComponent === 'documentTypePref' && (header === 'externalDocTypeCodes' || header === 'externalDocNames')) {
+                                        return <td key={`data_2${index2}`}>{
+                                            d[header].map((eDn: string) => {
+                                                return <span className="badge badge-secondary" style={{ marginRight: '1rem' }}> {eDn}</span>
+                                            })
+                                        }</td>
                                     }
                                     if (header === 'fileName') {
                                         return handleDocumentName(d, index2)
@@ -1110,6 +1119,7 @@ const TableComponent = ({
                                 || parentComponent === 'downloadHistory'
                                 || parentComponent === 'clientSetup'
                                 || parentComponent === 'partnerSetup'
+                                || parentComponent === 'documentTypePref'
                             )
                             && <td key={`data_${index}`} className='span1' style={{ minWidth: '140px', textAlign: 'center' }}>
                                 {
@@ -1201,6 +1211,23 @@ const TableComponent = ({
                                     </span>
                                 }
                                 {
+                                    typeof addEditArray.move !== 'undefined'
+                                    && <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Move
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <MdOutlineDriveFileMove size={20} onClick={() => addEditArray.move(d)} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+                                {
                                     typeof addEditArray.editClient !== 'undefined'
                                     && <span>
                                         <OverlayTrigger
@@ -1234,12 +1261,13 @@ const TableComponent = ({
                                         </OverlayTrigger>
                                     </span>
                                 }
+
                             </td>
                         }
                     </tr>
                 ))
             }
-        </tbody>
+        </tbody >
     }
 
     const tableHandler = () => (

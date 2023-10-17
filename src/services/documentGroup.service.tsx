@@ -7,7 +7,7 @@ const getAllDocumentGroup = async ({ pageSize,
     sortParam
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/search`, {
             pageSize,
             pageNumber: pageNumber - 1,
             sortOrder,
@@ -27,14 +27,16 @@ const getAllDocumentGroup = async ({ pageSize,
 
 const addDocumentGroup = async ({
     name,
+    description,
     domainCode,
-    description
+    code
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
             name,
+            description,
             domainCode,
-            description
+            code
         })
         const data = handleResponse(response)
         return data.response
@@ -47,14 +49,16 @@ const updateDocumentGroup = async ({
     name,
     domainCode,
     description,
-    docGroupId
+    docGroupId,
+    code
 }: any) => {
     try {
-        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
             name,
             domainCode,
             description,
-            docGroupId
+            docGroupId,
+            code
         })
         const data = handleResponse(response)
         return data.response

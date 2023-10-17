@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux"
 import Styles from "./Common.module.sass"
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
 
-const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false }: { selectedValue?: string, isDisabled?: boolean }, ref) => {
+const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false, isWhite = false }: { selectedValue?: string, isDisabled?: boolean, isWhite?: boolean }, ref) => {
     const dispatch = useDispatch()
     const {
         documentTypes,
@@ -57,7 +57,7 @@ const DocumentTypes = forwardRef(({ selectedValue = '', isDisabled = false }: { 
                 as="select"
                 name="document_type"
                 value={value}
-                className="select_custom"
+                className={`select_custom ${isWhite ? 'white' : ''}`}
                 onChange={(e) => { setValue(e.target.value) }}>
                 <option disabled value="">Select Document Type...</option>
                 {

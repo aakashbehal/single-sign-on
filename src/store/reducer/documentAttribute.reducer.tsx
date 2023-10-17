@@ -1,8 +1,9 @@
 import {
-    GetAllDomains,
-    AddDomain,
-    DeleteDomain,
-    UpdateDomain
+    GetAllDocumentAttribute,
+    AddDocumentAttribute,
+    AddNewDocumentAttribute,
+    UpdateDocumentAttribute,
+    DeleteDocumentAttribute
 } from "../types.d"
 
 const initialState = {
@@ -17,126 +18,156 @@ const initialState = {
     addError: false,
     deleting: false,
     deleteSuccess: false,
-    deleteError: false
+    deleteError: false,
+    addingNew: false,
+    addNewSuccess: false,
+    addNewError: false,
 }
 
-const domainReducer = (state = initialState, action: { type: any; payload: any; }) => {
+const documentAttributeReducer = (state = initialState, action: { type: any; payload: any; }) => {
     switch (action.type) {
-        case GetAllDomains.GET_ALL_DOMAIN_REQUEST:
+        case GetAllDocumentAttribute.GET_ALL_DOCUMENT_ATTRIBUTE_REQUEST:
             return {
                 ...state,
                 loading: true,
                 error: false,
                 data: [],
-                totalCount: 0
             }
-        case GetAllDomains.GET_ALL_DOMAIN_SUCCESS:
+        case GetAllDocumentAttribute.GET_ALL_DOCUMENT_ATTRIBUTE_SUCCESS:
             return {
                 ...state,
                 loading: false,
                 data: action.payload,
             }
-        case GetAllDomains.GET_ALL_DOMAIN_FAILURE:
+        case GetAllDocumentAttribute.GET_ALL_DOCUMENT_ATTRIBUTE_FAILURE:
             return {
                 ...state,
                 loading: false,
                 error: true,
                 data: [],
             }
-        case GetAllDomains.GET_ALL_DOMAIN_RESET:
+        case GetAllDocumentAttribute.GET_ALL_DOCUMENT_ATTRIBUTE_RESET:
             return {
                 ...state,
                 loading: false,
                 error: false,
                 data: [],
             }
-        case AddDomain.ADD_DOMAIN_REQUEST:
+        case AddDocumentAttribute.ADD_DOCUMENT_ATTRIBUTE_REQUEST:
             return {
                 ...state,
                 adding: true,
                 addSuccess: false,
                 addError: false
             }
-        case AddDomain.ADD_DOMAIN_SUCCESS:
+        case AddDocumentAttribute.ADD_DOCUMENT_ATTRIBUTE_SUCCESS:
             return {
                 ...state,
                 adding: false,
                 addSuccess: true,
                 addError: false
             }
-        case AddDomain.ADD_DOMAIN_FAILURE:
+        case AddDocumentAttribute.ADD_DOCUMENT_ATTRIBUTE_FAILURE:
             return {
                 ...state,
                 adding: false,
                 addSuccess: false,
                 addError: true
             }
-        case AddDomain.ADD_DOMAIN_RESET:
+        case AddDocumentAttribute.ADD_DOCUMENT_ATTRIBUTE_RESET:
             return {
                 ...state,
                 adding: false,
                 addSuccess: false,
                 addError: false
             }
-        case DeleteDomain.DELETE_DOMAIN_REQUEST:
+        case DeleteDocumentAttribute.DELETE_DOCUMENT_ATTRIBUTE_REQUEST:
             return {
                 ...state,
                 deleting: true,
                 deleteSuccess: false,
                 deleteError: false
             }
-        case DeleteDomain.DELETE_DOMAIN_SUCCESS:
+        case DeleteDocumentAttribute.DELETE_DOCUMENT_ATTRIBUTE_SUCCESS:
             return {
                 ...state,
                 deleting: false,
                 deleteSuccess: true,
                 deleteError: false
             }
-        case DeleteDomain.DELETE_DOMAIN_FAILURE:
+        case DeleteDocumentAttribute.DELETE_DOCUMENT_ATTRIBUTE_FAILURE:
             return {
                 ...state,
                 deleting: false,
                 deleteSuccess: false,
                 deleteError: true
             }
-        case DeleteDomain.DELETE_DOMAIN_RESET:
+        case DeleteDocumentAttribute.DELETE_DOCUMENT_ATTRIBUTE_RESET:
             return {
                 ...state,
                 deleting: false,
                 deleteSuccess: false,
                 deleteError: false
             }
-        case UpdateDomain.UPDATE_DOMAIN_REQUEST:
+        case UpdateDocumentAttribute.UPDATE_DOCUMENT_ATTRIBUTE_REQUEST:
             return {
                 ...state,
                 updating: true,
                 updateSuccess: false,
                 updateError: false
             }
-        case UpdateDomain.UPDATE_DOMAIN_SUCCESS:
+        case UpdateDocumentAttribute.UPDATE_DOCUMENT_ATTRIBUTE_SUCCESS:
             return {
                 ...state,
                 updating: false,
                 updateSuccess: true,
                 updateError: false
             }
-        case UpdateDomain.UPDATE_DOMAIN_FAILURE:
+        case UpdateDocumentAttribute.UPDATE_DOCUMENT_ATTRIBUTE_FAILURE:
             return {
                 ...state,
                 updating: false,
                 updateSuccess: false,
                 updateError: true
             }
-        case UpdateDomain.UPDATE_DOMAIN_RESET:
+        case UpdateDocumentAttribute.UPDATE_DOCUMENT_ATTRIBUTE_RESET:
             return {
                 ...state,
                 updating: false,
                 updateSuccess: false,
                 updateError: false
             }
+        case AddNewDocumentAttribute.ADD_NEW_DOCUMENT_ATTRIBUTE_REQUEST:
+            return {
+                ...state,
+                addingNew: true,
+                addNewSuccess: false,
+                addNewError: false
+            }
+        case AddNewDocumentAttribute.ADD_NEW_DOCUMENT_ATTRIBUTE_SUCCESS:
+            return {
+                ...state,
+                addingNew: false,
+                addNewSuccess: true,
+                addNewError: false
+            }
+        case AddNewDocumentAttribute.ADD_NEW_DOCUMENT_ATTRIBUTE_FAILURE:
+            return {
+                ...state,
+                addingNew: false,
+                addNewSuccess: false,
+                addNewError: true
+            }
+        case AddNewDocumentAttribute.ADD_NEW_DOCUMENT_ATTRIBUTE_RESET:
+            return {
+                ...state,
+                addingNew: false,
+                addNewSuccess: false,
+                addNewError: false
+            }
         default:
             return state
     }
 }
 
-export default domainReducer
+export default documentAttributeReducer

@@ -24,6 +24,7 @@ import documentTypeIdentifierReducer from "./documentTypeIdentifier.reducer";
 import domainReducer from "./domain.reducer";
 import documentGroupReducer from "./documentGroup.reducer";
 import documentTypePreferenceReducer from "./documentTypePreference.reducer";
+import documentAttributeReducer from "./documentAttribute.reducer";
 
 const appReducer = combineReducers({
     auth: authReducer,
@@ -49,7 +50,8 @@ const appReducer = combineReducers({
     ocr: documentTypeIdentifierReducer,
     domain: domainReducer,
     documentGroup: documentGroupReducer,
-    docTypePreference: documentTypePreferenceReducer
+    docTypePreference: documentTypePreferenceReducer,
+    docAttribute: documentAttributeReducer
 })
 
 const rootReducer = (state: any, action: any) => {

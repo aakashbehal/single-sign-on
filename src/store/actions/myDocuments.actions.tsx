@@ -1,4 +1,4 @@
-import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder, DownloadFolder, DownloadDocument } from "../types.d"
+import { MyDocumentsFolder, MyDocumentsList, DeleteDocument, DeleteFolder, DownloadFolder, DownloadDocument, MoveDocument } from "../types.d"
 import { myDocumentsService } from "../../services"
 
 export const MyDocumentsActionCreator = {
@@ -37,7 +37,9 @@ export const MyDocumentsActionCreator = {
             )
     },
     resetDocumentList: () => (dispatch: any) => {
-        dispatch(() => dispatch({ type: MyDocumentsList.MY_DOCUMENTS_LIST_RESET }))
+        setTimeout(() => {
+            dispatch(() => dispatch({ type: MyDocumentsList.MY_DOCUMENTS_LIST_RESET }))
+        }, 0)
     },
     deleteDocument: (documentId: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocument.DELETE_DOCUMENTS_REQUEST })
@@ -54,9 +56,11 @@ export const MyDocumentsActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(
-                dispatch({ type: DeleteDocument.DELETE_DOCUMENTS_RESET })
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteDocument.DELETE_DOCUMENTS_RESET })
+                }, 0)
+            })
     },
     deleteFolder: (clientAccountNo: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteFolder.DELETE_FOLDER_REQUEST })
@@ -73,9 +77,11 @@ export const MyDocumentsActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(
-                dispatch({ type: DeleteFolder.DELETE_FOLDER_RESET })
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DeleteFolder.DELETE_FOLDER_RESET })
+                }, 0);
+            })
     },
     downloadFolder: (accountNumbers: string[]) => (dispatch: any) => {
         const request = () => ({ type: DownloadFolder.DOWNLOAD_FOLDER_REQUEST })
@@ -115,8 +121,31 @@ export const MyDocumentsActionCreator = {
                 error => {
                     dispatch(failure(error))
                 }
-            ).finally(
-                dispatch({ type: DownloadDocument.DOWNLOAD_DOCUMENT_RESET })
-            )
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: DownloadDocument.DOWNLOAD_DOCUMENT_RESET })
+                }, 0);
+            })
+    },
+    moveDocument: (payload: any) => (dispatch: any) => {
+        const request = () => ({ type: MoveDocument.MOVE_DOCUMENTS_REQUEST })
+        const success = (document: any) => ({ type: MoveDocument.MOVE_DOCUMENTS_SUCCESS, payload: document })
+        const failure = (error: any) => ({ type: MoveDocument.MOVE_DOCUMENTS_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.moveDocument(payload)
+            .then(
+                document => {
+                    dispatch(success(document))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: MoveDocument.MOVE_DOCUMENTS_RESET })
+                }, 0);
+            })
     }
 }

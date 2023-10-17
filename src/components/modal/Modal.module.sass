@@ -1,3 +1,4 @@
+@import "../../colors"
 .multi_select_container
     display: flex
     flex-wrap: wrap
@@ -97,3 +98,20 @@
     background: #d8d6d6
     border-radius: 10px
     padding: 0.5rem 0.9rem
+.button_center
+    text-align: center
+.button_move_options
+    background: white
+    border: 1px solid black
+    color: black
+    &:hover
+        background: $bittersweet
+        border: $bittersweet
+.button_move_options:not(:disabled):not(.disabled):active
+    background: $bittersweet
+    border: $bittersweet
+    color: white
+.active
+    background: $bittersweet
+    border: $bittersweet
+    color: white

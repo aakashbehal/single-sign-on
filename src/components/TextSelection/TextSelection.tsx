@@ -6,6 +6,8 @@ export interface ISelection {
     text: string;
     start: number;
     end: number;
+    flagForPreviousSelection: boolean;
+    fileFieldCode: string
 }
 
 const TextSelectionHook = () => {
@@ -22,14 +24,19 @@ const TextSelectionHook = () => {
 
     const selectionEventListener: any = () => {
         const selection = window.getSelection()!;
+        // console.log(`----`, selection.toString())
         if (selection?.toString() !== '') {
             const range = selection.getRangeAt(0);
+            let flagForPreviousSelection = false
+            if (range.endOffset - range.startOffset !== selection?.toString().length) {
+                flagForPreviousSelection = true
+            }
             if (selection.toString() !== '_' && selection.toString() !== '-') {
                 setState((prevSelections: any) => {
                     let index = prevSelections.length
                     return [
                         ...prevSelections,
-                        { text: selection.toString(), start: range.startOffset, end: range.endOffset, fileFieldCode: `field_${index + 1}` },
+                        { text: selection.toString(), start: range.startOffset, end: range.endOffset, fileFieldCode: `field_${index + 1}`, flagForPreviousSelection },
                     ]
                 });
             }
@@ -145,16 +152,41 @@ const DocumentHighlighter = (
     const processName = () => {
         let processedDivs: any = [];
         let remainingText = documentName;
+        let previousEnd = 0
+        let previousSelectedText: string = ''
+        // console.log(`---------selections`, selections)
         selections.forEach((selection) => {
-            const selectedText = remainingText.substring(selection.start, selection.end);
-            const beforeSelected = remainingText.substring(0, selection.start);
-            const afterSelected = remainingText.substring(selection.end);
-
-            processedDivs.push(<>{beforeSelected}</>, <span className="selected" key={Math.random()}>{selectedText}</span>);
+            // console.log(`selection---`, selection)
+            // console.log(`======`, previousEnd ? previousEnd + selection.start : selection.start, selection.end + previousEnd)
+            const selectedText = documentName.substring(previousEnd ? previousEnd + selection.start : selection.start, selection.end + previousEnd);
+            previousEnd += selection.end
+            const beforeSelected = remainingText.substring(0, selection.start); // if we have space of characters which are not selected and we are skipping
+            const afterSelected = remainingText.substring(selection.end); // get the remaining text
+            // console.log(`----selection text---`, selectedText)
+            // || selection.flagForPreviousSelection
+            if (selection.text.length !== (selection.end - selection.start)) {
+                // this will be true when selection has some overlapping
+                // get the characters 
+                let overlappingCharacters = ''
+                // if (selection.flagForPreviousSelection) {
+                //     overlappingCharacters = previousSelectedText
+                // } else {
+                overlappingCharacters = selection.text.substring(0, (selection.text.length - (selection.end + selection.start)))
+                // }
+                // console.log(overlappingCharacters, previousSelectedText)
+                if (previousSelectedText === overlappingCharacters) {
+                    processedDivs.pop()
+                    processedDivs.push(<>{beforeSelected}</>, <span className="selected parent" key={Math.random()}><span className="selected" key={Math.random()}>{previousSelectedText}</span>{' ' + selectedText}</span>);
+                }
+            } else {
+                processedDivs.push(<>{beforeSelected}</>, <span className="selected" key={Math.random()}>{selectedText}</span>);
+            }
+            previousSelectedText = selectedText
             remainingText = afterSelected;
         });
 
         processedDivs.push(<>{remainingText}</>);
+        // console.log(`-------processedDivs---------`, processedDivs)
         setProcessedName((prev: any) => processedDivs);
     };
 

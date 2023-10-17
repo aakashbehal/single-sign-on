@@ -1,26 +1,11 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
 
-const getAllDomains = async ({
-    pageSize,
-    pageNumber,
-    sortOrder,
-    sortParam
-}: any) => {
+const getAllDomains = async () => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/all`, {
-            pageSize,
-            pageNumber: pageNumber - 1,
-            sortOrder,
-            sortParam
-        })
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`)
         const data = handleResponse(response)
-        let domains = data.response.datas
-        const responseModified: any = {}
-        responseModified.domains = domains
-        responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columnPreferences
-        return responseModified
+        return data.response
     } catch (error: any) {
         throw error.message
     }
