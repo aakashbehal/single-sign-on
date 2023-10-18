@@ -149,7 +149,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     const {
                         document_type
                     } = documentTypeRef.current
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/account`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/recordUniqueIndentifiers`
                     formData.append("accountNumber", details.accountId);
                     formData.append("docType", document_type.value);
                     formData.append("doc", file);
@@ -163,7 +163,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/bulk/sentRequest`
                     formData.append("doc", file);
                 } else if (parentComponent === 'documentNotSummary') {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/specific/recordUniqueIdentifiers`;
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/specific/recordUniqueIndentifiers`;
                     formData.append("doc", file);
                     formData.append("docTypeCode", details.docTypeCode);
                 } else {
