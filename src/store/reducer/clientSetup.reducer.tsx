@@ -1,4 +1,4 @@
-import { GetAllClients, AddClient, EditClient, DeactivateClient } from "../types.d";
+import { GetAllClients, AddClient, EditClient, DeactivateClient, AddDomainClient, AddGroupClient } from "../types.d";
 
 const initialState = {
     data: [],
@@ -14,7 +14,12 @@ const initialState = {
     deactivateClientSuccess: false,
     deactivateClientLoading: false,
     deactivateClientError: false,
-
+    addDomainClientSuccess: false,
+    addDomainClientLoading: false,
+    addDomainClientError: false,
+    addGroupClientSuccess: false,
+    addGroupClientLoading: false,
+    addGroupClientError: false,
 }
 
 const clientSetupReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -120,6 +125,63 @@ const clientSetupReducer = (state = initialState, action: { type: any; payload: 
                 deactivateClientSuccess: false,
                 deactivateClientLoading: false,
                 deactivateClientError: false,
+            }
+        case AddDomainClient.ADD_DOMAIN_CLIENT_REQUEST:
+            return {
+                ...state,
+                addDomainClientSuccess: false,
+                addDomainClientLoading: true,
+                addDomainClientError: false
+
+            }
+        case AddDomainClient.ADD_DOMAIN_CLIENT_SUCCESS:
+            return {
+                ...state,
+                addDomainClientSuccess: true,
+                addDomainClientLoading: false,
+                addDomainClientError: false
+            }
+        case AddDomainClient.ADD_DOMAIN_CLIENT_FAILURE:
+            return {
+                ...state,
+                addDomainClientSuccess: false,
+                addDomainClientLoading: false,
+                addDomainClientError: true
+            }
+        case AddDomainClient.ADD_DOMAIN_CLIENT_RESET:
+            return {
+                ...state,
+                addDomainClientSuccess: false,
+                addDomainClientLoading: false,
+                addDomainClientError: false
+            }
+        case AddGroupClient.ADD_GROUP_CLIENT_REQUEST:
+            return {
+                ...state,
+                addGroupClientSuccess: false,
+                addGroupClientLoading: true,
+                addGroupClientError: false,
+            }
+        case AddGroupClient.ADD_GROUP_CLIENT_SUCCESS:
+            return {
+                ...state,
+                addGroupClientSuccess: true,
+                addGroupClientLoading: false,
+                addGroupClientError: false,
+            }
+        case AddGroupClient.ADD_GROUP_CLIENT_FAILURE:
+            return {
+                ...state,
+                addGroupClientSuccess: false,
+                addGroupClientLoading: false,
+                addGroupClientError: true,
+            }
+        case AddGroupClient.ADD_GROUP_CLIENT_RESET:
+            return {
+                ...state,
+                addGroupClientSuccess: false,
+                addGroupClientLoading: false,
+                addGroupClientError: false,
             }
         default:
             return state

@@ -23,7 +23,8 @@ import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
 import NoRecord from '../Common/NoResult';
 import { MyDocumentsActionCreator } from '../../store/actions/myDocuments.actions';
-import { MdOutlineDriveFileMove } from 'react-icons/md';
+import { MdDomain, MdOutlineDriveFileMove } from 'react-icons/md';
+import { FaLayerGroup } from 'react-icons/fa';
 
 interface ITempObj {
     folderName: string;
@@ -1235,7 +1236,7 @@ const TableComponent = ({
                                             delay={{ show: 250, hide: 400 }}
                                             overlay={
                                                 <Tooltip id={`tooltip-error`}>
-                                                    Share
+                                                    Edit
                                                 </Tooltip>
                                             }
                                         >
@@ -1259,8 +1260,46 @@ const TableComponent = ({
                                         >
                                             <AiOutlineDelete onClick={() => addEditArray.delete(d)} size={20} style={{ cursor: 'pointer' }} />
                                         </OverlayTrigger>
+                                        &nbsp;
                                     </span>
                                 }
+                                {
+                                    typeof addEditArray.addDomainHandler !== 'undefined'
+                                    &&
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Add Domain
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <MdDomain onClick={() => addEditArray.addDomainHandler(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+                                {
+                                    typeof addEditArray.addGroupHandler !== 'undefined'
+                                    &&
+                                    <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Add Document Group
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <FaLayerGroup onClick={() => addEditArray.addGroupHandler(d)} size={20} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+
 
                             </td>
                         }

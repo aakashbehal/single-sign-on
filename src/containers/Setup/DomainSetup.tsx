@@ -151,7 +151,7 @@ const DomainSetup = () => {
                                         return (<tr key={`rD_${index}`}>
                                             <td>{cT.domainId}</td>
                                             <td>{cT.name}</td>
-                                            <td>{cT.shortCode}</td>
+                                            <td>{cT.code}</td>
                                             <td>{cT.description}</td>
                                             <td>{cT.createdBy}</td>
                                             <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>

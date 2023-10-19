@@ -67,14 +67,14 @@ export const DocumentGroupActionCreator = {
                 }, 0)
             )
     },
-    deleteDocumentGroup: (id: number) => (dispatch: any) => {
+    deleteDocumentGroup: (id: number, orgType: string) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocumentGroup.DELETE_DOCUMENT_GROUP_REQUEST })
         const success = (domains: any) => ({ type: DeleteDocumentGroup.DELETE_DOCUMENT_GROUP_SUCCESS, payload: domains })
         const failure = (error: any) => ({ type: DeleteDocumentGroup.DELETE_DOCUMENT_GROUP_FAILURE, payload: error })
 
         dispatch(request())
 
-        documentGroupService.deleteDocumentGroup(id)
+        documentGroupService.deleteDocumentGroup(id, orgType)
             .then(
                 domains => {
                     dispatch(success(domains))

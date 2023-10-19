@@ -124,9 +124,55 @@ const deactivateClient = async (clientId: string | number) => {
     }
 }
 
+const addClientDomain = async ({
+    orgTypeCode,
+    orgCode,
+    domainCode
+}: {
+    "orgTypeCode": string,
+    "orgCode": string,
+    "domainCode": string
+}) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/onboarding/setup/domain`, {
+            orgTypeCode,
+            orgCode,
+            domainCode
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const addClientGroup = async ({
+    orgTypeCode,
+    orgCode,
+    documentGroupCode
+}: {
+    "orgTypeCode": string,
+    "orgCode": string,
+    "documentGroupCode": string[]
+}) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/onboarding/setup/docGroup`, {
+            orgTypeCode,
+            orgCode,
+            documentGroupCode
+        })
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const clientServices = {
     getAllClients,
     addClient,
     editClient,
-    deactivateClient
+    deactivateClient,
+    addClientDomain,
+    addClientGroup
 }

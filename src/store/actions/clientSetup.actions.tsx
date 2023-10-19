@@ -1,4 +1,4 @@
-import { GetAllClients, AddClient, EditClient, DeactivateClient } from "../types.d";
+import { GetAllClients, AddClient, EditClient, DeactivateClient, AddDomainClient, AddGroupClient } from "../types.d";
 import { clientServices } from "../../services"
 
 export const ClientSetupActionCreator = {
@@ -81,5 +81,47 @@ export const ClientSetupActionCreator = {
                     dispatch({ type: EditClient.DEACTIVATE_CLIENTS_RESET })
                 }, 0)
             })
-    }
+    },
+    addClientDomain: (payload: any) => (dispatch: any) => {
+        const request = () => ({ type: AddDomainClient.ADD_DOMAIN_CLIENT_REQUEST })
+        const success = (clients: any) => ({ type: AddDomainClient.ADD_DOMAIN_CLIENT_SUCCESS, payload: clients })
+        const failure = () => ({ type: AddDomainClient.ADD_DOMAIN_CLIENT_FAILURE })
+
+        dispatch(request())
+
+        clientServices.addClientDomain(payload)
+            .then(
+                clients => {
+                    dispatch(success(clients))
+                },
+                error => {
+                    dispatch(failure())
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: AddDomainClient.ADD_DOMAIN_CLIENT_RESET })
+                }, 0)
+            })
+    },
+    addClientGroup: (payload: any) => (dispatch: any) => {
+        const request = () => ({ type: AddGroupClient.ADD_GROUP_CLIENT_REQUEST })
+        const success = (clients: any) => ({ type: AddGroupClient.ADD_GROUP_CLIENT_SUCCESS, payload: clients })
+        const failure = () => ({ type: AddGroupClient.ADD_GROUP_CLIENT_FAILURE })
+
+        dispatch(request())
+
+        clientServices.addClientGroup(payload)
+            .then(
+                clients => {
+                    dispatch(success(clients))
+                },
+                error => {
+                    dispatch(failure())
+                }
+            ).finally(() => {
+                setTimeout(() => {
+                    dispatch({ type: AddGroupClient.ADD_GROUP_CLIENT_RESET })
+                }, 0)
+            })
+    },
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Col, Row, Button, Modal, Container, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
+import 'react-bootstrap-typeahead/css/Typeahead.css';
 
 import TableComponent from "../../components/Table/Table";
 import Styles from "./Setup.module.sass";
@@ -8,6 +9,9 @@ import { ClientSetupActionCreator } from "../../store/actions/clientSetup.action
 import States from "../../components/Common/States";
 import { createMessage } from "../../helpers/messages";
 import { useToasts } from "react-toast-notifications";
+import Domains from "../../components/Common/Domains";
+import { TypesActionCreator } from "../../store/actions/common/types.actions";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const ClientSetup = () => {
     const dispatch = useDispatch();
@@ -32,6 +36,12 @@ const ClientSetup = () => {
         deactivateClientSuccess,
         deactivateClientLoading,
         deactivateClientError,
+        addDomainClientSuccess,
+        addDomainClientLoading,
+        addDomainClientError,
+        addGroupClientSuccess,
+        addGroupClientLoading,
+        addGroupClientError,
     } = useSelector((state: any) => ({
         clients: state.clients.data,
         error: state.clients.error,
@@ -46,6 +56,12 @@ const ClientSetup = () => {
         deactivateClientSuccess: state.clients.deactivateClientSuccess,
         deactivateClientLoading: state.clients.deactivateClientLoading,
         deactivateClientError: state.clients.deactivateClientError,
+        addDomainClientSuccess: state.clients.addDomainClientSuccess,
+        addDomainClientLoading: state.clients.addDomainClientLoading,
+        addDomainClientError: state.clients.addDomainClientError,
+        addGroupClientSuccess: state.clients.addGroupClientSuccess,
+        addGroupClientLoading: state.clients.addGroupClientLoading,
+        addGroupClientError: state.clients.addGroupClientError,
     }))
 
     useEffect(() => {
@@ -81,14 +97,28 @@ const ClientSetup = () => {
             search(pageSize, pageNumber)
         }
         if (deactivateClientSuccess) {
-            addToast(createMessage('success', `uploaded`, 'Client'), { appearance: 'success', autoDismiss: true })
+            addToast(createMessage('success', `deactivated`, 'Client'), { appearance: 'success', autoDismiss: true })
+            search(pageSize, pageNumber)
+        }
+        if (addDomainClientSuccess) {
+            addToast(createMessage('success', `added`, 'Client Domain'), { appearance: 'success', autoDismiss: true })
+            search(pageSize, pageNumber)
+        }
+        if (addGroupClientSuccess) {
+            addToast(createMessage('success', `uploaded`, 'Client Document Group'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
         setShowAddEdit(false)
         setEditData(null)
-    }, [addClientSuccess,
+        setAddDomainModal(false)
+        setAddGroupModal(false)
+    }, [
+        addClientSuccess,
         editClientSuccess,
-        deactivateClientSuccess])
+        deactivateClientSuccess,
+        addDomainClientSuccess,
+        addGroupClientSuccess
+    ])
 
     useEffect(() => {
         if (addClientError) {
@@ -98,11 +128,32 @@ const ClientSetup = () => {
             addToast(createMessage('error', `editing`, 'Client'), { appearance: 'error', autoDismiss: false })
         }
         if (deactivateClientError) {
-            addToast(createMessage('error', `uploading`, 'Client'), { appearance: 'error', autoDismiss: false })
+            addToast(createMessage('error', `Deactivating`, 'Client'), { appearance: 'error', autoDismiss: false })
+        }
+        if (addDomainClientError) {
+            addToast(createMessage('error', `adding`, 'Client Domain'), { appearance: 'error', autoDismiss: false })
+        }
+        if (addGroupClientError) {
+            addToast(createMessage('error', `adding`, 'Client Document Group'), { appearance: 'error', autoDismiss: false })
         }
     }, [addClientError,
         editClientError,
-        deactivateClientError])
+        deactivateClientError,
+        addDomainClientError,
+        addGroupClientError
+    ])
+
+    const [addDomainModal, setAddDomainModal] = useState(false)
+    const [addGroupModal, setAddGroupModal] = useState(false)
+    const addDomainHandler = (client: any) => {
+        setEditData(client)
+        setAddDomainModal(true)
+    }
+
+    const addGroupHandler = (client: any) => {
+        setEditData(client)
+        setAddGroupModal(true)
+    }
 
     return (
         <>
@@ -145,6 +196,12 @@ const ClientSetup = () => {
                         editClient: (data: any) => {
                             setShowAddEdit(true)
                             setEditData(data)
+                        },
+                        addDomainHandler: (client: any) => {
+                            addDomainHandler(client)
+                        },
+                        addGroupHandler: (client: any) => {
+                            addGroupHandler(client)
                         }
                     }}
                     onPaginationChange={(
@@ -159,6 +216,30 @@ const ClientSetup = () => {
                         setEditData(null)
                     }}
                     show={showAddEdit}
+                    data={editData}
+                    dispatch={dispatch}
+                />
+            }
+            {
+                addDomainModal
+                && <AddClientDomain
+                    onHide={() => {
+                        setAddDomainModal(!addDomainModal)
+                        setEditData(null)
+                    }}
+                    show={addDomainModal}
+                    data={editData}
+                    dispatch={dispatch}
+                />
+            }
+            {
+                addGroupModal
+                && <AddClientDocumentGroup
+                    onHide={() => {
+                        setAddGroupModal(!addGroupModal)
+                        setEditData(null)
+                    }}
+                    show={addGroupModal}
                     data={editData}
                     dispatch={dispatch}
                 />
@@ -436,6 +517,176 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         </Col>
                                         {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
                                         <Form.Label className="label_custom white">Website</Form.Label>
+                                    </Form.Group>
+                                </Col>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Container>
+            </Modal.Body >
+            <Modal.Footer>
+                <Button variant="dark" onClick={onHide}>Close</Button>
+                <Button variant="dark" onClick={() => addEditSubmit()}>Save</Button>
+            </Modal.Footer>
+        </Modal >
+    )
+}
+
+const AddClientDomain = ({ onHide, show, data, dispatch }: any) => {
+    const clientFormRef = useRef<any>()
+    const [formError, setFormError] = useState<any>({
+        domainCode: false,
+    })
+
+    const validate = (formObj: any) => {
+        let checkFormObj: any = {
+            domainCode: formObj.domainCode,
+        }
+        let formIsValid = true;
+        const error: any = {
+            domainCode: false
+        }
+        for (let key in checkFormObj) {
+            if (!checkFormObj[key] || checkFormObj[key] === "") {
+                error[key] = true
+            }
+        }
+        for (let k in error) {
+            if (error[k]) {
+                formIsValid = false
+            }
+        }
+        setFormError(error)
+        return formIsValid
+    }
+
+    const addEditSubmit = () => {
+        const {
+            domain,
+        } = clientFormRef.current
+        let formObject = {
+            orgTypeCode: 'CL',
+            orgCode: data?.shortName,
+            domainCode: domain?.value
+        }
+        if (validate(formObject)) {
+            dispatch(ClientSetupActionCreator.addClientDomain(formObject))
+        }
+    }
+
+    return (
+        <Modal
+            onHide={onHide}
+            show={show}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered animation={true}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Select Domain Code
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="show-grid">
+                <Container>
+                    <Form ref={clientFormRef}>
+                        <Row>
+                            <Col xs={12} md={12} className="mt-3">
+                                <Col lg={12} md={6} className="no_padding">
+                                    <Form.Group as={Col} className="no_padding">
+                                        <Col md={12} sm={12} className="no_padding">
+                                            <Domains />
+                                            <Form.Label className="label_custom white">Domain</Form.Label>
+                                        </Col>
+                                        <span style={{ color: 'red' }}><small>{formError["domainCode"] ? 'Please Select a Domain Code' : ''}</small></span>
+                                    </Form.Group>
+                                </Col>
+                            </Col>
+                        </Row>
+                    </Form>
+                </Container>
+            </Modal.Body >
+            <Modal.Footer>
+                <Button variant="dark" onClick={onHide}>Close</Button>
+                <Button variant="dark" onClick={() => addEditSubmit()}>Save</Button>
+            </Modal.Footer>
+        </Modal >
+    )
+}
+
+const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
+    const ref = useRef<any>()
+    const clientFormRef = useRef<any>()
+    const [documentGroups, setDocumentGroups] = useState<string[]>([])
+    const [documentGroupError, setDocumentGroupError] = useState<boolean>(false)
+
+    useEffect(() => {
+        dispatch(TypesActionCreator.getProductTypes())
+    }, [])
+
+    const {
+        productTypes,
+        loadingProductTypes,
+        errorProductTypes,
+    } = useSelector((state: any) => ({
+        productTypes: state.types.productType.data,
+        loadingProductTypes: state.types.productType.loading,
+        errorProductTypes: state.types.productType.error,
+    }))
+
+
+    const addEditSubmit = () => {
+        let formObject = {
+            orgTypeCode: 'CL',
+            orgCode: data?.shortName,
+            documentGroupCode: documentGroups
+        }
+        if (documentGroups.length > 0) {
+            dispatch(ClientSetupActionCreator.addClientDomain(formObject))
+        } else {
+            setDocumentGroupError(true)
+        }
+    }
+
+    return (
+        <Modal
+            onHide={onHide}
+            show={show}
+            aria-labelledby="contained-modal-title-vcenter"
+            centered animation={true}
+        >
+            <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-vcenter">
+                    Select Domain Code
+                </Modal.Title>
+            </Modal.Header>
+            <Modal.Body className="show-grid">
+                <Container>
+                    <Form ref={clientFormRef}>
+                        <Row>
+                            <Col xs={12} md={12} className="mt-3">
+                                <Col lg={12} md={6} className="no_padding">
+                                    <Form.Group as={Col} className="no_padding">
+                                        <Col md={12} sm={12} className="no_padding">
+                                            <Typeahead
+                                                isLoading={loadingProductTypes}
+                                                id="public-methods-example"
+                                                labelKey="name"
+                                                multiple
+                                                ref={ref}
+                                                className="input_custom_type_ahead"
+                                                allowNew={true}
+                                                newSelectionPrefix='Not a Platform User: '
+                                                onChange={(selected) => {
+                                                    let selectedUpdated = selected.map((s: any) => {
+                                                        return s.code
+                                                    })
+                                                    setDocumentGroups(selectedUpdated)
+                                                }}
+                                                options={productTypes}
+                                            />
+                                            <Form.Label className="label_custom white">Document Group</Form.Label>
+                                        </Col>
+                                        <span style={{ color: 'red' }}><small>{documentGroupError ? 'Please Select at least 1 Document Group' : ''}</small></span>
                                     </Form.Group>
                                 </Col>
                             </Col>

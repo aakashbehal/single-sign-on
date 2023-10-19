@@ -4,22 +4,30 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 const getAllDocumentGroup = async ({ pageSize,
     pageNumber,
     sortOrder,
-    sortParam
+    sortParam,
+    orgType
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/search`, {
-            pageSize,
-            pageNumber: pageNumber - 1,
-            sortOrder,
-            sortParam
-        })
-        const data = handleResponse(response)
-        let domains = data.response.datas
-        const responseModified: any = {}
-        responseModified.domains = domains
-        responseModified.totalCount = data.response.metadata.recordCount
-        responseModified.columns = data.response.metadata.columnPreferences
-        return responseModified
+        if (orgType !== 'Equabli') {
+            const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup`)
+            const data = handleResponse(response)
+            return { domains: data.response }
+        } else {
+            const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/search`, {
+                pageSize,
+                pageNumber: pageNumber - 1,
+                sortOrder,
+                sortParam
+            })
+            const data = handleResponse(response)
+            let domains = data.response.datas
+            const responseModified: any = {}
+            responseModified.domains = domains
+            responseModified.totalCount = data.response.metadata.recordCount
+            responseModified.columns = data.response.metadata.columnPreferences
+            return responseModified
+        }
+
     } catch (error: any) {
         throw error.message
     }
@@ -29,14 +37,23 @@ const addDocumentGroup = async ({
     name,
     description,
     domainCode,
-    code
+    code,
+    docGroupConfigCode,
+    orgType
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
+        let url = ''
+        if (orgType === 'Equabli') {
+            url = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`
+        } else {
+            url = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup`
+        }
+        const response = await axiosCustom.post(url, {
             name,
             description,
             domainCode,
-            code
+            code,
+            docGroupConfigCode
         })
         const data = handleResponse(response)
         return data.response
@@ -67,9 +84,15 @@ const updateDocumentGroup = async ({
     }
 }
 
-const deleteDocumentGroup = async (id: number) => {
+const deleteDocumentGroup = async (id: number, orgType: string) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/${id}`, {
+        let url = ''
+        if (orgType === 'Equabli') {
+            url = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/${id}`
+        } else {
+            url = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup/${id}`
+        }
+        const response = await axiosCustom.patch(url, {
             "action": "ACTIVE",
             "property": "string"
         })
