@@ -641,7 +641,7 @@ const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
             documentGroupCode: documentGroups
         }
         if (documentGroups.length > 0) {
-            dispatch(ClientSetupActionCreator.addClientDomain(formObject))
+            dispatch(ClientSetupActionCreator.addClientGroup(formObject))
         } else {
             setDocumentGroupError(true)
         }

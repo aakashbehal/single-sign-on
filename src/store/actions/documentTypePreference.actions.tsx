@@ -2,7 +2,8 @@ import {
     GetAllDocumentTypePreference,
     AddDocumentTypePreference,
     DeleteDocumentTypePreference,
-    UpdateDocumentTypePreference
+    UpdateDocumentTypePreference,
+    UniqueDocumentTypePreference
 } from "../types.d"
 import { documentTypePreference } from "../../services"
 
@@ -86,5 +87,22 @@ export const DocumentTypePreferenceActionCreator = {
                     dispatch({ type: DeleteDocumentTypePreference.DELETE_DOCUMENT_TYPE_PREFERENCE_RESET })
                 }, 0)
             })
-    }
+    },
+    getUniqueDocumentTypePreference: () => (dispatch: any) => {
+        const request = () => ({ type: UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_REQUEST })
+        const success = (domains: any) => ({ type: UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_SUCCESS, payload: domains })
+        const failure = (error: any) => ({ type: UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_FAILURE, payload: error })
+
+        dispatch(request())
+
+        documentTypePreference.getUniqueDocumentTypePreference()
+            .then(
+                domains => {
+                    dispatch(success(domains))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
 }

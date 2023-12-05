@@ -51,6 +51,14 @@ const DocumentCoverage = ({ collapse }: any) => {
         });
     }
 
+    const textHandler = (dC: any) => {
+        let documentType = dC.documentType;
+        if (documentType.slice(-1) !== 's') {
+            documentType += 's'
+        }
+        return <p className={Styles.ProgressDesc}><span className={Styles.clickable} onClick={() => drillDownHandler(dC)}>{dC.complete}</span> out of <b>{dC.total}</b> accounts have <b>{documentType}</b></p>
+    }
+
     return (
         <Col sm={12} className={Styles.inner_document_summary}
             style={{
@@ -93,7 +101,7 @@ const DocumentCoverage = ({ collapse }: any) => {
                             <div key={`dC_${index}`} className={`${Styles.progress_container}`}>
                                 <p className={Styles.ProgressTitle}><b>{dC.title}</b></p>
                                 <ProgressBar className={Styles.progressbar} now={dC.percentage} label={`${dC.percentage}% `} />
-                                <p className={Styles.ProgressDesc}><span className={Styles.clickable} onClick={() => drillDownHandler(dC)}>{dC.complete}</span> out of <b>{dC.total}</b> accounts has <b>{dC.documentType}</b></p>
+                                {textHandler(dC)}
                                 <hr />
                             </div>
                         )

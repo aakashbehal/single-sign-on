@@ -15,16 +15,16 @@ const RetentionPolicy = ({ dispatch, policy, loading, error }: any) => {
 
     const handleSave = (e: any) => {
         e.preventDefault()
-        if (Number(retention) < 60 || Number(retention) > 365) {
-            setMinMaxError(true)
-            return
-        } else {
-            setMinMaxError(false)
-            let configRequest = {
-                "retentionPolicy": retention
-            }
-            dispatch(FileNameConfigActionCreator.saveRetentionPolicy(configRequest))
+        // if (Number(retention) < 60 || Number(retention) > 365) {
+        // setMinMaxError(true)
+        // return
+        // } else {
+        // setMinMaxError(false)
+        let configRequest = {
+            "retentionPolicy": retention
         }
+        dispatch(FileNameConfigActionCreator.saveRetentionPolicy(configRequest))
+        // }
     }
 
     const resetHandler = () => {
@@ -60,7 +60,7 @@ const RetentionPolicy = ({ dispatch, policy, loading, error }: any) => {
                                                     value={retention} />
                                             </Col>
                                             <Col md={1} style={{ display: 'flex', alignItems: 'center' }}><p style={{ margin: 0 }}>Days</p></Col>
-                                            <span style={{ color: 'red', marginLeft: "1rem" }}><small>{minMaxError ? 'Retention Policy Should be between 60 to 365 days' : ''}</small></span>
+                                            {/* <span style={{ color: 'red', marginLeft: "1rem" }}><small>{minMaxError ? 'Retention Policy Should be between 60 to 365 days' : ''}</small></span> */}
                                         </Row>
                                         <Form.Label className="label_custom" style={{ left: '10px' }}>Retain document after closure of account till</Form.Label>
                                     </Form.Group>

@@ -1,14 +1,17 @@
 
 import { handleResponse, axiosCustom } from "../helpers/util"
+import { userService } from "./user.service"
 
-const getAllDocumentGroup = async ({ pageSize,
+const getAllDocumentGroup = async ({
+    pageSize,
     pageNumber,
     sortOrder,
-    sortParam,
-    orgType
+    sortParam
 }: any) => {
     try {
-        if (orgType !== 'Equabli') {
+        const user = userService.getUser()
+        let userType = user.recordSource
+        if (userType !== 'Equabli') {
             const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup`)
             const data = handleResponse(response)
             return { domains: data.response }
@@ -117,10 +120,21 @@ const getDocumentGroupByCode = async (shortCode: string) => {
     }
 }
 
+const getUniqueDocumentGroup = async (shortCode: string) => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pre/docGroup/unique`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const documentGroupService = {
     getAllDocumentGroup,
     addDocumentGroup,
     deleteDocumentGroup,
     updateDocumentGroup,
-    getDocumentGroupByCode
+    getDocumentGroupByCode,
+    getUniqueDocumentGroup
 }

@@ -15,6 +15,8 @@ import { RequiredDocumentActionCreator } from "../../store/actions/requiredDocum
 import { createMessage } from "../../helpers/messages"
 import NoRecord from "../../components/Common/NoResult";
 import { userService } from "../../services";
+import { DocumentTypePreferenceActionCreator } from "../../store/actions/documentTypePreference.actions";
+import { DocumentGroupActionCreator } from "../../store/actions/documentGroup.actions";
 
 const RequiredDocuments = () => {
     const dispatch = useDispatch()
@@ -51,9 +53,9 @@ const RequiredDocuments = () => {
         productTypes: state.types.productType.data,
         loadingProductTypes: state.types.productType.loading,
         errorProductTypes: state.types.productType.error,
-        documentTypes: state.types.documentType.data,
-        loadingDocumentTypes: state.types.documentType.loading,
-        errorDocumentTypes: state.types.documentType.error,
+        documentTypes: state.docTypePreference.uniqueDocumentTypes,
+        loadingDocumentTypes: state.docTypePreference.loadingUnique,
+        errorDocumentTypes: state.docTypePreference.errorUnique,
         adding: state.requiredDocuments.adding,
         addSuccessful: state.requiredDocuments.addSuccessful,
         addError: state.requiredDocuments.addError,
@@ -68,8 +70,8 @@ const RequiredDocuments = () => {
         const user = userService.getUser()
         setRole(user.recordSource)
         getRequiredDocuments()
-        dispatch(TypesActionCreator.getProductTypes())
-        dispatch(TypesActionCreator.getDocumentTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
+        dispatch(DocumentTypePreferenceActionCreator.getUniqueDocumentTypePreference())
     }, [])
 
     useEffect(() => {
@@ -339,7 +341,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
         } = formRef.current;
         const payload = {
             "productCode": productType.value,
-            "docTypeCode": documentTypesSelected.map((dT: any) => dT.keyCode)
+            "docTypeCode": documentTypesSelected.map((dT: any) => dT.code)
         }
 
         if (validateUpload(payload)) {
@@ -427,7 +429,7 @@ const PublicMethodsExample = ({ documentTypes, editRequired, setDocumentTypesSel
             <Typeahead
                 defaultSelected={editRequired ? editRequired.documents : []}
                 id="public-methods-example"
-                labelKey={"keyValue"}
+                labelKey={"name"}
                 multiple
                 options={documentTypes}
                 onChange={(selected) => {

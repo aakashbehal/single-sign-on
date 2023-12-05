@@ -2,7 +2,8 @@ import {
     GetAllDocumentTypePreference,
     AddDocumentTypePreference,
     DeleteDocumentTypePreference,
-    UpdateDocumentTypePreference
+    UpdateDocumentTypePreference,
+    UniqueDocumentTypePreference
 } from "../types.d"
 
 const initialState = {
@@ -18,7 +19,10 @@ const initialState = {
     updatingError: false,
     deleting: false,
     deleteSuccess: false,
-    deleteError: false
+    deleteError: false,
+    uniqueDocumentTypes: [],
+    loadingUnique: false,
+    errorUnique: false
 }
 
 const documentTypePreferenceReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -137,6 +141,31 @@ const documentTypePreferenceReducer = (state = initialState, action: { type: any
                 deleting: false,
                 deleteSuccess: false,
                 deleteError: false
+            }
+        case UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_REQUEST:
+            return {
+                ...state,
+                loadingUnique: true,
+                errorUnique: false
+            }
+        case UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_SUCCESS:
+            return {
+                ...state,
+                uniqueDocumentTypes: action.payload,
+                loadingUnique: false,
+            }
+        case UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_FAILURE:
+            return {
+                ...state,
+                loadingUnique: false,
+                errorUnique: true
+            }
+        case UniqueDocumentTypePreference.UNIQUE_DOCUMENT_TYPE_PREFERENCE_RESET:
+            return {
+                ...state,
+                uniqueDocumentTypes: [],
+                loadingUnique: false,
+                errorUnique: false
             }
         default:
             return state

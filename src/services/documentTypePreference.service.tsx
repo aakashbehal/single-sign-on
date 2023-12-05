@@ -78,7 +78,6 @@ const updateDocumentTypePreference = async (docTypePrefId: any, payload: any) =>
 }
 
 const deleteDocumentTypePreference = async (orgDocTypePrefId: any) => {
-    console.log(`---orgDocTypePrefId--`, orgDocTypePrefId)
     try {
         const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docType/${orgDocTypePrefId}`, {
             "action": "ACTIVE",
@@ -91,9 +90,20 @@ const deleteDocumentTypePreference = async (orgDocTypePrefId: any) => {
     }
 }
 
+const getUniqueDocumentTypePreference = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docType/unique`)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const documentTypePreference = {
     getAllDocumentTypePreference,
     addDocumentTypePreference,
     deleteDocumentTypePreference,
-    updateDocumentTypePreference
+    updateDocumentTypePreference,
+    getUniqueDocumentTypePreference
 }

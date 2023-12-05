@@ -113,18 +113,23 @@ const getMyDocumentList = async ({
             let orgCode = split[1]
             let docType = document.documentType
             let generationDate = document.generateDate
-            let name = document.documentName.replace(UniqueIdentifier, '').replace(orgCode, '').replace(docType, '').replace(generationDate, '').replace('-', '').replace('_', '').replace(/s/g, '')
-            let formattedName = `${orgCode}-${docType}-`
-            if (generationDate) {
-                let date = (new Date(generationDate)).getDate()
-                let month = (new Date(generationDate)).getMonth()
-                let year = (new Date(generationDate)).getFullYear()
+            if (accountNumber !== 'Other') {
 
-                formattedName += `${year}${date <= 9 ? `0${date}` : date}${month <= 9 ? `0${month}` : month}-`
+                let name = document.documentName.replace(UniqueIdentifier, '').replace(orgCode, '').replace(docType, '').replace(generationDate, '').replace('-', '').replace('_', '').replace(/s/g, '')
+                let formattedName = `${orgCode}-${docType}-`
+                if (generationDate) {
+                    let date = (new Date(generationDate)).getDate()
+                    let month = (new Date(generationDate)).getMonth()
+                    let year = (new Date(generationDate)).getFullYear()
+
+                    formattedName += `${year}${date <= 9 ? `0${date}` : date}${month <= 9 ? `0${month}` : month}-`
+                }
+                formattedName += `${UniqueIdentifier}-${name.trim()}`
+                // document.name = document.documentName
+                document.name = formattedName
+            } else {
+                document.name = document.documentName
             }
-            formattedName += `${UniqueIdentifier}-${name.trim()}`
-            // document.name = document.documentName
-            document.name = formattedName
             // if (doc) {
             //     document.documentName = doc[doc.length - 1]
             // }

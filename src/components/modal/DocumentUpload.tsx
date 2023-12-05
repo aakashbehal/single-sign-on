@@ -49,6 +49,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         fileLengthSingle: false,
         fileSize: false
     })
+    const [selectedNamingConfig, setSelectedNamingConfig] = useState<any>(null)
     const [userType, setUserType] = useState<string>('')
     const [profileImageTemp, setProfileImageTemp] = useState<any>()
     // const [noMatrixFile, SetNoMatrixFile] = useState(false);
@@ -56,12 +57,12 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     const [documentTypeFromName, setDocumentTypeFromName] = useState<any>(null)
 
     const {
-        documentTypes,
+        uniqueDocumentTypes,
         confListLoading,
         confListError,
         confList,
     } = useSelector((state: any) => ({
-        documentTypes: state.types.documentType.data,
+        uniqueDocumentTypes: state.docTypePreference.uniqueDocumentTypes,
         confListLoading: state.fileNameConfig.fileNamingConfigList.loading,
         confListError: state.fileNameConfig.fileNamingConfigList.error,
         confList: state.fileNameConfig.fileNamingConfigList.data,
@@ -135,6 +136,9 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             if (file.type === 'application/zip' || file.type === 'application/x-zip-compressed') {
                 formData.append("doc", file);
                 formData.append("doc", matrixFile)
+                if (selectedNamingConfig) {
+                    formData.append("namingConfigGroupCode", selectedNamingConfig)
+                }
                 API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload/bulk`
                 const response = await axiosCustom.post(API_URL, formData, config)
                 handleResponse(response)
@@ -168,6 +172,9 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                     formData.append("docTypeCode", details.docTypeCode);
                 } else {
                     formData.append("doc", file);
+                    if (selectedNamingConfig) {
+                        formData.append("namingConfigGroupCode", selectedNamingConfig)
+                    }
                 }
                 const response = await axiosCustom.post(API_URL, formData, config)
                 handleResponse(response)
@@ -212,7 +219,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 tempFiles = [...tempFiles, ...Array.from(file)]
             }
         } else {
-            const documentTypesCodes = documentTypes.map((dT: any) => dT.shortCode)
+            const documentTypesCodes = uniqueDocumentTypes.map((dT: any) => dT.shortCode)
             const fileArray: any = Array.from(file)
             documentTypesCodes.map((dTc: any) => {
                 if (fileArray[0].name.includes(`_${dTc}_`)) {
@@ -259,6 +266,10 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
     const ProfileRef = useRef<any>()
 
+    useEffect(() => {
+        console.log(`--selectedNamingConfig--`, selectedNamingConfig)
+    }, [selectedNamingConfig])
+
     return (
         <Modal
             show={show}
@@ -296,6 +307,32 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             <Modal.Body className="show-grid">
                 <Container>
                     <Col sm={12}>
+                        {
+                            parentComponent === 'myDocument'
+                            && <Row style={{ margin: 0 }}>
+                                <Col lg={12} md={12} className="no_padding">
+                                    <Form.Group as={Col} className="mb-4">
+                                        <Col md={12} sm={12} className="no_padding">
+                                            <Form.Control
+                                                as="select"
+                                                name="document_group"
+                                                value={selectedNamingConfig}
+                                                onChange={(e) => setSelectedNamingConfig(e.target.value)}
+                                                className="select_custom white"
+                                            >
+                                                <option value="" disabled selected>Select Document Name Group</option>
+                                                {
+                                                    (confList && confList.length > 0) &&
+                                                    confList.map((conf: any, index: number) => {
+                                                        return <option key={`cr_${index}`} value={conf.namingConfigGroupCode}><b>{conf.namingConfigGroupName}</b></option>
+                                                    })
+                                                }
+                                            </Form.Control>
+                                        </Col>
+                                    </Form.Group>
+                                </Col >
+                            </Row>
+                        }
                         {
                             parentComponent !== 'profile'
                             &&

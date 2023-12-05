@@ -13,6 +13,7 @@ import { createMessage } from "../../helpers/messages"
 
 import Styles from "./User.module.sass";
 import NoRecord from "../../components/Common/NoResult";
+import { DocumentTypePreferenceActionCreator } from "../../store/actions/documentTypePreference.actions";
 
 const DocumentCostConfiguration = () => {
     const dispatch = useDispatch();
@@ -42,9 +43,9 @@ const DocumentCostConfiguration = () => {
         cost: state.cost.data,
         loading: state.cost.loading,
         error: state.cost.error,
-        documentTypes: state.types.documentType.data,
-        loadingDocumentTypes: state.types.documentType.loading,
-        errorDocumentTypes: state.types.documentType.error,
+        documentTypes: state.docTypePreference.uniqueDocumentTypes,
+        loadingDocumentTypes: state.docTypePreference.loadingUnique,
+        errorDocumentTypes: state.docTypePreference.errorUnique,
         adding: state.cost.adding,
         addSuccessful: state.cost.addSuccessful,
         addError: state.cost.addError,
@@ -57,7 +58,7 @@ const DocumentCostConfiguration = () => {
 
     useEffect(() => {
         getDocumentCosts()
-        dispatch(TypesActionCreator.getDocumentTypes())
+        dispatch(DocumentTypePreferenceActionCreator.getUniqueDocumentTypePreference())
     }, [])
 
     useEffect(() => {
@@ -134,7 +135,7 @@ const DocumentCostConfiguration = () => {
                                                 {
                                                     (documentTypes && documentTypes.length > 0) &&
                                                     documentTypes.map((dT: any, index: number) => {
-                                                        return <option key={`cr_${index}`} value={dT.shortCode}>{dT.documentType}</option>
+                                                        return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                     })
                                                 }
                                             </Form.Control>
@@ -342,7 +343,7 @@ const AddEditCost = ({ show, onHide, Styles, documentTypes, editCost, dispatch, 
                                         {
                                             (documentTypes && documentTypes.length > 0) &&
                                             documentTypes.map((dT: any, index: number) => {
-                                                return <option key={`cr_${index}`} disabled={costAlreadyAdded.indexOf(dT.keyCode) !== -1} value={dT.keyCode}>{dT.keyValue}</option>
+                                                return <option key={`cr_${index}`} disabled={costAlreadyAdded.indexOf(dT.code) !== -1} value={dT.code}>{dT.name}</option>
                                             })
                                         }
                                     </Form.Control>

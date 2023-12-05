@@ -41,13 +41,13 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
 
     useEffect(() => {
         if (deleteSuccess) {
-            addToast(createMessage('success', 'user configuration', 'delete'), { appearance: 'success', autoDismiss: true });
+            addToast(createMessage('success', 'deleted', 'Document naming configuration'), { appearance: 'success', autoDismiss: true });
             getListOfUserConfig()
             setConfigurationDetails(null)
             setShowConfig(false)
         }
         if (deleteError) {
-            addToast(createMessage('error', `User Configuration`, 'Delete'), { appearance: 'error', autoDismiss: false });
+            addToast(createMessage('error', 'Deleting', `document Naming Configuration`), { appearance: 'error', autoDismiss: false });
         }
     }, [deleteRequest,
         deleteSuccess,

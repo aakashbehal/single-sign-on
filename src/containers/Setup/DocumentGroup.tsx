@@ -99,7 +99,6 @@ const DocumentGroup = () => {
         dispatch(DocumentGroupActionCreator.getAllDocumentGroup({
             pageSize,
             pageNumber,
-            orgType: user.recordSource
         }))
     }
 

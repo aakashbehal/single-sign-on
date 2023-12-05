@@ -24,6 +24,7 @@ import TransformationNameModel from '../../components/modal/TransformationNameMo
 import { adjustStartEnd, convertToDesiredFormat } from '../../helpers/util';
 import DefaultMissingModal from '../../components/modal/DefaultMissingModal';
 import DocumentTypes from '../../components/Common/DocumentType';
+import { DocumentTypePreferenceActionCreator } from '../../store/actions/documentTypePreference.actions';
 
 interface IFields {
     config_name: { value: string }
@@ -94,7 +95,7 @@ const NamingConfiguration = () => {
         dataFileNamingConfig: state.fileNameConfig.fileNamingConfig.data,
         dataUserConjunction: state.fileNameConfig.userConjunction.data,
         productTypes: state.types.productType.data,
-        documentTypes: state.types.documentType.data,
+        documentTypes: state.docTypePreference.uniqueDocumentTypes,
     }))
 
     useEffect(() => {
@@ -103,10 +104,10 @@ const NamingConfiguration = () => {
             history.push(`/setup/document_general_configuration`)
         }
         if (saveError) {
-            addToast(createMessage('error', `User Name Configuration`, 'Save'), { appearance: 'error', autoDismiss: false });
+            addToast(createMessage('error', 'saving', `document name configuration`), { appearance: 'error', autoDismiss: false });
         }
         if (updateSuccess) {
-            addToast(createMessage('success', `User Name Configuration`, 'Update'), { appearance: 'success', autoDismiss: true });
+            addToast(createMessage('success', `document name configuration`, 'Updated'), { appearance: 'success', autoDismiss: true });
             history.push(`/setup/document_general_configuration`)
         }
         if (updateError) {
@@ -122,7 +123,7 @@ const NamingConfiguration = () => {
         dispatch(FileNameConfigActionCreator.getConjunction())
         // dispatch(FileNameConfigActionCreator.getUserSeparator())
         dispatch(TypesActionCreator.getProductTypes())
-        dispatch(TypesActionCreator.getDocumentTypes())
+        dispatch(DocumentTypePreferenceActionCreator.getUniqueDocumentTypePreference())
         // return () => {
         //     localStorage.removeItem('naming_config')
         // }
@@ -508,8 +509,8 @@ const NamingConfiguration = () => {
             ]
             tempJson = documentTypes && documentTypes.map((data: any) => {
                 let obj: any = {
-                    "documentCode": data.keyCode,
-                    "documentName": data.keyValue
+                    "documentCode": data.code,
+                    "documentName": data.name
                 }
                 return obj
             })
@@ -663,7 +664,7 @@ const NamingConfiguration = () => {
                                                         {
                                                             (documentTypes && documentTypes.length > 0) &&
                                                             documentTypes.map((dT: any, index: number) => {
-                                                                return <option key={`cr_${index}`} value={dT.keyCode}>{dT.keyValue}</option>
+                                                                return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                             })
                                                         }
                                                     </Form.Control>
