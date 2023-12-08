@@ -72,7 +72,7 @@ const getClients = async () => {
 
 const getStates = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/stateCodes`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/country/state`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -105,7 +105,7 @@ const getAgencies = async () => {
 
 const getAppId = async (type: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getAppByShortName?shortName=${type}`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/app?shortCode=${type}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -115,7 +115,7 @@ const getAppId = async (type: any) => {
 
 const getRecordStatus = async (type: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getRecordStatusByShortName?shortName=${type}`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/recordStatus?shortCode=${type}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {
@@ -135,7 +135,7 @@ const getStatus = async () => {
 
 const getRecordSource = async (type: any) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getRecordSourceByShortName?shortName=${type}`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/recordSource?shortCode=${type}`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

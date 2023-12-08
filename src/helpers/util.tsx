@@ -106,7 +106,7 @@ export const handleResponse = (response: any) => {
         if (response.data.message === 'Token Expired!') {
             userService.logoutAuthExpired()
         }
-        throw response.data.message
+        throw response.data.errors
     }
     return response.data;
 }
@@ -114,9 +114,36 @@ export const handleResponse = (response: any) => {
 export const httpInterceptor = () => {
     const noAuthRequired = [
         "login",
+        // "allClients",
+        "getAllStates",
+        "getallstates",
+        "state",
+        // "getAllPartners",
+        "getAllAccountStatuses",
+        "getAllRecordStatus",
+        "getRecordStatusById",
+        "getRecordStatusByShortName",
         "authenticate",
-        "logout"
+        "logout",
+        "activateme",
+        "record_source",
+        "secret_question",
+        "resetPasswordByUserDetails",
+        "getSecurityQuesByUserDetails",
+        "validateSecurityQuesByUserDetails",
+        "resetPasswordByUserDetails",
+        "setPasswordAndSecurityQues",
+        "changePasswordByUserDetails",
+        "registration",
+        "insertIntoAppErrorLog",
+        "clientOrPartnerByCode",
+        "recordStatus",
+        "recordSource",
+        "app",
+        "lookup"
     ]
+
+    const apiKeyService = ['common-config-service']
 
     axiosCustom.interceptors.request.use(
         (request: any) => {
@@ -127,6 +154,7 @@ export const httpInterceptor = () => {
                 }
                 const url = request.url.split('/')
                 const urlString = url[url.length - 1].split('?')
+                const calledService = url[3]
                 if (
                     noAuthRequired.indexOf(urlString[0]) === -1
                 ) {
@@ -160,8 +188,10 @@ export const httpInterceptor = () => {
                     //     }
                     // }
                     request.headers['Authorization'] = `Bearer ${token}`;
-                    if (user?.apiKey) {
-                        request.headers['X-API-KEY'] = user.apiKey
+                    if (apiKeyService.includes(calledService)) {
+                        request.headers['X-API-KEY'] = user?.apiKey
+                    } else {
+                        request.headers['X-API-KEY'] = 'eq-docs-hfp-ljeq'
                     }
                 }
                 request.headers['rqsOrigin'] = 'web';
@@ -556,4 +586,16 @@ export const convertToDesiredFormat = (input: any) => {
     }
     // console.log(`--------converted`, converted)
     return converted;
+}
+
+interface IError {
+    errorCode: number
+    errorMessage: string
+    type: string
+}
+
+export const errorHandler = (addToast: any, errors: IError[]) => {
+    for (let error of errors) {
+        addToast(error.errorMessage, { appearance: 'error', autoDismiss: false })
+    }
 }

@@ -2,7 +2,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const registration = async (requestData: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/registration`, requestData)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_USER_SERVICE}/public/user/registration`, requestData)
         const data = handleResponse(response)
         return data
     } catch (error: any) {
@@ -11,20 +11,16 @@ const registration = async (requestData: any) => {
 }
 
 const validateOrgName = async (orgName: any, orgType: any) => {
-    let requestBody: any = {
-        orgType
-    }
-    if (orgType === 'CL') {
-        requestBody.clientName = orgName
-    } else if (orgType === 'PT') {
-        requestBody.partnerName = orgName
+    const requestBody: any = {
+        "orgType": orgType,
+        "shortName": orgName
     }
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/getClientOrPartnerIdByCode`, requestBody)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/services/validate/clientOrPartnerByCode`, requestBody)
         const data = handleResponse(response)
         return data
     } catch (error: any) {
-        throw error.message
+        throw error
     }
 }
 

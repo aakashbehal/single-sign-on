@@ -21,6 +21,7 @@ import { RegistrationActionCreator } from "../../store/actions/registration.acti
 import { registrationService } from "../../services";
 import { TiTick } from "react-icons/ti";
 import { BiPhone } from "react-icons/bi";
+import { errorHandler } from "../../helpers/util";
 
 let isValidOrg = false
 let orgId: any = null
@@ -344,7 +345,8 @@ const Step4Content = React.forwardRef((
                     } catch (err: any) {
                         isValidOrg = false
                         showNotCheck(false)
-                        addToast(err, { appearance: 'error', autoDismiss: false })
+                        errorHandler(addToast, err)
+                        // addToast(err, { appearance: 'error', autoDismiss: false })
                     }
                     setIsValidOrgName(isValidOrg)
                     setValidating(false)
@@ -500,7 +502,7 @@ const Step2Content = React.forwardRef((props: any, ref: any) => {
                 setValue(_formD.stateCode)
             }
         }, 0)
-        // dispatch(MiscActionCreator.getStates())
+        dispatch(MiscActionCreator.getStates())
     }, [])
 
     const [value, setValue] = useState<any>('')
@@ -589,9 +591,9 @@ const Step2Content = React.forwardRef((props: any, ref: any) => {
                                     return (
                                         <option
                                             key={`state_${index}`}
-                                            value={state.stateCode}
+                                            value={state.shortCode}
                                         >
-                                            {state.stateCode} - {state.fullName}
+                                            {state.shortCode} - {state.fullName}
                                         </option>
                                     )
                                 })

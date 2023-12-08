@@ -95,7 +95,7 @@ const UserAccount = () => {
     const getUserPreference = async (loginKey: any) => {
         try {
 
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/getUserPreference?loginKey=${loginKey}`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_USER_SERVICE}/public/user/getUserPreference?loginKey=${loginKey}`)
             const data = handleResponse(response)
             setUserPreferences(data.response)
             setSelectedState(data.response.state)
@@ -109,7 +109,7 @@ const UserAccount = () => {
 
     const getSecretQuestions = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/secret_question`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/lookup?lookupGroupKeyValue=secret_question`)
             const data = handleResponse(response)
             setSecretQuestions(data.response)
             setSecretQuestions1(data.response)
@@ -151,6 +151,8 @@ const UserAccount = () => {
             "state": selectedState,
             "stateName": stateName[0].fullName,
             "zip": zip.value,
+            "recordSourceId": recordSource.recordSourceId,
+            "appId": app.appId,
             "secretAnswers": [
                 {
                     "secretAnswerId": userPreferences.secretAnswers[0].secretAnswerId,
@@ -173,7 +175,7 @@ const UserAccount = () => {
             ]
         }
         try {
-            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMPLIANCE_SEARCH_URL}/updateUserPreference`, reqBody)
+            const response: any = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_USER_SERVICE}/public/user/updateUserPreference`, reqBody)
             const data = handleResponse(response)
             addToast(createMessage('success', `updated`, 'User details'), { appearance: 'success', autoDismiss: true })
         } catch (error: any) {
@@ -433,9 +435,9 @@ const UserAccount = () => {
                                                     return (
                                                         <option
                                                             key={`secretQuestion_${index}`}
-                                                            value={sQ.keycode}
+                                                            value={sQ.keyCode}
                                                         >
-                                                            {sQ.keyvalue}
+                                                            {sQ.keyValue}
                                                         </option>
                                                     )
                                                 })
@@ -474,9 +476,9 @@ const UserAccount = () => {
                                                     return (
                                                         <option
                                                             key={`secretQuestion_${index}`}
-                                                            value={sQ.keycode}
+                                                            value={sQ.keyCode}
                                                         >
-                                                            {sQ.keyvalue}
+                                                            {sQ.keyValue}
                                                         </option>
                                                     )
                                                 })

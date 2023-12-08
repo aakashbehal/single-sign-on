@@ -5,7 +5,7 @@ import { handleResponse, axiosCustom } from "../helpers/util"
 
 const login = async (username: string, password: string) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/login`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_USER_SERVICE}/login`, {
             loginKey: username.trim(),
             loginSecret: password.trim()
         })
@@ -36,7 +36,7 @@ async function logout() {
     const FBToken = sessionStorage.getItem('FBToken')
     const user = getUser()
     try {
-        axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/logout`, {
+        axiosCustom.post(`${process.env.REACT_APP_BASE_URL_SSO}${process.env.REACT_APP_SSO_USER_SERVICE}/logout`, {
             principleId: user.principleId,
             loginKey: user.loginKey
         })
@@ -87,7 +87,7 @@ const getTempUser = () => {
 
 const getUser = () => {
     const user = JSON.parse(localStorage.getItem('user')!)
-    if (!user) {
+    if (user && user.version !== '1') {
         localStorage.clear()
         history.push('/login')
         return null
@@ -107,7 +107,7 @@ const getAccessToken = () => {
 
 const getConnectedUsers = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/connected`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_USER_SERVICE}/users/connected`)
         const data = handleResponse(response)
         const modifiedResponse = data.response.map((res: any) => {
             res.modifiedFirstName = `${res.orgCode} - ${res.firstName} ${res.lastName}`
