@@ -260,18 +260,21 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
     const validate = (formObj: any) => {
         let checkFormObj: any = {}
         let formIsValid = true;
+        console.log(`--user.recordSource--`, user.recordSource)
         if (user.recordSource === 'Equabli') {
             checkFormObj = {
                 domainCode: formObj.domainCode,
                 name: formObj.name,
                 description: formObj.description,
-                docGroupId: formObj.docGroupId
+                code: formObj.code
             }
+            console.log(`--checkFormObj-`, checkFormObj)
+
             const error: any = {
                 domainCode: false,
                 name: false,
                 description: false,
-                docGroupId: false
+                code: false
             }
             for (let key in checkFormObj) {
                 if ((!checkFormObj[key] || checkFormObj[key] === "") && key !== 'docGroupId') {
@@ -283,6 +286,7 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                     formIsValid = false
                 }
             }
+            console.log(`--error-`, error)
             setFormError(error)
         } else {
             checkFormObj = {
@@ -310,8 +314,8 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
     const addEditSubmit = () => {
         const {
             domain,
-            shortName,
-            fullName,
+            code,
+            name,
             description,
             document_group
         } = documentGroupFormRef.current
@@ -323,9 +327,9 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
         } else {
             formObject.docGroupId = data?.id || null
             formObject.domainCode = domain?.value || null
-            formObject.name = fullName?.value || null
+            formObject.name = name?.value || null
             formObject.description = description?.value || null
-            formObject.code = shortName?.value || null
+            formObject.code = code?.value || null
         }
         if (validate(formObject)) {
             if (!data) {
@@ -360,25 +364,25 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                                         <Col lg={12} md={12} className="no_padding">
                                             <Form.Group as={Col} className="mb-4">
                                                 <Domains selectedValue={data ? data.domainCode : ''} />
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["domainCode"] ? 'Short Name is required ' : ''}</small></span>
                                                 <Form.Label className="label_custom white">Domains</Form.Label>
                                             </Form.Group>
                                         </Col>
                                         <Col lg={12} md={12} className="no_padding">
                                             <Form.Group as={Col} className="mb-4">
                                                 <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control type="text" name="shortName" defaultValue={data?.code || null} maxLength={5}></Form.Control>
+                                                    <Form.Control type="text" name="code" defaultValue={data?.code || null} maxLength={5}></Form.Control>
                                                 </Col>
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["code"] ? 'Short Name is required ' : ''}</small></span>
                                                 <Form.Label className="label_custom white">Short Name</Form.Label>
                                             </Form.Group>
                                         </Col>
                                         <Col lg={12} md={12} className="no_padding">
                                             <Form.Group as={Col} className="mb-4">
                                                 <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control type="text" name="fullName" defaultValue={data?.name || null}></Form.Control>
+                                                    <Form.Control type="text" name="name" defaultValue={data?.name || null}></Form.Control>
                                                 </Col>
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
+                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["name"] ? 'Full Name is required ' : ''}</small></span>
                                                 <Form.Label className="label_custom white">Full Name</Form.Label>
                                             </Form.Group>
                                         </Col>
