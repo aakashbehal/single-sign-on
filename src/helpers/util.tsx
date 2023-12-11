@@ -106,7 +106,7 @@ export const handleResponse = (response: any) => {
         if (response.data.message === 'Token Expired!') {
             userService.logoutAuthExpired()
         }
-        throw response.data.errors
+        throw response.data.errors || response.data.message
     }
     return response.data;
 }

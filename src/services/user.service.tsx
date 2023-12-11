@@ -28,7 +28,7 @@ const login = async (username: string, password: string) => {
         if (error.message) {
             throw error.message
         }
-        throw error.message
+        throw error
     }
 }
 
