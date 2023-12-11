@@ -57,13 +57,13 @@ const DocumentTypePreference = () => {
         loadingProductTypes,
         errorProductTypes,
     } = useSelector((state: any) => ({
-        productTypes: state.types.productType.data,
-        loadingProductTypes: state.types.productType.loading,
-        errorProductTypes: state.types.productType.error
+        productTypes: state.documentGroup.data,
+        loadingProductTypes: state.documentGroup.loading,
+        errorProductTypes: state.documentGroup.error
     }))
 
     useEffect(() => {
-        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
     }, [])
 
     const {
@@ -150,7 +150,6 @@ const DocumentTypePreference = () => {
     }
 
     const deleteDocumentTypePreference = () => {
-        console.log(details)
         dispatch(DocumentTypePreferenceActionCreator.deleteDocumentTypePreference(details.prefId))
     }
 
@@ -172,8 +171,8 @@ const DocumentTypePreference = () => {
                                             className="select_custom white">
                                             <option disabled value="" selected>Select Product Type...</option>
                                             {
-                                                (productTypes && productTypes.length > 0) &&
-                                                productTypes.map((dT: any, index: number) => {
+                                                (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                                productTypes?.pickedDocGroups.map((dT: any, index: number) => {
                                                     return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                 })
                                             }
@@ -343,8 +342,8 @@ const AddEditClient = ({ onHide, show, data, dispatch, productTypes }: any) => {
                                                 className="select_custom white">
                                                 <option disabled value="">Select Product Type...</option>
                                                 {
-                                                    (productTypes && productTypes.length > 0) &&
-                                                    productTypes.map((dT: any, index: number) => {
+                                                    (productTypes && productTypes?.availableDocGroups.length > 0) &&
+                                                    productTypes?.availableDocGroups.map((dT: any, index: number) => {
                                                         return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                     })
                                                 }

@@ -37,7 +37,6 @@ const getAllClients = async ({
         })
         return responseModified
     } catch (error: any) {
-        console.log(error)
         throw error.message
     }
 }

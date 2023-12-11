@@ -50,9 +50,9 @@ const RequiredDocuments = () => {
         requiredDocuments: state.requiredDocuments.data,
         loading: state.requiredDocuments.loading,
         error: state.requiredDocuments.error,
-        productTypes: state.types.productType.data,
-        loadingProductTypes: state.types.productType.loading,
-        errorProductTypes: state.types.productType.error,
+        productTypes: state.documentGroup.data,
+        loadingProductTypes: state.documentGroup.loading,
+        errorProductTypes: state.documentGroup.error,
         documentTypes: state.docTypePreference.uniqueDocumentTypes,
         loadingDocumentTypes: state.docTypePreference.loadingUnique,
         errorDocumentTypes: state.docTypePreference.errorUnique,
@@ -359,6 +359,7 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
             animation={true}
         >
             <Form ref={formRef} onSubmit={(e) => handleSubmit(e)}>
+
                 <Modal.Header closeButton>
                     <Modal.Title id="contained-modal-title-vcenter" >
                         {editRequired ? 'Edit Required Document Configuration' : "Add New Required Document Configuration"}
@@ -378,8 +379,8 @@ const AddEditRequiredDocuments = ({ show, onHide, Styles, documentTypes, editReq
                                         className="select_custom white">
                                         <option></option>
                                         {
-                                            (productTypes && productTypes.length > 0) &&
-                                            productTypes.map((dT: any, index: number) => {
+                                            (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                            productTypes.pickedDocGroups.map((dT: any, index: number) => {
                                                 return <option key={`cr_${index}`} disabled={selectedProduct.indexOf(dT.code) !== -1} value={dT.code}>{dT.name}</option>
                                             })
                                         }

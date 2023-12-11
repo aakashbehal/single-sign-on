@@ -40,7 +40,6 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
     }))
 
     useEffect(() => {
-        console.log(addSubscriptionSuccess)
         if (addSubscriptionSuccess) {
             getSubscriptionsAndUserSubscription()
             dispatch(UsageActionCreator.getUsage())

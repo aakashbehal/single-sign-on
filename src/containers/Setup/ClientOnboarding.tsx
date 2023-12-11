@@ -119,10 +119,6 @@ const ClientOnboarding = () => {
         dispatch(ClientSetupActionCreator.deactivateClient(editData.clientId))
     }
 
-    useEffect(() => {
-        console.log(JSON.stringify(clients))
-    }, [clients])
-
     return (
         <>
             <Col>

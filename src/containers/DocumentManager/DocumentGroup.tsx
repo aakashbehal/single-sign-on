@@ -115,10 +115,10 @@ const DocumentGroup = () => {
     const deleteDocumentGroup = () => {
         dispatch(DocumentGroupActionCreator.deleteDocumentGroup(details.id, user.recordSource))
     }
-
+    const [documentGroupPicked, setDocumentGroupPicked] = useState([])
     useEffect(() => {
-        console.log(editData)
-    }, [editData])
+        setDocumentGroupPicked(documentGroup?.pickedDocGroups)
+    }, [documentGroup])
 
     return (
         <>
@@ -134,7 +134,7 @@ const DocumentGroup = () => {
                 }
                 <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
                     {
-                        !loading && documentGroup.length === 0
+                        !loading && documentGroupPicked?.length === 0
                         && <thead>
                             <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
                                 <NoRecord />
@@ -142,26 +142,26 @@ const DocumentGroup = () => {
                         </thead>
                     }
                     {
-                        !loading && documentGroup.length > 0
+                        !loading && documentGroupPicked?.length > 0
                         && <>
                             <thead>
                                 <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
                                     <th>Document Group ID</th>
                                     <th>Name</th>
                                     <th>Short Code</th>
-                                    <th>Domain Code</th>
+                                    <th>Domain</th>
                                     <th>Description</th>
                                     <th style={{ width: '120px' }}>Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {
-                                    documentGroup && documentGroup.map((cT: any, index: any) => {
+                                    documentGroupPicked && documentGroupPicked.map((cT: any, index: any) => {
                                         return (<tr key={`rD_${index}`}>
                                             <td>{cT.id}</td>
                                             <td>{cT.name}</td>
                                             <td>{cT.code}</td>
-                                            <td>{cT.domainCode}</td>
+                                            <td>{cT.domainName}</td>
                                             <td>{cT.description}</td>
                                             <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
                                                 {/* <span>
@@ -233,7 +233,6 @@ const DocumentGroup = () => {
 }
 
 const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
-    console.log(`-data-`, data)
     const documentGroupFormRef = useRef<any>()
     const domainRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
@@ -248,19 +247,18 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
         // loadingProductTypes,
         // errorProductTypes,
     } = useSelector((state: any) => ({
-        productTypes: state.types.productType.data,
+        productTypes: state.documentGroup.data,
         // loadingProductTypes: state.types.productType.loading,
         // errorProductTypes: state.types.productType.error,
     }))
 
     useEffect(() => {
-        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
     }, [])
 
     const validate = (formObj: any) => {
         let checkFormObj: any = {}
         let formIsValid = true;
-        console.log(`--user.recordSource--`, user.recordSource)
         if (user.recordSource === 'Equabli') {
             checkFormObj = {
                 domainCode: formObj.domainCode,
@@ -268,8 +266,6 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                 description: formObj.description,
                 code: formObj.code
             }
-            console.log(`--checkFormObj-`, checkFormObj)
-
             const error: any = {
                 domainCode: false,
                 name: false,
@@ -286,7 +282,6 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                     formIsValid = false
                 }
             }
-            console.log(`--error-`, error)
             setFormError(error)
         } else {
             checkFormObj = {
@@ -358,9 +353,9 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                     <Form ref={documentGroupFormRef}>
                         <Row>
                             <Col xs={12} md={12} className="mt-3">
-                                {
-                                    user.recordSource === 'Equabli' &&
-                                    <>
+                                <>
+                                    {
+                                        user.recordSource === 'Equabli' &&
                                         <Col lg={12} md={12} className="no_padding">
                                             <Form.Group as={Col} className="mb-4">
                                                 <Domains selectedValue={data ? data.domainCode : ''} />
@@ -368,35 +363,35 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                                                 <Form.Label className="label_custom white">Domains</Form.Label>
                                             </Form.Group>
                                         </Col>
-                                        <Col lg={12} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control type="text" name="code" defaultValue={data?.code || null} maxLength={5}></Form.Control>
-                                                </Col>
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["code"] ? 'Short Name is required ' : ''}</small></span>
-                                                <Form.Label className="label_custom white">Short Name</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                        <Col lg={12} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control type="text" name="name" defaultValue={data?.name || null}></Form.Control>
-                                                </Col>
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["name"] ? 'Full Name is required ' : ''}</small></span>
-                                                <Form.Label className="label_custom white">Full Name</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                        <Col lg={12} md={12} className="no_padding">
-                                            <Form.Group as={Col} className="mb-4">
-                                                <Col md={12} sm={12} className="no_padding">
-                                                    <Form.Control type="text" name="description" defaultValue={data?.description || null}></Form.Control>
-                                                </Col>
-                                                <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["description"] ? 'Description is required ' : ''}</small></span>
-                                                <Form.Label className="label_custom white">Description</Form.Label>
-                                            </Form.Group>
-                                        </Col>
-                                    </>
-                                }
+                                    }
+                                    <Col lg={12} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control type="text" name="code" defaultValue={data?.code || null} maxLength={5}></Form.Control>
+                                            </Col>
+                                            <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["code"] ? 'Short Name is required ' : ''}</small></span>
+                                            <Form.Label className="label_custom white">Short Name</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col lg={12} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control type="text" name="name" defaultValue={data?.name || null}></Form.Control>
+                                            </Col>
+                                            <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["name"] ? 'Full Name is required ' : ''}</small></span>
+                                            <Form.Label className="label_custom white">Full Name</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                    <Col lg={12} md={12} className="no_padding">
+                                        <Form.Group as={Col} className="mb-4">
+                                            <Col md={12} sm={12} className="no_padding">
+                                                <Form.Control type="text" name="description" defaultValue={data?.description || null}></Form.Control>
+                                            </Col>
+                                            <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["description"] ? 'Description is required ' : ''}</small></span>
+                                            <Form.Label className="label_custom white">Description</Form.Label>
+                                        </Form.Group>
+                                    </Col>
+                                </>
                                 {
                                     user.recordSource !== 'Equabli' &&
                                     <>
@@ -409,8 +404,8 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
                                                 >
                                                     <option value="" disabled selected>Select Document Group</option>
                                                     {
-                                                        (productTypes && productTypes.length > 0) &&
-                                                        productTypes.map((product: any, index: number) => {
+                                                        (productTypes && productTypes?.availableDocGroups?.length > 0) &&
+                                                        productTypes?.availableDocGroups?.map((product: any, index: number) => {
                                                             return <option key={`cr_${index}`} value={product?.code}>{product?.name}</option>
                                                         })
                                                     }

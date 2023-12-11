@@ -8,7 +8,7 @@ const getNotifications = async ({
     sortParam
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/v1/webnotification/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/webnotification/all`, {
             pageSize,
             pageNumber,
             sortOrder,
@@ -18,9 +18,9 @@ const getNotifications = async ({
         let notifications = data.response.notifications
         const responseModified: any = {}
         responseModified.notifications = notifications
-        responseModified.totalCount = data.response.metadata.totalCount
+        responseModified.totalCount = data.response.totalNotification
         responseModified.pageNumber = data.response.metadata.pageNumber
-        responseModified.unread = data.response.metadata.unread
+        responseModified.unread = data.response.unreadNotification
         responseModified.columns = data.response.metadata.columnPreferences
         // .map((column:
         //     {
@@ -40,7 +40,7 @@ const getNotifications = async ({
 
 const readNotifications = async () => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/v1/webnotification/read`)
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/webnotification/read`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

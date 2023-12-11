@@ -118,7 +118,6 @@ export default () => {
     }
 
     const deleteDocumentTypePreference = () => {
-        console.log(details)
         dispatch(DocumentTypePreferenceActionCreator.deleteDocumentTypePreference(details.prefId))
     }
 

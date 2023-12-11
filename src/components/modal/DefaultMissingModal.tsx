@@ -19,13 +19,12 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
         loadingProductTypes,
         errorProductTypes,
     } = useSelector((state: any) => ({
-        productTypes: state.types.productType.data,
-        loadingProductTypes: state.types.productType.loading,
-        errorProductTypes: state.types.productType.error
+        productTypes: state.documentGroup.data,
+        loadingProductTypes: state.documentGroup.loading,
+        errorProductTypes: state.documentGroup.error
     }))
 
     useEffect(() => {
-        console.log(`---missing`, missing)
         dispatch(TypesActionCreator.getProductTypes())
     }, [])
 
@@ -85,8 +84,8 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
                                     className="select_custom white">
                                     <option disabled value="" selected>Select Product Type...</option>
                                     {
-                                        (productTypes && productTypes.length > 0) &&
-                                        productTypes.map((dT: any, index: number) => {
+                                        (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                        productTypes?.pickedDocGroups.map((dT: any, index: number) => {
                                             return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                         })
                                     }

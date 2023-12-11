@@ -25,6 +25,7 @@ import { adjustStartEnd, convertToDesiredFormat } from '../../helpers/util';
 import DefaultMissingModal from '../../components/modal/DefaultMissingModal';
 import DocumentTypes from '../../components/Common/DocumentType';
 import { DocumentTypePreferenceActionCreator } from '../../store/actions/documentTypePreference.actions';
+import { DocumentGroupActionCreator } from '../../store/actions/documentGroup.actions';
 
 interface IFields {
     config_name: { value: string }
@@ -94,7 +95,7 @@ const NamingConfiguration = () => {
         dataFieldOptions: state.fileNameConfig.fieldOptions.data,
         dataFileNamingConfig: state.fileNameConfig.fileNamingConfig.data,
         dataUserConjunction: state.fileNameConfig.userConjunction.data,
-        productTypes: state.types.productType.data,
+        productTypes: state.documentGroup.data,
         documentTypes: state.docTypePreference.uniqueDocumentTypes,
     }))
 
@@ -122,7 +123,7 @@ const NamingConfiguration = () => {
         dispatch(FileNameConfigActionCreator.getFieldOptions())
         dispatch(FileNameConfigActionCreator.getConjunction())
         // dispatch(FileNameConfigActionCreator.getUserSeparator())
-        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
         dispatch(DocumentTypePreferenceActionCreator.getUniqueDocumentTypePreference())
         // return () => {
         //     localStorage.removeItem('naming_config')
@@ -640,8 +641,8 @@ const NamingConfiguration = () => {
                                                         className="select_custom white">
                                                         <option disabled value="" selected>Select Product Type...</option>
                                                         {
-                                                            (productTypes && productTypes.length > 0) &&
-                                                            productTypes.map((dT: any, index: number) => {
+                                                            (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                                            productTypes?.pickedDocGroups.map((dT: any, index: number) => {
                                                                 return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                             })
                                                         }

@@ -119,7 +119,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
         }
         let API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_FILE_UPLOAD_SERVICE}/upload`
         const { file, matrixFile } = fileToUpload
-        console.log(`file, matrixFile`, file, matrixFile)
         // if ((parentComponent === 'myDocument' || parentComponent === 'receiveDocumentRequest') && files.length > 1) {
         //     setFormSubmitted(false)
         //     // SetNoMatrixFile(true)
@@ -186,7 +185,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
             dispatch(SummaryActionCreator.getSentSummary({}))
             search()
         } catch (error: any) {
-            console.log(error)
             setFormSubmitted(false)
             addToast(createMessage('error', `uploading`, 'file'), { appearance: 'error', autoDismiss: false })
             // throw error.message.message
@@ -265,10 +263,6 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
     }
 
     const ProfileRef = useRef<any>()
-
-    useEffect(() => {
-        console.log(`--selectedNamingConfig--`, selectedNamingConfig)
-    }, [selectedNamingConfig])
 
     return (
         <Modal

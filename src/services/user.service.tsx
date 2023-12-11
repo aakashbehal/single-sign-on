@@ -41,7 +41,7 @@ async function logout() {
             loginKey: user.loginKey
         })
 
-        axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/token/delete`, {}, {
+        axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/token/delete`, {}, {
             params: {
                 userId: user.principleId,
                 token: FBToken
@@ -135,7 +135,7 @@ const registerFireBaseToken = async (token: string) => {
     sessionStorage.setItem('FBToken', token)
     try {
         const user = getUser()
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/token`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_NOTIFICATION_SERVICE}/token`,
             {
                 "userId": user.principleId,
                 token,

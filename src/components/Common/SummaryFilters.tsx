@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { UserActionCreator } from "../../store/actions/user.actions";
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
+import { DocumentGroupActionCreator } from "../../store/actions/documentGroup.actions";
 
 const TENURES = [
     {
@@ -42,7 +43,7 @@ const SummaryFilters = ({ searchObj, setSearchObj }: { searchObj: any, setSearch
         users: state.users.data,
         // userLoading: state.users.loading,
         // userError: state.users.error,
-        productTypes: state.types.productType.data,
+        productTypes: state.documentGroup.data,
         // loadingProductTypes: state.types.productType.loading,
         // errorProductTypes: state.types.productType.error,
         clientAccountNumbers: state.misc.clientAccountNumbers.data,
@@ -53,9 +54,8 @@ const SummaryFilters = ({ searchObj, setSearchObj }: { searchObj: any, setSearch
     useEffect(() => {
         dispatch(MiscActionCreator.getClientAccountNumbers())
         dispatch(UserActionCreator.getConnectedUsers())
-        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
         setTenures(TENURES)
-
     }, [])
 
     const coverageHandler = (type: any, e: any) => {
@@ -121,8 +121,8 @@ const SummaryFilters = ({ searchObj, setSearchObj }: { searchObj: any, setSearch
                                 }}>
                                 <option value="">All Products</option>
                                 {
-                                    (productTypes && productTypes.length > 0) &&
-                                    productTypes.map((product: any, index: number) => {
+                                    (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                    productTypes?.pickedDocGroups?.map((product: any, index: number) => {
                                         return <option key={`cr_${index}`} value={product?.code}>{product?.name}</option>
                                     })
                                 }

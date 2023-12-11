@@ -24,7 +24,6 @@ const TextSelectionHook = () => {
 
     const selectionEventListener: any = () => {
         const selection = window.getSelection()!;
-        // console.log(`----`, selection.toString())
         if (selection?.toString() !== '') {
             const range = selection.getRangeAt(0);
             let flagForPreviousSelection = false
@@ -154,15 +153,11 @@ const DocumentHighlighter = (
         let remainingText = documentName;
         let previousEnd = 0
         let previousSelectedText: string = ''
-        // console.log(`---------selections`, selections)
         selections.forEach((selection) => {
-            // console.log(`selection---`, selection)
-            // console.log(`======`, previousEnd ? previousEnd + selection.start : selection.start, selection.end + previousEnd)
             const selectedText = documentName.substring(previousEnd ? previousEnd + selection.start : selection.start, selection.end + previousEnd);
             previousEnd += selection.end
             const beforeSelected = remainingText.substring(0, selection.start); // if we have space of characters which are not selected and we are skipping
             const afterSelected = remainingText.substring(selection.end); // get the remaining text
-            // console.log(`----selection text---`, selectedText)
             // || selection.flagForPreviousSelection
             if (selection.text.length !== (selection.end - selection.start)) {
                 // this will be true when selection has some overlapping
@@ -173,7 +168,6 @@ const DocumentHighlighter = (
                 // } else {
                 overlappingCharacters = selection.text.substring(0, (selection.text.length - (selection.end + selection.start)))
                 // }
-                // console.log(overlappingCharacters, previousSelectedText)
                 if (previousSelectedText === overlappingCharacters) {
                     processedDivs.pop()
                     processedDivs.push(<>{beforeSelected}</>, <span className="selected parent" key={Math.random()}><span className="selected" key={Math.random()}>{previousSelectedText}</span>{' ' + selectedText}</span>);
@@ -186,7 +180,6 @@ const DocumentHighlighter = (
         });
 
         processedDivs.push(<>{remainingText}</>);
-        // console.log(`-------processedDivs---------`, processedDivs)
         setProcessedName((prev: any) => processedDivs);
     };
 

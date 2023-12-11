@@ -107,10 +107,6 @@ const DomainSetup = () => {
         dispatch(DomainActionCreator.deleteDomains(details.domainId))
     }
 
-    useEffect(() => {
-        console.log(editData)
-    }, [editData])
-
     return (
         <>
             <Col sm={12} style={{ textAlign: 'right', marginBottom: '1rem' }}>

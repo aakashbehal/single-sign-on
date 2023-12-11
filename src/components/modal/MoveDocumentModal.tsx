@@ -47,9 +47,9 @@ export default ({ show, onHide, parentComponent, details, search }: any) => {
         confListLoading: state.fileNameConfig.fileNamingConfigList.loading,
         confListError: state.fileNameConfig.fileNamingConfigList.error,
         confList: state.fileNameConfig.fileNamingConfigList.data,
-        productTypes: state.types.productType.data,
-        loadingProductTypes: state.types.productType.loading,
-        errorProductTypes: state.types.productType.error,
+        productTypes: state.documentGroup.data,
+        loadingProductTypes: state.documentGroup.loading,
+        errorProductTypes: state.documentGroup.error,
         moveDocumentSuccess: state.myDocuments.moveDocument.success,
         moveDocumentError: state.myDocuments.moveDocument.error,
         moveDocumentLoading: state.myDocuments.moveDocument.loading,
@@ -168,7 +168,6 @@ export default ({ show, onHide, parentComponent, details, search }: any) => {
         } else {
             formObj.fileName = documentName
         }
-        console.log(`---formObj`, formObj)
         dispatch(MyDocumentsActionCreator.moveDocument(formObj))
     }
 
@@ -276,8 +275,8 @@ export default ({ show, onHide, parentComponent, details, search }: any) => {
                                                         className="select_custom white">
                                                         <option disabled value="" selected>Select Product Type...</option>
                                                         {
-                                                            (productTypes && productTypes.length > 0) &&
-                                                            productTypes.map((dT: any, index: number) => {
+                                                            (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                                            productTypes?.pickedDocGroups?.map((dT: any, index: number) => {
                                                                 return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                             })
                                                         }

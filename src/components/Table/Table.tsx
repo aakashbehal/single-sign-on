@@ -96,10 +96,8 @@ const TableComponent = ({
     useEffect(() => {
         if (data && data.length > 0) {
             let headers = Object.keys(map).filter(item => {
-                console.log(`item------`, item)
                 return showHideColumns.includes(item)
             })
-            console.log(JSON.stringify(headers))
             setHeaders(headers);
         }
     }, [showHideColumns, data])
@@ -156,7 +154,6 @@ const TableComponent = ({
     //             if (filePath) {
     //                 fileLinks = [...fileLinks, filePath]
     //             }
-    //             console.log(fileLinks)
     //             for (let key of fileLinks) {
     //                 let obj: any = {
     //                     filePath: key,
@@ -897,6 +894,13 @@ const TableComponent = ({
                                     }
                                     if (header === 'download') {
                                         return <td key={`data_2${index2}`}><AiOutlineCloudDownload size={24} /></td>
+                                    }
+                                    if (header === 'docGroup') {
+                                        return <td key={`data_2${index2}`}>{
+                                            d['docGroup']?.map((d: any, index: number) => {
+                                                return <span className="badge badge-secondary" style={{ marginRight: '1rem' }}> {d.name}</span>
+                                            })
+                                        }</td>
                                     }
                                     if (parentComponent === 'documentTypePref' && (header === 'externalDocTypeCodes' || header === 'externalDocNames')) {
                                         return <td key={`data_2${index2}`}>{

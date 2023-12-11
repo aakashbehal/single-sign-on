@@ -146,13 +146,11 @@ export const httpInterceptor = () => {
     axiosCustom.interceptors.request.use(
         (request: any) => {
             try {
-                console.log(request.header)
                 let user = userService.getUser();
                 if (request.url.includes('changePasswordByUserDetails')) {
                     user = userService.getTempUser()
                 }
                 const url = request.url.split('/')
-                console.log(`====calledService====`, url)
                 if (!url.includes('public')) {
                     let token = userService.getAccessToken()
                     if (token === null) {
@@ -510,7 +508,6 @@ export const adjustStartEnd = (original: any) => {
     let adjusted: any = [];
     let previousEnd = -1;
     let previousItem: any = -Infinity
-    // console.log(`----original`, original)
     original.forEach((item: any) => {
         const newItem = { ...item };
         newItem.start = newItem.flagForPreviousSelection ? previousItem.start : previousEnd + 1 + newItem.start;
@@ -519,7 +516,6 @@ export const adjustStartEnd = (original: any) => {
         previousEnd = newItem.end;
         previousItem = newItem
     });
-    // console.log(`adjusted====`, adjusted)
     return adjusted;
 }
 
@@ -533,26 +529,20 @@ export const convertToDesiredFormat = (input: any) => {
         let previousItem: any = -Infinity
         if (i > 0) {
             previousItem = input[i - 1];
-            // console.log(`---previousItem`, previousItem)
-            // console.log(`---currentItem`, currentItem)
             let spaceCount
             if (currentItem.start === previousItem.start) {
                 spaceCount = 0
             } else {
                 spaceCount = currentItem.start - previousItem.end - 1;
             }
-            // console.log(spaceCount)
             newItem.start = spaceCount
         }
         newItem.end = newItem.start + newItem.text.length;
         if (currentItem.flagForPreviousSelection) {
-            // console.log(`000textOverlapped---`, previousItem)
             newItem.end = currentItem.end - previousItem.end
         }
-        // console.log(`---currentItem ---last---`, newItem)
         converted.push(newItem);
     }
-    // console.log(`--------converted`, converted)
     return converted;
 }
 
