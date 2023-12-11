@@ -64,9 +64,9 @@ const States = forwardRef(({ selectedValue = '' }: { selectedValue?: string }, r
                         return (
                             <option
                                 key={`state_${index}`}
-                                value={state.stateCode}
+                                value={state.shortCode}
                             >
-                                {state.stateCode} - {state.fullName}
+                                {state.shortCode} - {state.fullName}
                             </option>
                         )
                     })

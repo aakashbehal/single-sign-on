@@ -101,14 +101,14 @@ const NamingConfiguration = () => {
     useEffect(() => {
         if (saveSuccess) {
             addToast(createMessage('', `FILE_NAME_CONFIGURATION_SAVED_SUCCESS`, ''), { appearance: 'success', autoDismiss: true });
-            history.push(`/setup/document_general_configuration`)
+            history.push(`/configure/document_general_configuration`)
         }
         if (saveError) {
             addToast(createMessage('error', 'saving', `document name configuration`), { appearance: 'error', autoDismiss: false });
         }
         if (updateSuccess) {
             addToast(createMessage('success', `document name configuration`, 'Updated'), { appearance: 'success', autoDismiss: true });
-            history.push(`/setup/document_general_configuration`)
+            history.push(`/configure/document_general_configuration`)
         }
         if (updateError) {
             addToast(createMessage('error', `User Name Configuration`, 'Update'), { appearance: 'error', autoDismiss: false });
@@ -618,7 +618,7 @@ const NamingConfiguration = () => {
                                                     className="select_custom white">
                                                     {
                                                         dataConjunction &&
-                                                        dataConjunction?.lookUps.map((cR: any, index: number) => {
+                                                        dataConjunction?.lookups.map((cR: any, index: number) => {
                                                             return <option key={`cr_${index}`} value={cR.keyCode}>{cR.description}</option>
                                                         })
                                                     }

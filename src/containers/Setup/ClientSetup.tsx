@@ -12,6 +12,7 @@ import { useToasts } from "react-toast-notifications";
 import Domains from "../../components/Common/Domains";
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
 import { Typeahead } from "react-bootstrap-typeahead";
+import DeleteConfirm from "../../components/modal/DeleteConfirm";
 
 const ClientSetup = () => {
     const dispatch = useDispatch();
@@ -22,6 +23,7 @@ const ClientSetup = () => {
     const [pageNumber, setPageNumber] = useState(1);
     const [showAddEdit, setShowAddEdit] = useState<boolean>(false)
     const [editData, setEditData] = useState<any>(null)
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const {
         clients,
         totalCount,
@@ -98,6 +100,8 @@ const ClientSetup = () => {
         }
         if (deactivateClientSuccess) {
             addToast(createMessage('success', `deactivated`, 'Client'), { appearance: 'success', autoDismiss: true })
+            setEditData(null)
+            setShowDeleteConfirm(false)
             search(pageSize, pageNumber)
         }
         if (addDomainClientSuccess) {
@@ -155,6 +159,10 @@ const ClientSetup = () => {
         setAddGroupModal(true)
     }
 
+    const deactivateHandler = () => {
+        dispatch(ClientSetupActionCreator.deactivateClient(editData.clientId))
+    }
+
     return (
         <>
             <Col sm={12} style={{ textAlign: 'right', marginBottom: '1rem' }}>
@@ -166,7 +174,7 @@ const ClientSetup = () => {
                     isLoading={loading}
                     map={{
                         clientId: "Client ID",
-                        shortName: "Short Name",
+                        shortCode: "Short Name",
                         fullName: "Full Name",
                         clientType: "Client Type",
                         emailAddress: "Email",
@@ -185,7 +193,7 @@ const ClientSetup = () => {
                     searchCriteria={{}}
                     hideShareArray={[
                         "clientId",
-                        "shortName",
+                        "shortCode",
                         "fullName",
                         "clientType",
                         "emailAddress",
@@ -197,17 +205,31 @@ const ClientSetup = () => {
                             setShowAddEdit(true)
                             setEditData(data)
                         },
-                        addDomainHandler: (client: any) => {
-                            addDomainHandler(client)
-                        },
-                        addGroupHandler: (client: any) => {
-                            addGroupHandler(client)
+                        delete: (data: any) => {
+                            setEditData(data)
+                            setShowDeleteConfirm(true)
                         }
+                        // addDomainHandler: (client: any) => {
+                        //     addDomainHandler(client)
+                        // },
+                        // addGroupHandler: (client: any) => {
+                        //     addGroupHandler(client)
+                        // }
                     }}
                     onPaginationChange={(
                         pageSize: number, pageNumber: number
                     ) => handlePagination(pageSize, pageNumber)}></TableComponent >
             </Col>
+            {
+                showDeleteConfirm
+                && <DeleteConfirm
+                    show={showDeleteConfirm}
+                    onHide={() => setShowDeleteConfirm(false)}
+                    confirmDelete={() => deactivateHandler()}
+                    details={editData}
+                    type='clients'
+                />
+            }
             {
                 showAddEdit
                 && <AddEditClient
@@ -251,7 +273,7 @@ const ClientSetup = () => {
 const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
     const clientFormRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
-        shortName: false,
+        shortCode: false,
         fullName: false,
         clientType: false,
         pocName: false,
@@ -265,7 +287,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
 
     const validate = (formObj: any) => {
         let checkFormObj: any = {
-            shortName: formObj.shortName,
+            shortCode: formObj.shortCode,
             fullName: formObj.fullName,
             clientType: formObj.clientType,
             pocName: formObj.pocName,
@@ -274,7 +296,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
         }
         let formIsValid = true;
         const error: any = {
-            shortName: false,
+            shortCode: false,
             fullName: false,
             clientType: false,
             pocName: false,
@@ -313,7 +335,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
 
     const addEditSubmit = () => {
         const {
-            shortName,
+            shortCode,
             fullName,
             clientType,
             pocName,
@@ -331,7 +353,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
         } = clientFormRef.current
         let formObject = {
             clientId: data?.clientId || null,
-            shortName: shortName?.value || null,
+            shortCode: shortCode?.value || null,
             fullName: fullName?.value || null,
             clientType: clientType?.value || null,
             pocName: pocName?.value || null,
@@ -378,9 +400,9 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={6} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
+                                            <Form.Control type="text" name="shortCode" defaultValue={data?.shortCode || null} maxLength={5}></Form.Control>
                                         </Col>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortCode"] ? 'Short Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Short Name <span style={{ color: 'red' }}>*</span></Form.Label>
                                     </Form.Group>
                                 </Col>
@@ -403,7 +425,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
+                                    <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="pocName" defaultValue={data?.pocName || null}></Form.Control>
                                         </Col>
@@ -446,7 +468,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                             </Col>
                             <Col xs={12} md={6} className="mt-3" >
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
+                                    <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="address1" defaultValue={data?.address1 || null}></Form.Control>
                                         </Col>
@@ -490,7 +512,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
+                                    <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="phone1" maxLength={10} defaultValue={data?.phone1 || null}></Form.Control>
                                         </Col>
@@ -501,7 +523,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
+                                    <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="phone2" maxLength={10} defaultValue={data?.phone2 || null}></Form.Control>
                                         </Col>
@@ -511,7 +533,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                     </Form.Group>
                                 </Col>
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="mb-5">
+                                    <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="website" defaultValue={data?.website || null}></Form.Control>
                                         </Col>
@@ -566,7 +588,7 @@ const AddClientDomain = ({ onHide, show, data, dispatch }: any) => {
         } = clientFormRef.current
         let formObject = {
             orgTypeCode: 'CL',
-            orgCode: data?.shortName,
+            orgCode: data?.shortCode,
             domainCode: domain?.value
         }
         if (validate(formObject)) {
@@ -592,11 +614,11 @@ const AddClientDomain = ({ onHide, show, data, dispatch }: any) => {
                         <Row>
                             <Col xs={12} md={12} className="mt-3">
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="no_padding">
-                                        <Col md={12} sm={12} className="no_padding">
+                                    <Form.Group as={Col}>
+                                        <Col md={12} sm={12} >
                                             <Domains />
-                                            <Form.Label className="label_custom white">Domain</Form.Label>
                                         </Col>
+                                        <Form.Label className="label_custom white">Domain</Form.Label>
                                         <span style={{ color: 'red' }}><small>{formError["domainCode"] ? 'Please Select a Domain Code' : ''}</small></span>
                                     </Form.Group>
                                 </Col>
@@ -637,7 +659,7 @@ const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
     const addEditSubmit = () => {
         let formObject = {
             orgTypeCode: 'CL',
-            orgCode: data?.shortName,
+            orgCode: data?.shortCode,
             documentGroupCode: documentGroups
         }
         if (documentGroups.length > 0) {
@@ -665,8 +687,8 @@ const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
                         <Row>
                             <Col xs={12} md={12} className="mt-3">
                                 <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} className="no_padding">
-                                        <Col md={12} sm={12} className="no_padding">
+                                    <Form.Group as={Col} >
+                                        <Col md={12} sm={12} >
                                             <Typeahead
                                                 isLoading={loadingProductTypes}
                                                 id="public-methods-example"
@@ -684,8 +706,8 @@ const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
                                                 }}
                                                 options={productTypes}
                                             />
-                                            <Form.Label className="label_custom white">Document Group</Form.Label>
                                         </Col>
+                                        <Form.Label className="label_custom white">Document Group</Form.Label>
                                         <span style={{ color: 'red' }}><small>{documentGroupError ? 'Please Select at least 1 Document Group' : ''}</small></span>
                                     </Form.Group>
                                 </Col>

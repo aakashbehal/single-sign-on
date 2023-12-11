@@ -75,12 +75,12 @@ const ListOfUserFileNamingConfiguration = forwardRef(({ dispatch, setConfigurati
     const handleEdit = (config: IConfiguration) => {
         // setConfigurationDetails(config)
         localStorage.setItem('naming_config', JSON.stringify(config))
-        history.push(`/setup/document_general_configuration/${config.namingConfigGroupName}`)
+        history.push(`/configure/document_general_configuration/${config.namingConfigGroupName}`)
         // setShowConfig(true)
     }
 
     const addNewHandler = () => {
-        history.push(`/setup/document_general_configuration/_NEW_CONFIGURATION`)
+        history.push(`/configure/document_general_configuration/_NEW_CONFIGURATION`)
         // setShowConfig(true)
     }
 

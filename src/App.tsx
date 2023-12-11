@@ -42,9 +42,10 @@ const ConsoleSettings = lazy(() => import("./containers/DocumentManager/ConsoleS
 const Automation = lazy(() => import("./containers/DocumentManager/Automation"));
 const NamingConfiguration = lazy(() => import("./containers/User/NamingConfiguration"));
 const DomainSetup = lazy(() => import("./containers/Setup/DomainSetup"));
-const DocumentGroup = lazy(() => import("./containers/Setup/DocumentGroup"));
-const DocumentTypePreference = lazy(() => import("./containers/Setup/DocumentTypePreference"));
+const DocumentGroup = lazy(() => import("./containers/DocumentManager/DocumentGroup"));
+const DocumentTypePreference = lazy(() => import("./containers/DocumentManager/DocumentTypePreference"));
 const DocumentAttribute = lazy(() => import("./containers/DocumentManager/DocumentAttribute"));
+const ClientOnboarding = lazy(() => import("./containers/Setup/ClientOnboarding"));
 
 /**
  * Applications starting point
@@ -92,20 +93,23 @@ const App = () => {
               {/* Setup */}
               <PrivateRoute exact path="/setup/client" component={ClientSetup} />
               <PrivateRoute exact path="/setup/partner" component={PartnerSetup} />
-              <PrivateRoute exact path="/setup/user_approval" component={Approval} />
               <PrivateRoute exact path="/setup/Domain" component={DomainSetup} />
-              <PrivateRoute exact path="/setup/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
-              <PrivateRoute exact path="/setup/document_general_configuration/:id" component={sessions(NamingConfiguration)} />
-              <PrivateRoute exact path="/setup/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
-              <PrivateRoute exact path="/setup/required_documents" component={sessions(RequiredDocuments)} />
-              <PrivateRoute exact path="/setup/document_group" component={sessions(DocumentGroup)} />
-              <PrivateRoute exact path="/setup/document_type" component={sessions(DocumentTypePreference)} />
-              <PrivateRoute exact path="/setup/document_attribute" component={sessions(DocumentAttribute)} />
+              <PrivateRoute exact path="/setup/client_onboarding" component={ClientOnboarding} />
+
+              {/* Setup */}
+              <PrivateRoute exact path="/configure/user_approval" component={Approval} />
+              <PrivateRoute exact path="/configure/document_general_configuration" component={sessions(DocumentGeneralConfiguration)} />
+              <PrivateRoute exact path="/configure/document_general_configuration/:id" component={sessions(NamingConfiguration)} />
+              <PrivateRoute exact path="/configure/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
+              <PrivateRoute exact path="/configure/required_documents" component={sessions(RequiredDocuments)} />
+              <PrivateRoute exact path="/configure/document_group" component={sessions(DocumentGroup)} />
+              <PrivateRoute exact path="/configure/document_type" component={sessions(DocumentTypePreference)} />
+              <PrivateRoute exact path="/configure/document_attribute" component={sessions(DocumentAttribute)} />
 
               {/* OCR */}
-              <PrivateRoute exact path="/setup/document_type_identifier" component={DocumentTypeIdentifier} />
+              <PrivateRoute exact path="/configure/document_type_identifier" component={DocumentTypeIdentifier} />
               {/* Console */}
-              <PrivateRoute exact path="/setup/console" component={ConsoleSettings} />
+              <PrivateRoute exact path="/configure/console" component={ConsoleSettings} />
               <PrivateRoute exact path="/automation" component={Automation} />
 
             </Switch>

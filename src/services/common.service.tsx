@@ -28,7 +28,7 @@ const getLookupValues = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: s
 
 const getLookupValuesEQDocs = async ({ lookupGroupKeyValue }: { lookupGroupKeyValue: string | null }) => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/config/lookup`, {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/master/lookup`, {
             params: {
                 lookupGroupKeyValue
             }

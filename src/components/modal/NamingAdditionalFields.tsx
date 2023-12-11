@@ -172,8 +172,8 @@ const NamingAdditionalFields = (
                     }}>
                     <option></option>
                     {
-                        (lookUp?.DATA_TYPE && lookUp?.DATA_TYPE?.lookUps.length > 0) &&
-                        lookUp?.DATA_TYPE?.lookUps.map((dt: any, index: number) => {
+                        (lookUp?.DATA_TYPE && lookUp?.DATA_TYPE?.lookups.length > 0) &&
+                        lookUp?.DATA_TYPE?.lookups.map((dt: any, index: number) => {
                             return <option key={`cr_${index}`} value={dt.keyCode}>{dt.keyValue}</option>
                         })
                     }
@@ -283,8 +283,8 @@ const NamingAdditionalFields = (
                     }}>
                     <option></option>
                     {
-                        (lookUp?.POSSIBLE_VALUE_TYPE && lookUp?.POSSIBLE_VALUE_TYPE?.lookUps.length > 0) &&
-                        lookUp?.POSSIBLE_VALUE_TYPE?.lookUps.map((pvt: any, index: number) => {
+                        (lookUp?.POSSIBLE_VALUE_TYPE && lookUp?.POSSIBLE_VALUE_TYPE?.lookups.length > 0) &&
+                        lookUp?.POSSIBLE_VALUE_TYPE?.lookups.map((pvt: any, index: number) => {
                             return <option key={`cr_${index}`} value={pvt.keyCode}>{pvt.keyValue}</option>
                         })
                     }
@@ -307,8 +307,8 @@ const NamingAdditionalFields = (
                             }}>
                             <option></option>
                             {
-                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE && lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookUps.length > 0) &&
-                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookUps.map((lV: any, index: number) => {
+                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE && lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookups.length > 0) &&
+                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_INLINE?.lookups.map((lV: any, index: number) => {
                                     return <option key={`cr_${index}`} value={lV.keyCode}>{lV.keyValue}</option>
                                 })
                             }
@@ -361,8 +361,8 @@ const NamingAdditionalFields = (
                             onChange={(e) => setPossibleValue(e.target.value)}>
                             <option></option>
                             {
-                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookUps.length > 0) &&
-                                lookUp?.REFERENCE_VALUE_TYPE?.lookUps.map((rt: any, index: number) => {
+                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookups.length > 0) &&
+                                lookUp?.REFERENCE_VALUE_TYPE?.lookups.map((rt: any, index: number) => {
                                     return <option key={`cr_${index}`} value={rt.keyCode}>{rt.keyValue}</option>
                                 })
                             }
@@ -386,8 +386,8 @@ const NamingAdditionalFields = (
                             }}>
                             <option></option>
                             {
-                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF && lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookUps.length > 0) &&
-                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookUps.map((rt: any, index: number) => {
+                                (lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF && lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookups.length > 0) &&
+                                lookUp?.POSSIBLE_VALUE_SUB_TYPE_REF?.lookups.map((rt: any, index: number) => {
                                     return <option key={`cr_${index}`} value={rt.keyCode}>{rt.keyValue}</option>
                                 })
                             }
@@ -403,8 +403,8 @@ const NamingAdditionalFields = (
                             onChange={(e) => setPossibleValue(e.target.value)}>
                             <option></option>
                             {
-                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookUps.length > 0) &&
-                                lookUp?.REFERENCE_VALUE_TYPE?.lookUps.map((lV: any, index: number) => {
+                                (lookUp?.REFERENCE_VALUE_TYPE && lookUp?.REFERENCE_VALUE_TYPE?.lookups.length > 0) &&
+                                lookUp?.REFERENCE_VALUE_TYPE?.lookups.map((lV: any, index: number) => {
                                     return <option key={`cr_${index}`} value={lV.keyCode}>{lV.keyValue}</option>
                                 })
                             }

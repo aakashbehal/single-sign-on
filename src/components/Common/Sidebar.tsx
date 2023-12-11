@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaTasks } from "react-icons/fa"
+import { FaWrench } from "react-icons/fa"
 import { Link, NavLink, useHistory } from 'react-router-dom';
 import { NavDropdown } from "react-bootstrap"
 import { MdInventory2, MdOutlinePendingActions, MdOutlineDashboardCustomize, MdOutlineAdminPanelSettings, MdLiveHelp, MdOutlinePhonelinkSetup } from "react-icons/md";
@@ -120,19 +120,15 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/download_history">Download History</NavLink></li>
                     </ul>
                 </li>
-                <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
+                {role === 'Equabli' && <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
                     setMenuDrop((state: any) => {
                         return { ...state, setup: !state.setup }
                     })
                 }}>
-                    <div className={`icon-link ${(activeRoute === 'client'
+                    <div className={`icon-link ${(
+                        activeRoute === 'client'
                         || activeRoute === 'partner'
                         || activeRoute === 'user_approval'
-                        || activeRoute === 'document_type_identifier'
-                        || activeRoute === 'document_general_configuration'
-                        || activeRoute === 'document_cost_configuration'
-                        || activeRoute === 'required_documents'
-                        || activeRoute === 'document_group'
                         || activeRoute === 'domain'
                     ) ? 'active' : ''}`}>
                         <NavLink to="/documents/my_documents">
@@ -143,17 +139,41 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                     </div>
                     <ul className="sub-menu">
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_general_configuration">Document General Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_cost_configuration">Document Cost Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/required_documents">Required Documents</NavLink></li>
-                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
-                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
-                        {role === 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
-                        {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_attribute">Document Attribute</NavLink></li>} */}
+                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
+                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
+                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
+                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client_onboarding">Client Onboarding</NavLink></li>}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
-                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type_identifier">Document Type Identifier</NavLink></li> */}
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_group">Document Group</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/document_type">Document Type</NavLink></li>
+                    </ul>
+                </li>}
+                <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
+                    setMenuDrop((state: any) => {
+                        return { ...state, setup: !state.setup }
+                    })
+                }}>
+                    <div className={`icon-link ${(
+                        activeRoute === 'document_type_identifier'
+                        || activeRoute === 'document_general_configuration'
+                        || activeRoute === 'document_cost_configuration'
+                        || activeRoute === 'required_documents'
+                        || activeRoute === 'document_group'
+                    ) ? 'active' : ''}`}>
+                        <NavLink to="/configure/document_general_configuration">
+                            <FaWrench size={30} />
+                            <span className="link_name">Configure</span>
+                        </NavLink>
+                        <i className='bx bxs-chevron-down arrow'></i>
+                    </div>
+                    <ul className="sub-menu">
+                        <li><a className="link_name" onClick={(e) => void e}>Configure</a></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_general_configuration">Document General Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_cost_configuration">Document Cost Configuration</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/required_documents">Required Documents</NavLink></li>
+                        {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_attribute">Document Attribute</NavLink></li>} */}
+                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li> */}
+                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type_identifier">Document Type Identifier</NavLink></li> */}
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_group">Document Group</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>
                     </ul>
                 </li>
                 <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
@@ -181,14 +201,14 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                     })
                 }}>
                     <div className={`icon-link ${(activeRoute === 'console') ? 'active' : ''}`}>
-                        <NavLink to="/setup/console">
+                        <NavLink to="/configure/console">
                             <FiSettings size={30} />
                             <span className="link_name">Console</span>
                         </NavLink>
                     </div>
                     {!isClosed &&
                         <ul className="sub-menu">
-                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/console">Console</NavLink></li>
+                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/console">Console</NavLink></li>
                         </ul>
                     }
                 </li>

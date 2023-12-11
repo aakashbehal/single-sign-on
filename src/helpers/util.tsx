@@ -143,57 +143,25 @@ export const httpInterceptor = () => {
         "lookup"
     ]
 
-    const apiKeyService = ['common-config-service']
-
     axiosCustom.interceptors.request.use(
         (request: any) => {
             try {
+                console.log(request.header)
                 let user = userService.getUser();
                 if (request.url.includes('changePasswordByUserDetails')) {
                     user = userService.getTempUser()
                 }
                 const url = request.url.split('/')
-                const urlString = url[url.length - 1].split('?')
-                const calledService = url[3]
-                if (
-                    noAuthRequired.indexOf(urlString[0]) === -1
-                ) {
+                console.log(`====calledService====`, url)
+                if (!url.includes('public')) {
                     let token = userService.getAccessToken()
                     if (token === null) {
                         localStorage.removeItem('user');
                         history.push('/login')
                     }
-                    // if (user.orgType === 'PT') {
-                    //     if (request.method === 'get') {
-                    //         if ((request.url).indexOf("?") !== -1) {
-                    //             request.url += `&partnerId=${user.partnerId}`
-                    //         } else {
-                    //             request.url += `?partnerId=${user.partnerId}`
-                    //         }
-                    //     }
-                    //     if (request.method === 'post' || request.method === 'put') {
-                    //         request.data.partnerId = user.partnerId
-                    //     }
-                    // }
-                    // if (user.orgType === 'CL') {
-                    //     if (request.method === 'get') {
-                    //         if ((request.url).indexOf("?") !== -1) {
-                    //             request.url += `&clientId=${user.clientId}`
-                    //         } else {
-                    //             request.url += `?clientId=${user.clientId}`
-                    //         }
-                    //     }
-                    //     if (request.method === 'post' || request.method === 'put') {
-                    //         request.data.clientId = user.clientId
-                    //     }
-                    // }
                     request.headers['Authorization'] = `Bearer ${token}`;
-                    if (apiKeyService.includes(calledService)) {
-                        request.headers['X-API-KEY'] = user?.apiKey
-                    } else {
-                        request.headers['X-API-KEY'] = 'eq-docs-hfp-ljeq'
-                    }
                 }
+                request.headers['X-API-KEY'] = 'eq-docs-hfp-ljeq'
                 request.headers['rqsOrigin'] = 'web';
                 // request.headers['Content-Type'] = 'application/json';
                 return request

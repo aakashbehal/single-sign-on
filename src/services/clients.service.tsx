@@ -5,28 +5,52 @@ const getAllClients = async ({
     pageSize,
     pageNumber,
     sortOrder,
-    sortParam
+    sortParam,
+    isOnboarding
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client/all`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/clients/search`, {
             pageSize,
-            pageNumber
+            pageNumber: pageNumber - 1
         })
         const data = handleResponse(response)
         let clients = data.response.datas
         const responseModified: any = {}
+        let clientDomainMap: any = {}
         responseModified.totalCount = data.response.metadata.recordCount
         // responseModified.totalCount = 10
-        responseModified.clients = clients
+        if (isOnboarding) {
+            let clientList = clients.map((client: any) => client.shortCode)
+            let result = await getOnboardingDetails(clientList)
+            for (let r of result) {
+                clientDomainMap[r.clientCode] = r
+            }
+        }
+        responseModified.clients = clients.map((client: any) => {
+            let obj = {
+                domainCode: clientDomainMap[client.shortCode] ? clientDomainMap[client.shortCode].code : null,
+                domainName: clientDomainMap[client.shortCode] ? clientDomainMap[client.shortCode].name : null,
+                docGroup: clientDomainMap[client.shortCode] ? clientDomainMap[client.shortCode].docGroups : null
+            }
+            client = { ...client, ...obj }
+            return client
+        })
         return responseModified
     } catch (error: any) {
+        console.log(error)
         throw error.message
     }
 }
 
+const getOnboardingDetails = async (clients: string[]) => {
+    const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/onboarding/setup`, clients)
+    const data = handleResponse(response)
+    return data.response
+}
+
 
 const addClient = async ({
-    shortName,
+    shortCode,
     fullName,
     clientType,
     pocName,
@@ -43,8 +67,8 @@ const addClient = async ({
     isMasterServiced
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client`, {
-            shortName,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/clients`, {
+            shortCode,
             fullName,
             clientType,
             pocName,
@@ -69,7 +93,7 @@ const addClient = async ({
 
 const editClient = async ({
     clientId,
-    shortName,
+    shortCode,
     fullName,
     clientType,
     pocName,
@@ -86,9 +110,8 @@ const editClient = async ({
     isMasterserviced
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client/edit`, {
-            clientId,
-            shortName,
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/clients/${clientId}`, {
+            shortCode,
             fullName,
             clientType,
             pocName,
@@ -113,7 +136,7 @@ const editClient = async ({
 
 const deactivateClient = async (clientId: string | number) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/client/${clientId}`, {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/clients/${clientId}`, {
             "action": "ACTIVE",
             "property": "string"
         })

@@ -78,7 +78,7 @@ export const ClientSetupActionCreator = {
                 }
             ).finally(() => {
                 setTimeout(() => {
-                    dispatch({ type: EditClient.DEACTIVATE_CLIENTS_RESET })
+                    dispatch({ type: DeactivateClient.DEACTIVATE_CLIENTS_RESET })
                 }, 0)
             })
     },

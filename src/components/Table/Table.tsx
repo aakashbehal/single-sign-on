@@ -96,8 +96,10 @@ const TableComponent = ({
     useEffect(() => {
         if (data && data.length > 0) {
             let headers = Object.keys(map).filter(item => {
+                console.log(`item------`, item)
                 return showHideColumns.includes(item)
             })
+            console.log(JSON.stringify(headers))
             setHeaders(headers);
         }
     }, [showHideColumns, data])

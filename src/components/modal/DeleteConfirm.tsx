@@ -80,6 +80,16 @@ const DeleteConfirm = ({ onHide, show, confirmDelete, text = "Deletion", actionT
                     </Container>
                 </Modal.Body>
             }
+            {
+                details && type === 'clients'
+                && <Modal.Body className="show-grid">
+                    <Container>
+                        <p>
+                            Are you sure you want to delete {details.fullName}
+                        </p>
+                    </Container>
+                </Modal.Body>
+            }
             <Modal.Footer>
                 <Button variant="danger" ref={deleteRef} onClick={confirmDelete}>{actionText}</Button>
                 <Button variant="dark" onClick={onHide}>Cancel</Button>
