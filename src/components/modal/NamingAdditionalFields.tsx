@@ -5,34 +5,40 @@ import MultipleInputs from "../Common/MultipleInputs"
 import { useDispatch, useSelector } from 'react-redux';
 import { TypesActionCreator } from "../../store/actions/common/types.actions"
 import { RootState } from "../../store";
+import { Typeahead } from "react-bootstrap-typeahead";
 
 const DATE_FORMAT = [
-    "d/M/yy",
-    "dd/MM/yyyy",
-    "d/M/yyyy",
-    "dd/MM/yy",
-    "dd-MM-yyyy",
-    "d-M-yyyy",
-    "dd-MM-yy",
-    "MM/dd/yyyy",
-    "M/d/yyyy",
-    "MM/dd/yy",
-    "MM-dd-yyyy",
-    "M-d-yyyy",
-    "MM-dd-yy",
-    "yyyy-MM-dd",
-    "yyyy/MM/dd",
-    "yy-MM-dd",
-    "yy/MM/dd",
-    "d MMM yyyy",
-    "dd MMM yyyy",
-    "MMM d yyyy",
-    "MMM dd yyyy",
-    "d MMMM yyyy",
-    "dd MMMM yyyy",
-    "MMMM d yyyy",
-    "MMMM dd yyyy",
-    "MMddyyyy"
+    { name: "d/M/yy" },
+    { name: "dd/MM/yyyy" },
+    { name: "d/M/yyyy" },
+    { name: "dd/MM/yy" },
+    { name: "dd-MM-yyyy" },
+    { name: "d-M-yyyy" },
+    { name: "dd-MM-yy" },
+    { name: "MM/dd/yyyy" },
+    { name: "M/d/yyyy" },
+    { name: "MM/dd/yy" },
+    { name: "MM-dd-yyyy" },
+    { name: "M-d-yyyy" },
+    { name: "MM-dd-yy" },
+    { name: "yyyy-MM-dd" },
+    { name: "yyyy/MM/dd" },
+    { name: "yy-MM-dd" },
+    { name: "yy/MM/dd" },
+    { name: "d MMM yyyy" },
+    { name: "dd MMM yyyy" },
+    { name: "MMM d yyyy" },
+    { name: "MMM dd yyyy" },
+    { name: "d MMMM yyyy" },
+    { name: "dd MMMM yyyy" },
+    { name: "MMMM d yyyy" },
+    { name: "MMMM dd yyyy" },
+    { name: "MMddyyyy" },
+    { name: "MM.dd.yyyy" },
+    { name: "M.d.yyyy" },
+    { name: "MM.d.yyyy" },
+    { name: "M.dd.yyyy" },
+    { name: "MM.d.yy" }
 ]
 const LOOKUP_COLUMNS = ["CODE", "VALUE", "DESC", "EXTERNAL_CODE", "EXTERNAL_NAME"]
 
@@ -64,6 +70,7 @@ const NamingAdditionalFields = (
         { show: boolean, onHide: any, additionSettingsJson: { [key: string]: IAdditionSettingsJson }, setAdditionalSettingsJson: any, field: string }
 ) => {
     const configRef = useRef<HTMLFormElement>(null)
+    const ref = useRef<any>();
     const dispatch = useDispatch();
     const [addition, setAdditional] = useState<any>({})
     const { lookUp, error, loading } = useSelector((state: any) => ({
@@ -78,10 +85,20 @@ const NamingAdditionalFields = (
         possibleValues: false,
         transformation: false
     })
-    const [dateFormat, setDateFormat] = useState('')
+    const [selectedDateFormat, setSelectedDateFormat] = useState<any>([])
+    const [dateString, setDateString] = useState('')
+    useEffect(() => {
+        let string = ''
+        selectedDateFormat.map((s: any, index: number) => {
+            string += `${s.name}${index + 1 < selectedDateFormat.length ? ',' : ''}`
+        })
+        setDateString(string)
+    }, [selectedDateFormat])
+
+    // const [dateFormat, setDateFormat] = useState('')
     const [possibleValueType, setPossibleValueType] = useState('')
     const [possibleValuesSubType, setPossibleValuesSubType] = useState('')
-    const [possibleValue, setPossibleValue] = useState('')
+    const [possibleValue, setPossibleValue] = useState<any>('')
     const [multipleValues, setMultipleValues] = useState([])
     const [stringLength, setStringLength] = useState<IMinMax>({
         min: 0,
@@ -101,6 +118,7 @@ const NamingAdditionalFields = (
     // check if already have additional settings
     useEffect(() => {
         let tempSetting = Object.assign(additionSettings)
+        console.log(`--addition--`, addition)
         if (addition.dataType) {
             setDataType(addition.dataType)
             setStringLength({
@@ -113,7 +131,13 @@ const NamingAdditionalFields = (
             })
             tempSetting.validation = true
         }
-        setPossibleValue(addition.possibleVal)
+        if (addition.dataType === 'DT') {
+            setPossibleValue(addition.possibleVal.split(',').map((s: string) => {
+                return { name: s }
+            }))
+        } else {
+            setPossibleValue(addition.possibleVal)
+        }
         if (addition.dataType !== 'DT' && addition.possibleVal) {
             setPossibleValueType(addition.possibleValType)
             setPossibleValuesSubType(addition.possibleValSubType)
@@ -132,7 +156,7 @@ const NamingAdditionalFields = (
             isFixLength: false,
             possibleValType: possibleValueType,
             possibleValSubType: possibleValuesSubType,
-            possibleVal: dataType === 'DT' ? dateFormat : possibleValue,
+            possibleVal: dataType === 'DT' ? dateString : possibleValue,
         }
         setAdditionalSettingsJson(settings, field)
     }
@@ -244,7 +268,7 @@ const NamingAdditionalFields = (
                     </Form.Group>
                 </React.Fragment>
             }
-            {
+            {/* {
                 dataType === 'DT'
                 &&
                 <Form.Group as={Col} className="mb-5 mt-3 no_padding">
@@ -266,7 +290,28 @@ const NamingAdditionalFields = (
                     </Form.Control>
                     <Form.Label className="label_custom" style={{ left: 0 }}>Date Format</Form.Label>
                 </Form.Group>
-            }
+            } */}
+            <Form.Group as={Col} className="mb-4 no_padding">
+                <Col md={12} sm={12} className="no_padding">
+                    {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
+                    <Typeahead
+                        defaultSelected={possibleValue}
+                        id="public-methods-example"
+                        labelKey={"name"}
+                        multiple
+                        options={DATE_FORMAT}
+                        onChange={(selected) => {
+                            setSelectedDateFormat(selected)
+                        }}
+                        ignoreDiacritics={false}
+                        placeholder="Choose Document Types..."
+                        ref={ref}
+                    />
+                    {/* <span style={{ color: 'red' }}><small>{formError["requiredDoc"] ? 'At least One Document Type is required' : ''}</small></span> */}
+                </Col>
+                <Form.Label className="label_custom">Required Documents</Form.Label>
+            </Form.Group>
+
         </React.Fragment>
     }
 

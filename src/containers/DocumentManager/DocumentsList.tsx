@@ -26,6 +26,7 @@ const DocumentsList = ({ location }: { location: any }) => {
     const aRef = useRef<any>()
     const params = new URLSearchParams(location.search);
     const AccountId = params.get('account_id');
+    const DocumentGroup = params.get('dgc');
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('documentName')
     const [sortType, setSortType] = useState('desc');
@@ -115,7 +116,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         pageSize: any,
         pageNumber: any
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, accountNumber: AccountId, sortParam: sortElement, sortOrder: sortType }
+        searchObj = { ...searchObj, pageSize, pageNumber, accountNumber: AccountId, docGroupCode: DocumentGroup, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentList(searchObj))
         setShowAdvanceSearch(false)
     }
@@ -228,7 +229,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         </Col >
         {
             uploadDocModal
-            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} details={{ accountId: AccountId }} />
+            && <DocumentUpload show={uploadDocModal} onHide={() => setUploadDocModal(false)} accountId={123} Styles={Styles} parentComponent="documents" search={search} details={{ accountId: AccountId, docGroupCode: DocumentGroup }} />
         }
         {
             showDocument &&

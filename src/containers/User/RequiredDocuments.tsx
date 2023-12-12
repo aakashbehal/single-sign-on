@@ -52,7 +52,7 @@ const RequiredDocuments = () => {
         error: state.requiredDocuments.error,
         productTypes: state.documentGroup.data,
         loadingProductTypes: state.documentGroup.loading,
-        errorProductTypes: state.documentGroup.error,
+        errorProductTypes: state.documentGroup.data.error,
         documentTypes: state.docTypePreference.uniqueDocumentTypes,
         loadingDocumentTypes: state.docTypePreference.loadingUnique,
         errorDocumentTypes: state.docTypePreference.errorUnique,
@@ -79,8 +79,8 @@ const RequiredDocuments = () => {
             let tempRequiredDocuments = Object.assign([], requiredDocuments)
             tempRequiredDocuments = tempRequiredDocuments.map((tRD: any) => {
                 tRD.documents = tRD.documents.map((d: any) => {
-                    d.keyCode = d.documentCode
-                    d.keyValue = d.documentName
+                    d.code = d.documentCode
+                    d.name = d.documentName
                     d.description = d.documentName
                     delete d.documentCode
                     delete d.documentName
@@ -235,7 +235,7 @@ const RequiredDocuments = () => {
                                         <td>{cT.productName}</td>
                                         <td>
                                             {cT.documents && cT.documents.map((dL: any, index: any) => {
-                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.keyValue}</span>
+                                                return <span key={`dL_${index}`} className={Styles.required_documents}>{dL.name}</span>
                                             })}
                                         </td>
                                         {

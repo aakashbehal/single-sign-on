@@ -68,6 +68,7 @@ const getMyDocumentList = async ({
     sortParam,
     accountNumber,
     docTypeCode,
+    docGroupCode,
     documentName,
     generationDateFrom,
     generationDateTo,
@@ -97,6 +98,7 @@ const getMyDocumentList = async ({
                 shareDateTo,
                 receiveDateFrom,
                 receiveDateTo,
+                docGroupCode,
                 textSearch
             }
         )

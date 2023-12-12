@@ -343,7 +343,7 @@ const AddEditClient = ({ onHide, show, data, dispatch, productTypes }: any) => {
                                                 <option disabled value="">Select Product Type...</option>
                                                 {
                                                     (productTypes && productTypes?.availableDocGroups.length > 0) &&
-                                                    productTypes?.availableDocGroups.map((dT: any, index: number) => {
+                                                    [...productTypes?.availableDocGroups, ...productTypes?.pickedDocGroups].map((dT: any, index: number) => {
                                                         return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                                     })
                                                 }

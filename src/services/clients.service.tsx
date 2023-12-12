@@ -42,9 +42,13 @@ const getAllClients = async ({
 }
 
 const getOnboardingDetails = async (clients: string[]) => {
-    const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/onboarding/setup`, clients)
-    const data = handleResponse(response)
-    return data.response
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/onboarding/setup`, clients)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
 }
 
 
@@ -196,5 +200,6 @@ export const clientServices = {
     editClient,
     deactivateClient,
     addClientDomain,
-    addClientGroup
+    addClientGroup,
+    getOnboardingDetails
 }

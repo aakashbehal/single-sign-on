@@ -109,7 +109,7 @@ const MyDocuments = () => {
     const showDocumentListPage = (data: any) => {
         history.push({
             pathname: '/documents/document_list',
-            search: `account_id=${data.folderName}`,
+            search: `account_id=${data.folderName}&dgc=${data.docGroupCode}`,
         });
     }
 
@@ -170,6 +170,7 @@ const MyDocuments = () => {
                 isLoading={loading}
                 map={{
                     "folderName": "Name",
+                    "docGroupName": "Document Group",
                     "fileSize": "Size",
                     "modifiedDate": "Modified Date",
                     "lastShareDate": "Last Shared Date",

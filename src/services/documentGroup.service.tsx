@@ -42,7 +42,8 @@ const addDocumentGroup = async ({
     domainCode,
     code,
     docGroupConfigCode,
-    orgType
+    orgType,
+    isNative
 }: any) => {
     try {
         let url = ''
@@ -56,7 +57,8 @@ const addDocumentGroup = async ({
             description,
             domainCode,
             code,
-            docGroupConfigCode
+            docGroupConfigCode,
+            isNative
         })
         const data = handleResponse(response)
         return data.response
@@ -70,7 +72,8 @@ const updateDocumentGroup = async ({
     domainCode,
     description,
     docGroupId,
-    code
+    code,
+    isNative
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group`, {
@@ -78,7 +81,8 @@ const updateDocumentGroup = async ({
             domainCode,
             description,
             docGroupId,
-            code
+            code,
+            isNative
         })
         const data = handleResponse(response)
         return data.response
