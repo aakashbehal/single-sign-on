@@ -9,7 +9,7 @@ const getAllPartners = async ({
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/search`, {
-            pageNumber,
+            pageNumber: pageNumber - 1,
             pageSize
         })
         const data = handleResponse(response)
