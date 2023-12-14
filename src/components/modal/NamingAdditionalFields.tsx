@@ -4,8 +4,10 @@ import { BsPlusCircleFill } from "react-icons/bs"
 import MultipleInputs from "../Common/MultipleInputs"
 import { useDispatch, useSelector } from 'react-redux';
 import { TypesActionCreator } from "../../store/actions/common/types.actions"
-import { RootState } from "../../store";
 import { Typeahead } from "react-bootstrap-typeahead";
+import 'react-bootstrap-typeahead/css/Typeahead.css';
+
+import { RootState } from "../../store";
 
 const DATE_FORMAT = [
     { name: "d/M/yy" },
@@ -291,27 +293,30 @@ const NamingAdditionalFields = (
                     <Form.Label className="label_custom" style={{ left: 0 }}>Date Format</Form.Label>
                 </Form.Group>
             } */}
-            <Form.Group as={Col} className="mb-4 no_padding">
-                <Col md={12} sm={12} className="no_padding">
-                    {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
-                    <Typeahead
-                        defaultSelected={possibleValue === '' ? [] : possibleValue}
-                        id="public-methods-example"
-                        labelKey={"name"}
-                        multiple
-                        options={DATE_FORMAT}
-                        onChange={(selected) => {
-                            setSelectedDateFormat(selected)
-                        }}
-                        ignoreDiacritics={false}
-                        placeholder="Choose Document Types..."
-                        ref={ref}
-                    />
-                    {/* <span style={{ color: 'red' }}><small>{formError["requiredDoc"] ? 'At least One Document Type is required' : ''}</small></span> */}
-                </Col>
-                <Form.Label className="label_custom">Required Documents</Form.Label>
-            </Form.Group>
-
+            {
+                dataType === 'DT' &&
+                <Form.Group as={Col} className="mb-4 no_padding">
+                    <Col md={12} sm={12} className="no_padding">
+                        {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
+                        <Typeahead
+                            defaultSelected={possibleValue === '' ? [] : possibleValue}
+                            id="public-methods-example"
+                            labelKey={"name"}
+                            multiple
+                            className="transformDate"
+                            options={DATE_FORMAT}
+                            onChange={(selected) => {
+                                setSelectedDateFormat(selected)
+                            }}
+                            ignoreDiacritics={false}
+                            placeholder="Choose Date formats..."
+                            ref={ref}
+                        />
+                        {/* <span style={{ color: 'red' }}><small>{formError["requiredDoc"] ? 'At least One Document Type is required' : ''}</small></span> */}
+                    </Col>
+                    <Form.Label className="label_custom" style={{ left: 0 }}>Required Documents</Form.Label>
+                </Form.Group>
+            }
         </React.Fragment>
     }
 
