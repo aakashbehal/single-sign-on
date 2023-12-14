@@ -9,7 +9,7 @@ const GetSubscriptions = async () => {
             }
         })
         const data = handleResponse(response)
-        return data.response[0].lookUps
+        return data.response[0].lookups
     } catch (error: any) {
         throw error.message
     }
