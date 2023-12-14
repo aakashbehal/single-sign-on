@@ -295,7 +295,7 @@ const NamingAdditionalFields = (
                 <Col md={12} sm={12} className="no_padding">
                     {/* <Form.Control defaultValue={editCost ? editCost.cost : ''} className="select_custom white" type="number" name="document_name" /> */}
                     <Typeahead
-                        defaultSelected={possibleValue}
+                        defaultSelected={possibleValue === '' ? [] : possibleValue}
                         id="public-methods-example"
                         labelKey={"name"}
                         multiple
