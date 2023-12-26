@@ -7,8 +7,10 @@ import { history } from '../../helpers';
 
 const Breadcrumbs = () => <Route path="*" render={props => {
     const hash = window.location.hash;
+    let pattern = /^documents\/\d+\/document_list$/
+    let withoutSearch = hash.replace('#/', '').split("?")[0]
+    let isInsideFolder = pattern.test(withoutSearch)
     let parts = hash.split('/').filter(part => part.indexOf('#') === -1) // Removes first # part
-
     if (new RegExp(/^report/).test(parts[0])) {
         parts = parts[0].split('?dName=')
     }
@@ -57,6 +59,9 @@ const Breadcrumbs = () => <Route path="*" render={props => {
             }
 
             const gotoPage = (part: any) => {
+                if (isInsideFolder) {
+                    history.goBack()
+                }
                 if (!isActive) {
                     if (part === 'account_details' || part === 'details' || part === 'compliance_all_requests' || part === 'compliance_my_requests' || part === 'document_general_configuration') {
                         history.goBack()

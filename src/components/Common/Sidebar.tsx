@@ -172,7 +172,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_attribute">Document Attribute</NavLink></li>} */}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li> */}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type_identifier">Document Type Identifier</NavLink></li> */}
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_group">Document Group</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/product_type">Product Type</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>
                     </ul>
                 </li>

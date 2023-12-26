@@ -19,6 +19,40 @@ export const MyDocumentsActionCreator = {
                 }
             )
     },
+    getMyDocumentFoldersTextSearch: (payload: any) => (dispatch: any) => {
+        const request = () => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_REQUEST })
+        const success = (user: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_SUCCESS, payload: user })
+        const failure = (error: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.getMyDocumentFoldersTextSearch(payload)
+            .then(
+                user => {
+                    dispatch(success(user))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
+    getMyDocumentFoldersAdvanceSearch: (payload: any) => (dispatch: any) => {
+        const request = () => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_REQUEST })
+        const success = (user: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_SUCCESS, payload: user })
+        const failure = (error: any) => ({ type: MyDocumentsFolder.MY_DOCUMENTS_FOLDER_FAILURE, payload: error })
+
+        dispatch(request())
+
+        myDocumentsService.getMyDocumentFoldersAdvanceSearch(payload)
+            .then(
+                user => {
+                    dispatch(success(user))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
+    },
     getMyDocumentList: (payload: any) => (dispatch: any) => {
         const request = () => ({ type: MyDocumentsList.MY_DOCUMENTS_LIST_REQUEST })
         const success = (user: any) => ({ type: MyDocumentsList.MY_DOCUMENTS_LIST_SUCCESS, payload: user })

@@ -18,6 +18,7 @@ import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 import MoveDocumentModal from "../../components/modal/MoveDocumentModal";
+import { useParams } from "react-router-dom";
 
 
 const DocumentsList = ({ location }: { location: any }) => {
@@ -40,6 +41,8 @@ const DocumentsList = ({ location }: { location: any }) => {
     const aRef = useRef<any>()
     const params = new URLSearchParams(location.search);
     const AccountId = params.get('account_id');
+    const { aid }: { aid: string } = useParams();
+    console.log(`--aId`, aid)
     const DocumentGroup = params.get('dgc');
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('documentName')

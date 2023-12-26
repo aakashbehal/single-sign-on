@@ -90,8 +90,8 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
                                         })
                                     }
                                 </Form.Control>
-                                <span style={{ color: 'red' }}><small>{error['product'] ? 'Please Select Document group' : ''}</small></span>
-                                <Form.Label className="label_custom white">Document Group Code</Form.Label>
+                                <span style={{ color: 'red' }}><small>{error['product'] ? 'Please Select Product Type' : ''}</small></span>
+                                <Form.Label className="label_custom white">Product Type Code</Form.Label>
                             </Col>
                         }
                         {

@@ -26,6 +26,7 @@ import WithSidebar from "./components/PrivateRoute/SideBarRoute";
 import Approval from "./containers/Setup/Approval";
 
 
+
 // Lazy load components
 const Documents = lazy(() => import("./containers/DocumentManager/Documents"));
 const UserAccount = lazy(() => import("./containers/User/UserAccount"));
@@ -46,7 +47,7 @@ const DocumentGroup = lazy(() => import("./containers/DocumentManager/DocumentGr
 const DocumentTypePreference = lazy(() => import("./containers/DocumentManager/DocumentTypePreference"));
 const DocumentAttribute = lazy(() => import("./containers/DocumentManager/DocumentAttribute"));
 const ClientOnboarding = lazy(() => import("./containers/Setup/ClientOnboarding"));
-
+const DocumentFolder = lazy(() => import("./containers/DocumentManager/DocumentFolder"));
 /**
  * Applications starting point
  * @returns 
@@ -84,6 +85,8 @@ const App = () => {
               <PrivateRoute exact path="/documents/templates" component={Documents} />
               <PrivateRoute exact path="/documents/download_history" component={Documents} />
               <PrivateRoute exact path="/documents/document_list" component={DocumentsList} />
+              <PrivateRoute exact path="/documents/:aid" component={DocumentFolder} />
+              <PrivateRoute exact path="/documents/:aid/document_list" component={DocumentsList} />
               <PrivateRoute exact path="/documents/accounts_documents" component={SummaryDrillDownHave} />
               <PrivateRoute exact path="/documents/accounts_missing_documents" component={SummaryDrillDownNotHave} />
 
@@ -102,7 +105,7 @@ const App = () => {
               <PrivateRoute exact path="/configure/document_general_configuration/:id" component={sessions(NamingConfiguration)} />
               <PrivateRoute exact path="/configure/document_cost_configuration" component={sessions(DocumentCostConfiguration)} />
               <PrivateRoute exact path="/configure/required_documents" component={sessions(RequiredDocuments)} />
-              <PrivateRoute exact path="/configure/document_group" component={sessions(DocumentGroup)} />
+              <PrivateRoute exact path="/configure/product_type" component={sessions(DocumentGroup)} />
               <PrivateRoute exact path="/configure/document_type" component={sessions(DocumentTypePreference)} />
               <PrivateRoute exact path="/configure/document_attribute" component={sessions(DocumentAttribute)} />
 

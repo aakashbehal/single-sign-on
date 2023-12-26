@@ -479,7 +479,7 @@ const NamingConfiguration = () => {
         }
         let objToDownload: any = []
         let tempJson: any = []
-        if (fileName === 'Document Group Code') {
+        if (fileName === 'Product Type Code') {
             objToDownload = [
                 {
                     sheet: "Matrix",
@@ -647,7 +647,7 @@ const NamingConfiguration = () => {
                                                             })
                                                         }
                                                     </Form.Control>
-                                                    <Form.Label className="label_custom ">Document Group Code</Form.Label>
+                                                    <Form.Label className="label_custom ">Product Type Code</Form.Label>
                                                 </Form.Group>
                                             </Col>
                                         }
@@ -900,7 +900,7 @@ const NameTransformationNotRequired = ({
                                 </Form.Control>
                                 <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
                                     {(fieldsSelected[keyName] === 'DG' || fieldsSelected[keyName] === 'DT') &&
-                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Document Group Code')} />}
+                                        <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Type Code')} />}
                                     {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
                                 </Form.Label>
                             </Form.Group>
