@@ -6,6 +6,96 @@ import _ from 'lodash'
 const getMyDocumentFolders = async ({
     pageSize,
     pageNumber,
+    sortOrder,
+    sortParam,
+    documentName,
+    folderName,
+    recordGroupIdentifier
+}: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder`,
+            {
+                pageSize,
+                pageNumber: pageNumber - 1,
+                sortOrder,
+                sortParam,
+                recordGroupIdentifier: recordGroupIdentifier,
+            }
+        )
+        const data = handleResponse(response)
+        let folders = data.response.datas
+        const responseModified: any = {}
+        responseModified.folders = folders.map((folder: any) => {
+            folder.selected = false
+            folder.fileSizeOriginal = folder.fileSize
+            folder.fileSize = formatBytes(folder.fileSize)
+            return folder
+        })
+        responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
+        return responseModified
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const getMyDocumentFoldersTextSearch = async ({
+    pageSize,
+    pageNumber,
+    sortOrder,
+    sortParam,
+    textSearch,
+    recordGroupIdentifier
+}: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folders/search`,
+            {
+                pageSize,
+                pageNumber: pageNumber - 1,
+                textSearch,
+                sortOrder,
+                recordGroupIdentifier,
+                sortParam,
+            }
+        )
+        const data = handleResponse(response)
+        let folders = data.response.datas
+        const responseModified: any = {}
+        responseModified.folders = folders.map((folder: any) => {
+            folder.selected = false
+            folder.fileSizeOriginal = folder.fileSize
+            folder.fileSize = formatBytes(folder.fileSize)
+            return folder
+        })
+        responseModified.totalCount = data.response.metadata.recordCount
+        responseModified.columns = data.response.metadata.columnPreferences.map((column:
+            {
+                sequence: number,
+                displayName: string,
+                attributeNodeKey: string,
+                attributeCode: string
+            }
+        ) => {
+            return column.attributeNodeKey
+        })
+        return responseModified
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+const getMyDocumentFoldersAdvanceSearch = async ({
+    pageSize,
+    pageNumber,
     modifiedDateFrom,
     modifiedDateTo,
     sortOrder,
@@ -219,6 +309,8 @@ const moveDocument = async (payload: any) => {
 
 export const myDocumentsService = {
     getMyDocumentFolders,
+    getMyDocumentFoldersTextSearch,
+    getMyDocumentFoldersAdvanceSearch,
     getMyDocumentList,
     deleteDocument,
     deleteFolder,

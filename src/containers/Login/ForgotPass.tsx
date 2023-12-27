@@ -57,7 +57,7 @@ const ForgotPassword = () => {
 
     const getOrganizationTypes = async () => {
         try {
-            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_COMMON_URL}/getLookUpListByGroupKeyVal/record_source`)
+            const response: any = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/lookup?lookupGroupKeyValue=record_source`)
             const data = handleResponse(response)
             setOrgTypes(data.response)
         } catch (error: any) {
@@ -288,7 +288,7 @@ const ForgotPassword = () => {
                                                             key={`orgTypes_${index}`}
                                                             value={oT.keycode}
                                                         >
-                                                            {oT.keyvalue}
+                                                            {oT.keyValue}
                                                         </option>
                                                     )
                                                 })

@@ -57,15 +57,15 @@ const DocumentGroup = () => {
 
     useEffect(() => {
         if (addDocumentGroupSuccess) {
-            addToast(createMessage('success', `added`, 'Document Group'), { appearance: 'success', autoDismiss: true })
+            addToast(createMessage('success', `added`, 'Product Type'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
         if (deleteDocumentGroupSuccess) {
-            addToast(createMessage('success', `deleting`, 'Document Group'), { appearance: 'success', autoDismiss: true })
+            addToast(createMessage('success', `deleting`, 'Product Type'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
         if (updateSuccess) {
-            addToast(createMessage('success', `updating`, 'Document Group'), { appearance: 'success', autoDismiss: true })
+            addToast(createMessage('success', `updating`, 'Product Type'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
         setShowAddEdit(false)
@@ -125,8 +125,8 @@ const DocumentGroup = () => {
     return (
         <>
             <Col sm={12} style={{ textAlign: 'right', marginBottom: '1rem' }}>
-                <Button variant="dark" className="pull-right" onClick={() => setShowAddEdit(true)}>Add {user.recordSource === 'Equabli' ? 'New' : ''} Document Group</Button>{" "}
-                {user.recordSource !== 'Equabli' && <Button variant="dark" className="pull-right" onClick={() => setShowSelectGroup(true)}>Select Document Group</Button>}
+                <Button variant="dark" className="pull-right" onClick={() => setShowAddEdit(true)}>Add {user.recordSource === 'Equabli' ? 'New' : ''} Product Type</Button>{" "}
+                {user.recordSource !== 'Equabli' && <Button variant="dark" className="pull-right" onClick={() => setShowSelectGroup(true)}>Select Product Type</Button>}
             </Col>
             <Col>
                 {
@@ -149,7 +149,7 @@ const DocumentGroup = () => {
                         && <>
                             <thead>
                                 <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
-                                    <th>Document Group ID</th>
+                                    <th>Product Type ID</th>
                                     <th>Name</th>
                                     <th>Short Code</th>
                                     <th>Domain</th>
@@ -341,7 +341,7 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    {!data ? 'Add Document Group' : 'Edit Document Group'}
+                    {!data ? 'Add Product Type' : 'Edit Product Type'}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
@@ -468,7 +468,7 @@ const SelectDocumentGroup = ({ onHide, show, dispatch, user }: any) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Select Document Group
+                    Select Product Type
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
@@ -483,7 +483,7 @@ const SelectDocumentGroup = ({ onHide, show, dispatch, user }: any) => {
                                             name="document_group"
                                             className="select_custom white"
                                         >
-                                            <option value="" disabled selected>Select Document Group</option>
+                                            <option value="" disabled selected>Select Product Type</option>
                                             {
                                                 (productTypes && productTypes?.availableDocGroups?.length > 0) &&
                                                 productTypes?.availableDocGroups?.map((product: any, index: number) => {
@@ -491,8 +491,8 @@ const SelectDocumentGroup = ({ onHide, show, dispatch, user }: any) => {
                                                 })
                                             }
                                         </Form.Control>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["docGroupConfigCode"] ? 'Document group is required' : ''}</small></span>
-                                        <Form.Label className="label_custom white">Document Group</Form.Label>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["docGroupConfigCode"] ? 'Product Type is required' : ''}</small></span>
+                                        <Form.Label className="label_custom white">Product Type</Form.Label>
                                     </Form.Group>
                                 </Col>
                             </Col>

@@ -8,8 +8,8 @@ const getAllPartners = async ({
     sortParam
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/all`, {
-            pageNumber,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/search`, {
+            pageNumber: pageNumber - 1,
             pageSize
         })
         const data = handleResponse(response)
@@ -48,7 +48,7 @@ const addPartner = async ({
     isEqassociate
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/add`, {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners`, {
             shortName,
             fullName,
             address1,
@@ -103,8 +103,7 @@ const editPartner = async ({
     isEqassociate
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/update`, {
-            partnerId,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/${partnerId}`, {
             shortName,
             fullName,
             address1,
@@ -136,7 +135,7 @@ const editPartner = async ({
 
 const deactivatePartner = async (partnerId: string | number) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/partner/${partnerId}`, {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/${partnerId}`, {
             "action": "ACTIVE",
             "property": "string"
         })

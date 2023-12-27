@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Col, Row, Button } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useToasts } from "react-toast-notifications";
 
@@ -16,10 +16,11 @@ import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 
-const MyDocuments = () => {
+const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
     const dispatch = useDispatch()
     const history = useHistory();
     const { addToast } = useToasts();
+    const { aid }: any = useParams()
     const [sortElement, setSortElement] = useState('modifiedDate')
     const [sortType, setSortType] = useState('desc');
     const [pageSize, setPageSize] = useState(10)
@@ -69,11 +70,11 @@ const MyDocuments = () => {
             sortOrder: sortType,
             sortParam: sortElement
         })
+        search(pageSize, pageNumber)
         dispatch(MiscActionCreator.getColumnForAllTables('documentFolder'))
     }, [])
 
     useEffect(() => {
-        console.log(`--searchObj--`, searchObj)
         if (searchObj !== null) {
             if (searchObj.textSearch !== null && searchObj.textSearch !== '') {
                 setPageNumber(1)
@@ -113,18 +114,46 @@ const MyDocuments = () => {
     }, [downloadRequest, downloadError, downloadSuccess, downloadLinks])
 
     const showDocumentListPage = (data: any) => {
-        history.push({
-            pathname: '/documents/document_list',
-            search: `account_id=${data.folderName}&dgc=${data.docGroupCode}`,
-        });
+        if (data.isGroupIdentifier) {
+            history.push({
+                pathname: `/documents/${data.folderName}`
+            });
+        } else {
+            if (!isInside) {
+                history.push({
+                    pathname: '/documents/document_list',
+                    search: `account_id=${data.folderName}&isGroup=${data.isGroupIdentifier}&dgc=${data.docGroupCode}`,
+                });
+            } else {
+                history.push({
+                    pathname: `/documents/${aid}/document_list`,
+                    search: `account_id=${data.folderName}&isGroup=${data.isGroupIdentifier}&dgc=${data.docGroupCode}`,
+                });
+            }
+        }
     }
 
     const search = (
         pageSize: any,
         pageNumber: any
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        let searchObj: any = { pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        if (isInside) {
+            searchObj.recordGroupIdentifier = aid
+        }
         dispatch(MyDocumentsActionCreator.getMyDocumentFolders(searchObj))
+        setShowAdvanceSearch(false)
+    }
+
+    const searchText = (
+        pageSize: any,
+        pageNumber: any
+    ) => {
+        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        if (isInside) {
+            searchObj.recordGroupIdentifier = aid
+        }
+        dispatch(MyDocumentsActionCreator.getMyDocumentFoldersTextSearch(searchObj))
         setShowAdvanceSearch(false)
     }
 
@@ -176,7 +205,7 @@ const MyDocuments = () => {
                 isLoading={loading}
                 map={{
                     "folderName": "Name",
-                    "docGroupName": "Document Group",
+                    "docGroupName": "Product Type",
                     "fileSize": "Size",
                     "modifiedDate": "Modified Date",
                     "lastShareDate": "Last Shared Date",

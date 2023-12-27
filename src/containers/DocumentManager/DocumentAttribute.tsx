@@ -203,7 +203,7 @@ const AddEditClient = ({ onHide, show, data, dispatch, productTypes }: any) => {
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    {!data ? 'Add Document Group' : 'Edit Document Group'}
+                    {!data ? 'Add Product Type' : 'Edit Product Type'}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">

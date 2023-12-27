@@ -315,7 +315,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                                                 onChange={(e) => setSelectedNamingConfig(e.target.value)}
                                                 className="select_custom white"
                                             >
-                                                <option value="" disabled selected>Select Document Name Group</option>
+                                                <option value="" disabled selected>Select Product Type</option>
                                                 {
                                                     (confList && confList.length > 0) &&
                                                     confList.map((conf: any, index: number) => {
@@ -576,7 +576,7 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
                                             name="document_group"
                                             className="select_custom white"
                                         >
-                                            <option value="" disabled selected>Select Document Name Group</option>
+                                            <option value="" disabled selected>Select Product Type</option>
                                             {
                                                 (confList && confList.length > 0) &&
                                                 confList.map((conf: any, index: number) => {
@@ -584,7 +584,7 @@ const DownloadSample = ({ confList, parentComponent, details }: { confList: any,
                                                 })
                                             }
                                         </Form.Control>
-                                        <span style={{ color: 'red' }}><small>{groupError ? 'Document Name Group is Required' : ''}</small></span>
+                                        <span style={{ color: 'red' }}><small>{groupError ? 'Product Type is Required' : ''}</small></span>
                                     </Col>
                                 </Form.Group>
                             </Col >

@@ -18,14 +18,31 @@ import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 import MoveDocumentModal from "../../components/modal/MoveDocumentModal";
+import { useParams } from "react-router-dom";
 
 
 const DocumentsList = ({ location }: { location: any }) => {
+    let documentListMap = {
+        name: "Name",
+        documentType: "Document Type",
+        originalAccountNumber: "Original Account Number",
+        equabliAccountNo: "Equabli Account Number",
+        clientAccountNumber: "Client Account Number",
+        generateDate: "Generated Date",
+        uploadDate: "Upload Date",
+        shareDate: "Share Date",
+        receiveDate: "Receive Date",
+        fileSize: "File Size",
+        sharedBy: "Shared By",
+        sharedWith: "Shared With",
+    }
     const dispatch = useDispatch();
     const { addToast } = useToasts();
     const aRef = useRef<any>()
     const params = new URLSearchParams(location.search);
     const AccountId = params.get('account_id');
+    const { aid }: { aid: string } = useParams();
+    console.log(`--aId`, aid)
     const DocumentGroup = params.get('dgc');
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('documentName')
@@ -40,6 +57,7 @@ const DocumentsList = ({ location }: { location: any }) => {
     const [details, setDetails] = useState<any>(null);
     const [showShare, setShowShare] = useState(null);
     const [moveModalShow, setMoveModalShow] = useState(null)
+    const [documentMapList, setDocumentMapList] = useState<any>(documentListMap)
     let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
@@ -81,6 +99,10 @@ const DocumentsList = ({ location }: { location: any }) => {
             sortParam: sortElement
         })
         dispatch(MiscActionCreator.getColumnForAllTables('document'))
+        if (AccountId === 'Other') {
+            let temp = { ...documentMapList, otherReason: 'Error' }
+            setDocumentMapList(temp)
+        }
         return () => {
             dispatch(MyDocumentsActionCreator.resetDocumentList())
         }
@@ -183,20 +205,7 @@ const DocumentsList = ({ location }: { location: any }) => {
             <TableComponent
                 data={documents}
                 isLoading={loading}
-                map={{
-                    name: "Name",
-                    documentType: "Document Type",
-                    originalAccountNumber: "Original Account Number",
-                    equabliAccountNo: "Equabli Account Number",
-                    clientAccountNumber: "Client Account Number",
-                    generateDate: "Generated Date",
-                    uploadDate: "Upload Date",
-                    shareDate: "Share Date",
-                    receiveDate: "Receive Date",
-                    fileSize: "File Size",
-                    sharedBy: "Shared By",
-                    sharedWith: "Shared With",
-                }}
+                map={documentMapList}
                 totalCount={totalCount}
                 actionArray={['name']}
                 handleNavigate={(data: any) => {
@@ -210,7 +219,7 @@ const DocumentsList = ({ location }: { location: any }) => {
                 setCurrentPage={setPageNumber}
                 parentComponent={'documents'}
                 searchCriteria={{}}
-                hideShareArray={columnsSaved}
+                hideShareArray={[...columnsSaved, 'otherReason']}
                 addEditArray={
                     {
                         download: (data: any) => downloadHandler(data),

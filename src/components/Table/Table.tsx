@@ -23,7 +23,7 @@ import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
 import NoRecord from '../Common/NoResult';
 import { MyDocumentsActionCreator } from '../../store/actions/myDocuments.actions';
-import { MdDomain, MdOutlineDriveFileMove } from 'react-icons/md';
+import { MdDomain, MdOutlineDriveFileMove, MdOutlineFolder, MdOutlineFolderCopy } from 'react-icons/md';
 import { FaLayerGroup } from 'react-icons/fa';
 
 interface ITempObj {
@@ -824,7 +824,8 @@ const TableComponent = ({
                                                             alignItems: 'center'
                                                         }}
                                                     >
-                                                        <AiFillFolder size={20} />
+                                                        {d['isGroupIdentifier'] && <MdOutlineFolderCopy size={20} />}
+                                                        {!d['isGroupIdentifier'] && <MdOutlineFolder size={20} />}
                                                         <span
                                                             style={{ paddingLeft: '.7rem' }}
                                                             onClick={() => handleNavigate(d, header)}
@@ -1296,7 +1297,7 @@ const TableComponent = ({
                                             delay={{ show: 250, hide: 400 }}
                                             overlay={
                                                 <Tooltip id={`tooltip-error`}>
-                                                    Add Document Group
+                                                    Add Product Type
                                                 </Tooltip>
                                             }
                                         >

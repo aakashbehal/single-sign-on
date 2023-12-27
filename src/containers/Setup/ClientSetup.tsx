@@ -109,7 +109,7 @@ const ClientSetup = () => {
             search(pageSize, pageNumber)
         }
         if (addGroupClientSuccess) {
-            addToast(createMessage('success', `uploaded`, 'Client Document Group'), { appearance: 'success', autoDismiss: true })
+            addToast(createMessage('success', `uploaded`, 'Client Product Type'), { appearance: 'success', autoDismiss: true })
             search(pageSize, pageNumber)
         }
         setShowAddEdit(false)
@@ -138,7 +138,7 @@ const ClientSetup = () => {
             addToast(createMessage('error', `adding`, 'Client Domain'), { appearance: 'error', autoDismiss: false })
         }
         if (addGroupClientError) {
-            addToast(createMessage('error', `adding`, 'Client Document Group'), { appearance: 'error', autoDismiss: false })
+            addToast(createMessage('error', `adding`, 'Client Product Type'), { appearance: 'error', autoDismiss: false })
         }
     }, [addClientError,
         editClientError,
@@ -707,8 +707,8 @@ const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
                                                 options={productTypes}
                                             />
                                         </Col>
-                                        <Form.Label className="label_custom white">Document Group</Form.Label>
-                                        <span style={{ color: 'red' }}><small>{documentGroupError ? 'Please Select at least 1 Document Group' : ''}</small></span>
+                                        <Form.Label className="label_custom white">Product Type</Form.Label>
+                                        <span style={{ color: 'red' }}><small>{documentGroupError ? 'Please Select at least 1 Product Type' : ''}</small></span>
                                     </Form.Group>
                                 </Col>
                             </Col>

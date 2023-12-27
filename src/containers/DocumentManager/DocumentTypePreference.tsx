@@ -206,7 +206,7 @@ const DocumentTypePreference = () => {
                     map={{
                         "prefId": "ID",
                         "name": "Document Type",
-                        "docGroupConfigName": "Document Group Code",
+                        "docGroupConfigName": "Product Type",
                         "fileExtension": "File Extension",
                         "externalDocTypeCodes": "External Code",
                         "externalDocNames": "External Name",

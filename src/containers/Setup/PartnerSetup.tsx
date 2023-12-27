@@ -124,7 +124,7 @@ const PartnerSetup = () => {
                     isLoading={loading}
                     map={{
                         partnerId: "Partner ID",
-                        shortName: "Short Name",
+                        shortCode: "Short Name",
                         fullName: "Full Name",
                         emailAddress: "Email",
                         quicksiteId: "Quicksite ID",
@@ -142,7 +142,7 @@ const PartnerSetup = () => {
                     searchCriteria={{}}
                     hideShareArray={[
                         "partnerId",
-                        "shortName",
+                        "shortCode",
                         "fullName",
                         "emailAddress",
                         "quicksiteId",
