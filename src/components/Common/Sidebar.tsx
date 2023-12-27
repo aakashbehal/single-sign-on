@@ -173,7 +173,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li> */}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type_identifier">Document Type Identifier</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/product_type">Product Type</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>
+                        {role !== 'Partner' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>}
                     </ul>
                 </li>
                 <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
