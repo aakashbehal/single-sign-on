@@ -73,8 +73,14 @@ const MyDocuments = () => {
     }, [])
 
     useEffect(() => {
+        console.log(`--searchObj--`, searchObj)
         if (searchObj !== null) {
-            search(pageSize, pageNumber)
+            if (searchObj.textSearch !== null && searchObj.textSearch !== '') {
+                setPageNumber(1)
+                searchText(pageSize, 1)
+            } else {
+                search(pageSize, pageNumber)
+            }
         }
     }, [searchObj, sortElement, sortType])
 
