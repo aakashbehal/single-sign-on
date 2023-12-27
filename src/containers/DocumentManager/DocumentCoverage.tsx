@@ -46,7 +46,7 @@ const DocumentCoverage = ({ collapse }: any) => {
         let searchObjTemp = { ...searchObj, ...data }
         const params = new URLSearchParams(searchObjTemp).toString();
         history.push({
-            pathname: '/documents/accounts_documents',
+            pathname: '/documents/summary/accounts_documents',
             search: params,
         });
     }

@@ -113,9 +113,9 @@ const TableComponent = ({
 
     const showSummaryNotHaving = () => {
         handleDocumentManagerSummary.documentType = handleDocumentManagerSummary.documentType.replace(/[^\w\s]/gi, " ")
-        let path = '/documents/accounts_missing_documents'
+        let path = '/documents/summary/accounts_missing_documents'
         if (parentComponent === 'documentNotSummary') {
-            path = '/documents/accounts_documents'
+            path = '/documents/summary/accounts_documents'
         }
         history.push({
             pathname: path,
