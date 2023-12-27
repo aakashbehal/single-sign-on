@@ -146,7 +146,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
                 onHide()
             } else {
                 if (parentComponent === 'profile') {
-                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_USER_SERVICE}/v1/users/uploadProfilePic`
+                    API_URL = `${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_SSO_USER_SERVICE}/users/uploadProfilePic`
                     formData.append("file", file);
                 } else if (parentComponent === 'documents') {
                     const {
