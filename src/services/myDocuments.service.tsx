@@ -116,7 +116,8 @@ const getMyDocumentFoldersAdvanceSearch = async ({
     sharedBy,
     sharedWith,
     recordGroupIdentifier,
-    docGroupCode
+    docGroupCode,
+    portfolioId
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder/advanceSearch`,
@@ -139,6 +140,7 @@ const getMyDocumentFoldersAdvanceSearch = async ({
                 receiveDateTo,
                 shareDateFrom,
                 shareDateTo,
+                portfolioId
             }
         )
         const data = handleResponse(response)

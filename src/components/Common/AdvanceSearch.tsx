@@ -193,6 +193,7 @@ const AdvanceSearch = ({ parentComponent,
             console.log(`--documentTypeRef.current?.value`, document_type, document_type.value)
             advanceSearchTemp.docTypeCode = document_type?.value || null
             advanceSearchTemp.docGroupCode = product_type?.value || null
+            advanceSearchTemp.portfolioId = portfolio_id?.value || null
             advanceSearchTemp.documentName = document_name?.value.trim() || null
             advanceSearchTemp.generationDateFrom = dates.generationDateFrom ? dateFormatterForRequestDocManager(dates.generationDateFrom) : null
             advanceSearchTemp.generationDateTo = dates.generationDateTo ? dateFormatterForRequestDocManager(dates.generationDateTo) : null
@@ -218,7 +219,6 @@ const AdvanceSearch = ({ parentComponent,
             advanceSearchTemp.requestedFrom = requestedFromSelected.length === 0 ? null : requestedFromSelected[0]
             advanceSearchTemp.requestedBy = requestedBySelected.length === 0 ? null : requestedBySelected[0]
             advanceSearchTemp.requestStatus = requested_status?.value || null
-            console.log(`---advanceSearchTemp--`, advanceSearchTemp)
             advanceSearchHook(advanceSearchTemp)
         }
     }
