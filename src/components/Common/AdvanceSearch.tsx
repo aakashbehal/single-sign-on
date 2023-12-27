@@ -10,12 +10,15 @@ import DocumentTypes from './DocumentType';
 import { checkIfAdvanceSearchIsActive, dateFormatterForRequestDocManager } from '../../helpers/util';
 import { useDispatch, useSelector } from 'react-redux';
 import { UserActionCreator } from '../../store/actions/user.actions';
+import { ProductTypes } from '../../store/types.d';
+import DocumentGroup from '../../containers/DocumentManager/DocumentGroup';
+import { DocumentGroupActionCreator } from '../../store/actions/documentGroup.actions';
 
 const FIELD_MAPPER: any = {
     myDocuments: [
-        "originalAccountNumber",
+        // "originalAccountNumber",
         "equabliAccountNumber",
-        "clientAccountNumber",
+        // "clientAccountNumber",
         "documentName",
         "DocumentType",
         "DocumentTypeNot",
@@ -26,7 +29,9 @@ const FIELD_MAPPER: any = {
         "ReceiveDateFrom",
         "ReceiveDateTo",
         "shareBy",
-        "shareWith"
+        "shareWith",
+        "portfolioId",
+        "productType"
     ],
     documents: [
         "documentName",
@@ -45,9 +50,9 @@ const FIELD_MAPPER: any = {
     sentDocumentRequest: [
         "documentName",
         "DocumentType",
-        "originalAccountNumber",
+        // "originalAccountNumber",
         "equabliAccountNumber",
-        "clientAccountNumber",
+        // "clientAccountNumber",
         "requestedDateFrom",
         "requestedDateTo",
         "dueDateFrom",
@@ -60,9 +65,9 @@ const FIELD_MAPPER: any = {
     receiveDocumentRequest: [
         "documentName",
         "DocumentType",
-        "originalAccountNumber",
+        // "originalAccountNumber",
         "equabliAccountNumber",
-        "clientAccountNumber",
+        // "clientAccountNumber",
         "requestedDateFrom",
         "requestedDateTo",
         "dueDateFrom",
@@ -74,9 +79,9 @@ const FIELD_MAPPER: any = {
     ],
     documentSummary: [
         "documentName",
-        "originalAccountNumber",
+        // "originalAccountNumber",
         "equabliAccountNumber",
-        "clientAccountNumber",
+        // "clientAccountNumber",
         "shareBy",
         "uploadDateFrom",
         "uploadDateTo",
@@ -100,15 +105,21 @@ const AdvanceSearch = ({ parentComponent,
     searchObj
 }: any) => {
     const dispatch = useDispatch();
-    const ref = useRef<any>();
+    const requestFromRef = useRef<any>();
+    const requestByRef = useRef<any>();
+    const sharedWithRef = useRef<any>();
+    const sharedByRef = useRef<any>();
     const advanceSearchRef = useRef<any>();
     const documentTypeRef = useRef<any>();
+    const productTypeRef = useRef<any>();
+    const documentTypeNotRef = useRef<any>();
     const textSearchRef = useRef<HTMLInputElement | null>(null);
     const [advanceSearchActive, setAdvanceSearchActive] = useState<any>(false);
     const [requestedFromSelected, setRequestedFromSelected] = useState<any>([])
     const [requestedBySelected, setRequestedBySelected] = useState<any>([])
     const [sharedBySelected, setSharedBySelected] = useState<any>([])
     const [sharedWithSelected, setSharedWithSelected] = useState<any>([])
+    const [productTypeValue, setProductTypeValue] = useState('')
     const [dates, setDates] = useState<any>({
         generationDateFrom: null,
         generationDateTo: null,
@@ -132,13 +143,20 @@ const AdvanceSearch = ({ parentComponent,
         users,
         loading,
         error,
+        productTypes,
+        loadingProductTypes,
+        errorProductTypes,
     } = useSelector((state: any) => ({
         users: state.users.data,
         loading: state.users.loading,
-        error: state.users.error
+        error: state.users.error,
+        productTypes: state.documentGroup.data,
+        loadingProductTypes: state.documentGroup.loading,
+        errorProductTypes: state.documentGroup.data.error,
     }))
 
     useEffect(() => {
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
         dispatch(UserActionCreator.getConnectedUsers())
         if (!checkIfAdvanceSearchIsActive(searchObj)) {
             setAdvanceSearchActive(true)
@@ -164,14 +182,17 @@ const AdvanceSearch = ({ parentComponent,
             let advanceSearchTemp: any = {}
             const {
                 document_type,
+                product_type,
                 document_name,
                 original_account_number,
                 client_account_number,
                 equabli_account_number,
-                requested_status
-                // portfolio_id
+                requested_status,
+                portfolio_id
             } = advanceSearchRef.current
-            advanceSearchTemp.docTypeCode = document_type?.value || null
+            console.log(`--documentTypeRef.current?.value`, document_type, document_type.value)
+            advanceSearchTemp.docTypeCode = document_type.value || null
+            advanceSearchTemp.docGroupCode = product_type.value || null
             advanceSearchTemp.documentName = document_name?.value.trim() || null
             advanceSearchTemp.generationDateFrom = dates.generationDateFrom ? dateFormatterForRequestDocManager(dates.generationDateFrom) : null
             advanceSearchTemp.generationDateTo = dates.generationDateTo ? dateFormatterForRequestDocManager(dates.generationDateTo) : null
@@ -197,6 +218,7 @@ const AdvanceSearch = ({ parentComponent,
             advanceSearchTemp.requestedFrom = requestedFromSelected.length === 0 ? null : requestedFromSelected[0]
             advanceSearchTemp.requestedBy = requestedBySelected.length === 0 ? null : requestedBySelected[0]
             advanceSearchTemp.requestStatus = requested_status?.value || null
+            console.log(`---advanceSearchTemp--`, advanceSearchTemp)
             advanceSearchHook(advanceSearchTemp)
         }
     }
@@ -205,6 +227,7 @@ const AdvanceSearch = ({ parentComponent,
         // Common
         documentTypeRef.current.reset();
         advanceSearchRef.current["document_name"].value = ""
+        advanceSearchRef.current["portfolio_id"].value = ""
         setDates({
             generationDateFrom: null,
             generationDateTo: null,
@@ -223,15 +246,21 @@ const AdvanceSearch = ({ parentComponent,
             fulFillmentDateFrom: null,
             fulFillmentDateTo: null
         })
-        advanceSearchRef.current["original_account_number"].value = ""
-        advanceSearchRef.current["client_account_number"].value = ""
+        // advanceSearchRef.current["original_account_number"].value = ""
+        // advanceSearchRef.current["client_account_number"].value = ""
         advanceSearchRef.current["equabli_account_number"].value = ""
-        advanceSearchRef.current["requested_status"].value = ""
+        if (FIELD_MAPPER[parentComponent].includes('requestedStatus')) {
+            advanceSearchRef.current["requested_status"].value = ""
+        }
         setRequestedFromSelected([])
         setRequestedBySelected([])
         setSharedBySelected([])
         setSharedWithSelected([])
-        ref.current?.clear()
+        requestFromRef.current?.clear()
+        requestByRef.current?.clear()
+        sharedWithRef.current?.clear()
+        sharedByRef.current?.clear()
+        setProductTypeValue('')
         resetHandlerHook({})
     }
 
@@ -285,12 +314,12 @@ const AdvanceSearch = ({ parentComponent,
                             {/* {
                                 FIELD_MAPPER[parentComponent].includes('documentName')
                                 && <Col sm={6} className="my-1 mt-4">
-                                    <DocumentTypes ref={documentTypeRef} />
+                                    <DocumentTypes ref={documentTypeNotRef} />
                                     <Form.Label className="label_custom white">Folder that do not contain Document Type</Form.Label>
                                 </Col>
                             } */}
-                            {/* {
-                                FIELD_MAPPER[parentComponent].includes('documentName')
+                            {
+                                FIELD_MAPPER[parentComponent].includes('portfolioId')
                                 && <Col sm={6} className="my-1 mt-4">
                                     <Form.Control
                                         className="select_custom white"
@@ -298,7 +327,28 @@ const AdvanceSearch = ({ parentComponent,
                                         name="portfolio_id" />
                                     <Form.Label className="label_custom white">Portfolio Id</Form.Label>
                                 </Col>
-                            } */}
+                            }
+                            {
+                                FIELD_MAPPER[parentComponent].includes('productType')
+                                && <Col sm={6} className="my-1 mt-4">
+                                    <Form.Control
+                                        as="select"
+                                        name="product_type"
+                                        ref={productTypeRef}
+                                        value={productTypeValue}
+                                        onChange={(e) => { setProductTypeValue(e.target.value) }}
+                                        className="select_custom white">
+                                        <option disabled value="">Select Product Type...</option>
+                                        {
+                                            (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                            productTypes?.pickedDocGroups?.map((dT: any, index: number) => {
+                                                return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
+                                            })
+                                        }
+                                    </Form.Control>
+                                    <Form.Label className="label_custom white">Product Type</Form.Label>
+                                </Col>
+                            }
                             {
                                 FIELD_MAPPER[parentComponent].includes('originalAccountNumber')
                                 && <Col sm={12} className="my-1 mt-4">
@@ -568,7 +618,7 @@ const AdvanceSearch = ({ parentComponent,
                                         id="public-methods-example"
                                         labelKey="modifiedFirstName"
                                         multiple
-                                        ref={ref}
+                                        ref={requestFromRef}
                                         className="input_custom_type_ahead"
                                         allowNew={true}
                                         newSelectionPrefix='Not a Platform User: '
@@ -593,7 +643,7 @@ const AdvanceSearch = ({ parentComponent,
                                         isLoading={loading}
                                         id="public-methods-example"
                                         labelKey="modifiedFirstName"
-                                        ref={ref}
+                                        ref={requestByRef}
                                         className="input_custom_type_ahead"
                                         allowNew={true}
                                         newSelectionPrefix='Not a Platform User: '
@@ -648,7 +698,7 @@ const AdvanceSearch = ({ parentComponent,
                                         isLoading={loading}
                                         id="public-methods-example"
                                         labelKey="modifiedFirstName"
-                                        ref={ref}
+                                        ref={sharedByRef}
                                         className="input_custom_type_ahead"
                                         newSelectionPrefix='Not a Platform User: '
                                         onChange={(selected) => {
@@ -669,7 +719,7 @@ const AdvanceSearch = ({ parentComponent,
                                         isLoading={loading}
                                         id="public-methods-example"
                                         labelKey="modifiedFirstName"
-                                        ref={ref}
+                                        ref={sharedWithRef}
                                         className="input_custom_type_ahead"
                                         newSelectionPrefix='Not a Platform User: '
                                         onChange={(selected) => {

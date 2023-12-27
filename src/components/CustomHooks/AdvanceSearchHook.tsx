@@ -1,30 +1,36 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 const AdvanceSearchHook = () => {
     const [state, setState] = useState<any>(null)
+    const [text, setText] = useState<any>(null)
+    const [isAdvanceSearch, setIsAdvanceSearch] = useState<boolean>(false)
 
     const setInitObj = (searchObj: any) => {
         setState(searchObj)
+        setText(null)
     }
 
     const textSearch: any = async (text: any) => {
-        setState((state: any) => {
-            return { ...state, textSearch: text }
-        })
+        setText(text)
     }
 
     const advanceSearch: any = async (searchParams: any) => {
+        setIsAdvanceSearch(true)
         setState((state: any) => {
-            return { ...state, ...searchParams, textSearch: null }
+            return { ...state, ...searchParams }
         })
     }
 
+    useEffect(() => {
+        console.log(`--state--state`, state)
+    }, [state])
+
     const resetHandler: any = async () => {
+        setIsAdvanceSearch(false)
         setState((state: any) => {
             return {
                 pageSize: state.pageSize,
                 pageNumber: state.pageNumber,
-                textSearch: null,
                 sortOrder: state.sortOrder,
                 sortParam: state.sortParam
             }
@@ -33,6 +39,8 @@ const AdvanceSearchHook = () => {
 
     return [
         state,
+        text,
+        isAdvanceSearch,
         {
             setInitObj,
             textSearch,

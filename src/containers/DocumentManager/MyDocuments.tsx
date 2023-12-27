@@ -31,7 +31,7 @@ const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
     const [showShare, setShowShare] = useState(null);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
-    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
+    let [searchObj, text, isAdvanceSearch, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const { folders,
         columns,
@@ -66,7 +66,6 @@ const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
         setInitObj({
             pageSize: pageSize,
             pageNumber: pageNumber,
-            textSearch: null,
             sortOrder: sortType,
             sortParam: sortElement
         })
@@ -75,15 +74,21 @@ const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
     }, [])
 
     useEffect(() => {
-        if (searchObj !== null) {
-            if (searchObj.textSearch !== null && searchObj.textSearch !== '') {
+        if (text !== null) {
+            if (text !== '') {
                 setPageNumber(1)
                 searchText(pageSize, 1)
             } else {
                 search(pageSize, pageNumber)
             }
         }
-    }, [searchObj, sortElement, sortType])
+    }, [text, sortElement, sortType])
+
+    useEffect(() => {
+        if (isAdvanceSearch === true) {
+            searchAdvanceSearch(pageSize, pageNumber)
+        }
+    }, [isAdvanceSearch, searchObj])
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -149,11 +154,23 @@ const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
         pageSize: any,
         pageNumber: any
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        let searchObj: any = { textSearch: text, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         if (isInside) {
             searchObj.recordGroupIdentifier = aid
         }
         dispatch(MyDocumentsActionCreator.getMyDocumentFoldersTextSearch(searchObj))
+        setShowAdvanceSearch(false)
+    }
+
+    const searchAdvanceSearch = (
+        pageSize: any,
+        pageNumber: any
+    ) => {
+        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        if (isInside) {
+            searchObj.recordGroupIdentifier = aid
+        }
+        dispatch(MyDocumentsActionCreator.getMyDocumentFoldersAdvanceSearch(searchObj))
         setShowAdvanceSearch(false)
     }
 
