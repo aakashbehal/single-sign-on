@@ -23,7 +23,7 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
     const [showDocument, setShowDocument] = useState(false)
     const [documentToShow, setDocumentToShow] = useState(null);
     const [columnsSaved, setColumnsSaved] = useState<any>([]);
-    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
+    let [searchObj, text, isAdvanceSearch, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
         documents,
@@ -59,7 +59,7 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
         if (searchObj !== null) {
             search(pageSize, pageNumber)
         }
-    }, [searchObj, sortElement, sortType])
+    }, [searchObj, text, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns?.length === 0 && (defaultColumns && defaultColumns?.length > 0)) {
@@ -74,7 +74,7 @@ const SummaryDrillDownHave = ({ location }: { location: any }) => {
         pageNumber: any
     ) => {
         searchObj = {
-            ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType, ...searchParams
+            ...searchObj, textSearch: text, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType, ...searchParams
         }
         dispatch(SummaryActionCreator.getSummaryDrillDown(searchObj))
         setShowAdvanceSearch(false)

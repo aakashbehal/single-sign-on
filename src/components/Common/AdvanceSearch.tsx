@@ -191,8 +191,8 @@ const AdvanceSearch = ({ parentComponent,
                 portfolio_id
             } = advanceSearchRef.current
             console.log(`--documentTypeRef.current?.value`, document_type, document_type.value)
-            advanceSearchTemp.docTypeCode = document_type.value || null
-            advanceSearchTemp.docGroupCode = product_type.value || null
+            advanceSearchTemp.docTypeCode = document_type?.value || null
+            advanceSearchTemp.docGroupCode = product_type?.value || null
             advanceSearchTemp.documentName = document_name?.value.trim() || null
             advanceSearchTemp.generationDateFrom = dates.generationDateFrom ? dateFormatterForRequestDocManager(dates.generationDateFrom) : null
             advanceSearchTemp.generationDateTo = dates.generationDateTo ? dateFormatterForRequestDocManager(dates.generationDateTo) : null
@@ -227,7 +227,9 @@ const AdvanceSearch = ({ parentComponent,
         // Common
         documentTypeRef.current.reset();
         advanceSearchRef.current["document_name"].value = ""
-        advanceSearchRef.current["portfolio_id"].value = ""
+        if (FIELD_MAPPER[parentComponent].includes('portfolioId')) {
+            advanceSearchRef.current["portfolio_id"].value = ""
+        }
         setDates({
             generationDateFrom: null,
             generationDateTo: null,

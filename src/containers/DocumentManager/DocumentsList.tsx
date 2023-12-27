@@ -58,7 +58,7 @@ const DocumentsList = ({ location }: { location: any }) => {
     const [showShare, setShowShare] = useState(null);
     const [moveModalShow, setMoveModalShow] = useState(null)
     const [documentMapList, setDocumentMapList] = useState<any>(documentListMap)
-    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
+    let [searchObj, text, isAdvanceSearch, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
         documents,
@@ -112,7 +112,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         if (searchObj !== null) {
             search(pageSize, pageNumber)
         }
-    }, [searchObj, sortElement, sortType])
+    }, [searchObj, text, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns?.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -138,7 +138,7 @@ const DocumentsList = ({ location }: { location: any }) => {
         pageSize: any,
         pageNumber: any
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, accountNumber: AccountId, docGroupCode: DocumentGroup, sortParam: sortElement, sortOrder: sortType }
+        searchObj = { ...searchObj, textSearch: text, pageSize, pageNumber, accountNumber: AccountId, docGroupCode: DocumentGroup, sortParam: sortElement, sortOrder: sortType }
         dispatch(MyDocumentsActionCreator.getMyDocumentList(searchObj))
         setShowAdvanceSearch(false)
     }

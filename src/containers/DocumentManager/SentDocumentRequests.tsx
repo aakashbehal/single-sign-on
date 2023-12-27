@@ -38,7 +38,7 @@ const SentDocumentRequests = () => {
     const [showDocument, setShowDocument] = useState(false)
     const [documentToShow, setDocumentToShow] = useState(null);
     const [columnsSaved, setColumnsSaved] = useState<any>([])
-    let [searchObj, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
+    let [searchObj, text, isAdvanceSearch, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
 
     const {
         sentDocumentRequests,
@@ -83,7 +83,7 @@ const SentDocumentRequests = () => {
         if (searchObj !== null) {
             search(pageSize, pageNumber)
         }
-    }, [searchObj, sortElement, sortType])
+    }, [searchObj, text, sortElement, sortType])
 
     useEffect(() => {
         if (!loading && columns.length === 0 && (defaultColumns && defaultColumns.length > 0)) {
@@ -119,7 +119,7 @@ const SentDocumentRequests = () => {
         pageSize: any,
         pageNumber: any
     ) => {
-        searchObj = { ...searchObj, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
+        searchObj = { ...searchObj, textSearch: text, pageSize, pageNumber, sortParam: sortElement, sortOrder: sortType }
         dispatch(SentDocumentRequestActionCreator.getSentDocumentRequest(searchObj))
         setShowAdvanceSearch(false)
     }

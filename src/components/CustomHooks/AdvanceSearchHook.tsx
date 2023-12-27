@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 const AdvanceSearchHook = () => {
     const [state, setState] = useState<any>(null)
     const [text, setText] = useState<any>(null)
-    const [isAdvanceSearch, setIsAdvanceSearch] = useState<boolean>(false)
+    const [isAdvanceSearch, setIsAdvanceSearch] = useState<any>(null)
 
     const setInitObj = (searchObj: any) => {
         setState(searchObj)
@@ -20,10 +20,6 @@ const AdvanceSearchHook = () => {
             return { ...state, ...searchParams }
         })
     }
-
-    useEffect(() => {
-        console.log(`--state--state`, state)
-    }, [state])
 
     const resetHandler: any = async () => {
         setIsAdvanceSearch(false)

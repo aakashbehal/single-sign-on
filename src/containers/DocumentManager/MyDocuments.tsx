@@ -87,6 +87,8 @@ const MyDocuments = ({ isInside = false }: { isInside?: boolean }) => {
     useEffect(() => {
         if (isAdvanceSearch === true) {
             searchAdvanceSearch(pageSize, pageNumber)
+        } else if (isAdvanceSearch === false) {
+            search(pageSize, pageNumber)
         }
     }, [isAdvanceSearch, searchObj])
 
