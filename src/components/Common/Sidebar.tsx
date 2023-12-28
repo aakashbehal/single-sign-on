@@ -141,6 +141,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
                         {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
                         {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li>
                         {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
                         {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client_onboarding">Client Onboarding</NavLink></li>}
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
@@ -170,7 +171,7 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_cost_configuration">Document Cost Configuration</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/required_documents">Required Documents</NavLink></li>
                         {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_attribute">Document Attribute</NavLink></li>} */}
-                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li> */}
+
                         {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type_identifier">Document Type Identifier</NavLink></li> */}
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/product_type">Product Type</NavLink></li>
                         {role !== 'Partner' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>}
