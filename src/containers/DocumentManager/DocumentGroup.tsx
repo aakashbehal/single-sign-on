@@ -30,6 +30,7 @@ const DocumentGroup = () => {
     const [editData, setEditData] = useState<any>(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [details, setDetails] = useState<any>(null);
+    const [docGroups, setDocGroups] = useState([])
 
     const {
         documentGroup,
@@ -54,6 +55,15 @@ const DocumentGroup = () => {
         updateSuccess: state.documentGroup.updateSuccess,
         updateError: state.documentGroup.updateError,
     }))
+
+    useEffect(() => {
+        const userType = userService.getUserType()
+        if (userType === 'Client') {
+            setDocGroups(documentGroup.pickedDocGroups)
+        } else if (userType === 'Equabli') {
+            setDocGroups(documentGroup)
+        }
+    }, [documentGroup])
 
     useEffect(() => {
         if (addDocumentGroupSuccess) {
@@ -137,7 +147,7 @@ const DocumentGroup = () => {
                 }
                 <Table striped bordered hover responsive size="sm" className="tableHeight" style={{ marginBottom: 0 }}>
                     {
-                        !loading && documentGroupPicked?.length === 0
+                        !loading && docGroups?.length === 0
                         && <thead>
                             <tr className='no_records' style={{ lineHeight: '35px', backgroundColor: '#e9ecef', textAlign: 'center' }}>
                                 <NoRecord />
@@ -145,7 +155,7 @@ const DocumentGroup = () => {
                         </thead>
                     }
                     {
-                        !loading && documentGroupPicked?.length > 0
+                        !loading && docGroups?.length > 0
                         && <>
                             <thead>
                                 <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
@@ -159,7 +169,7 @@ const DocumentGroup = () => {
                             </thead>
                             <tbody>
                                 {
-                                    documentGroupPicked && documentGroupPicked.map((cT: any, index: any) => {
+                                    docGroups && docGroups.map((cT: any, index: any) => {
                                         return (<tr key={`rD_${index}`}>
                                             <td>{cT.id}</td>
                                             <td>{cT.name}</td>
@@ -269,7 +279,10 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
 
     useEffect(() => {
         dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
-        getClientDomain()
+        const userType = userService.getUserType()
+        if (userType === 'Client') {
+            getClientDomain()
+        }
     }, [])
 
     const getClientDomain = async () => {
@@ -278,6 +291,7 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
     }
 
     const validate = (formObj: any) => {
+        console.log(`--formObj-`, formObj)
         let formIsValid = true;
         let checkFormObj: any = {
             domainCode: formObj.domainCode,
@@ -314,12 +328,12 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
             description
         } = documentGroupFormRef.current
         let formObject: any = {}
-        if (user.recordSource !== 'Equabli') {
+        if (user.recordSource === 'Equabli' && !data) {
             formObject.docGroupId = data?.id || null
-            formObject.name = name?.value || null
-            formObject.description = description?.value || null
-            formObject.code = code?.value || null
         }
+        formObject.name = name?.value || null
+        formObject.description = description?.value || null
+        formObject.code = code?.value || null
         formObject.domainCode = user.recordSource === 'Equabli' ? domain?.value : clientDomain
         if (validate(formObject)) {
             formObject.isNative = user.recordSource === 'Equabli'
