@@ -15,6 +15,8 @@ import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
 import { FiShare2 } from "react-icons/fi"
+import { HiOutlineBadgeCheck } from "react-icons/hi";
+import { SiMinutemailer } from "react-icons/si";
 
 import { checkType, createZipForFolderDownload } from '../../helpers/util';
 import PaginationComponent from './pagination';
@@ -738,6 +740,7 @@ const TableComponent = ({
                         || parentComponent === 'clientSetup'
                         || parentComponent === 'partnerSetup'
                         || parentComponent === 'documentTypePref'
+                        || parentComponent === 'approval'
                     )
                     && <th className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>Actions</th>
                 }
@@ -1128,6 +1131,7 @@ const TableComponent = ({
                                 || parentComponent === 'clientSetup'
                                 || parentComponent === 'partnerSetup'
                                 || parentComponent === 'documentTypePref'
+                                || parentComponent === 'approval'
                             )
                             && <td key={`data_${index}`} className='span1' style={{ minWidth: '140px', textAlign: 'center' }}>
                                 {
@@ -1306,7 +1310,48 @@ const TableComponent = ({
                                         &nbsp;
                                     </span>
                                 }
-
+                                {
+                                    typeof addEditArray.approve !== undefined
+                                    && parentComponent === 'approval'
+                                    && <>
+                                        {
+                                            d['recordStatusCode'] === 'RAW' &&
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Approve User
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <HiOutlineBadgeCheck onClick={() => {
+                                                        addEditArray.approve(d)
+                                                    }} size={25} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        }
+                                        {
+                                            d['recordStatusCode'] === 'InProgress' &&
+                                            <span>
+                                                <OverlayTrigger
+                                                    placement="bottom"
+                                                    delay={{ show: 250, hide: 400 }}
+                                                    overlay={
+                                                        <Tooltip id={`tooltip-error`}>
+                                                            Resent Email
+                                                        </Tooltip>
+                                                    }
+                                                >
+                                                    <SiMinutemailer onClick={() => {
+                                                        addEditArray.approve(d)
+                                                    }} size={25} style={{ cursor: 'pointer' }} />
+                                                </OverlayTrigger>
+                                            </span>
+                                        }
+                                    </>
+                                }
 
                             </td>
                         }

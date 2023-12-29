@@ -5,6 +5,7 @@ import {
 
 const initialState = {
     data: [],
+    totalCount: 0,
     error: false,
     loading: false,
     approving: false,
@@ -26,7 +27,8 @@ const approvalReducer = (state = initialState, action: { type: any; payload: any
             return {
                 ...state,
                 loading: false,
-                data: action.payload,
+                data: action.payload.users,
+                totalCount: action.payload.totalCount
             }
         case GetAllUsers.GET_ALL_USERS_FAILURE:
             return {
@@ -34,6 +36,7 @@ const approvalReducer = (state = initialState, action: { type: any; payload: any
                 loading: false,
                 error: true,
                 data: [],
+                totalCount: 0
             }
         case GetAllUsers.GET_ALL_USERS_RESET:
             return {
@@ -41,6 +44,7 @@ const approvalReducer = (state = initialState, action: { type: any; payload: any
                 loading: false,
                 error: false,
                 data: [],
+                totalCount: 0
             }
         case ApproveUser.APPROVE_USER_REQUEST:
             return {

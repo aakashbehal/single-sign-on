@@ -5,14 +5,14 @@ import {
 import { approvalService } from "../../services"
 
 export const ApprovalActionCreator = {
-    getAllUsers: () => (dispatch: any) => {
+    getAllUsers: (requestPayload: any) => (dispatch: any) => {
         const request = () => ({ type: GetAllUsers.GET_ALL_USERS_REQUEST })
         const success = (users: any) => ({ type: GetAllUsers.GET_ALL_USERS_SUCCESS, payload: users })
         const failure = (error: any) => ({ type: GetAllUsers.GET_ALL_USERS_FAILURE, payload: error })
 
         dispatch(request())
 
-        approvalService.getAllUsers()
+        approvalService.getAllUsers(requestPayload)
             .then(
                 users => {
                     dispatch(success(users))
