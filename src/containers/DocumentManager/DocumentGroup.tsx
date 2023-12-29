@@ -335,8 +335,10 @@ const AddEditClient = ({ onHide, show, data, dispatch, user }: any) => {
         formObject.description = description?.value || null
         formObject.code = code?.value || null
         formObject.domainCode = user.recordSource === 'Equabli' ? domain?.value : clientDomain
+        formObject.orgType = user.recordSource
         if (validate(formObject)) {
             formObject.isNative = user.recordSource === 'Equabli'
+            console.log(`---formObject--`, formObject)
             if (!data) {
                 dispatch(DocumentGroupActionCreator.addDocumentGroup(formObject))
             } else {
@@ -464,7 +466,7 @@ const SelectDocumentGroup = ({ onHide, show, dispatch, user }: any) => {
             document_group
         } = documentGroupFormRef.current
         let formObject: any = {
-            orgTypeCode: user.recordSource,
+            orgType: user.recordSource,
             docGroupConfigCode: document_group?.value || null
         }
         if (validate(formObject)) {
