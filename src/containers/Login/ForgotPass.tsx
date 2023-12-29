@@ -286,7 +286,7 @@ const ForgotPassword = () => {
                                                     return (
                                                         <option
                                                             key={`orgTypes_${index}`}
-                                                            value={oT.keycode}
+                                                            value={oT.keyCode}
                                                         >
                                                             {oT.keyValue}
                                                         </option>

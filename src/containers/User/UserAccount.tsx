@@ -119,8 +119,13 @@ const UserAccount = () => {
         }
     }
 
+    const [errors, setErrors] = useState({
+        state: false
+    })
+
     const onSubmitHandler = async (e: FormEvent) => {
         e.preventDefault()
+        setErrors({ state: false })
         const userData = userService.getUser()
         const {
             communicationEmail,
@@ -132,12 +137,17 @@ const UserAccount = () => {
             answer1,
             answer2
         } = formRef.current
+        if (!selectedState) {
+            setErrors({ state: true })
+            return
+        }
         const stateName = states.filter((s: any) => {
-            if (s.stateCode === selectedState) {
+            if (s.shortCode === selectedState) {
                 return s
             }
             return false
         })
+        console.log(`---selectedState--`, stateName)
         const reqBody = {
             "principleId": userData.principleId,
             "loginKey": userData.loginKey,
@@ -393,7 +403,7 @@ const UserAccount = () => {
                                                     return (
                                                         <option
                                                             key={`secretQuestion_${index}`}
-                                                            value={sQ.stateCode}
+                                                            value={sQ.shortCode}
                                                         >
                                                             {sQ.fullName}
                                                         </option>
@@ -401,6 +411,7 @@ const UserAccount = () => {
                                                 })
                                             }
                                         </Form.Control>
+                                        <span style={{ color: 'red' }}><small>{errors['state'] ? 'State is required' : ''}</small></span>
                                     </Col>
                                 </Form.Group>
                             </Col>
