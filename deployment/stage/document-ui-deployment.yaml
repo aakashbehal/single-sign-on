@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: eq-docs-ui-deploy-stage
+  namespace: equabli-stage-nm
+  labels:
+    app: eq-docs-ui-app-stage
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: eq-docs-ui-app-stage
+  template:
+    metadata:
+      labels:
+        app: eq-docs-ui-app-stage
+        version: 1.0.0
+    spec:
+      containers:
+        - name: eq-docs-ui-stage
+          image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/eks-eq-docs-ui-qa/document_manager:1.64.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: 1024m
+              memory: 500Mi
+            requests:
+              cpu: 512m
+              memory: 450Mi
