@@ -25,7 +25,7 @@ const getAllPartners = async ({
 
 
 const addPartner = async ({
-    shortName,
+    shortCode,
     fullName,
     address1,
     address2,
@@ -49,7 +49,7 @@ const addPartner = async ({
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners`, {
-            shortName,
+            shortCode,
             fullName,
             address1,
             address2,
