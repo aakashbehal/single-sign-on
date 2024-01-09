@@ -145,7 +145,7 @@ const getRecordSource = async (type: any) => {
 
 const getAllRecordSource = async () => {
     try {
-        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_COMMON_CONFIG_SERVICE}/v1/serviceType/all`)
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/public/masters/serviceType`)
         const data = handleResponse(response)
         return data.response
     } catch (error: any) {

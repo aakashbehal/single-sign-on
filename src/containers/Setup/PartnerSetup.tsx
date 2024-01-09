@@ -127,7 +127,7 @@ const PartnerSetup = () => {
                         shortCode: "Short Name",
                         fullName: "Full Name",
                         emailAddress: "Email",
-                        quicksiteId: "Quicksite ID",
+                        // quicksiteId: "Quicksite ID",
                         isEqassociate: "Equabli Associated",
                     }}
                     totalCount={totalCount}
@@ -145,7 +145,7 @@ const PartnerSetup = () => {
                         "shortCode",
                         "fullName",
                         "emailAddress",
-                        "quicksiteId",
+                        // "quicksiteId",
                         "isEqassociate",
                     ]}
                     addEditArray={{
@@ -176,15 +176,17 @@ const PartnerSetup = () => {
 
 const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
     const clientFormRef = useRef<any>()
+    const [serviceType, setServiceType] = useState(data?.servicetypeId || '')
     const [formError, setFormError] = useState<any>({
-        shortName: false,
+        shortCode: false,
         fullName: false,
-        quickSiteId: false,
+        // quickSiteId: false,
         serviceTypeId: false,
         pocName: false,
         address1: false,
         phone1: false,
         emailAddress: false,
+        stateCode: false,
     })
 
     const {
@@ -204,25 +206,27 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
 
     const validate = (formObj: any) => {
         let checkFormObj: any = {
-            shortName: formObj.shortName,
+            shortCode: formObj.shortCode,
             fullName: formObj.fullName,
-            quickSiteId: formObj.quickSiteId,
+            // quickSiteId: formObj.quickSiteId,
             serviceTypeId: formObj.servicetypeId,
             pocName: formObj.pocName,
             address1: formObj.address1,
             phone1: formObj.phone1,
             emailAddress: formObj.emailAddress,
+            stateCode: formObj.stateCode
         }
         let formIsValid = true;
         const error: any = {
-            shortName: false,
+            shortCode: false,
             fullName: false,
-            quickSiteId: false,
+            // quickSiteId: false,
             serviceTypeId: false,
             pocName: false,
             address1: false,
             phone1: false,
             emailAddress: false,
+            stateCode: false
         }
         for (let key in checkFormObj) {
             if (!checkFormObj[key] || checkFormObj[key] === "") {
@@ -240,7 +244,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
 
     const addEditSubmit = () => {
         const {
-            shortName,
+            shortCode,
             fullName,
             pocName,
             emailAddress,
@@ -257,11 +261,11 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
             phonePronunciation,
             addressPronunciation,
             serviceTypeId,
-            quickSiteId
+            // quickSiteId
         } = clientFormRef.current
         let formObject = {
             partnerId: data?.partnerId || null,
-            shortName: shortName?.value || null,
+            shortCode: shortCode?.value || null,
             fullName: fullName?.value || null,
             pocName: pocName?.value || null,
             emailAddress: emailAddress?.value || null,
@@ -278,7 +282,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
             phonePronunciation: phonePronunciation?.value || null,
             addressPronunciation: addressPronunciation?.value || null,
             servicetypeId: serviceTypeId?.value || null,
-            quickSiteId: quickSiteId?.value || null
+            // quickSiteId: quickSiteId?.value || null
         }
         if (validate(formObject)) {
             if (!data) {
@@ -311,9 +315,9 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                             <Col lg={6} md={12} className="no_padding">
                                 <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
-                                        <Form.Control type="text" name="shortName" defaultValue={data?.shortName || null} maxLength={5}></Form.Control>
+                                        <Form.Control type="text" name="shortCode" defaultValue={data?.shortCode || null} maxLength={5}></Form.Control>
                                     </Col>
-                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortCode"] ? 'Short Name is required ' : ''}</small></span>
                                     <Form.Label className="label_custom white">Short Name <span style={{ color: 'red' }}>*</span></Form.Label>
                                 </Form.Group>
                             </Col>
@@ -327,7 +331,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="namePronunciation" defaultValue={data?.namePronunciation || null}></Form.Control>
                                     </Col>
@@ -335,21 +339,23 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                     <Form.Label className="label_custom white">Full Name (IVR)</Form.Label>
                                 </Form.Group>
                             </Col>
-                            <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                            {/* <Col lg={6} md={12} className="no_padding">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="quickSiteId" defaultValue={data?.quickSiteId || null}></Form.Control>
                                     </Col>
                                     <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["quickSiteId"] ? 'Partner\'s VPN IP Address is required ' : ''}</small></span>
                                     <Form.Label className="label_custom white">Partner's VPN IP Address <span style={{ color: 'red' }}>*</span></Form.Label>
                                 </Form.Group>
-                            </Col>
+                            </Col> */}
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control
                                             as="select"
                                             name="serviceTypeId"
+                                            value={serviceType}
+                                            onChange={(e) => setServiceType(e.target.value)}
                                         >
                                             <option></option>
                                             {
@@ -357,9 +363,9 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                                     return (
                                                         <option
                                                             key={`rS_${index}`}
-                                                            value={rS.servicetypeId}
+                                                            value={rS.id}
                                                         >
-                                                            {rS.fullName}
+                                                            {rS.name}
                                                         </option>
                                                     )
                                                 })
@@ -367,11 +373,11 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                         </Form.Control>
                                     </Col>
                                     <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["serviceTypeId"] ? 'Service Type is required ' : ''}</small></span>
-                                    <Form.Label className="label_custom white">Service Type <span style={{ color: 'red' }}>*</span></Form.Label>
+                                    <Form.Label className="label_custom white">{data?.servicetypeId} Service Type <span style={{ color: 'red' }}>*</span></Form.Label>
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="pocName" defaultValue={data?.pocName || null}></Form.Control>
                                     </Col>
@@ -380,7 +386,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="address1" defaultValue={data?.address1 || null}></Form.Control>
                                     </Col>
@@ -389,7 +395,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="address2" defaultValue={data?.address2 || null}></Form.Control>
                                     </Col>
@@ -398,20 +404,20 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="city" defaultValue={data?.city || null}></Form.Control>
                                     </Col>
-                                    {/* <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["originalAccountNumber"] ? 'Original Account Number is required ' : ''}</small></span> */}
                                     <Form.Label className="label_custom white">City</Form.Label>
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
-                                        <States />
+                                        <States selectedValue={data?.stateCode || ''} />
                                     </Col>
-                                    <Form.Label className="label_custom white">State</Form.Label>
+                                    <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["stateCode"] ? 'State is required ' : ''}</small></span>
+                                    <Form.Label className="label_custom white">State <span style={{ color: 'red' }}>*</span></Form.Label>
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
@@ -433,7 +439,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="phone1" defaultValue={data?.phone1 || null}></Form.Control>
                                     </Col>
@@ -442,7 +448,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="phonePronunciation" defaultValue={data?.phonePronunciation || null}></Form.Control>
                                     </Col>
@@ -469,7 +475,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="website" defaultValue={data?.website || null}></Form.Control>
                                     </Col>
@@ -478,7 +484,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                                 </Form.Group>
                             </Col>
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="emailAddress" defaultValue={data?.emailAddress || null}></Form.Control>
                                     </Col>
@@ -488,7 +494,7 @@ const AddEditPartner = ({ onHide, show, data, dispatch }: any) => {
                             </Col>
 
                             <Col lg={6} md={12} className="no_padding">
-                                <Form.Group as={Col} className="mb-5">
+                                <Form.Group as={Col} className="mb-4">
                                     <Col md={12} sm={12}>
                                         <Form.Control type="text" name="emailPronunciation" defaultValue={data?.emailPronunciation || null}></Form.Control>
                                     </Col>

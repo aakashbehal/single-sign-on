@@ -80,7 +80,7 @@ const addPartner = async ({
 
 const editPartner = async ({
     partnerId,
-    shortName,
+    shortCode,
     fullName,
     address1,
     address2,
@@ -103,8 +103,8 @@ const editPartner = async ({
     isEqassociate
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/${partnerId}`, {
-            shortName,
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/partners/${partnerId}`, {
+            shortCode,
             fullName,
             address1,
             address2,
