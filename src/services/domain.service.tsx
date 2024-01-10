@@ -12,14 +12,14 @@ const getAllDomains = async () => {
 }
 
 const addDomain = async ({
-    domainName,
-    domainShortCode,
+    name,
+    code,
     description
 }: any) => {
     try {
         const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
-            domainName,
-            domainShortCode,
+            name,
+            code,
             description
         })
         const data = handleResponse(response)
@@ -30,15 +30,15 @@ const addDomain = async ({
 }
 
 const updateDomain = async ({
-    domainName,
-    domainShortCode,
+    name,
+    code,
     description,
     domainId
 }: any) => {
     try {
-        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain`, {
-            domainName,
-            domainShortCode,
+        const response = await axiosCustom.put(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/domain/${domainId}`, {
+            name,
+            code,
             description,
             domainId
         })

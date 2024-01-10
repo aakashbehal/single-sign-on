@@ -221,22 +221,22 @@ const DomainSetup = () => {
 const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
     const clientFormRef = useRef<any>()
     const [formError, setFormError] = useState<any>({
-        domainShortCode: false,
-        domainName: false,
+        code: false,
+        name: false,
         description: false
     })
 
     const validate = (formObj: any) => {
         let checkFormObj: any = {
-            domainShortCode: formObj.domainShortCode,
-            domainName: formObj.domainName,
+            code: formObj.code,
+            name: formObj.name,
             description: formObj.description,
             domainId: formObj.domainId
         }
         let formIsValid = true;
         const error: any = {
-            domainShortCode: false,
-            domainName: false,
+            code: false,
+            name: false,
             description: false,
             domainId: false
         }
@@ -262,8 +262,8 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
         } = clientFormRef.current
         let formObject = {
             domainId: data?.domainId || null,
-            domainShortCode: shortName?.value || null,
-            domainName: fullName?.value || null,
+            code: shortName?.value || null,
+            name: fullName?.value || null,
             description: description?.value || null
         }
         if (validate(formObject)) {
@@ -296,9 +296,9 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                 <Col lg={12} md={12} className="no_padding">
                                     <Form.Group as={Col} className="mb-4">
                                         <Col md={12} sm={12}>
-                                            <Form.Control type="text" name="shortName" defaultValue={data?.shortCode || null} maxLength={5}></Form.Control>
+                                            <Form.Control type="text" name="shortName" defaultValue={data?.code || null} maxLength={5}></Form.Control>
                                         </Col>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["shortName"] ? 'Short Name is required ' : ''}</small></span>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["code"] ? 'Short Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Short Name</Form.Label>
                                     </Form.Group>
                                 </Col>
@@ -307,7 +307,7 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
                                         <Col md={12} sm={12}>
                                             <Form.Control type="text" name="fullName" defaultValue={data?.name || null}></Form.Control>
                                         </Col>
-                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["fullName"] ? 'Full Name is required ' : ''}</small></span>
+                                        <span style={{ color: 'red', paddingLeft: '1rem' }}><small>{formError["name"] ? 'Full Name is required ' : ''}</small></span>
                                         <Form.Label className="label_custom white">Full Name</Form.Label>
                                     </Form.Group>
                                 </Col>
