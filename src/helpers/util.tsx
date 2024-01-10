@@ -159,7 +159,7 @@ export const httpInterceptor = () => {
                     }
                     request.headers['Authorization'] = `Bearer ${token}`;
                 }
-                request.headers['X-API-KEY'] = 'eq-docs-hfp-ljeq'
+                request.headers['X-API-KEY'] = process.env.REACT_APP_API_KEY
                 request.headers['rqsOrigin'] = 'web';
                 // request.headers['Content-Type'] = 'application/json';
                 return request
