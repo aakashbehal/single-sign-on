@@ -15,12 +15,12 @@ const getNotifications = async ({
             sortParam
         })
         const data = handleResponse(response)
-        let notifications = data.response.notifications
+        let notifications = data.response.datas
         const responseModified: any = {}
         responseModified.notifications = notifications
-        responseModified.totalCount = data.response.totalNotification
+        responseModified.totalCount = data.response.metadata.totalNotification
         responseModified.pageNumber = data.response.metadata.pageNumber
-        responseModified.unread = data.response.unreadNotification
+        responseModified.unread = data.response.metadata.unreadNotification
         responseModified.columns = data.response.metadata.columnPreferences
         // .map((column:
         //     {

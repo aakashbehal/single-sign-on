@@ -44,7 +44,7 @@ const NamingConfiguration = () => {
     const dispatch = useDispatch()
     const { addToast } = useToasts();
     const clientDefault = ["CAN", "DT"]
-    const partnerDefault = ["CIDSC", "DT", "CAN"]
+    const partnerDefault = ["CSC", "DT", "CAN"]
     const configRef = useRef<any>();
     const configNameSaveRef = useRef<any>();
     const [uniqueIdentifier, setUniqueIdentifier] = useState<any>(null)
@@ -205,7 +205,7 @@ const NamingConfiguration = () => {
             }
         } else {
             selectedTemp = {
-                1: 'CIDSC',
+                1: 'CSC',
                 2: 'DT',
                 3: 'CAN',
                 4: null,
@@ -401,7 +401,7 @@ const NamingConfiguration = () => {
                 }
             } else {
                 selectedTemp = {
-                    1: 'CIDSC',
+                    1: 'CSC',
                     2: 'DT',
                     3: 'CAN',
                     4: 'PC',
@@ -901,7 +901,7 @@ const NameTransformationNotRequired = ({
                                 <Form.Label className="label_custom" style={{ left: 0 }}>Field {keyIndex + 1}
                                     {(fieldsSelected[keyName] === 'DG' || fieldsSelected[keyName] === 'DT') &&
                                         <BsFillQuestionCircleFill size={14} style={{ marginLeft: '1rem', color: 'black', cursor: 'pointer' }} onClick={() => downloadProductCodes(fieldsSelected[keyName] === 'DT' ? 'Document Types' : 'Product Type Code')} />}
-                                    {(fieldsSelected[keyName] === 'DGD') && <span className={Styles.date_format}>Format: DDMMYYYY</span>}
+
                                 </Form.Label>
                             </Form.Group>
                         </div>

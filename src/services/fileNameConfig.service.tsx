@@ -43,11 +43,11 @@ const handleDefaultAndSavedSelection = async (dataFieldOptions: any, userType: a
          * Default available and selection
          */
         if (userType !== 'Client' || userType === "Equabli") {
-            selectedFields = ['CIDSC', "DT", "CAN"]
-            notAvailableFields = ['CIDSC', "DT", "CAN"]
+            selectedFields = ['CSC', "DT", "CAN"]
+            notAvailableFields = ['CSC', "DT", "CAN"]
         } else {
             selectedFields = ['CAN', "DT"]
-            notAvailableFields = ['CIDSC', 'DT', 'CAN']
+            notAvailableFields = ['CSC', 'DT', 'CAN']
         }
     } else if (treadedList && treadedList.length > 0) {
         /**

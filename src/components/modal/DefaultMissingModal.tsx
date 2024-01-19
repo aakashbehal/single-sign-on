@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { TypesActionCreator } from '../../store/actions/common/types.actions';
 import { FileNameConfigActionCreator } from '../../store/actions/fileNameConfig.actions';
 import DocumentTypes from '../Common/DocumentType';
+import { DocumentGroupActionCreator } from '../../store/actions/documentGroup.actions';
 
 export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: boolean, namingConfig: any, missing: { product: boolean, documentType: boolean } }) => {
     const dispatch = useDispatch();
@@ -25,7 +26,7 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
     }))
 
     useEffect(() => {
-        dispatch(TypesActionCreator.getProductTypes())
+        dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
     }, [])
 
     const handleSave = () => {

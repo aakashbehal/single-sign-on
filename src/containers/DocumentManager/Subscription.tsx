@@ -87,6 +87,7 @@ const Subscription = ({ show, onHide }: { show: any, onHide: any }) => {
             className='subscription_modal'
             animation={true}
         >
+            <Modal.Header closeButton></Modal.Header>
             <Modal.Body className="show-grid" style={{ width: '50vw' }}>
                 <div className="background" >
                     <div className="container">

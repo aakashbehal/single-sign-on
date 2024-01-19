@@ -57,7 +57,7 @@ const getMyDocumentFoldersTextSearch = async ({
     recordGroupIdentifier
 }: any) => {
     try {
-        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folders/search`,
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/folder/textSearch`,
             {
                 pageSize,
                 pageNumber: pageNumber - 1,

@@ -14,6 +14,7 @@ import { createMessage } from "../../helpers/messages"
 import Styles from "./User.module.sass";
 import NoRecord from "../../components/Common/NoResult";
 import { DocumentTypePreferenceActionCreator } from "../../store/actions/documentTypePreference.actions";
+import { userService } from "../../services";
 
 const DocumentCostConfiguration = () => {
     const dispatch = useDispatch();
@@ -160,12 +161,12 @@ const DocumentCostConfiguration = () => {
                     </div>
                     }
                 </Col>
-                <Col md={2} sm={2}>
+                {<Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => {
                         setEditCost(null)
                         setAddEditCost(true)
                     }}>Add New Cost</Button>
-                </Col>
+                </Col>}
             </Row>
             <br />
         </Col>
@@ -191,7 +192,7 @@ const DocumentCostConfiguration = () => {
                         <thead>
                             <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
                                 <th>Document Type</th>
-                                <th>Client Name</th>
+                                {/* <th>Client Name</th> */}
                                 <th>Cost</th>
                                 <th style={{ width: '120px' }}>Actions</th>
                             </tr>
@@ -201,7 +202,7 @@ const DocumentCostConfiguration = () => {
                                 cost && cost.length > 0 && cost.map((cT: any, index: any) => {
                                     return (<tr key={`cost_${index}`}>
                                         <td>{cT.documentType}</td>
-                                        <td>{cT.clientName || '-'}</td>
+                                        {/* <td>{cT.clientName || '-'}</td> */}
                                         <td>${(Number(cT.cost)).toFixed(2)}</td>
                                         <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
                                             <span>

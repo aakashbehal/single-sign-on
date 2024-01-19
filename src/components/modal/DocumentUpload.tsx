@@ -267,6 +267,7 @@ const DocumentUpload = ({ show, onHide, accountId, Styles, parentComponent, sear
 
     return (
         <Modal
+            backdrop={false}
             show={show}
             onHide={onHide}
             aria-labelledby="contained-modal-title-vcenter"

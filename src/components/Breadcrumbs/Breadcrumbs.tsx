@@ -54,6 +54,9 @@ const Breadcrumbs = () => <Route path="*" render={props => {
                 case 'documents':
                     part = `documents/my_documents`
                     break
+                case 'configure':
+                    part = `configure/document_general_configuration`
+                    break
                 case 'setup':
                     part = `setup/document_general_configuration`
             }
