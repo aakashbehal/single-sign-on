@@ -89,9 +89,10 @@ const DownloadHistory = () => {
 
     const downloadHandler = async (document: any) => {
         //download file
-        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
-        await downloadSignedFile(document)
-        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        // addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        // await downloadSignedFile(document)
+        // addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        dispatch(MyDocumentsActionCreator.downloadDocument([document.documentId]))
     }
 
     return (<>

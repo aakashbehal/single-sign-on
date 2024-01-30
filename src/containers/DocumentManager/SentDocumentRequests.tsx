@@ -11,7 +11,6 @@ import { SentDocumentRequestActionCreator } from "../../store/actions/sentDocume
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
-import { downloadSignedFile } from "../../helpers/util";
 import { SummaryActionCreator } from "../../store/actions/summary.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
 import DocumentTypes from "../../components/Common/DocumentType";
@@ -19,6 +18,7 @@ import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 import { DownloadHistoryActionCreator } from "../../store/actions/downloadHistory.actions";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
+import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 
 
 const SentDocumentRequests = () => {
@@ -145,10 +145,11 @@ const SentDocumentRequests = () => {
 
     const downloadHandler = async (document: any) => {
         //download file
-        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
-        await downloadSignedFile(document)
-        // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.fullFilledDocument]))
-        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        // addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        // await downloadSignedFile(document)
+        // // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.fullFilledDocument]))
+        // addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        dispatch(MyDocumentsActionCreator.downloadDocument([document.id]))
     }
 
 

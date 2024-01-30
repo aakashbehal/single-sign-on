@@ -107,7 +107,7 @@ const DocumentCostConfiguration = () => {
     }
 
     const deleteAlert = () => {
-        dispatch(DocumentCostConfigActionCreator.deleteDocumentCost(details.docTypeCode))
+        dispatch(DocumentCostConfigActionCreator.deleteDocumentCost(details.id))
     }
 
     const handleDetails = (cost: any) => {

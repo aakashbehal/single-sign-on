@@ -64,14 +64,14 @@ export const DocumentCostConfigActionCreator = {
             })
     },
 
-    deleteDocumentCost: (docTypeCode: any) => (dispatch: any) => {
+    deleteDocumentCost: (id: any) => (dispatch: any) => {
         const request = () => ({ type: DeleteDocumentsCost.DELETE_DOCUMENTS_COST_REQUEST })
         const success = (costs: any) => ({ type: DeleteDocumentsCost.DELETE_DOCUMENTS_COST_SUCCESS, payload: costs })
         const failure = (error: any) => ({ type: DeleteDocumentsCost.DELETE_DOCUMENTS_COST_FAILURE, payload: error })
 
         dispatch(request())
 
-        documentCostConfigurationService.deleteDocumentCost(docTypeCode)
+        documentCostConfigurationService.deleteDocumentCost(id)
             .then(
                 costs => {
                     dispatch(success(costs))

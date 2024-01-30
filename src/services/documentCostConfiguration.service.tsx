@@ -31,9 +31,9 @@ const editDocumentCost = async (payload: any) => {
     }
 }
 
-const deleteDocumentCost = async (docTypeCode: any) => {
+const deleteDocumentCost = async (id: any) => {
     try {
-        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/cost/${docTypeCode}`, {
+        const response = await axiosCustom.patch(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/cost/${id}`, {
             "action": "ACTIVE",
             "property": "string"
         })

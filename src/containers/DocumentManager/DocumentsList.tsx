@@ -9,7 +9,7 @@ import TableComponent from "../../components/Table/Table";
 import DocumentUpload from "../../components/modal/DocumentUpload";
 import { MyDocumentsActionCreator } from "../../store/actions/myDocuments.actions";
 import ViewDocument from "../../components/modal/ViewDocument";
-import { checkIfAdvanceSearchIsActive, downloadFromLink, downloadSignedFile } from "../../helpers/util";
+import { checkIfAdvanceSearchIsActive, downloadFromLink } from "../../helpers/util";
 import AdvanceSearch from "../../components/Common/AdvanceSearch";
 import { createMessage } from "../../helpers/messages";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
@@ -42,7 +42,6 @@ const DocumentsList = ({ location }: { location: any }) => {
     const params = new URLSearchParams(location.search);
     const AccountId = params.get('account_id');
     const { aid }: { aid: string } = useParams();
-    console.log(`--aId`, aid)
     const DocumentGroup = params.get('dgc');
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [sortElement, setSortElement] = useState('documentName')
@@ -155,10 +154,10 @@ const DocumentsList = ({ location }: { location: any }) => {
 
     const downloadHandler = async (document: any) => {
         //download file
-        addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
-        await downloadSignedFile(document)
-        // dispatch(DownloadHistoryActionCreator.saveDownloadHistory([document.id]))
-        addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
+        // addToast(createMessage('info', `DOWNLOAD_STARTED`, ''), { appearance: 'info', autoDismiss: true })
+        // await downloadSignedFile(document)
+        dispatch(MyDocumentsActionCreator.downloadDocument([document.id]))
+        // addToast(createMessage('info', `DOWNLOAD_SUCCESSFUL`, ''), { appearance: 'success', autoDismiss: true })
     }
 
     useEffect(() => {
