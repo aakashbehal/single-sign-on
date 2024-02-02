@@ -9,11 +9,14 @@ import { FiShare2 } from 'react-icons/fi';
 import { HiOutlineDocumentDuplicate, HiOutlineDownload } from 'react-icons/hi';
 
 interface INotification {
-    "type": string
-    "requestedBy"?: string
-    "fulfilledBy"?: string
-    "orgType": string
-    "account": string
+    "isread": boolean,
+    description: {
+        "type": string
+        "requestedBy"?: string
+        "fulfilledBy"?: string
+        "orgType": string
+        "account": string
+    }
 }
 
 const pageSize = 10
@@ -80,7 +83,7 @@ const NotificationSidebar = ({ showNotifications }: { showNotifications: any }) 
                     {
                         notifications && notifications.map((notification: INotification, index: number) => {
                             if (JSON.stringify(notification) !== "{}") {
-                                return <NotificationCard key={`notification_${index}`} notification={notification} />
+                                return <NotificationCard key={`notification_${index}`} notification={notification?.description} />
                             }
                         })
                     }

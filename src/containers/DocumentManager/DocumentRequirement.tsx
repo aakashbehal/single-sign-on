@@ -30,6 +30,9 @@ const options: any = {
                 weight: 'bold',
                 size: '12px',
                 family: `'VisbyCF-Regular', Arial, Helvetica, sans-serif`
+            },
+            display: function (context: any) {
+                return context.dataset.data[context.dataIndex] !== 0; // or >= 1 or ...
             }
         },
         legend: {

@@ -28,11 +28,7 @@ const FILE_EXTENSIONS = [
     },
     {
         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        name: "XLSX"
-    },
-    {
-        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        name: "XLS"
+        name: "XLSX / XLS"
     },
     {
         type: '.csv',
