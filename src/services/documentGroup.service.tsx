@@ -11,10 +11,16 @@ const getAllDocumentGroup = async ({
     try {
         const user = userService.getUser()
         let userType = user.recordSource
-        if (userType !== 'Equabli') {
-            const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup/unique`)
+        if (userType === 'Client') {
+            const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup`)
             const data = handleResponse(response)
             return { domains: data.response }
+        } else if (userType === 'Partner') {
+            if (userType !== 'Equabli') {
+                const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup/unique`)
+                const data = handleResponse(response)
+                return { domains: data.response }
+            }
         } else {
             const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/group/search`, {
                 pageSize,
