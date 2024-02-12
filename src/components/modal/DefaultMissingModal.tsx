@@ -85,8 +85,8 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
                                     className="select_custom white">
                                     <option disabled value="" selected>Select Product Type...</option>
                                     {
-                                        (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
-                                        productTypes?.pickedDocGroups.map((dT: any, index: number) => {
+                                        (productTypes && productTypes?.length > 0) &&
+                                        productTypes?.map((dT: any, index: number) => {
                                             return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
                                         })
                                     }
