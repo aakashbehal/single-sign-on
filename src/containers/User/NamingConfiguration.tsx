@@ -636,7 +636,7 @@ const NamingConfiguration = () => {
                                                     <Form.Control
                                                         as="select"
                                                         name="productType"
-                                                        value={defaultProductCode}
+                                                        value={defaultDocGroupConfigCode}
                                                         onChange={(e) => setDefaultProductCode(e.target.value)}
                                                         className="select_custom white">
                                                         <option disabled value="" selected>Select Product Type...</option>
@@ -657,7 +657,7 @@ const NamingConfiguration = () => {
                                                 <Form.Group as={Col} className="mb-2">
                                                     <Form.Control
                                                         as="select"
-                                                        value={defaultDocumentType}
+                                                        value={defaultDocTypeCode}
                                                         onChange={(e) => setDefaultDocumentType(e.target.value)}
                                                         name="documentType"
                                                         className="select_custom white">
