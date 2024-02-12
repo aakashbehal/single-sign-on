@@ -12,7 +12,7 @@ const getAllDocumentGroup = async ({
         const user = userService.getUser()
         let userType = user.recordSource
         if (userType !== 'Equabli') {
-            const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup`)
+            const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/pref/docGroup/unique`)
             const data = handleResponse(response)
             return { domains: data.response }
         } else {
