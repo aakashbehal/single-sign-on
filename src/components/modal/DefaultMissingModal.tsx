@@ -7,9 +7,11 @@ import { TypesActionCreator } from '../../store/actions/common/types.actions';
 import { FileNameConfigActionCreator } from '../../store/actions/fileNameConfig.actions';
 import DocumentTypes from '../Common/DocumentType';
 import { DocumentGroupActionCreator } from '../../store/actions/documentGroup.actions';
+import { userService } from '../../services';
 
 export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: boolean, namingConfig: any, missing: { product: boolean, documentType: boolean } }) => {
     const dispatch = useDispatch();
+    const userType = userService.getUserType()
     const formRef = useRef<any>()
     const [error, setError] = useState({
         product: false,
@@ -79,18 +81,36 @@ export default ({ onHide, show, namingConfig, missing }: { onHide: any, show: bo
                         {
                             missing.product &&
                             <Col sm={12} className="my-1 mt-4">
-                                <Form.Control
-                                    as="select"
-                                    name="productType"
-                                    className="select_custom white">
-                                    <option disabled value="" selected>Select Product Type...</option>
-                                    {
-                                        (productTypes && productTypes?.length > 0) &&
-                                        productTypes?.map((dT: any, index: number) => {
-                                            return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
-                                        })
-                                    }
-                                </Form.Control>
+                                {
+                                    userType === 'Partner' &&
+                                    <Form.Control
+                                        as="select"
+                                        name="productType"
+                                        className="select_custom white">
+                                        <option disabled value="" selected>Select Product Type...</option>
+                                        {
+                                            (productTypes && productTypes?.length > 0) &&
+                                            productTypes?.map((dT: any, index: number) => {
+                                                return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
+                                            })
+                                        }
+                                    </Form.Control>
+                                }
+                                {
+                                    userType !== 'Partner'
+                                    && <Form.Control
+                                        as="select"
+                                        name="productType"
+                                        className="select_custom white">
+                                        <option disabled value="" selected>Select Product Type...</option>
+                                        {
+                                            (productTypes && productTypes?.pickedDocGroups?.length > 0) &&
+                                            productTypes.pickedDocGroups?.map((dT: any, index: number) => {
+                                                return <option key={`cr_${index}`} value={dT.code}>{dT.name}</option>
+                                            })
+                                        }
+                                    </Form.Control>
+                                }
                                 <span style={{ color: 'red' }}><small>{error['product'] ? 'Please Select Product Type' : ''}</small></span>
                                 <Form.Label className="label_custom white">Product Type Code</Form.Label>
                             </Col>
