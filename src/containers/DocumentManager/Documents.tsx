@@ -12,12 +12,14 @@ import DownloadHistory from "./DownloadHistory";
 import { MiscActionCreator } from "../../store/actions/common/misc.actions";
 import DocumentRequirement from "./DocumentRequirement";
 import DocumentCoverage from "./DocumentCoverage";
+import { userService } from "../../services";
 import Usage from "./Usage";
 import Invoice from "./Invoice";
 
 const Documents = ({ location }: { location: any }) => {
     const history = useHistory();
     const dispatch = useDispatch();
+    const userType = userService.getUserType()
     const [collapse, setCollapse] = useState(false);
     const [selectedTab, setSelectedTab] = useState('');
 
@@ -36,16 +38,16 @@ const Documents = ({ location }: { location: any }) => {
                     {collapse && <BsArrowsAngleExpand size={20} />}
                 </Col>
             </Row>
-            <Col sm={12} className={collapse ? Styles.collapse_summary : ''} style={{ overflowX: 'scroll' }}>
-                <Row style={{ minWidth: '110%' }}>
-                    <Col sm={5} >
+            <Col sm={12} className={collapse ? Styles.collapse_summary : ''} style={{ overflowX: userType !== 'Partner' ? 'auto' : 'hidden' }}>
+                <Row style={{ minWidth: userType !== 'Partner' ? '110%' : '100%' }}>
+                    <Col sm={userType !== 'Partner' ? 5 : 6} >
                         <DocumentCoverage collapse={collapse} />
                     </Col >
-                    <Col sm={5}  >
+                    <Col sm={userType !== 'Partner' ? 5 : 6}  >
                         <DocumentRequirement collapse={collapse} />
                     </Col>
                     <Col sm={2} >
-                        <Usage collapse={collapse} />
+                        {userType !== 'Partner' && <Usage collapse={collapse} />}
                         <Invoice collapse={collapse} />
                     </Col>
                 </Row >

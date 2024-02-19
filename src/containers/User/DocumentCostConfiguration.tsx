@@ -18,6 +18,7 @@ import { userService } from "../../services";
 
 const DocumentCostConfiguration = () => {
     const dispatch = useDispatch();
+    const userType = userService.getUserType()
     const { addToast } = useToasts();
     const [showAdvanceSearch, setShowAdvanceSearch] = useState(false);
     const [addEditCost, setAddEditCost] = useState(false)
@@ -118,7 +119,7 @@ const DocumentCostConfiguration = () => {
     return (<>
         <Col sm={12}>
             <Row>
-                <Col md={10} sm={10} className={Styles.search_input}>
+                <Col md={userType !== 'Partner' ? 10 : 12} sm={userType !== 'Partner' ? 10 : 12} className={Styles.search_input}>
                     <CgSearch size={20} className={Styles.search} />
                     <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
@@ -161,7 +162,7 @@ const DocumentCostConfiguration = () => {
                     </div>
                     }
                 </Col>
-                {<Col md={2} sm={2}>
+                {userType !== 'Partner' && <Col md={2} sm={2}>
                     <Button variant="dark" style={{ width: "100%" }} onClick={() => {
                         setEditCost(null)
                         setAddEditCost(true)
@@ -192,9 +193,9 @@ const DocumentCostConfiguration = () => {
                         <thead>
                             <tr style={{ lineHeight: '35px', backgroundColor: '#000', color: 'white' }}>
                                 <th>Document Type</th>
-                                {/* <th>Client Name</th> */}
+                                {userType === 'Partner' && <th>Client Name</th>}
                                 <th>Cost</th>
-                                <th style={{ width: '120px' }}>Actions</th>
+                                {userType !== 'Partner' && <th style={{ width: '120px' }}>Actions</th>}
                             </tr>
                         </thead>
                         <tbody>
@@ -202,37 +203,40 @@ const DocumentCostConfiguration = () => {
                                 cost && cost.length > 0 && cost.map((cT: any, index: any) => {
                                     return (<tr key={`cost_${index}`}>
                                         <td>{cT.documentType}</td>
-                                        {/* <td>{cT.clientName || '-'}</td> */}
+                                        {userType === 'Partner' && <td>{cT.clientName || '-'}</td>}
                                         <td>${(Number(cT.cost)).toFixed(2)}</td>
-                                        <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Edit
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span> &nbsp;
-                                            <span>
-                                                <OverlayTrigger
-                                                    placement="bottom"
-                                                    delay={{ show: 250, hide: 400 }}
-                                                    overlay={
-                                                        <Tooltip id={`tooltip-error`}>
-                                                            Delete
-                                                        </Tooltip>
-                                                    }
-                                                >
-                                                    <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
-                                                </OverlayTrigger>
-                                            </span>
-                                        </td>
-                                    </tr>)
+                                        {
+                                            userType !== 'Partner' && <td className='span1' style={{ minWidth: '130px', textAlign: 'center' }}>
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Edit
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <FiEdit2 onClick={() => handleEdit(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span> &nbsp;
+                                                <span>
+                                                    <OverlayTrigger
+                                                        placement="bottom"
+                                                        delay={{ show: 250, hide: 400 }}
+                                                        overlay={
+                                                            <Tooltip id={`tooltip-error`}>
+                                                                Delete
+                                                            </Tooltip>
+                                                        }
+                                                    >
+                                                        <AiOutlineDelete onClick={() => handleDetails(cT)} size={20} style={{ cursor: 'pointer' }} />
+                                                    </OverlayTrigger>
+                                                </span>
+                                            </td>
+                                        }
+                                    </tr>
+                                    )
                                 })
                             }
                         </tbody>
