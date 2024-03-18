@@ -92,6 +92,10 @@ const FIELD_MAPPER: any = {
         "originalAccountNumber",
         "equabliAccountNumber",
         "clientAccountNumber",
+    ],
+    requiredDocuments: [
+        "productType",
+        "documentName",
     ]
 }
 
@@ -190,7 +194,6 @@ const AdvanceSearch = ({ parentComponent,
                 requested_status,
                 portfolio_id
             } = advanceSearchRef.current
-            console.log(`--documentTypeRef.current?.value`, document_type, document_type.value)
             advanceSearchTemp.docTypeCode = document_type?.value || null
             advanceSearchTemp.docGroupCode = product_type?.value || null
             advanceSearchTemp.portfolioId = portfolio_id?.value || null
@@ -225,7 +228,7 @@ const AdvanceSearch = ({ parentComponent,
 
     const handleReset = async () => {
         // Common
-        documentTypeRef.current.reset();
+        documentTypeRef?.current?.reset();
         advanceSearchRef.current["document_name"].value = ""
         if (FIELD_MAPPER[parentComponent].includes('portfolioId')) {
             advanceSearchRef.current["portfolio_id"].value = ""
@@ -250,7 +253,9 @@ const AdvanceSearch = ({ parentComponent,
         })
         // advanceSearchRef.current["original_account_number"].value = ""
         // advanceSearchRef.current["client_account_number"].value = ""
-        advanceSearchRef.current["equabli_account_number"].value = ""
+        if (FIELD_MAPPER[parentComponent].includes('equabliAccountNumber')) {
+            advanceSearchRef.current["equabli_account_number"].value = ""
+        }
         if (FIELD_MAPPER[parentComponent].includes('requestedStatus')) {
             advanceSearchRef.current["requested_status"].value = ""
         }
@@ -274,8 +279,8 @@ const AdvanceSearch = ({ parentComponent,
 
     return (
         <Col
-            md={(parentComponent === 'sentDocumentRequest' || parentComponent === "documentNotSummary") ? 8 : parentComponent === "documentSummary" ? 12 : 10}
-            sm={(parentComponent === 'sentDocumentRequest' || parentComponent === "documentNotSummary") ? 8 : parentComponent === "documentSummary" ? 12 : 10}
+            md={(parentComponent === 'sentDocumentRequest' || parentComponent === "documentNotSummary") ? 8 : (parentComponent === "documentSummary" || parentComponent === 'requiredDocuments') ? 12 : 10}
+            sm={(parentComponent === 'sentDocumentRequest' || parentComponent === "documentNotSummary") ? 8 : (parentComponent === "documentSummary" || parentComponent === 'requiredDocuments') ? 12 : 10}
             className={Styles.search_input}>
             <CgSearch
                 size={20}

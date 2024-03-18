@@ -33,8 +33,19 @@ const deleteRequiredDocuments = async (id: any) => {
     }
 }
 
+const searchRequiredDocuments = async (obj: any) => {
+    try {
+        const response = await axiosCustom.post(`${process.env.REACT_APP_BASE_URL}/${process.env.REACT_APP_DOCUMENT_SERVICE}/document/require/all`, obj)
+        const data = handleResponse(response)
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
 export const requiredDocumentService = {
     getRequiredDocuments,
     saveRequiredDocuments,
-    deleteRequiredDocuments
+    deleteRequiredDocuments,
+    searchRequiredDocuments
 }

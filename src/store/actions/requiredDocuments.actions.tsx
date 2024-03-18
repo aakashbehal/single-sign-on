@@ -1,4 +1,4 @@
-import { RequiredDocuments, SaveRequiredDocuments, DeleteRequiredDocuments } from "../types.d";
+import { RequiredDocuments, SaveRequiredDocuments, DeleteRequiredDocuments, SearchRequiredDocuments } from "../types.d";
 import { requiredDocumentService } from "../../services"
 
 export const RequiredDocumentActionCreator = {
@@ -60,5 +60,22 @@ export const RequiredDocumentActionCreator = {
                     dispatch({ type: DeleteRequiredDocuments.DELETE_REQUIRED_DOCUMENTS_RESET })
                 }, 0)
             })
+    },
+    searchRequiredDocuments: (obj: any) => (dispatch: any) => {
+        const request = () => ({ type: SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_REQUEST })
+        const success = (costs: any) => ({ type: SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_SUCCESS, payload: costs })
+        const failure = (error: any) => ({ type: SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_FAILURE, payload: error })
+
+        dispatch(request())
+
+        requiredDocumentService.searchRequiredDocuments(obj)
+            .then(
+                requiredDocuments => {
+                    dispatch(success(requiredDocuments))
+                },
+                error => {
+                    dispatch(failure(error))
+                }
+            )
     }
 }

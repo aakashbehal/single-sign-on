@@ -10,13 +10,15 @@ import { useToasts } from "react-toast-notifications";
 
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
-import Styles from "./User.module.sass";
+import Styles from "../DocumentManager/DocumentManager.module.sass";
 import { RequiredDocumentActionCreator } from "../../store/actions/requiredDocuments.actions";
 import { createMessage } from "../../helpers/messages"
 import NoRecord from "../../components/Common/NoResult";
 import { userService } from "../../services";
 import { DocumentTypePreferenceActionCreator } from "../../store/actions/documentTypePreference.actions";
 import { DocumentGroupActionCreator } from "../../store/actions/documentGroup.actions";
+import AdvanceSearch from "../../components/Common/AdvanceSearch";
+import AdvanceSearchHook from "../../components/CustomHooks/AdvanceSearchHook";
 
 const RequiredDocuments = () => {
     const dispatch = useDispatch()
@@ -29,6 +31,7 @@ const RequiredDocuments = () => {
     const [selectedProduct, setSelectedProduct] = useState<any>([])
     const [role, setRole] = useState<any>(null)
     const [requiredDocumentsUpdated, setRequiredDocumentsUpdated] = useState<any>([])
+    let [searchObj, text, isAdvanceSearch, { setInitObj, textSearch, advanceSearch, resetHandler }] = AdvanceSearchHook()
     const { requiredDocuments,
         loading,
         error,
@@ -63,7 +66,10 @@ const RequiredDocuments = () => {
         editSuccessful: state.requiredDocuments.editSuccessful,
         editError: state.requiredDocuments.editError,
         deleteSuccessful: state.requiredDocuments.deleteSuccessful,
-        deleteError: state.requiredDocuments.deleteError
+        deleteError: state.requiredDocuments.deleteError,
+        searching: state.requiredDocuments.searching,
+        searchingSuccess: state.requiredDocuments.searchingSuccess,
+        searchingError: state.requiredDocuments.searchingError,
     }))
 
     useEffect(() => {
@@ -73,6 +79,24 @@ const RequiredDocuments = () => {
         dispatch(DocumentGroupActionCreator.getAllDocumentGroup({}))
         dispatch(DocumentTypePreferenceActionCreator.getUniqueDocumentTypePreference())
     }, [])
+
+    useEffect(() => {
+        if (text !== null) {
+            if (text !== '') {
+                searchText()
+            } else {
+                getRequiredDocuments()
+            }
+        }
+    }, [text])
+
+    useEffect(() => {
+        if (isAdvanceSearch === true) {
+            searchAdvanceSearch()
+        } else if (isAdvanceSearch === false) {
+            getRequiredDocuments()
+        }
+    }, [isAdvanceSearch, searchObj])
 
     useEffect(() => {
         if (requiredDocuments && requiredDocuments.length > 0) {
@@ -128,7 +152,23 @@ const RequiredDocuments = () => {
     }
 
     const getRequiredDocuments = () => {
-        dispatch(RequiredDocumentActionCreator.getRequiredDocuments())
+        dispatch(RequiredDocumentActionCreator.searchRequiredDocuments({}))
+    }
+
+    const searchText = () => {
+        let searchObj: any = { textSearch: text }
+        dispatch(RequiredDocumentActionCreator.searchRequiredDocuments(searchObj))
+        setShowAdvanceSearch(false)
+    }
+
+    const searchAdvanceSearch = () => {
+        console.log(`--searchObj--`, searchObj)
+        let obj: any = {
+            "productName": searchObj.docGroupCode,
+            "textSearch": searchObj.documentName
+        }
+        dispatch(RequiredDocumentActionCreator.searchRequiredDocuments(obj))
+        setShowAdvanceSearch(false)
     }
 
     const deleteAlert = () => {
@@ -140,13 +180,16 @@ const RequiredDocuments = () => {
         setShowDeleteConfirm(true)
     }
 
+    const handleSearchInput = (e: any) => {
+        console.log(e.target.value)
+    }
 
     return (<>
         <Col sm={12}>
             <Row>
                 <Col md={role === 'Partner' ? 12 : 10} sm={role === 'Partner' ? 12 : 10} className={`${Styles.search_input} required_document_input`}>
-                    <CgSearch size={20} className={Styles.search} />
-                    <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
+                    {/* <CgSearch size={20} className={Styles.search} />
+                    <Form.Control type="text" name="my_document_search" className={Styles.my_document_search} onChange={(e) => handleSearchInput(e)} onMouseDown={() => setShowAdvanceSearch(false)} placeholder="Search" ></Form.Control>
                     <CgOptions size={20} className={Styles.advanceSearch} onClick={() => setShowAdvanceSearch(!showAdvanceSearch)} />
                     {showAdvanceSearch && <div className={Styles.advance_search}>
                         <Form className="" style={{ marginTop: '2rem' }}>
@@ -185,7 +228,17 @@ const RequiredDocuments = () => {
                             </Col>
                         </Form>
                     </div>
-                    }
+                    } */}
+                    <AdvanceSearch
+                        parentComponent={'requiredDocuments'}
+                        Styles={Styles}
+                        showAdvanceSearch={showAdvanceSearch}
+                        setShowAdvanceSearch={(flag: any) => setShowAdvanceSearch(flag)}
+                        textSearchHook={textSearch}
+                        searchObj={searchObj}
+                        advanceSearchHook={advanceSearch}
+                        resetHandlerHook={resetHandler}
+                    />
                 </Col>
                 {
                     role !== 'Partner'

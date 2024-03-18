@@ -2,7 +2,8 @@ import {
     RequiredDocuments,
     SaveRequiredDocuments,
     EditRequiredDocuments,
-    DeleteRequiredDocuments
+    DeleteRequiredDocuments,
+    SearchRequiredDocuments
 } from "../types.d";
 
 const initialState = {
@@ -17,7 +18,10 @@ const initialState = {
     editError: false,
     deleting: false,
     deleteSuccessful: false,
-    deleteError: false
+    deleteError: false,
+    searching: false,
+    searchingSuccess: false,
+    searchingError: false
 }
 
 const requiredDocumentsReducer = (state = initialState, action: { type: any; payload: any; }) => {
@@ -130,6 +134,37 @@ const requiredDocumentsReducer = (state = initialState, action: { type: any; pay
                 deleting: false,
                 deleteSuccessful: false,
                 deleteError: false
+            }
+        case SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_REQUEST:
+            return {
+                ...state,
+                searching: true,
+                searchingSuccess: false,
+                searchingError: false
+            }
+        case SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_SUCCESS:
+            return {
+                ...state,
+                data: action.payload,
+                searching: false,
+                searchingSuccess: true,
+                searchingError: false
+            }
+        case SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_FAILURE:
+            return {
+                ...state,
+                data: [],
+                searching: false,
+                searchingSuccess: false,
+                searchingError: true
+            }
+        case SearchRequiredDocuments.SEARCH_REQUIRED_DOCUMENTS_RESET:
+            return {
+                ...state,
+                data: [],
+                searching: false,
+                searchingSuccess: false,
+                searchingError: false
             }
         default:
             return state
