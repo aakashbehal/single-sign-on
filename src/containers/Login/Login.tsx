@@ -49,7 +49,7 @@ const Login: FC = () => {
                 dispatch(LoginActionCreator.resetUser())
                 history.push('/change_password')
             } else {
-                history.push('/documents/my_documents')
+                history.push('/setup/client')
             }
         }
     }, [user])

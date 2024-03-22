@@ -2,17 +2,19 @@ import { useState, useEffect, useRef } from "react";
 import { Col, Row, Button, Modal, Container, Form } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import 'react-bootstrap-typeahead/css/Typeahead.css';
+import { BsPlusLg } from "react-icons/bs";
+import { Typeahead } from "react-bootstrap-typeahead";
+import { useToasts } from "react-toast-notifications";
 
 import TableComponent from "../../components/Table/Table";
 import Styles from "./Setup.module.sass";
 import { ClientSetupActionCreator } from "../../store/actions/clientSetup.actions";
 import States from "../../components/Common/States";
 import { createMessage } from "../../helpers/messages";
-import { useToasts } from "react-toast-notifications";
 import Domains from "../../components/Common/Domains";
 import { TypesActionCreator } from "../../store/actions/common/types.actions";
-import { Typeahead } from "react-bootstrap-typeahead";
 import DeleteConfirm from "../../components/modal/DeleteConfirm";
+import { clientServices } from "../../services";
 
 const ClientSetup = () => {
     const dispatch = useDispatch();
@@ -24,6 +26,8 @@ const ClientSetup = () => {
     const [showAddEdit, setShowAddEdit] = useState<boolean>(false)
     const [editData, setEditData] = useState<any>(null)
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [preferenceModal, setPreferenceModal] = useState(false)
+    const [mapModal, setMapModal] = useState(false)
     const {
         clients,
         totalCount,
@@ -114,8 +118,6 @@ const ClientSetup = () => {
         }
         setShowAddEdit(false)
         setEditData(null)
-        setAddDomainModal(false)
-        setAddGroupModal(false)
     }, [
         addClientSuccess,
         editClientSuccess,
@@ -147,20 +149,19 @@ const ClientSetup = () => {
         addGroupClientError
     ])
 
-    const [addDomainModal, setAddDomainModal] = useState(false)
-    const [addGroupModal, setAddGroupModal] = useState(false)
-    const addDomainHandler = (client: any) => {
-        setEditData(client)
-        setAddDomainModal(true)
-    }
 
-    const addGroupHandler = (client: any) => {
+    const preferenceHandler = (client: any) => {
         setEditData(client)
-        setAddGroupModal(true)
+        setPreferenceModal(true)
     }
 
     const deactivateHandler = () => {
         dispatch(ClientSetupActionCreator.deactivateClient(editData.clientId))
+    }
+
+    const mapClientPartner = (client: any) => {
+        setEditData(client)
+        setMapModal(true)
     }
 
     return (
@@ -208,10 +209,13 @@ const ClientSetup = () => {
                         delete: (data: any) => {
                             setEditData(data)
                             setShowDeleteConfirm(true)
+                        },
+                        preferenceHandler: (client: any) => {
+                            preferenceHandler(client)
+                        },
+                        mapClientPartner: (client: any) => {
+                            mapClientPartner(client)
                         }
-                        // addDomainHandler: (client: any) => {
-                        //     addDomainHandler(client)
-                        // },
                         // addGroupHandler: (client: any) => {
                         //     addGroupHandler(client)
                         // }
@@ -243,25 +247,25 @@ const ClientSetup = () => {
                 />
             }
             {
-                addDomainModal
-                && <AddClientDomain
+                preferenceModal
+                && <AddClientDocumentGroup
                     onHide={() => {
-                        setAddDomainModal(!addDomainModal)
+                        setPreferenceModal(!preferenceModal)
                         setEditData(null)
                     }}
-                    show={addDomainModal}
+                    show={preferenceModal}
                     data={editData}
                     dispatch={dispatch}
                 />
             }
             {
-                addGroupModal
-                && <AddClientDocumentGroup
+                mapModal
+                && <ClientPartnerMap
                     onHide={() => {
-                        setAddGroupModal(!addGroupModal)
+                        setPreferenceModal(!mapModal)
                         setEditData(null)
                     }}
-                    show={addGroupModal}
+                    show={mapModal}
                     data={editData}
                     dispatch={dispatch}
                 />
@@ -554,75 +558,199 @@ const AddEditClient = ({ onHide, show, data, dispatch }: any) => {
     )
 }
 
-const AddClientDomain = ({ onHide, show, data, dispatch }: any) => {
+const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
+    const ref = useRef<any>()
     const clientFormRef = useRef<any>()
-    const [formError, setFormError] = useState<any>({
-        domainCode: false,
-    })
+    const [schema, setSchema] = useState<any>({})
+    const [selectedPT, setSelectedPT] = useState<any>([])
+    const [selectedSC, setSelectedSC] = useState<any>([])
+    const [selectedRS, setSelectedRS] = useState<any>([])
+    const [supportingCycles, setSupportingCycles] = useState([{
+        "shortName": "",
+        "fromDay": 0,
+        "toDays": 0
+    }])
 
-    const validate = (formObj: any) => {
-        let checkFormObj: any = {
-            domainCode: formObj.domainCode,
-        }
-        let formIsValid = true;
-        const error: any = {
-            domainCode: false
-        }
-        for (let key in checkFormObj) {
-            if (!checkFormObj[key] || checkFormObj[key] === "") {
-                error[key] = true
-            }
-        }
-        for (let k in error) {
-            if (error[k]) {
-                formIsValid = false
-            }
-        }
-        setFormError(error)
-        return formIsValid
+    useEffect(() => {
+        dispatch(TypesActionCreator.getProductTypes())
+        getPreferencesSchema()
+    }, [])
+
+    const getPreferencesSchema = async () => {
+        const response = await clientServices.fetchPreferenceSchema();
+        setSchema(response)
     }
+
+    const addSupporting = () => {
+        setSupportingCycles((prev) => {
+            return [...prev, {
+                "shortName": "",
+                "fromDay": 0,
+                "toDays": 0
+            }]
+        })
+
+    }
+
 
     const addEditSubmit = () => {
         const {
-            domain,
+            collectAfterSOLExpire,
+            maxAge,
+            minimumBalance
         } = clientFormRef.current
-        let formObject = {
-            orgTypeCode: 'CL',
-            orgCode: data?.shortCode,
-            domainCode: domain?.value
+        let obj = {
+            "orgType": "CT",
+            "orgId": data.clientId,
+            "orgShortName": data.shortCode,
+            "productType": selectedPT,
+            "supportingCycle": supportingCycles,
+            "supportingChannel": selectedSC,
+            "collectAfterSOLExpire": collectAfterSOLExpire.value,
+            "maxAge": maxAge.value,
+            "minimumBalance": minimumBalance.value,
+            "restrictedState": selectedRS
         }
-        if (validate(formObject)) {
-            dispatch(ClientSetupActionCreator.addClientDomain(formObject))
-        }
+
+        console.log('===', obj)
+
     }
 
     return (
         <Modal
             onHide={onHide}
             show={show}
+            size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered animation={true}
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Select Domain Code
+                    {schema.title}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
                 <Container>
                     <Form ref={clientFormRef}>
                         <Row>
-                            <Col xs={12} md={12} className="mt-3">
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col}>
-                                        <Col md={12} sm={12} >
-                                            <Domains />
+                            {
+                                schema && schema?.properties?.map((property: any) => {
+                                    return (
+                                        <Col xs={12} md={12} className="mt-3">
+                                            <Form.Group as={Col} >
+                                                <Col md={12} sm={12} >
+                                                    {
+                                                        property.UIControlType === "MS" &&
+                                                        <Typeahead
+                                                            id="public-methods-example"
+                                                            labelKey="productTypeDescription"
+                                                            multiple
+                                                            ref={ref}
+                                                            className="input_custom_type_ahead"
+                                                            onChange={(selected) => {
+                                                                if (property.key === 'productType') { setSelectedPT(selected) }
+                                                                if (property.key === 'supportingChannel') { setSelectedSC(selected) }
+                                                                if (property.key === 'restrictedState') { setSelectedRS(selected) }
+                                                            }}
+                                                            options={property.options}
+                                                        />
+                                                    }
+                                                    {
+                                                        property.UIControlType === "TX" &&
+                                                        <Form.Control
+                                                            type="text"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "DO" &&
+                                                        <Form.Control
+                                                            type="number"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "IN" &&
+                                                        <Form.Control
+                                                            type="number"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "BL" &&
+                                                        <Form.Control
+                                                            type='Checkbox'
+                                                            className="switch mt-2"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "TT" &&
+                                                        <>
+                                                            {
+                                                                supportingCycles && supportingCycles.map((supportingCycle: any, index: number) => {
+                                                                    return (
+                                                                        <>
+                                                                            <div className={Styles.supporting_cycle_container}>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Name</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="text"
+                                                                                            defaultValue={supportingCycle.shortName}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].shortName = e.target.value
+                                                                                                console.log(prev)
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Days From</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="number"
+                                                                                            defaultValue={supportingCycle.fromDay}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].fromDay = +e.target.value
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Days To</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="number"
+                                                                                            defaultValue={supportingCycle.toDays}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].toDays = +e.target.value
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                            </div>
+                                                                        </>
+                                                                    )
+                                                                })
+                                                            }
+                                                            <div className={Styles.supporting_cycle_plus} onClick={addSupporting}>
+                                                                <BsPlusLg />
+                                                            </div>
+                                                        </>
+                                                    }
+                                                </Col>
+                                                <Form.Label className="label_custom white">{property.englishName}</Form.Label>
+                                            </Form.Group>
                                         </Col>
-                                        <Form.Label className="label_custom white">Domain</Form.Label>
-                                        <span style={{ color: 'red' }}><small>{formError["domainCode"] ? 'Please Select a Domain Code' : ''}</small></span>
-                                    </Form.Group>
-                                </Col>
-                            </Col>
+                                    )
+
+                                })
+                            }
+
                         </Row>
                     </Form>
                 </Container>
@@ -635,83 +763,198 @@ const AddClientDomain = ({ onHide, show, data, dispatch }: any) => {
     )
 }
 
-const AddClientDocumentGroup = ({ onHide, show, data, dispatch }: any) => {
+const ClientPartnerMap = ({ onHide, show, data, dispatch }: any) => {
     const ref = useRef<any>()
     const clientFormRef = useRef<any>()
-    const [documentGroups, setDocumentGroups] = useState<string[]>([])
-    const [documentGroupError, setDocumentGroupError] = useState<boolean>(false)
+    const [schema, setSchema] = useState<any>({})
+    const [selectedPT, setSelectedPT] = useState<any>([])
+    const [selectedSC, setSelectedSC] = useState<any>([])
+    const [selectedRS, setSelectedRS] = useState<any>([])
+    const [supportingCycles, setSupportingCycles] = useState([{
+        "shortName": "",
+        "fromDay": 0,
+        "toDays": 0
+    }])
 
     useEffect(() => {
         dispatch(TypesActionCreator.getProductTypes())
+        getPreferencesSchema()
     }, [])
 
-    const {
-        productTypes,
-        loadingProductTypes,
-        errorProductTypes,
-    } = useSelector((state: any) => ({
-        productTypes: state.types.productType.data,
-        loadingProductTypes: state.types.productType.loading,
-        errorProductTypes: state.types.productType.error,
-    }))
+    const getPreferencesSchema = async () => {
+        const response = await clientServices.fetchPreferenceSchema();
+        setSchema(response)
+    }
+
+    const addSupporting = () => {
+        setSupportingCycles((prev) => {
+            return [...prev, {
+                "shortName": "",
+                "fromDay": 0,
+                "toDays": 0
+            }]
+        })
+    }
 
 
     const addEditSubmit = () => {
-        let formObject = {
-            orgTypeCode: 'CL',
-            orgCode: data?.shortCode,
-            documentGroupCode: documentGroups
+        const {
+            collectAfterSOLExpire,
+            maxAge,
+            minimumBalance
+        } = clientFormRef.current
+        let obj = {
+            "orgType": "CT",
+            "orgId": data.clientId,
+            "orgShortName": data.shortCode,
+            "productType": selectedPT,
+            "supportingCycle": supportingCycles,
+            "supportingChannel": selectedSC,
+            "collectAfterSOLExpire": collectAfterSOLExpire.value,
+            "maxAge": maxAge.value,
+            "minimumBalance": minimumBalance.value,
+            "restrictedState": selectedRS
         }
-        if (documentGroups.length > 0) {
-            dispatch(ClientSetupActionCreator.addClientGroup(formObject))
-        } else {
-            setDocumentGroupError(true)
-        }
+
+        console.log('===', obj)
+
     }
 
     return (
         <Modal
             onHide={onHide}
             show={show}
+            size="lg"
             aria-labelledby="contained-modal-title-vcenter"
             centered animation={true}
         >
             <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-vcenter">
-                    Select Domain Code
+                    {schema.title}
                 </Modal.Title>
             </Modal.Header>
             <Modal.Body className="show-grid">
                 <Container>
                     <Form ref={clientFormRef}>
                         <Row>
-                            <Col xs={12} md={12} className="mt-3">
-                                <Col lg={12} md={6} className="no_padding">
-                                    <Form.Group as={Col} >
-                                        <Col md={12} sm={12} >
-                                            <Typeahead
-                                                isLoading={loadingProductTypes}
-                                                id="public-methods-example"
-                                                labelKey="name"
-                                                multiple
-                                                ref={ref}
-                                                className="input_custom_type_ahead"
-                                                allowNew={true}
-                                                newSelectionPrefix='Not a Platform User: '
-                                                onChange={(selected) => {
-                                                    let selectedUpdated = selected.map((s: any) => {
-                                                        return s.code
-                                                    })
-                                                    setDocumentGroups(selectedUpdated)
-                                                }}
-                                                options={productTypes}
-                                            />
+                            {
+                                schema && schema?.properties?.map((property: any) => {
+                                    return (
+                                        <Col xs={12} md={12} className="mt-3">
+                                            <Form.Group as={Col} >
+                                                <Col md={12} sm={12} >
+                                                    {
+                                                        property.UIControlType === "MS" &&
+                                                        <Typeahead
+                                                            id="public-methods-example"
+                                                            labelKey="productTypeDescription"
+                                                            multiple
+                                                            ref={ref}
+                                                            className="input_custom_type_ahead"
+                                                            onChange={(selected) => {
+                                                                if (property.key === 'productType') { setSelectedPT(selected) }
+                                                                if (property.key === 'supportingChannel') { setSelectedSC(selected) }
+                                                                if (property.key === 'restrictedState') { setSelectedRS(selected) }
+                                                            }}
+                                                            options={property.options}
+                                                        />
+                                                    }
+                                                    {
+                                                        property.UIControlType === "TX" &&
+                                                        <Form.Control
+                                                            type="text"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "DO" &&
+                                                        <Form.Control
+                                                            type="number"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "IN" &&
+                                                        <Form.Control
+                                                            type="number"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "BL" &&
+                                                        <Form.Control
+                                                            type='Checkbox'
+                                                            className="switch mt-2"
+                                                            name={property.key}
+                                                        ></Form.Control>
+                                                    }
+                                                    {
+                                                        property.UIControlType === "TT" &&
+                                                        <>
+                                                            {
+                                                                supportingCycles && supportingCycles.map((supportingCycle: any, index: number) => {
+                                                                    return (
+                                                                        <>
+                                                                            <div className={Styles.supporting_cycle_container}>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Name</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="text"
+                                                                                            defaultValue={supportingCycle.shortName}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].shortName = e.target.value
+                                                                                                console.log(prev)
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Days From</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="number"
+                                                                                            defaultValue={supportingCycle.fromDay}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].fromDay = +e.target.value
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                                <Form.Group as={Row}>
+                                                                                    <Form.Label column md={3} sm={12} className={Styles.custom_inputs_modal}>Days To</Form.Label>
+                                                                                    <Col md={9} sm={12} className="switch_box">
+                                                                                        <Form.Control
+                                                                                            type="number"
+                                                                                            defaultValue={supportingCycle.toDays}
+                                                                                            onChange={(e) => setSupportingCycles((prev) => {
+                                                                                                prev[index].toDays = +e.target.value
+                                                                                                return prev
+                                                                                            })}
+                                                                                        ></Form.Control>
+                                                                                    </Col>
+                                                                                </Form.Group>
+                                                                            </div>
+                                                                        </>
+                                                                    )
+                                                                })
+                                                            }
+                                                            <div className={Styles.supporting_cycle_plus} onClick={addSupporting}>
+                                                                <BsPlusLg />
+                                                            </div>
+                                                        </>
+                                                    }
+                                                </Col>
+                                                <Form.Label className="label_custom white">{property.englishName}</Form.Label>
+                                            </Form.Group>
                                         </Col>
-                                        <Form.Label className="label_custom white">Product Type</Form.Label>
-                                        <span style={{ color: 'red' }}><small>{documentGroupError ? 'Please Select at least 1 Product Type' : ''}</small></span>
-                                    </Form.Group>
-                                </Col>
-                            </Col>
+                                    )
+
+                                })
+                            }
+
                         </Row>
                     </Form>
                 </Container>

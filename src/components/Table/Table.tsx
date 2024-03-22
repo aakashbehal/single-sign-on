@@ -14,6 +14,7 @@ import { AiOutlineCloudDownload, AiOutlineCloudUpload, AiFillFolder, AiFillQuest
 import {
     FcHighPriority, FcLowPriority, FcMediumPriority, FcCancel,
 } from 'react-icons/fc';
+import { VscSettings } from "react-icons/vsc";
 import { FiShare2 } from "react-icons/fi"
 import { HiOutlineBadgeCheck } from "react-icons/hi";
 import { SiMinutemailer } from "react-icons/si";
@@ -25,7 +26,7 @@ import { MiscActionCreator } from '../../store/actions/common/misc.actions';
 import SkeletonLoading from '../../helpers/skeleton-loading';
 import NoRecord from '../Common/NoResult';
 import { MyDocumentsActionCreator } from '../../store/actions/myDocuments.actions';
-import { MdDomain, MdOutlineDriveFileMove, MdOutlineFolder, MdOutlineFolderCopy } from 'react-icons/md';
+import { MdDomain, MdOutlineDriveFileMove, MdOutlineFolder, MdOutlineFolderCopy, MdOutlineMap } from 'react-icons/md';
 import { FaLayerGroup } from 'react-icons/fa';
 
 interface ITempObj {
@@ -1256,6 +1257,42 @@ const TableComponent = ({
                                         &nbsp;
                                     </span>
                                 }
+                                {
+                                    typeof addEditArray.preferenceHandler !== 'undefined'
+                                    && <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Preference
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <VscSettings size={20} onClick={() => addEditArray.preferenceHandler(d)} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+                                {
+                                    typeof addEditArray.mapClientPartner !== 'undefined'
+                                    && <span>
+                                        <OverlayTrigger
+                                            placement="bottom"
+                                            delay={{ show: 250, hide: 400 }}
+                                            overlay={
+                                                <Tooltip id={`tooltip-error`}>
+                                                    Preference
+                                                </Tooltip>
+                                            }
+                                        >
+                                            <MdOutlineMap size={20} onClick={() => addEditArray.mapClientPartner(d)} style={{ cursor: 'pointer' }} />
+                                        </OverlayTrigger>
+                                        &nbsp;
+                                    </span>
+                                }
+
+
                                 {
                                     typeof addEditArray.delete !== 'undefined'
                                     &&

@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: eq-docs-ui-deploy-stage
+  name: eq-sso-ui-deploy-stage
   namespace: equabli-stage-nm
   labels:
-    app: eq-docs-ui-app-stage
+    app: eq-sso-ui-app-stage
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: eq-docs-ui-app-stage
+      app: eq-sso-ui-app-stage
   template:
     metadata:
       labels:
-        app: eq-docs-ui-app-stage
+        app: eq-sso-ui-app-stage
         version: 1.0.0
     spec:
       containers:
-        - name: eq-docs-ui-stage
-          image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/eks-eq-docs-ui-qa/document_manager:1.64.1
+        - name: eq-sso-ui-stage
+          image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/eks-eq-sso-ui-qa/document_manager:1.64.1
           imagePullPolicy: Always
           ports:
             - containerPort: 80
