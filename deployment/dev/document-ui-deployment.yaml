@@ -17,8 +17,8 @@ spec:
         version: "1.0.0"
     spec:
       containers:
-      - name: eq-docs-ui-dev
-        image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-docs-ui:0.1.10
+      - name: eq-sso-ui-dev
+        image: 400779737080.dkr.ecr.us-east-1.amazonaws.com/equabli-eks-ecr-qa/eq-sso-ui:0.1.10
         imagePullPolicy: Always
         ports:
         - containerPort: 80

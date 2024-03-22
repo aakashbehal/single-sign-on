@@ -194,6 +194,29 @@ const addClientGroup = async ({
     }
 }
 
+const fetchPreferenceSchema = async () => {
+    try {
+        const response = await axiosCustom.get(`${process.env.REACT_APP_BASE_URL}${process.env.REACT_APP_SSO_ONBOARDING_SERVICE}/clients/getPreferenceJsonSchema`)
+        const data = handleResponse(response)
+        const propertiesArray: any = []
+        for (let key in data?.response?.properties) {
+            if (data?.response?.properties[key].UIControlType !== 'TX') {
+                let obj = {
+                    ...data?.response?.properties[key],
+                    key,
+                    name: data?.response?.properties[key].name || key
+                }
+                propertiesArray.push(obj)
+            }
+        }
+        data.response.properties = propertiesArray
+        return data.response
+    } catch (error: any) {
+        throw error.message
+    }
+}
+
+
 export const clientServices = {
     getAllClients,
     addClient,
@@ -201,5 +224,6 @@ export const clientServices = {
     deactivateClient,
     addClientDomain,
     addClientGroup,
-    getOnboardingDetails
+    getOnboardingDetails,
+    fetchPreferenceSchema
 }

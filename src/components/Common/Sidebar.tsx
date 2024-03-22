@@ -97,29 +97,6 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                 {isClosed && <span className="logo_name">Equabli</span>}
             </div>
             <ul className="nav-links">
-                <li className={`${menuDrop.documents ? 'showMenu' : ''}`} onClick={() => {
-                    setMenuDrop((state: any) => {
-                        return { ...state, documents: !state.documents }
-                    })
-                }}>
-                    <div className={`icon-link ${(activeRoute === 'my_documents'
-                        || activeRoute === 'sent_document_requests'
-                        || activeRoute === 'received_document_requests'
-                        || activeRoute === 'download_history') ? 'active' : ''}`}>
-                        <NavLink to="/documents/my_documents">
-                            <MdOutlinePendingActions size={30} />
-                            <span className="link_name">Documents</span>
-                        </NavLink>
-                        <i className='bx bxs-chevron-down arrow'></i>
-                    </div>
-                    <ul className="sub-menu">
-                        <li><a className="link_name" onClick={(e) => void e}>Documents</a></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/my_documents">My Documents</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/sent_document_requests">Sent Document Requests</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/received_document_requests">Received Document Requests</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/documents/download_history">Download History</NavLink></li>
-                    </ul>
-                </li>
                 {role === 'Equabli' && <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
                     setMenuDrop((state: any) => {
                         return { ...state, setup: !state.setup }
@@ -139,80 +116,13 @@ const Sidebar = ({ isClosed }: { isClosed: boolean }) => {
                     </div>
                     <ul className="sub-menu">
                         <li><a className="link_name" onClick={(e) => void e}>Setup</a></li>
-                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>}
-                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>}
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client">Client</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/partner">Partner</NavLink></li>
                         <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/user_approval">User Approval</NavLink></li>
-                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>}
-                        {<li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client_onboarding">Client Onboarding</NavLink></li>}
-                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/user_approval">User Approval</NavLink></li> */}
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/domain">Domain</NavLink></li>
+                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/setup/client_onboarding">Client Onboarding</NavLink></li>
                     </ul>
                 </li>}
-                <li className={`${menuDrop.setup ? 'showMenu' : ''}`} onClick={() => {
-                    setMenuDrop((state: any) => {
-                        return { ...state, setup: !state.setup }
-                    })
-                }}>
-                    <div className={`icon-link ${(
-                        activeRoute === 'document_type_identifier'
-                        || activeRoute === 'document_general_configuration'
-                        || activeRoute === 'document_cost_configuration'
-                        || activeRoute === 'required_documents'
-                        || activeRoute === 'document_group'
-                    ) ? 'active' : ''}`}>
-                        <NavLink to="/configure/document_general_configuration">
-                            <FaWrench size={30} />
-                            <span className="link_name">Configure</span>
-                        </NavLink>
-                        <i className='bx bxs-chevron-down arrow'></i>
-                    </div>
-                    <ul className="sub-menu">
-                        <li><a className="link_name" onClick={(e) => void e}>Configure</a></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_general_configuration">Document General Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_cost_configuration">Document Cost Configuration</NavLink></li>
-                        <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/required_documents">Required Documents</NavLink></li>
-                        {/* {role !== 'Equabli' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_attribute">Document Attribute</NavLink></li>} */}
-
-                        {/* <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type_identifier">Document Type Identifier</NavLink></li> */}
-                        {role !== 'Partner' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/product_type">Product Type</NavLink></li>}
-                        {role !== 'Partner' && <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/document_type">Document Type</NavLink></li>}
-                    </ul>
-                </li>
-                <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
-                    setMenuDrop((state: any) => {
-                        return { ...state, console: !state.console }
-                    })
-                }}>
-                    <div className={`icon-link ${(activeRoute === 'automation') ? 'active' : ''}`}>
-                        <NavLink to="/automation">
-                            <BsRobot size={30} />
-                            <span className="link_name">Automation</span>
-                        </NavLink>
-                    </div>
-                    {!isClosed &&
-                        <ul className="sub-menu">
-                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/automation">Automation</NavLink></li>
-                        </ul>
-                    }
-                </li>
-            </ul>
-            <ul className="nav-links console">
-                <li className={`${menuDrop.console ? 'showMenu' : ''}`} onClick={() => {
-                    setMenuDrop((state: any) => {
-                        return { ...state, console: !state.console }
-                    })
-                }}>
-                    <div className={`icon-link ${(activeRoute === 'console') ? 'active' : ''}`}>
-                        <NavLink to="/configure/console">
-                            <FiSettings size={30} />
-                            <span className="link_name">Console</span>
-                        </NavLink>
-                    </div>
-                    {!isClosed &&
-                        <ul className="sub-menu">
-                            <li><NavLink onClick={(e) => e.stopPropagation()} to="/configure/console">Console</NavLink></li>
-                        </ul>
-                    }
-                </li>
             </ul>
         </div >
     );
